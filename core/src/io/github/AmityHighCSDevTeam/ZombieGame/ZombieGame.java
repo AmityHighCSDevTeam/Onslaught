@@ -7,6 +7,8 @@ import com.badlogic.gdx.Game;
 
 public class ZombieGame extends Game {
 	
+	public boolean isLoaded = false;
+	
 	@Override
 	public void create () {
 		setScreen(new LoadingScreen());
@@ -17,8 +19,8 @@ public class ZombieGame extends Game {
 				//Do Loading
 				
 				try {
-					Thread.sleep(1000);//Loading Delay Test
-					setScreen(new MainMenu());
+					Thread.sleep(10000);//Loading Delay Test
+					isLoaded = true;	
 				} catch (InterruptedException e) {}
 				
 			}
@@ -27,6 +29,9 @@ public class ZombieGame extends Game {
 	@Override
 	public void render () {
 		super.render();
+		if (isLoaded) {
+			setScreen(new MainMenu());
+		}
 	}
 	@Override
 	public void dispose() {
