@@ -3,6 +3,7 @@ package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class MainMenu implements Screen {
 
@@ -16,6 +17,11 @@ public class MainMenu implements Screen {
 	}
 	@Override
 	public void show() {
+		//FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/myfont.ttf"));
+		//FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		//parameter.size = 12;
+		//BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
+		//generator.dispose(); // don't forget to dispose to avoid memory leaks!
 	}
 	@Override
 	public void hide() {
