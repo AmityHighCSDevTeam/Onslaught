@@ -19,7 +19,7 @@ public class ZombieGame extends Game {
 				//Do Loading
 				
 				try {
-					Thread.sleep(10000);//Loading Delay Test
+					Thread.sleep(1000);//Loading Delay Test
 					isLoaded = true;	
 				} catch (InterruptedException e) {}
 				
