@@ -1,8 +1,9 @@
 package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
 
 import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton;
+import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton.MouseStatus;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,30 +16,32 @@ public abstract class GuiScreen implements Screen{
 	protected SpriteBatch batch;
 	private float lastMouseX, lastMouseY;
 	private boolean isMouseDown = false;
-	private ArrayList<GuiButton> buttons = new ArrayList<GuiButton>();
+	private HashMap<Integer, GuiButton> buttons = new HashMap<Integer, GuiButton>();
 
 	@Override
 	public void render(float delta) {
+		Vector2 touchPos = new Vector2();
+		touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+		
 		if(Gdx.input.isTouched()) {
-			Vector2 touchPos = new Vector2();
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY());
 			lastMouseX = touchPos.x;
 			lastMouseY = touchPos.y;
 			if (!isMouseDown) {
 				isMouseDown = true;
 				mouseDown(touchPos.x, touchPos.y);
 			}
-			
-			
-			for (GuiButton b : buttons) {
-				if (b.getBoundingRectangle().contains(touchPos.x, height - touchPos.y)) {
-					buttonClicked(b.getID());
-				}
-			}
 		} else {
 			if (isMouseDown) {
 				isMouseDown = false;
 				mouseUp(lastMouseX, lastMouseY);
+			}
+		}
+		
+		for (GuiButton b : buttons.values()) {
+			if (b.getBoundingRectangle().contains(touchPos.x, height - touchPos.y)) {
+				b.setStatus(MouseStatus.HOVER);
+			} else {
+				b.setStatus(MouseStatus.NONE);
 			}
 		}
 		
@@ -55,6 +58,9 @@ public abstract class GuiScreen implements Screen{
 	}
 	@Override
 	public void show() {	
+		this.width = 800;
+		this.height = 600;
+		
 		batch = new SpriteBatch();
 	}
 	@Override
@@ -65,7 +71,7 @@ public abstract class GuiScreen implements Screen{
 	public void resume() {}
 	@Override
 	public void dispose() {
-		for (GuiButton b : buttons) {
+		for (GuiButton b : buttons.values()) {
 			b.dispose();
 		}
 	}
@@ -80,9 +86,15 @@ public abstract class GuiScreen implements Screen{
 	/**
 	 * On mouse up
 	 */
-	protected void mouseUp(float x, float y) {}
+	protected void mouseUp(float x, float y) {	
+		for (GuiButton b : buttons.values()) {
+			if (b.getBoundingRectangle().contains(x, height - y)) {
+				buttonClicked(b.getID());
+			}
+		}
+	}
 	protected void drawScreen(float delta) {		
-		for (GuiButton b : buttons) {
+		for (GuiButton b : buttons.values()) {
 			b.draw(batch);
 		}
 	}
@@ -92,6 +104,10 @@ public abstract class GuiScreen implements Screen{
 	public int getHeight() {return height;}
 
 	protected void addButton(GuiButton button) {
-		buttons.add(button);
+		buttons.put(button.getID(), button);
+	}
+	
+	protected HashMap<Integer, GuiButton> getButtons() {
+		return buttons;
 	}
 }

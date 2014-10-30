@@ -36,6 +36,8 @@ public class MainMenu extends GuiScreen {
 	public void resize(int width, int height) {
 		super.resize(width, height);
 		titleHeight = (int) Math.round((double)titleTexture.getHeight()/(double)titleTexture.getWidth() * (getWidth() - 20));
+		
+		getButtons().get(0).setXYWH(10, getHeight() - titleHeight - 10 - 50, 100, 50);
 	}
 	@Override
 	public void show() {
@@ -55,7 +57,7 @@ public class MainMenu extends GuiScreen {
 		buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
 		titleTexture = new Texture(Gdx.files.internal("images/ZombieGameTitle.png"));
 		
-		addButton(new GuiButton(buttonTexture, 0));
+		addButton(new GuiButton(buttonTexture, 0, 10, getHeight() - titleHeight - 10 - 50, 100, 50));
 	}
 	
 	@Override
