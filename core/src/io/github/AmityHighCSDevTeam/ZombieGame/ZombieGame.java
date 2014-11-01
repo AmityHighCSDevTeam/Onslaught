@@ -4,38 +4,45 @@ import io.github.AmityHighCSDevTeam.ZombieGame.client.screen.LoadingScreen;
 import io.github.AmityHighCSDevTeam.ZombieGame.client.screen.MainMenu;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 public class ZombieGame extends Game {
-	
-	public boolean isLoaded = false;
-	
+
+	public static BitmapFont buttonFont;
+
 	@Override
 	public void create () {
 		setScreen(new LoadingScreen());
-		
-		new Thread(new Runnable() {			
+
+		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run() {
-				//Do Loading
+				FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Calibri.ttf"));
+
+				FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+				parameter.size = 24;
+
+				buttonFont = generator.generateFont(parameter);
+
+				generator.dispose();
+
+				buttonFont.setColor(0, 0, 0, 1);
 				
-				try {
-					Thread.sleep(1000);//Loading Delay Test
-					isLoaded = true;	
-				} catch (InterruptedException e) {}
-				
+				setScreen(new MainMenu());
 			}
-		}).start();
+		});
 	}
 	@Override
 	public void render () {
 		super.render();
-		if (isLoaded) {
-			setScreen(new MainMenu());
-		}
 	}
 	@Override
 	public void dispose() {
 		super.dispose();
+		buttonFont.dispose();
 	}
 	@Override
 	public void pause() {

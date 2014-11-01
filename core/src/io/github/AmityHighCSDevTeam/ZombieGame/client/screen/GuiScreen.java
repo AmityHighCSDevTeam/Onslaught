@@ -15,7 +15,7 @@ public abstract class GuiScreen implements Screen{
 	private int width,height;
 	protected SpriteBatch batch;
 	private float lastMouseX, lastMouseY;
-	private boolean isMouseDown = false;
+	private boolean lastMouseDown = false;
 	private HashMap<Integer, GuiButton> buttons = new HashMap<Integer, GuiButton>();
 
 	@Override
@@ -26,13 +26,13 @@ public abstract class GuiScreen implements Screen{
 		if(Gdx.input.isTouched()) {
 			lastMouseX = touchPos.x;
 			lastMouseY = touchPos.y;
-			if (!isMouseDown) {
-				isMouseDown = true;
+			if (!lastMouseDown) {
+				lastMouseDown = true;
 				mouseDown(touchPos.x, touchPos.y);
 			}
 		} else {
-			if (isMouseDown) {
-				isMouseDown = false;
+			if (lastMouseDown) {
+				lastMouseDown = false;
 				mouseUp(lastMouseX, lastMouseY);
 			}
 		}
@@ -57,9 +57,9 @@ public abstract class GuiScreen implements Screen{
 		this.height = height;
 	}
 	@Override
-	public void show() {	
-		this.width = 800;
-		this.height = 600;
+	public void show() {
+		this.width = 1200;
+		this.height = 900;
 		
 		batch = new SpriteBatch();
 	}
@@ -86,7 +86,7 @@ public abstract class GuiScreen implements Screen{
 	/**
 	 * On mouse up
 	 */
-	protected void mouseUp(float x, float y) {	
+	protected void mouseUp(float x, float y) {
 		for (GuiButton b : buttons.values()) {
 			if (b.getBoundingRectangle().contains(x, height - y)) {
 				buttonClicked(b.getID());
