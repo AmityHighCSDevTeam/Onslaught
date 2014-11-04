@@ -1,0 +1,11 @@
+{
+weapon: {
+	class: SemiAutoWeaponType,
+	bulletSpeed: 10,
+	name: M9,
+	weaponPrice: 10,
+	bulletDamage: 1,
+	ammoPrice: 1,
+	description: "A basic pistol."
+}
+}

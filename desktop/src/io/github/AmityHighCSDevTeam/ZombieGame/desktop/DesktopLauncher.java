@@ -11,6 +11,6 @@ public class DesktopLauncher {
 		config.width = 1200;
 		config.height = 900;
 
-		new LwjglApplication(new ZombieGame(), config);
+		new LwjglApplication(new ZombieGame(false), config);
 	}
 }

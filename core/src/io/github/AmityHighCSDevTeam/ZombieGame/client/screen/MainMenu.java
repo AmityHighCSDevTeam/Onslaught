@@ -27,7 +27,7 @@ public class MainMenu extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 		
-		calibri30.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 33);
+		//calibri30.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 33);
 		batch.draw(titleTexture, 10, (getHeight() - titleHeight) - 10,
 				getWidth() - 20, titleHeight);
 	}
