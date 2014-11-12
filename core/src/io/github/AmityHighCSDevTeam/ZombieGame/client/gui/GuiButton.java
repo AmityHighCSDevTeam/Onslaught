@@ -2,12 +2,15 @@ package io.github.AmityHighCSDevTeam.ZombieGame.client.gui;
 
 import io.github.AmityHighCSDevTeam.ZombieGame.ZombieGame;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 public class GuiButton extends Sprite implements Disposable{
@@ -15,6 +18,7 @@ public class GuiButton extends Sprite implements Disposable{
 	private int id;
 	private MouseStatus status;
 	private String text;
+	private boolean isEnabled = true;
 	
 
 	public GuiButton(Sprite sprite, int id, String text, float x, float y, float width, float height) {
@@ -76,14 +80,34 @@ public class GuiButton extends Sprite implements Disposable{
 	@Override
 	public void dispose() {
 		getTexture().dispose();
-	}
+	}	
 	
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+	public GuiButton setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+		return this;
+	}
 	@Override
 	public void draw(Batch batch) {
+		
+		if (isEnabled()) {		
+			Vector2 touchPos = new Vector2();
+			touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+			if (getBoundingRectangle().contains(touchPos.x, ZombieGame.instance.height - touchPos.y)) {
+				setColor(new Color(0.7f, 0.7f, 0.7f, 1f));
+			}
+		} else {
+			setColor(new Color(0.4f, 0.4f, 0.4f, 1f));
+		}
+		
 		super.draw(batch);
+		
+		setColor(Color.WHITE);
 		if (text != null) {
-			TextBounds b = ZombieGame.buttonFont.getWrappedBounds(text, getWidth());
-			ZombieGame.buttonFont.drawWrapped(batch, text, getX(), getY() + ((getHeight() + b.height)/2), getWidth(), HAlignment.CENTER);			
+			TextBounds b = ZombieGame.instance.buttonFont.getWrappedBounds(text, getWidth());
+			ZombieGame.instance.buttonFont.drawWrapped(batch, text, getX(), getY() + ((getHeight() + b.height)/2), getWidth(), HAlignment.CENTER);			
 		}
 	}
 	

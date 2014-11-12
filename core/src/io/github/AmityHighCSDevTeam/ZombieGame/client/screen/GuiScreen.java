@@ -1,5 +1,6 @@
 package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
 
+import io.github.AmityHighCSDevTeam.ZombieGame.ZombieGame;
 import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton;
 import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton.MouseStatus;
 
@@ -12,12 +13,16 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class GuiScreen implements Screen{
 
-	private int width,height;
 	protected SpriteBatch batch;
 	private float lastMouseX, lastMouseY;
 	private boolean lastMouseDown = false;
 	private HashMap<Integer, GuiButton> buttons = new HashMap<Integer, GuiButton>();
-
+	protected GuiScreen prevScreen;
+	
+	public GuiScreen(GuiScreen prevScreen) {
+		this.prevScreen = prevScreen;
+	}
+	
 	@Override
 	public void render(float delta) {
 		Vector2 touchPos = new Vector2();
@@ -38,7 +43,7 @@ public abstract class GuiScreen implements Screen{
 		}
 		
 		for (GuiButton b : buttons.values()) {
-			if (b.getBoundingRectangle().contains(touchPos.x, height - touchPos.y)) {
+			if (b.getBoundingRectangle().contains(touchPos.x, getHeight() - touchPos.y)) {
 				b.setStatus(MouseStatus.HOVER);
 			} else {
 				b.setStatus(MouseStatus.NONE);
@@ -53,14 +58,9 @@ public abstract class GuiScreen implements Screen{
 	}
 	@Override
 	public void resize(int width, int height) {
-		this.width = width;
-		this.height = height;
 	}
 	@Override
 	public void show() {
-		this.width = 1200;
-		this.height = 900;
-		
 		batch = new SpriteBatch();
 	}
 	@Override
@@ -88,7 +88,7 @@ public abstract class GuiScreen implements Screen{
 	 */
 	protected void mouseUp(float x, float y) {
 		for (GuiButton b : buttons.values()) {
-			if (b.getBoundingRectangle().contains(x, height - y)) {
+			if (b.getBoundingRectangle().contains(x, getHeight() - y)) {
 				buttonClicked(b.getID());
 			}
 		}
@@ -100,8 +100,8 @@ public abstract class GuiScreen implements Screen{
 	}
 	
 
-	public int getWidth() {return width;}
-	public int getHeight() {return height;}
+	public int getWidth() {return ZombieGame.instance.width;}
+	public int getHeight() {return ZombieGame.instance.height;}
 
 	protected void addButton(GuiButton button) {
 		buttons.put(button.getID(), button);
