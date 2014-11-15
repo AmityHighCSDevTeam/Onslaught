@@ -1,4 +1,4 @@
-package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
+package org.amityregion5.ZombieGame.client.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,16 +9,28 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+
+/*
+ * Might be getting rid of this as it does not seem to work
+ */
+
+
+
+/**
+ * 
+ * @author sergeys
+ *
+ */
 public class LoadingScreen implements Screen {
 	
-	SpriteBatch batch;
-	BitmapFont calibri30;
-	int dots = 0;
-	float dCount = 0;
+	private SpriteBatch batch;
+	private BitmapFont calibri30;
+	private int dots = 0;
+	private float dCount = 0;
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		batch.begin();

@@ -1,9 +1,46 @@
-package io.github.AmityHighCSDevTeam.ZombieGame.common.weapon;
+package org.amityregion5.ZombieGame.common.weapon;
 
+/**
+ * 
+ * @author sergeys
+ *
+ */
 public class SemiAuto implements IWeapon {
 	
-	private double weaponPrice, ammoPrice, bulletDamage, bulletSpeed;
+	//All the variables!
+	private double weaponPrice, ammoPrice, bulletDamage, bulletSpeed, preFireDelay, postFireDelay;
 	private String name, description;
+	
+	
+	
+	/**
+	 * @return the preFireDelay
+	 */
+	@Override
+	public double getPreFireDelay() {
+		return preFireDelay;
+	}
+	/**
+	 * @param preFireDelay the preFireDelay to set
+	 */
+	@Override
+	public void setPreFireDelay(double preFireDelay) {
+		this.preFireDelay = preFireDelay;
+	}
+	/**
+	 * @return the postFireDelay
+	 */
+	@Override
+	public double getPostFireDelay() {
+		return postFireDelay;
+	}
+	/**
+	 * @param postFireDelay the postFireDelay to set
+	 */
+	@Override
+	public void setPostFireDelay(double postFireDelay) {
+		this.postFireDelay = postFireDelay;
+	}
 	
 	@Override
 	public void setWeaponPrice(double price) {

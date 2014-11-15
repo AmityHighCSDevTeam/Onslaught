@@ -1,8 +1,9 @@
-package io.github.AmityHighCSDevTeam.ZombieGame.desktop;
+package org.amityregion5.ZombieGame.desktop;
+
+import org.amityregion5.ZombieGame.ZombieGame;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import io.github.AmityHighCSDevTeam.ZombieGame.ZombieGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

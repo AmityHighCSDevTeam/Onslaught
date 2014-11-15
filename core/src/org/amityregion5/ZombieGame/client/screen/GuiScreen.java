@@ -1,67 +1,82 @@
-package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
-
-import io.github.AmityHighCSDevTeam.ZombieGame.ZombieGame;
-import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton;
-import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton.MouseStatus;
+package org.amityregion5.ZombieGame.client.screen;
 
 import java.util.HashMap;
+
+import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.gui.GuiButton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * 
+ * @author sergeys
+ *
+ */
 public abstract class GuiScreen implements Screen{
-
+	
+	//The batch for drawing the screen
 	protected SpriteBatch batch;
+	//Last locations that the mouse was down
 	private float lastMouseX, lastMouseY;
+	//Was the mouse down?
 	private boolean lastMouseDown = false;
+	//The buttons
 	private HashMap<Integer, GuiButton> buttons = new HashMap<Integer, GuiButton>();
+	//The screen that we came from
 	protected GuiScreen prevScreen;
 	
+	/**
+	 * 
+	 * @param prevScreen the screen that we came from
+	 */
 	public GuiScreen(GuiScreen prevScreen) {
 		this.prevScreen = prevScreen;
 	}
 	
 	@Override
 	public void render(float delta) {
+		//Get mouse down position
 		Vector2 touchPos = new Vector2();
 		touchPos.set(Gdx.input.getX(), Gdx.input.getY());
 		
+		//Is the screen touched (mouse currently down)
 		if(Gdx.input.isTouched()) {
+			//Record mouse pos
 			lastMouseX = touchPos.x;
 			lastMouseY = touchPos.y;
+			
+			//If the mouse was up register this as a mouseDown
 			if (!lastMouseDown) {
 				lastMouseDown = true;
 				mouseDown(touchPos.x, touchPos.y);
 			}
 		} else {
+			//If the mouse was down register this as a mouseUp
 			if (lastMouseDown) {
 				lastMouseDown = false;
 				mouseUp(lastMouseX, lastMouseY);
 			}
 		}
-		
-		for (GuiButton b : buttons.values()) {
-			if (b.getBoundingRectangle().contains(touchPos.x, getHeight() - touchPos.y)) {
-				b.setStatus(MouseStatus.HOVER);
-			} else {
-				b.setStatus(MouseStatus.NONE);
-			}
-		}
-		
+
+		//Start drawing
 		batch.begin();
 		
+		//Call other methods to draw
 		drawScreen(delta);
 		
+		//Finish drawing
 		batch.end();
 	}
 	@Override
 	public void resize(int width, int height) {
+		setUpScreen(); //Used for repositioning buttons
 	}
 	@Override
 	public void show() {
-		batch = new SpriteBatch();
+		batch = new SpriteBatch(); //Create a new sprite batch
 	}
 	@Override
 	public void hide() {}
@@ -72,9 +87,17 @@ public abstract class GuiScreen implements Screen{
 	@Override
 	public void dispose() {
 		for (GuiButton b : buttons.values()) {
-			b.dispose();
+			b.dispose(); //Dispose all of the buttons
 		}
 	}
+	
+	protected void setUpScreen() {
+		for (GuiButton b : buttons.values()) {
+			b.dispose(); //Dispose all of the buttons
+		}
+		buttons.clear(); //Clear the hashmap
+	}
+	
 	/**
 	 * Override this to get buttonClicks
 	 */
@@ -89,22 +112,22 @@ public abstract class GuiScreen implements Screen{
 	protected void mouseUp(float x, float y) {
 		for (GuiButton b : buttons.values()) {
 			if (b.getBoundingRectangle().contains(x, getHeight() - y)) {
-				buttonClicked(b.getID());
+				buttonClicked(b.getID()); //Register a general button clicked event
 			}
 		}
 	}
 	protected void drawScreen(float delta) {		
 		for (GuiButton b : buttons.values()) {
-			b.draw(batch);
+			b.draw(batch); //Draw the buttons
 		}
 	}
 	
-
+	
 	public int getWidth() {return ZombieGame.instance.width;}
 	public int getHeight() {return ZombieGame.instance.height;}
-
+	
 	protected void addButton(GuiButton button) {
-		buttons.put(button.getID(), button);
+		buttons.put(button.getID(), button); //Add a button
 	}
 	
 	protected HashMap<Integer, GuiButton> getButtons() {

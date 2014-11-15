@@ -1,28 +1,32 @@
-package io.github.AmityHighCSDevTeam.ZombieGame.client.screen;
+package org.amityregion5.ZombieGame.client.screen;
 
-import io.github.AmityHighCSDevTeam.ZombieGame.ZombieGame;
-import io.github.AmityHighCSDevTeam.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.gui.GuiButton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+/**
+ * 
+ * @author sergeys
+ *
+ */
 public class MainMenu extends GuiScreen {
 
 	public MainMenu() {
 		super(null);
 	}
 	
+	//Title image
 	private Texture titleTexture;
+	//Title position
 	private int titleHeight;
 	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor((50f / 255f), 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); //Clear screen
 
 		super.render(delta);
 	}
@@ -31,41 +35,37 @@ public class MainMenu extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 
+		//Draw picture
 		batch.draw(titleTexture, 10, (getHeight() - titleHeight) - 10,
 				getWidth() - 20, titleHeight);
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		super.resize(width, height);
+		//Compute title position
 		titleHeight = (int) Math.round((double) titleTexture.getHeight()
 				/ (double) titleTexture.getWidth() * (getWidth() - 20));
-
-		if (!getButtons().isEmpty()) {
-			getButtons().get(0).setXYWH(10,
-					getHeight() - titleHeight - 10 - 50, getWidth() - 20, 50);
-			getButtons().get(1).setXYWH(10,
-					getHeight() - titleHeight - 10 - 50 - 60, getWidth() - 20,
-					50);
-			getButtons().get(2).setXYWH(10,
-					getHeight() - titleHeight - 10 - 50 - 60 - 60,
-					getWidth() - 20, 50);
-			getButtons().get(3).setXYWH(10,
-					getHeight() - titleHeight - 10 - 50 - 60 - 60 - 60,
-					getWidth() - 20, 50);
-		}
+		
+		super.resize(width, height);
 	}
 
 	@Override
 	public void show() {
 		super.show();
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-				Gdx.files.internal("font/Calibri.ttf"));
-
-		Texture buttonTexture = ZombieGame.instance.buttonTexture;
+		//Initialize the title texture
 		titleTexture = new Texture(
 				Gdx.files.internal("images/ZombieGameTitle.png"));
 
+	}
+	
+	@Override
+	protected void setUpScreen() {
+		super.setUpScreen();
+
+		//Get the button texture
+		Texture buttonTexture = ZombieGame.instance.buttonTexture;
+
+		//Add all of the buttons
 		addButton(new GuiButton(buttonTexture, 0, "Play Game", 10, getHeight()
 				- titleHeight - 10 - 50, getWidth() - 20, 50));
 		addButton(new GuiButton(buttonTexture, 1, "Options", 10, getHeight()
@@ -81,9 +81,11 @@ public class MainMenu extends GuiScreen {
 		super.buttonClicked(id);
 		switch (id) {
 			case 0:
+				//Play Game button
 				ZombieGame.instance.setScreen(new PlayGameMenu(this));
 				break;
 			case 3:
+				//Quit button
 				Gdx.app.exit();
 				break;
 		}
@@ -107,7 +109,7 @@ public class MainMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose();
+		batch.dispose(); //Clear up memory
 		titleTexture.dispose();
 	}
 }
