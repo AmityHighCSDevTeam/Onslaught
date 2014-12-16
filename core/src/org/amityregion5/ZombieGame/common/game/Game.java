@@ -29,7 +29,8 @@ public class Game implements Disposable{
 	public void tick(float deltaTime) {
 		
 		for (IEntity e : entities) {
-			e.getBody().applyForceToCenter(new e.getBody().getLinearVelocity() * e.getFriction(), true);
+			e.getBody().applyForceToCenter(new Vector2(e.getBody().getLinearVelocity()).scl(e.getFriction()), false);
+			//e.getBody().applyForceToCenter(e.getBody().getLinearVelocity() * e.getFriction(), true);
 		}
 		
 	    float frameTime = Math.min(deltaTime, 0.25f);
