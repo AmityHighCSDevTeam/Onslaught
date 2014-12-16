@@ -39,7 +39,7 @@ public class PluginLoader {
 			m9.setPreFireDelay(0);
 			m9.setPostFireDelay(10);
 			
-			com.badlogic.gdx.Gdx.files.local("ZombieGameData/GameData/Core/Weapons/M9/M9.json").writeString(json.prettyPrint(new JsonWeaponHolder(m9)), false);
+			com.badlogic.gdx.Gdx.files.local("ZombieGameData/GameData/Core/Weapons/M9/M9.json").writeString(json.prettyPrint(new WeaponWrapper(m9)), false);
 		}
 		*/
 		

@@ -1,27 +1,40 @@
 package org.amityregion5.ZombieGame.client.screen;
 
-import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
-import org.amityregion5.ZombieGame.common.game.Difficulty;
+import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.Game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 /**
  * 
  * @author sergeys
  *
  */
-public class NewGameMenu extends GuiScreen {
+public class InGameScreen extends GuiScreen {
 	
+	private Game game;
+	private Box2DDebugRenderer debugRenderer;
+	private OrthographicCamera camera;
+	private EntityPlayer player;
 	
-	public NewGameMenu(GuiScreen prevScreen) {
+	public InGameScreen(GuiScreen prevScreen, Game game) {
 		super(prevScreen);
+		this.game = game;
+		
+		player = new EntityPlayer();
+		player.setSpeed(5);
+		player.setFriction(0.5f);
+		
+		game.addEntityToWorld(player);
 	}
 	
 	//Font
@@ -29,8 +42,27 @@ public class NewGameMenu extends GuiScreen {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor((50f / 255f), 0, 0, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); //Clear screen
+	
+		game.tick(delta);
+
+		debugRenderer.render(game.getWorld(), camera.combined);
+		
+		//player.getBodyDef().allowSleep = false;
+		
+		if (Gdx.input.isKeyPressed(Keys.W)) {
+			player.getBody().applyForceToCenter(new Vector2(0, player.getSpeed()), true);
+		}	
+		if (Gdx.input.isKeyPressed(Keys.S)) {
+			player.getBody().applyForceToCenter(new Vector2(0, -player.getSpeed()), true);
+		}
+		if (Gdx.input.isKeyPressed(Keys.D)) {
+			player.getBody().applyForceToCenter(new Vector2(player.getSpeed(),0), true);
+		}	
+		if (Gdx.input.isKeyPressed(Keys.A)) {
+			player.getBody().applyForceToCenter(new Vector2(-player.getSpeed(), 0), true);
+		}
 		
 		super.render(delta);
 	}
@@ -38,9 +70,6 @@ public class NewGameMenu extends GuiScreen {
 	@Override
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
-		
-		//Draw name of screen
-		calibri30.drawWrapped(batch, "New Game", 10, getHeight() - 45, getWidth() - 20, HAlignment.CENTER);
 	}
 	
 	@Override
@@ -51,16 +80,6 @@ public class NewGameMenu extends GuiScreen {
 	@Override
 	protected void setUpScreen() {
 		super.setUpScreen();
-		
-		//Register buttons
-		{
-			int i = 0;
-			for (Difficulty d : Difficulty.getSortedArray()) {
-				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i, d.getLocName(), 10, getHeight() - 150 - (60 * i), getWidth() - 20, 50));
-				i++;
-			}
-		}
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
 	}
 	
 	@Override
@@ -80,19 +99,14 @@ public class NewGameMenu extends GuiScreen {
 		
 		calibri30.setColor(1, 1, 1, 1);
 		
+		debugRenderer = new Box2DDebugRenderer();
+		
+		camera = new OrthographicCamera(120,90);
 	}
 	
 	@Override
 	protected void buttonClicked(int id) {
 		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				//Back button
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			default:
-				ZombieGame.instance.setScreen(new InGameScreen(this, new Game()));
-		}
 	}
 	
 	@Override
@@ -115,5 +129,7 @@ public class NewGameMenu extends GuiScreen {
 		super.dispose();
 		batch.dispose(); //Clear memory
 		calibri30.dispose();
+		debugRenderer.dispose();
+		game.dispose();
 	}
 }
