@@ -1,10 +1,12 @@
 package org.amityregion5.ZombieGame.common.game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.amityregion5.ZombieGame.client.Constants;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -27,10 +29,27 @@ public class Game implements Disposable{
 	}
 	
 	public void tick(float deltaTime) {
-		
 		for (IEntity e : entities) {
-			e.getBody().applyForceToCenter(new Vector2(e.getBody().getLinearVelocity()).scl(e.getFriction()), false);
-			//e.getBody().applyForceToCenter(e.getBody().getLinearVelocity() * e.getFriction(), true);
+			   Body body = e.getBody();
+
+			   Vector2 v = body.getLinearVelocity();
+
+			   //Get the square of the velocity by computing the square of the distance from the origin
+			   float vSqrd = v.dst2(new Vector2());
+
+			   //Calculate the magnitude of the drag force
+			   float fMag = e.getFriction()*vSqrd;
+			   
+			   if (fMag < 1) {
+				   fMag = e.getBody().getMass()*2;
+			   } else {
+				   Gdx.app.log("fMag", "" + fMag);
+			   }
+		
+			   Vector2 fd = new Vector2(v).scl(-fMag);
+
+			   //Finally we communicate this to box2d by calling applyForceToCenter
+			   body.applyForceToCenter(fd, false);
 		}
 		
 	    float frameTime = Math.min(deltaTime, 0.25f);
@@ -63,7 +82,6 @@ public class Game implements Disposable{
 			entity.setBody(body);
 		}
 
-		// Create a circle shape and set its radius to 6
 		Shape shape = entity.getShape();
 
 		// Create a fixture definition to apply our shape to

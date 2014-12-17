@@ -4,7 +4,6 @@ import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.Game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -31,8 +30,8 @@ public class InGameScreen extends GuiScreen {
 		this.game = game;
 		
 		player = new EntityPlayer();
-		player.setSpeed(5);
-		player.setFriction(0.5f);
+		player.setSpeed(10);
+		player.setFriction(2f);
 		
 		game.addEntityToWorld(player);
 	}
@@ -48,8 +47,6 @@ public class InGameScreen extends GuiScreen {
 		game.tick(delta);
 
 		debugRenderer.render(game.getWorld(), camera.combined);
-		
-		//player.getBodyDef().allowSleep = false;
 		
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			player.getBody().applyForceToCenter(new Vector2(0, player.getSpeed()), true);
