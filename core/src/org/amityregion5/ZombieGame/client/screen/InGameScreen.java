@@ -1,16 +1,21 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import org.amityregion5.ZombieGame.common.entity.EntityBulletTEST;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
+import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
+import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 /**
@@ -24,6 +29,7 @@ public class InGameScreen extends GuiScreen {
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 	private EntityPlayer player;
+	private float coolDown;
 	
 	public InGameScreen(GuiScreen prevScreen, Game game) {
 		super(prevScreen);
@@ -31,9 +37,11 @@ public class InGameScreen extends GuiScreen {
 		
 		player = new EntityPlayer();
 		player.setSpeed(10);
-		player.setFriction(2f);
+		player.setFriction(1f);
 		
-		game.addEntityToWorld(player);
+		game.addEntityToWorld(player, 5, 5);
+		
+		game.addEntityToWorld(new EntityZombie(game), 1, 1);
 	}
 	
 	//Font
@@ -48,25 +56,35 @@ public class InGameScreen extends GuiScreen {
 
 		debugRenderer.render(game.getWorld(), camera.combined);
 		
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			player.getBody().applyForceToCenter(new Vector2(0, player.getSpeed()), true);
-		}	
-		if (Gdx.input.isKeyPressed(Keys.S)) {
-			player.getBody().applyForceToCenter(new Vector2(0, -player.getSpeed()), true);
-		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			player.getBody().applyForceToCenter(new Vector2(player.getSpeed(),0), true);
-		}	
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			player.getBody().applyForceToCenter(new Vector2(-player.getSpeed(), 0), true);
-		}
-		
 		super.render(delta);
 	}
 	
 	@Override
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
+		
+		if (coolDown > 0) {
+			coolDown -= delta;
+		}
+		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+			if (coolDown <= 0) {
+				EntityBulletTEST bull = new EntityBulletTEST(game);
+				
+				Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+				
+				double dir = MathHelper.getDirBetweenPoints(
+						player.getBody().getPosition().x,
+						player.getBody().getPosition().y,
+						mouseCoord.x,
+						mouseCoord.y);
+				
+				Vector2 v = MathHelper.getEndOfLine(player.getBody().getPosition(), player.getShape().getRadius() + 0.1, dir);
+				
+				game.addEntityToWorld(bull, v.x, v.y);
+				
+				bull.getBody().applyForceToCenter(VectorFactory.createVector(100f, (float) dir), true);
+			}
+		}
 	}
 	
 	@Override

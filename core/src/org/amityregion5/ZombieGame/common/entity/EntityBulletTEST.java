@@ -3,24 +3,28 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
+import org.amityregion5.ZombieGame.common.game.Game;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Disposable;
+import com.sun.javafx.geom.Vec2d;
 
 /**
  * @author savelyevse17
  *
  */
-public class EntityPlayer implements IEntity, Disposable {
-	
+public class EntityBulletTEST implements IEntity, Disposable {
+
 	private Body body;
 	private float speed, friction;
-	
-	public EntityPlayer() {
+	private Game g;
+
+	public EntityBulletTEST(Game g) {
+		this.g = g;
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	@Override
 	public Shape getShape() {	
 		CircleShape shape = new CircleShape();
-		shape.setRadius(1f);
+		shape.setRadius(0.1f);
 		return shape;
 	}
 
@@ -69,17 +73,8 @@ public class EntityPlayer implements IEntity, Disposable {
 
 	@Override
 	public void tick(float delta) {
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			getBody().applyForceToCenter(new Vector2(0, getSpeed()), true);
-		}	
-		if (Gdx.input.isKeyPressed(Keys.S)) {
-			getBody().applyForceToCenter(new Vector2(0, -getSpeed()), true);
-		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			getBody().applyForceToCenter(new Vector2(getSpeed(),0), true);
-		}	
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			getBody().applyForceToCenter(new Vector2(-getSpeed(), 0), true);
+		if (!getBody().isAwake()) {
+			g.removeEntity(this);
 		}
 	}
 }

@@ -21,40 +21,45 @@ public class Game implements Disposable{
 	
 	private World world;
 	private float accumulator;
-	private ArrayList<IEntity> entities;
+	private ArrayList<IEntity> entities, entitiesToDelete;
 
 	public Game() {
 		world = new World(new Vector2(0,0), true);
 		entities = new ArrayList<IEntity>();
+		entitiesToDelete = new ArrayList<IEntity>();
 	}
 	
 	public void tick(float deltaTime) {
-		for (IEntity e : entities) {
-			   Body body = e.getBody();
-
-			   Vector2 v = body.getLinearVelocity();
-
-			   //Get the square of the velocity by computing the square of the distance from the origin
-			   float vSqrd = v.dst2(new Vector2());
-
-			   //Calculate the magnitude of the drag force
-			   float fMag = e.getFriction()*vSqrd;
-			   
-			   if (fMag < 1) {
-				   fMag = e.getBody().getMass()*2;
-			   } else {
-				   Gdx.app.log("fMag", "" + fMag);
-			   }
-		
-			   Vector2 fd = new Vector2(v).scl(-fMag);
-
-			   //Finally we communicate this to box2d by calling applyForceToCenter
-			   body.applyForceToCenter(fd, false);
-		}
-		
 	    float frameTime = Math.min(deltaTime, 0.25f);
 	    accumulator += frameTime;
 	    while (accumulator >= Constants.TIME_STEP) {
+	    	
+	    	entities.removeAll(entitiesToDelete);
+	    	entitiesToDelete.clear();
+	    	
+			for (IEntity e : entities) {
+				   Body body = e.getBody();
+
+				   Vector2 v = body.getLinearVelocity();
+
+				   //Get the square of the velocity by computing the square of the distance from the origin
+				   float vSqrd = v.dst2(new Vector2());
+
+				   //Calculate the magnitude of the drag force
+				   float fMag = e.getFriction()*vSqrd;
+				   
+				   if (fMag < 1) {
+					   fMag = e.getBody().getMass()*2;
+				   }
+			
+				   Vector2 fd = new Vector2(v).scl(-fMag);
+
+				   //Finally we communicate this to box2d by calling applyForceToCenter
+				   body.applyForceToCenter(fd, false);
+				   
+				   e.tick(deltaTime);
+			}
+			
 	        world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 	        accumulator -= Constants.TIME_STEP;
 	    }
@@ -64,7 +69,7 @@ public class Game implements Disposable{
 		return world;
 	}
 	
-	public void addEntityToWorld(IEntity entity) {
+	public void addEntityToWorld(IEntity entity, float x, float y) {
 		Body body = entity.getBody();
 		
 		if (body == null) {		
@@ -74,7 +79,7 @@ public class Game implements Disposable{
 			bodyDef.type = BodyType.DynamicBody;
 			
 			// Set our body's starting position in the world
-			bodyDef.position.set(5, 5);
+			bodyDef.position.set(x, y);
 
 			// Create our body in the world using our body definition
 			body = world.createBody(bodyDef);
@@ -104,5 +109,13 @@ public class Game implements Disposable{
 	@Override
 	public void dispose() {
 		world.dispose();
+	}
+	
+	public ArrayList<IEntity> getEntities() {
+		return entities;
+	}
+	
+	public void removeEntity(IEntity e) {
+		entitiesToDelete.add(e);
 	}
 }

@@ -15,4 +15,6 @@ public interface IEntity {
 	
 	public float getFriction();
 	public void setFriction(float f);
+	
+	public void tick(float delta);
 }
