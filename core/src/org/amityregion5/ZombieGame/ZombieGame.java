@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.utils.async.ThreadUtils;
 
 /**
  * 
@@ -50,6 +49,7 @@ public class ZombieGame extends Game {
 			setScreen(new LoadingScreen()); //Set the screen to a loading screen
 		}
 
+		//Thread for loading the game
 		new Thread(() -> {
 			//The gamedata folder
 			FileHandle gameData = Gdx.files.local("ZombieGameData/GameData");

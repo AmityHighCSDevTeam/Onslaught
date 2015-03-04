@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
+import com.badlogic.gdx.utils.Array;
+
 
 /**
  * 
@@ -8,13 +10,19 @@ package org.amityregion5.ZombieGame.common.weapon;
  */
 public class WeaponRegistry {
 	
+	private Array<IWeapon> weapons = new Array<IWeapon>();
+	
 	/**
 	 * Register a weapon
 	 * @param wrapper the WeaponWrapper containing the weapon
 	 */
 	public void registerWeapon(WeaponWrapper wrapper) {
-		//IWeapon weapon = wrapper.getWeapon();
+		IWeapon weapon = wrapper.getWeapon();
 		
-		//TODO: Register Weapon for later use
+		weapons.add(weapon);
+	}
+	
+	public Array<IWeapon> getWeapons() {
+		return weapons;
 	}
 }

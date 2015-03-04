@@ -2,15 +2,11 @@ package org.amityregion5.ZombieGame.client.screen;
 
 import java.util.ArrayList;
 
-import org.amityregion5.ZombieGame.common.bullet.BasicBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.helper.BodyHelper;
-import org.amityregion5.ZombieGame.common.helper.MathHelper;
-import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
@@ -42,8 +38,6 @@ public class InGameScreen extends GuiScreen {
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 	private EntityPlayer player;
-	private float coolDown;
-	private ArrayList<IBullet> activeBullets;
 	private ShapeRenderer shapeRenderer;
 	private RayHandler rayHandler;
 	
@@ -58,10 +52,9 @@ public class InGameScreen extends GuiScreen {
 		
 		rayHandler = new RayHandler(game.getWorld());
 		
-		activeBullets = new ArrayList<IBullet>();
 		shapeRenderer = new ShapeRenderer();
 		
-		player = new EntityPlayer();
+		player = new EntityPlayer(game);
 		player.setSpeed(0.05f);
 		player.setFriction(0.99f);
 		player.setMass(100);
@@ -75,6 +68,7 @@ public class InGameScreen extends GuiScreen {
 		zom.setMass(100);
 		zom.setSpeed(0.03f);
 		zom.setFriction(0.99f);
+		zom.setHealth(5);
 		
 		game.addEntityToWorld(zom, 1, 1);
 	}
@@ -97,7 +91,7 @@ public class InGameScreen extends GuiScreen {
 	    shapeRenderer.setProjectionMatrix(camera.combined);
 		Gdx.gl.glLineWidth(1);
 	    shapeRenderer.begin(ShapeType.Line);
-		for (IBullet bull : new ArrayList<IBullet>(activeBullets)) {
+		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
 			if (bull.getEnd() != null) {
 			    shapeRenderer.setColor(bull.getColor());
 			    
@@ -106,7 +100,7 @@ public class InGameScreen extends GuiScreen {
 			    
 			    shapeRenderer.line(start.x, start.y, end.x, end.y);
 			}
-		    activeBullets.remove(bull);
+			game.getActiveBullets().remove(bull);
 		}
 	    shapeRenderer.end();
 		Gdx.gl.glLineWidth(1);
@@ -122,7 +116,8 @@ public class InGameScreen extends GuiScreen {
 		
 		
 		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-		
+		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
+		/*
 		if (coolDown > 0) {
 			coolDown -= delta;
 		}
@@ -143,32 +138,29 @@ public class InGameScreen extends GuiScreen {
 				BasicBullet bull = new BasicBullet(game, v, 1, 18/1000f, 1, bullVector);
 				bull.setDir((float) dir);
 
-				activeBullets.add(bull);
+				game.getActiveBullets().add(bull);
 				game.getWorld().rayCast(bull, v, bullVector);
 				bull.finishRaycast();
 				
 				coolDown += 0.1f;
 			}
-		}
+		}*/
 		if (Gdx.input.isKeyJustPressed(Keys.L)) { 
 			EntityLantern lantern = new EntityLantern(game);
-			lantern.setLight(new PointLight(rayHandler, 350, EntityLantern.LIGHT_COLOR, 15, mouseCoord.x, mouseCoord.y));
+			lantern.setLight(new PointLight(rayHandler, 400, EntityLantern.LIGHT_COLOR, 15, mouseCoord.x, mouseCoord.y));
 			lantern.getLight().setXray(false);
 			lantern.setMass(10);
 			
 			game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.F)) { 
-			player.getLight().setActive(!player.getLight().isActive());
-		}
 		
-		BodyHelper.setPointing(player.getBody(), new Vector2(mouseCoord.x, mouseCoord.y), delta, 10);
 		
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT))  {			
 			EntityZombie zom = new EntityZombie(game);
 			zom.setMass(100);
 			zom.setSpeed(0.03f);
 			zom.setFriction(0.99f);
+			zom.setHealth(5);
 			
 			game.addEntityToWorld(zom, mouseCoord.x, mouseCoord.y);
 		}

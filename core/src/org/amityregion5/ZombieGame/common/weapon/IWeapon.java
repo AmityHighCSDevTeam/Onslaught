@@ -1,5 +1,10 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
+import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
+import org.amityregion5.ZombieGame.common.game.Game;
+
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * 
  * @author sergeys
@@ -109,8 +114,7 @@ public interface IWeapon {
 	 */
 	public String getAmmoString();
 	
-	//public boolean onUse(Point start, Point mousePos, World world); TODO: Create World Class
-	
+	public void onUse(Vector2 end, Game game, EntityPlayer firing, double maxFireDegrees);
 	
 	public void purchaseAmmo();
 	
@@ -122,4 +126,7 @@ public interface IWeapon {
 	 * @param delta amount of time since last tick
 	 */
 	public void tick(float delta);
+	
+	public double getAccuracyDeg();
+	public void setAccuracyDeg(double deg);
 }

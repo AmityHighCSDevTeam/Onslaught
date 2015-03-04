@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class EntityZombie implements IEntity, Disposable {
 	
 	private Body body;
-	private float speed, friction;
+	private float speed, friction, health;
 	private IEntity target;
 	private Game g;
 	private MassData massData;
@@ -74,6 +74,14 @@ public class EntityZombie implements IEntity, Disposable {
 	public void setFriction(float f) {
 		friction = f;
 	}
+	
+	public void setHealth(float health) {
+		this.health = health;
+	}
+	
+	public float getHealth() {
+		return health;
+	}
 
 	@Override
 	public void tick(float delta) {
@@ -107,6 +115,9 @@ public class EntityZombie implements IEntity, Disposable {
 
 	@Override
 	public void damage(float damage) {
-		g.removeEntity(this);
+		health -= damage;
+		if (health <= 0) {
+			g.removeEntity(this);
+		}
 	}
 }

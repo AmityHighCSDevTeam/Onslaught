@@ -1,13 +1,13 @@
 {
 "weapon": {
 	"class": "SemiAutoWeaponType",
-	"postFireDelay": 0.2,
+	"postFireDelay": 0.05,
 	"bulletSpeed": 1,
-	"name": "M9",
+	"name": "AK47",
 	"weaponPrice": 10,
 	"bulletDamage": 2.5,
 	"ammoPrice": 1,
-	"accuracyDeg": 2,
+	"accuracyDeg": 5,
 	"description": "A basic pistol."
 }
 }

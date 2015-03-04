@@ -2,8 +2,10 @@ package org.amityregion5.ZombieGame.common.game;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Random;
 
 import org.amityregion5.ZombieGame.client.Constants;
+import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 
 import com.badlogic.gdx.math.Vector2;
@@ -20,11 +22,15 @@ public class Game implements Disposable{
 	private World world;
 	private float accumulator;
 	private ArrayList<IEntity> entities, entitiesToDelete;
+	private ArrayList<IBullet> activeBullets;
+	private Random rand;
 
 	public Game() {
 		world = new World(new Vector2(0,0), true);
 		entities = new ArrayList<IEntity>();
 		entitiesToDelete = new ArrayList<IEntity>();
+		activeBullets = new ArrayList<IBullet>();
+		rand = new Random();
 	}
 	
 	public void tick(float deltaTime) {
@@ -109,5 +115,13 @@ public class Game implements Disposable{
 	
 	public void removeEntity(IEntity e) {
 		entitiesToDelete.add(e);
+	}
+	
+	public ArrayList<IBullet> getActiveBullets() {
+		return activeBullets;
+	}
+
+	public Random getRandom() {
+		return rand;
 	}
 }
