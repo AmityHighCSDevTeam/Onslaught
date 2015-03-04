@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import org.amityregion5.ZombieGame.ZombieGame;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,7 +32,7 @@ public class LoadingScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 1, 0, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		batch.begin();
@@ -81,7 +83,7 @@ public class LoadingScreen implements Screen {
 	}
 	@Override
 	public void dispose() {
-		//batch.dispose();
-		//calibri30.dispose();
+		batch.dispose();
+		calibri30.dispose();
 	}
 }
