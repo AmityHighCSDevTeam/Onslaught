@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.entity;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.Shape;
 
 public interface IEntity {
@@ -17,4 +18,7 @@ public interface IEntity {
 	public void setFriction(float f);
 	
 	public void tick(float delta);
+	public MassData getMassData();
+	
+	public void damage(float damage);
 }

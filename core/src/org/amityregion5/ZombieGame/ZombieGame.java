@@ -40,6 +40,8 @@ public class ZombieGame extends Game {
 	
 	@Override
 	public void create () {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG); //Set the log level
+
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		
@@ -47,7 +49,6 @@ public class ZombieGame extends Game {
 			setScreen(new LoadingScreen()); //Set the screen to a loading screen
 		}
 		
-		Gdx.app.setLogLevel(Application.LOG_DEBUG); //Set the log level
 		
 		//Thread for loading the game
 		Gdx.app.postRunnable(new Runnable() { 

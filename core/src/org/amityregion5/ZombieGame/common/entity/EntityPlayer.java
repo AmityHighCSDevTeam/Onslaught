@@ -3,11 +3,14 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
+import box2dLight.Light;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -16,11 +19,14 @@ import com.badlogic.gdx.utils.Disposable;
  *
  */
 public class EntityPlayer implements IEntity, Disposable {
-	
+
 	private Body body;
 	private float speed, friction;
-	
+	private MassData massData;
+	private Light light;
+
 	public EntityPlayer() {
+		massData = new MassData();
 	}
 
 	@Override
@@ -29,7 +35,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	@Override
 	public Shape getShape() {	
 		CircleShape shape = new CircleShape();
-		shape.setRadius(1f);
+		shape.setRadius(0.15f);
 		return shape;
 	}
 
@@ -81,5 +87,30 @@ public class EntityPlayer implements IEntity, Disposable {
 		if (Gdx.input.isKeyPressed(Keys.A)) {
 			getBody().applyForceToCenter(new Vector2(-getSpeed(), 0), true);
 		}
+		light.setDirection((float) Math.toDegrees(getBody().getAngle()));
+		light.setPosition(getBody().getWorldCenter());
+	}
+
+	public void setMass(float mass) {
+		massData.mass = mass;
+	}
+
+	@Override
+	public MassData getMassData() {
+		return massData;
+	}
+
+	@Override
+	public void damage(float damage) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	public Light getLight() {
+		return light;
+	}
+
+	public void setLight(Light light) {
+		this.light = light;
 	}
 }

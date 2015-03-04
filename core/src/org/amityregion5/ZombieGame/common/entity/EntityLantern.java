@@ -5,26 +5,33 @@ package org.amityregion5.ZombieGame.common.entity;
 
 import org.amityregion5.ZombieGame.common.game.Game;
 
+import box2dLight.Light;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Disposable;
-import com.sun.javafx.geom.Vec2d;
 
 /**
  * @author savelyevse17
  *
  */
-public class EntityBulletTEST implements IEntity, Disposable {
-
+public class EntityLantern implements IEntity, Disposable {
+	
+	public static final Color LIGHT_COLOR = new Color(1, 1, 1, 0.6f);
 	private Body body;
-	private float speed, friction;
+	private float friction;
 	private Game g;
-
-	public EntityBulletTEST(Game g) {
+	private MassData massData;
+	private Light light;
+	
+	public EntityLantern(Game g) {
 		this.g = g;
+		massData = new MassData();
 	}
 
 	@Override
@@ -33,7 +40,7 @@ public class EntityBulletTEST implements IEntity, Disposable {
 	@Override
 	public Shape getShape() {	
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.1f);
+		shape.setRadius(0.05f);
 		return shape;
 	}
 
@@ -53,12 +60,11 @@ public class EntityBulletTEST implements IEntity, Disposable {
 
 	@Override
 	public float getSpeed() {
-		return speed;
+		return 0;
 	}
 
 	@Override
 	public void setSpeed(float f) {
-		speed = f;
 	}
 
 	@Override
@@ -73,8 +79,33 @@ public class EntityBulletTEST implements IEntity, Disposable {
 
 	@Override
 	public void tick(float delta) {
-		if (!getBody().isAwake()) {
-			g.removeEntity(this);
+		light.setDirection((float) Math.toDegrees(getBody().getAngle()));
+		light.setPosition(getBody().getWorldCenter());
+		if (Gdx.input.isKeyJustPressed(Keys.Z)) { 
+			light.setXray(!light.isXray());
 		}
+	}
+	
+	public Light getLight() {
+		return light;
+	}
+
+	public void setLight(Light light) {
+		this.light = light;
+	}
+
+	public void setMass(float mass) {
+		massData.mass = mass;
+	}
+
+	@Override
+	public MassData getMassData() {
+		return massData;
+	}
+
+	@Override
+	public void damage(float damage) {
+		g.removeEntity(this);
+		light.remove();
 	}
 }

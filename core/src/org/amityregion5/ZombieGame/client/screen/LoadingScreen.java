@@ -55,8 +55,7 @@ public class LoadingScreen implements Screen {
 	public void resize(int width, int height) {
 	}
 	@Override
-	public void show() {	
-		
+	public void show() {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Calibri.ttf"));
 		
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
@@ -82,7 +81,7 @@ public class LoadingScreen implements Screen {
 	}
 	@Override
 	public void dispose() {
-		batch.dispose();
-		calibri30.dispose();
+		//batch.dispose();
+		//calibri30.dispose();
 	}
 }

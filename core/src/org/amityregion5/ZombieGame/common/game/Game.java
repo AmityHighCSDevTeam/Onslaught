@@ -1,17 +1,15 @@
 package org.amityregion5.ZombieGame.common.game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Optional;
 
 import org.amityregion5.ZombieGame.client.Constants;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -35,27 +33,14 @@ public class Game implements Disposable{
 	    while (accumulator >= Constants.TIME_STEP) {
 	    	
 	    	entities.removeAll(entitiesToDelete);
+	    	for (IEntity e : entitiesToDelete) {
+	    		world.destroyBody(e.getBody());
+	    	}
+	    	
 	    	entitiesToDelete.clear();
 	    	
 			for (IEntity e : entities) {
-				   Body body = e.getBody();
-
-				   Vector2 v = body.getLinearVelocity();
-
-				   //Get the square of the velocity by computing the square of the distance from the origin
-				   float vSqrd = v.dst2(new Vector2());
-
-				   //Calculate the magnitude of the drag force
-				   float fMag = e.getFriction()*vSqrd;
-				   
-				   if (fMag < 1) {
-					   fMag = e.getBody().getMass()*2;
-				   }
-			
-				   Vector2 fd = new Vector2(v).scl(-fMag);
-
-				   //Finally we communicate this to box2d by calling applyForceToCenter
-				   body.applyForceToCenter(fd, false);
+				   //Body body = e.getBody();
 				   
 				   e.tick(deltaTime);
 			}
@@ -86,6 +71,9 @@ public class Game implements Disposable{
 			
 			entity.setBody(body);
 		}
+		
+		body.setLinearDamping(entity.getFriction());
+		body.setMassData(entity.getMassData());
 
 		Shape shape = entity.getShape();
 
@@ -97,13 +85,17 @@ public class Game implements Disposable{
 		fixtureDef.restitution = 0.6f; // Make it bounce a little bit
 
 		// Create our fixture and attach it to the body
-		Fixture fixture = body.createFixture(fixtureDef);
+		/*Fixture fixture =*/ body.createFixture(fixtureDef);
 
 		// Remember to dispose of any shapes after you're done with them!
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		shape.dispose();
 		
 		entities.add(entity);
+	}
+	
+	public Optional<IEntity> getEntityFromBody(Body b) {
+		return entities.parallelStream().filter(e -> {return e.getBody() == b;}).findFirst();
 	}
 
 	@Override
