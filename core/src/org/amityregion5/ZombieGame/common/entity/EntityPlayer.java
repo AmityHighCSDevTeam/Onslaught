@@ -34,6 +34,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	private IWeapon currentWeapon;
 	private Vector2 mousePos;
 	private Game g;
+	private double money = 1000;
 
 	public EntityPlayer(Game g) {
 		massData = new MassData();
@@ -107,6 +108,12 @@ public class EntityPlayer implements IEntity, Disposable {
 		if (Gdx.input.isKeyJustPressed(Keys.F)) { 
 			light.setActive(!light.isActive());
 		}
+		if (Gdx.input.isKeyJustPressed(Keys.B)) { 
+			currentWeapon.purchaseAmmo(this);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.R)) {
+			currentWeapon.reload();
+		}
 		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 			currentWeapon.onUse(mousePos, g, this, 15);
 		}
@@ -130,8 +137,6 @@ public class EntityPlayer implements IEntity, Disposable {
 
 	@Override
 	public void damage(float damage) {
-		// TODO Auto-generated method stub
-
 	}
 	
 	public Light getLight() {
@@ -144,5 +149,17 @@ public class EntityPlayer implements IEntity, Disposable {
 	
 	public void setMousePos(Vector2 mousePos) {
 		this.mousePos = mousePos;
+	}
+	
+	public IWeapon getCurrentWeapon() {
+		return currentWeapon;
+	}
+	
+	public double getMoney() {
+		return money;
+	}
+	
+	public void setMoney(double money) {
+		this.money = money;
 	}
 }

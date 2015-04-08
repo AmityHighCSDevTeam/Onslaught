@@ -8,6 +8,8 @@
 	"bulletDamage": 2.5,
 	"ammoPrice": 1,
 	"accuracyDeg": 2,
+	"maxAmmo": 10,
+	"reloadTime": 1,
 	"description": "A basic pistol."
 }
 }

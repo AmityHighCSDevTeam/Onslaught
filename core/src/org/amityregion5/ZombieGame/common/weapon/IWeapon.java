@@ -114,9 +114,13 @@ public interface IWeapon {
 	 */
 	public String getAmmoString();
 	
+	public int getMaxAmmo();
+	
+	public void setMaxAmmo(int ammo);
+	
 	public void onUse(Vector2 end, Game game, EntityPlayer firing, double maxFireDegrees);
 	
-	public void purchaseAmmo();
+	public void purchaseAmmo(EntityPlayer player);
 	
 	public void reload();
 	

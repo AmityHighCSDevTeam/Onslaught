@@ -90,10 +90,6 @@ public final class NullWeapon implements IWeapon {
 	}
 
 	@Override
-	public void purchaseAmmo() {
-	}
-
-	@Override
 	public void reload() {
 	}
 
@@ -110,4 +106,16 @@ public final class NullWeapon implements IWeapon {
 	public void setAccuracyDeg(double deg) {
 	}
 
+	@Override
+	public int getMaxAmmo() {
+		return 0;
+	}
+
+	@Override
+	public void setMaxAmmo(int ammo) {
+	}
+
+	@Override
+	public void purchaseAmmo(EntityPlayer player) {
+	}
 }
