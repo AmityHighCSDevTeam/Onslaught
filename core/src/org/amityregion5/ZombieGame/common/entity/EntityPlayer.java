@@ -3,7 +3,10 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
+import java.util.Optional;
+
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.IWeapon;
@@ -14,6 +17,7 @@ import box2dLight.Light;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -35,6 +39,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	private Vector2 mousePos;
 	private Game g;
 	private double money = 1000;
+	private Sprite sprite;
 
 	public EntityPlayer(Game g) {
 		massData = new MassData();
@@ -44,6 +49,7 @@ public class EntityPlayer implements IEntity, Disposable {
 		} else {
 			currentWeapon = new NullWeapon();
 		}
+		sprite = new Sprite(TextureRegistry.textures.get("Player").get(0));
 	}
 
 	@Override
@@ -58,6 +64,7 @@ public class EntityPlayer implements IEntity, Disposable {
 
 	@Override
 	public void dispose() {
+		light.remove();
 	}
 
 	@Override
@@ -124,6 +131,8 @@ public class EntityPlayer implements IEntity, Disposable {
 		BodyHelper.setPointing(getBody(), mousePos, delta, 10);
 		light.setDirection((float) Math.toDegrees(getBody().getAngle()));
 		light.setPosition(getBody().getWorldCenter());
+
+		sprite.setOriginCenter();
 	}
 
 	public void setMass(float mass) {
@@ -161,5 +170,10 @@ public class EntityPlayer implements IEntity, Disposable {
 	
 	public void setMoney(double money) {
 		this.money = money;
+	}
+
+	@Override
+	public Optional<Sprite> getSprite() {
+		return Optional.ofNullable(sprite);
 	}
 }

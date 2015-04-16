@@ -7,6 +7,7 @@ import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
+import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.Game;
 
 import box2dLight.ConeLight;
@@ -20,10 +21,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -85,9 +88,28 @@ public class InGameScreen extends GuiScreen {
 		camera.update();
 		
 		debugRenderer.render(game.getWorld(), camera.combined);
+		
+		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		for (IEntity e : game.getEntities()) {
+			if (e.getSprite().isPresent()) {
+				Sprite s = e.getSprite().get();
 
+				s.setRotation((float) (Math.toDegrees(e.getBody().getAngle())-90));
+				s.setBounds(e.getBody().getWorldCenter().x - e.getShape().getRadius(),
+						e.getBody().getWorldCenter().y - e.getShape().getRadius(),
+						e.getShape().getRadius()*2,
+						e.getShape().getRadius()*2);
+
+				e.getSprite().get().draw(batch);
+			}
+		}
+		batch.end();
+		batch.setProjectionMatrix(oldBatchMatrix);
+		
 		rayHandler.setCombinedMatrix(camera.combined);
-		rayHandler.updateAndRender();
+		rayHandler.updateAndRender();		
 
 		super.render(delta);
 
@@ -125,42 +147,21 @@ public class InGameScreen extends GuiScreen {
 		drawHUD();
 		
 		
-		
-		/*
-		if (coolDown > 0) {
-			coolDown -= delta;
-		}
-		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
-			if (coolDown <= 0) {
-
-
-				double dir = MathHelper.clampAngleAroundCenter(player.getBody().getAngle(), 
-						MathHelper.getDirBetweenPoints(player.getBody().getPosition(), new Vector2(mouseCoord.x, mouseCoord.y)), 
-						Math.toRadians(15));
-
-
-				Vector2 v = MathHelper.getEndOfLine(player.getBody().getPosition(), player.getShape().getRadius() - 0.01, dir);
-
-
-				Vector2 bullVector = VectorFactory.createVector(200f, (float) dir);
-
-				BasicBullet bull = new BasicBullet(game, v, 1, 18/1000f, 1, bullVector);
-				bull.setDir((float) dir);
-
-				game.getActiveBullets().add(bull);
-				game.getWorld().rayCast(bull, v, bullVector);
-				bull.finishRaycast();
-
-				coolDown += 0.1f;
-			}
-		}*/
 		if (Gdx.input.isKeyJustPressed(Keys.L)) { 
-			EntityLantern lantern = new EntityLantern(game);
-			lantern.setLight(new PointLight(rayHandler, 400, EntityLantern.LIGHT_COLOR, 15, mouseCoord.x, mouseCoord.y));
+			EntityLantern lantern = new EntityLantern(game, rayHandler);
+			lantern.setLight(new PointLight(rayHandler, 200, EntityLantern.LIGHT_COLOR, 15, mouseCoord.x, mouseCoord.y));
 			lantern.getLight().setXray(false);
+			lantern.setFriction(0.99f);
 			lantern.setMass(10);
 
 			game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
+		}
+		
+		if (Gdx.input.isKeyPressed(Keys.G)) { 
+			camera.zoom += 0.02;
+		}
+		if (Gdx.input.isKeyPressed(Keys.H)) { 
+			camera.zoom -= 0.02;
 		}
 
 
@@ -206,7 +207,7 @@ public class InGameScreen extends GuiScreen {
 		font1.setColor(1, 1, 1, 1);
 		font2.setColor(0, 0, 0, 1);
 
-		debugRenderer = new Box2DDebugRenderer();
+		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
 
 		camera = new OrthographicCamera(12,9);
 	}
@@ -216,12 +217,13 @@ public class InGameScreen extends GuiScreen {
 		
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		
+		shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+		
 		shapeRenderer.begin(ShapeType.Filled);
 
 		shapeRenderer.setColor(75/255f, 75/255f, 75/255f, 75/255f);
-		Vector3 start = camera.unproject(new Vector3(getWidth()-400, getHeight()-200, 0));
-		Vector3 end = camera.unproject(new Vector3(getWidth(), getHeight(), 0));
-		shapeRenderer.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+		shapeRenderer.rect(getWidth()-400, 0, 400, 200);
 		shapeRenderer.end();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		

@@ -3,11 +3,16 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
+import java.util.Optional;
+
+import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -25,10 +30,13 @@ public class EntityZombie implements IEntity, Disposable {
 	private IEntity target;
 	private Game g;
 	private MassData massData;
+	private int textureIndex = ZombieGame.instance.random.nextInt(TextureRegistry.textures.get("Zombie").size);
+	private Sprite zSprite;
 	
 	public EntityZombie(Game g) {
 		this.g = g;
 		massData = new MassData();
+		zSprite = new Sprite(TextureRegistry.textures.get("Zombie").get(textureIndex));
 	}
 
 	@Override
@@ -102,6 +110,7 @@ public class EntityZombie implements IEntity, Disposable {
 			body.applyForceToCenter(VectorFactory.createVector(getSpeed(), (float) MathHelper.getDirBetweenPoints(body.getPosition(), target.getBody().getPosition())), true);
 			BodyHelper.setPointing(getBody(), target.getBody().getWorldCenter(), delta, 10);
 		}
+		zSprite.setOriginCenter();
 	}
 	
 	public void setMass(float mass) {
@@ -119,5 +128,10 @@ public class EntityZombie implements IEntity, Disposable {
 		if (health <= 0) {
 			g.removeEntity(this);
 		}
+	}
+
+	@Override
+	public Optional<Sprite> getSprite() {
+		return Optional.of(zSprite);
 	}
 }

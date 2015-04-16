@@ -1,5 +1,8 @@
 package org.amityregion5.ZombieGame;
 
+import java.util.Random;
+
+import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
@@ -28,6 +31,7 @@ public class ZombieGame extends Game {
 	public boolean isServer; //Is the current instance a server
 	public WeaponRegistry weaponRegistry; //The registry for the weapons
 	public int width, height; //The width and height of the screen
+	public Random random;
 
 	/**
 	 * 
@@ -36,6 +40,7 @@ public class ZombieGame extends Game {
 	public ZombieGame(boolean isServer) {
 		instance = this; //Set the instance
 		this.isServer = isServer; //Set if it is a server
+		random = new Random();
 	}
 
 	@Override
@@ -99,6 +104,7 @@ public class ZombieGame extends Game {
 	@Override
 	public void dispose() {
 		super.dispose();
+		TextureRegistry.dispose();
 		buttonFont.dispose(); //Get rid of all used memory
 		buttonTexture.dispose();
 
