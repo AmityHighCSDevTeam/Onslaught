@@ -94,7 +94,7 @@ public class NewGameMenu extends GuiScreen {
 				break;
 			default:
 				ZombieGame.instance
-						.setScreen(new InGameScreen(this, new Game()));
+						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id])));
 		}
 	}
 

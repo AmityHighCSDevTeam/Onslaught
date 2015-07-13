@@ -10,6 +10,7 @@ import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.PlayerModel;
 
@@ -70,8 +71,10 @@ public class InGameScreen extends GuiScreen {
 		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.mul(1, 1,
 				1, 0.7f), 10, 0, 0, 0, 30);
 		playerEntity.setLight(light);
+		playerEntity.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.mul(1, 1,
+				1, 0.8f), 2, 0, 0));
 
-		player = new PlayerModel(playerEntity, game, this);
+		player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()));
 
 		game.addEntityToWorld(player.getEntity(), 0, 0);
 	}

@@ -4,12 +4,15 @@
 package org.amityregion5.ZombieGame.common.entity;
 
 import java.util.Optional;
+
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -31,6 +34,7 @@ public class EntityZombie implements IEntity, Disposable {
 	private int			textureIndex	= ZombieGame.instance.random
 												.nextInt(TextureRegistry.getTexturesFor("*/Zombies/**.png").size());
 	private Sprite		zSprite;
+	private double prizeMoney;
 
 	public EntityZombie(Game g) {
 		this.g = g;
@@ -125,11 +129,22 @@ public class EntityZombie implements IEntity, Disposable {
 	public MassData getMassData() {
 		return massData;
 	}
+	
+	public void setPrizeMoney(double prizeMoney) {
+		this.prizeMoney = prizeMoney;
+	}
+	
+	public double getPrizeMoney() {
+		return prizeMoney;
+	}
 
 	@Override
-	public void damage(float damage) {
+	public void damage(float damage, PlayerModel source) {
 		health -= damage;
 		if (health <= 0) {
+			if (source != null) {
+				source.setMoney(source.getMoney() + prizeMoney);
+			}
 			g.removeEntity(this);
 		}
 	}

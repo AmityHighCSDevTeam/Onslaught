@@ -6,6 +6,7 @@ package org.amityregion5.ZombieGame.common.entity;
 import java.util.Optional;
 
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
+import org.amityregion5.ZombieGame.common.game.PlayerModel;
 
 import box2dLight.Light;
 
@@ -25,7 +26,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	private Body				body;
 	private float				speed, friction;
 	private MassData			massData;
-	private Light				light;
+	private Light				light, circleLight;
 	private Sprite				sprite;
 
 
@@ -49,6 +50,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	@Override
 	public void dispose() {
 		light.remove();
+		circleLight.remove();
 	}
 
 	@Override
@@ -96,7 +98,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	}
 
 	@Override
-	public void damage(float damage) {
+	public void damage(float damage, PlayerModel source) {
 	}
 
 	public Light getLight() {
@@ -105,6 +107,14 @@ public class EntityPlayer implements IEntity, Disposable {
 
 	public void setLight(Light light) {
 		this.light = light;
+	}
+	
+	public void setCircleLight(Light circleLight) {
+		this.circleLight = circleLight;
+	}
+	
+	public Light getCircleLight() {
+		return circleLight;
 	}
 
 	@Override

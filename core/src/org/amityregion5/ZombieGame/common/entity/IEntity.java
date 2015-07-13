@@ -1,6 +1,9 @@
 package org.amityregion5.ZombieGame.common.entity;
 
 import java.util.Optional;
+
+import org.amityregion5.ZombieGame.common.game.PlayerModel;
+
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -27,7 +30,7 @@ public interface IEntity {
 
 	public MassData getMassData();
 
-	public void damage(float damage);
+	public void damage(float damage, PlayerModel source);
 
 	public Optional<Sprite> getSprite();
 }

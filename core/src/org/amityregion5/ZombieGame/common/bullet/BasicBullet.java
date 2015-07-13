@@ -4,7 +4,9 @@
 package org.amityregion5.ZombieGame.common.bullet;
 
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -21,13 +23,15 @@ public class BasicBullet implements IBullet {
 	private Body	hit;
 	private Vector2	hitPoint;
 	private Vector2	start;
+	private PlayerModel source;
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage,
-			Vector2 bullVector) {
+			Vector2 bullVector, PlayerModel source) {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
 		this.damage = damage;
+		this.source = source;
 		hitPoint = start.cpy().add(bullVector);
 	}
 
@@ -97,7 +101,7 @@ public class BasicBullet implements IBullet {
 					hitPoint, true);
 		}
 
-		g.getEntityFromBody(hit).ifPresent(e -> e.damage(damage));
+		g.getEntityFromBody(hit).ifPresent(e -> e.damage(damage, source));
 		;
 	}
 }

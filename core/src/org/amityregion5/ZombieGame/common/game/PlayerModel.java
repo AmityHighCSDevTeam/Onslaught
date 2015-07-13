@@ -16,17 +16,18 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerModel {
 	private EntityPlayer 		entity;
-	private double				money			= 10000;
+	private double				money			= 1000;
 	private Vector2				mousePos;
 	private List<WeaponStack>	weapons;
 	private int					currentWeapon	= 0;
 	private InGameScreen 		screen;
 	private Game				g;
 
-	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen) {
+	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
 		this.entity = entity;
 		weapons = new ArrayList<WeaponStack>();
 		this.g = g;
+		this.money = startMoney;
 		this.screen = screen;
 	}
 	
@@ -63,6 +64,8 @@ public class PlayerModel {
 			BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
 			entity.getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
 			entity.getLight().setPosition(entity.getBody().getWorldCenter());
+			//entity.getCircleLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
+			entity.getCircleLight().setPosition(entity.getBody().getWorldCenter());
 		}
 		
 		if (currentWeapon < weapons.size() && currentWeapon >= 0) {

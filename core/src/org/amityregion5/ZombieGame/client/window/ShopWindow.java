@@ -253,14 +253,26 @@ public class ShopWindow implements Window {
 			float h = 50;
 			x+=10;
 			y-=60;
+			
+			double price = selectedWeapon.getWeaponData(level).getPrice();
+			if (nextLev != null) {
+				price = selectedWeapon.getWeaponData(level + 1).getPrice();
+			}
+			
+			boolean hasEnoughMoney = player.getMoney() >= price;
+			
+			if (!hasEnoughMoney) {
+				batch.setColor(Color.GRAY);
+			}
 			batch.draw(ZombieGame.instance.buttonTexture, x, y, w, h);
+			batch.setColor(Color.WHITE);
 			
 			boolean upgrade = (nextLev == null ? false : true);
 			
 			glyph.setText(ZombieGame.instance.mainFont, (upgrade ? "Upgrade" : "Buy"), Color.BLACK, w, Align.center, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + h/2 + glyph.height/2);
 			
-			if (Gdx.input.isTouched() && Gdx.input.justTouched()) {
+			if (hasEnoughMoney && Gdx.input.isTouched() && Gdx.input.justTouched()) {
 				if (clickX >= x && clickX <= x + w) {
 					if (screen.getHeight() - clickY >= y && screen.getHeight() - clickY <= y + h) {
 						if (upgrade) {
@@ -268,6 +280,7 @@ public class ShopWindow implements Window {
 						} else {
 							player.getWeapons().add(new WeaponStack(selectedWeapon));
 						}
+						player.setMoney(player.getMoney() - price);
 					}
 				}
 			}

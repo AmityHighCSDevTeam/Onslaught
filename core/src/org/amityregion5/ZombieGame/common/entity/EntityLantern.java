@@ -4,8 +4,12 @@
 package org.amityregion5.ZombieGame.common.entity;
 
 import java.util.Optional;
+
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.PlayerModel;
+
 import box2dLight.Light;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -100,7 +104,7 @@ public class EntityLantern implements IEntity, Disposable {
 	}
 
 	@Override
-	public void damage(float damage) {
+	public void damage(float damage, PlayerModel source) {
 		g.removeEntity(this);
 		light.remove();
 	}

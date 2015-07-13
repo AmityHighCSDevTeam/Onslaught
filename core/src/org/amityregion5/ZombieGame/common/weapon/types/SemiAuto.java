@@ -115,7 +115,7 @@ public class SemiAuto implements IWeapon {
 
 					BasicBullet bull = new BasicBullet(game, v, (float) data
 							.get(stack.getLevel()).getKnockback(), (float) data
-							.get(stack.getLevel()).getDamage(), bullVector);
+							.get(stack.getLevel()).getDamage(), bullVector, firing);
 					bull.setDir((float) dir);
 
 					game.getActiveBullets().add(bull);

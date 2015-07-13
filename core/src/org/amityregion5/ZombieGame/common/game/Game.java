@@ -3,9 +3,13 @@ package org.amityregion5.ZombieGame.common.game;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
+
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
+import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
+import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -21,14 +25,31 @@ public class Game implements Disposable {
 	private float	accumulator;
 	private ArrayList<IEntity>	entities, entitiesToDelete;
 	private ArrayList<IBullet>	activeBullets;
+	private ArrayList<EntityPlayer> players;
 	private Random				rand;
+	private Difficulty diff;
 
-	public Game() {
+	private float timeUntilNextWave;
+	private float timeBetWaves;
+	private float waveDifficulty;
+	private int wavesSpawned = 0;
+	
+	private float big = 100;
+	private float small = 12.5f;
+
+	public Game(Difficulty diff) {
+		this.diff = diff;
+
 		world = new World(new Vector2(0, 0), true);
 		entities = new ArrayList<IEntity>();
 		entitiesToDelete = new ArrayList<IEntity>();
 		activeBullets = new ArrayList<IBullet>();
+		players = new ArrayList<EntityPlayer>();
 		rand = new Random();
+
+		timeUntilNextWave = 10 * (Difficulty.diffInvertNum - diff.getDifficultyMultiplier());
+		timeBetWaves = 15 * (Difficulty.diffInvertNum - diff.getDifficultyMultiplier());
+		waveDifficulty = 3 * diff.getDifficultyMultiplier();
 	}
 
 	public void tick(float deltaTime) {
@@ -46,13 +67,54 @@ public class Game implements Disposable {
 			for (IEntity e : entities) {
 				// Body body = e.getBody();
 
-				e.tick(deltaTime);
+				e.tick(Constants.TIME_STEP);
 			}
 
 			world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS,
 					Constants.POSITION_ITERATIONS);
 			accumulator -= Constants.TIME_STEP;
+
+			if (timeUntilNextWave <= 0) {
+				spawnWave();
+				timeUntilNextWave = timeBetWaves;
+				timeBetWaves -= Math.pow(2, (1.4 * timeBetWaves * diff.getDifficultyMultiplier())/60) - 1;
+				wavesSpawned++;
+			}
+			timeUntilNextWave -= deltaTime;
 		}
+	}
+
+	private void spawnWave() {
+		for (int i = 0; i<waveDifficulty * wavesSpawned/4; i++) {
+			spawnEntity();
+		}
+	}
+	
+	private void spawnEntity() {		
+		for (EntityPlayer player : players) {
+			Vector2 pos = player.getBody().getPosition();
+			Vector2 spawnPos = null;
+			boolean whilePara = true;
+			do {
+				final Vector2 v = new Vector2(pos.x - big/2 + rand.nextFloat()*big, pos.y - big/2 + rand.nextFloat()*big);
+				spawnPos = v;
+				whilePara = players.parallelStream().anyMatch((p)->p.getBody().getPosition().dst2(v) < small * small);
+			} while (whilePara);
+
+			addEntityToWorld(getSpawningEntity(), spawnPos.x, spawnPos.y);
+		}
+	}
+
+	private IEntity getSpawningEntity() {
+		EntityZombie zom = new EntityZombie(this);
+		zom.setMass(100);
+		zom.setSpeed(0.03f);
+		//zom.setSpeed(1f);
+		zom.setFriction(0.99f);
+		zom.setHealth(5 + wavesSpawned);
+		zom.setPrizeMoney(5 + wavesSpawned*waveDifficulty + zom.getHealth()/2);
+
+		return zom;
 	}
 
 	public World getWorld() {
@@ -97,6 +159,10 @@ public class Game implements Disposable {
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		shape.dispose();
 
+		if (entity instanceof EntityPlayer) {
+			players.add((EntityPlayer) entity);
+		}
+
 		entities.add(entity);
 	}
 
@@ -125,5 +191,9 @@ public class Game implements Disposable {
 
 	public Random getRandom() {
 		return rand;
+	}
+	
+	public Difficulty getDifficulty() {
+		return diff;
 	}
 }
