@@ -1,12 +1,17 @@
 package org.amityregion5.ZombieGame;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Random;
 
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
+import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
+import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -18,108 +23,145 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 /**
- * 
+ *
  * @author sergeys
  *
  */
 public class ZombieGame extends Game {
 
-	public static ZombieGame instance; //The current game
+	public static ZombieGame	instance;		// The current game
+	public static String workingDir;
 
-	public BitmapFont buttonFont; //Font that buttons use
-	public Texture buttonTexture; //Texture that buttons use
-	public boolean isServer; //Is the current instance a server
-	public WeaponRegistry weaponRegistry; //The registry for the weapons
-	public int width, height; //The width and height of the screen
-	public Random random;
+	public BitmapFont			mainFont;	// Font that buttons use
+	public Texture				buttonTexture;	// Texture that buttons use
+	public boolean				isServer;		// Is the current instance a
+												// server
+	public WeaponRegistry		weaponRegistry; // The registry for the weapons
+	public int					width, height;	// The width and height of the
+												// screen
+	public Random				random;
 
 	/**
-	 * 
-	 * @param isServer is the game a server
+	 *
+	 * @param isServer
+	 *            is the game a server
 	 */
 	public ZombieGame(boolean isServer) {
-		instance = this; //Set the instance
-		this.isServer = isServer; //Set if it is a server
+		instance = this; // Set the instance
+		this.isServer = isServer; // Set if it is a server
 		random = new Random();
+		try {
+			String temp = ZombieGame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			workingDir = URLDecoder.decode(temp, "UTF-8");
+			workingDir = (new File(workingDir).getParent());
+		} catch (UnsupportedEncodingException e) {
+			workingDir = Gdx.files.getLocalStoragePath(); //Hopefully this will work on your computer if that doesn't
+		}
 	}
 
 	@Override
-	public void create () {
-		Gdx.app.setLogLevel(Application.LOG_DEBUG); //Set the log level
+	public void create() {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 
+		Gdx.app.log("Loading", "Starting the loading process");
 		if (!isServer) {
-			setScreen(new LoadingScreen()); //Set the screen to a loading screen
+			setScreen(new LoadingScreen()); // Set the screen to a loading
+											// screen
 		}
 
-		//Thread for loading the game
-		new Thread(() -> {
-			//The gamedata folder
-			FileHandle gameData = Gdx.files.local("ZombieGameData/GameData");
+		// Thread for loading the game
+		new Thread(
+				() -> {
+					// The gamedata folder
+					FileHandle gameData = Gdx.files
+							.absolute(workingDir + "/ZombieGameData/GameData");
 
-			//"Mod" loading list of mods
-			FileHandle[] plugins = gameData.list();
+					
+					
+					// "Mod" loading list of mods
+					FileHandle[] plugins = gameData.list();
+					
+					PluginManager pluginManager = new PluginManager();
 
-			//Create the weapon registry
-			weaponRegistry = new WeaponRegistry();
+					// Create the weapon registry
+					weaponRegistry = new WeaponRegistry(pluginManager);
 
-			//Create the plugin loader
-			PluginLoader loader = new PluginLoader();
-			//Load the plugins
-			loader.loadPlugin(plugins);
+					// Create the plugin loader
+					PluginLoader loader = new PluginLoader(pluginManager);
+					// Load the plugins
+					Gdx.app.log("Loading", "Plugins will be loaded from " + gameData.file().getAbsolutePath());
+					
+					loader.loadPluginMeta(plugins);
+					
+					pluginManager.loadPluginJars();
+					
+					pluginManager.getCorePlugin().addWeaponClass(SemiAuto.class);
+					
+					loader.loadPlugins(plugins);
 
-			//If it is a client
-			if (!isServer) {
-				//Load the texture for buttons
-				Gdx.app.postRunnable(() -> buttonTexture = new Texture(Gdx.files.internal("images/button.png")));
+					// If it is a client
+					if (!isServer) {
+						// Load the texture for buttons
+						Gdx.app.log("Loading", "Loading button texture");
+						Gdx.app.postRunnable(() -> buttonTexture = new Texture(
+								Gdx.files.internal("images/button.png")));
 
-				//Create the font generator
-				FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Calibri.ttf"));
+						// Create the font generator
+						Gdx.app.log("Loading", "Loading main font");
+						FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+								Gdx.files.internal("font/Calibri.ttf"));
 
-				//Size 24 font
-				FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-				parameter.size = 24;
+						// Size 24 font
+						FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+						parameter.size = 24;
 
-				//Generate the font
-				Gdx.app.postRunnable(() -> {
-					buttonFont = generator.generateFont(parameter);
-					//Make the font black
-					buttonFont.setColor(0, 0, 0, 1);	
-					//Get rid of generator
-					generator.dispose();
-				});
+						// Generate the font
+						Gdx.app.postRunnable(() -> {
+							mainFont = generator.generateFont(parameter);
+							// Make the font black
+							mainFont.setColor(0, 0, 0, 1);
+							// Get rid of generator
+							generator.dispose();
+						});
 
-				//Go to main menu
-				Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
-			}
-		}).start();;
+						// Go to main menu
+						Gdx.app.log("Loading", "Loading completed");
+						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
+					}
+				}).start();
+		;
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		super.render();
 	}
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		TextureRegistry.dispose();
-		buttonFont.dispose(); //Get rid of all used memory
+		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
 
 	}
+
 	@Override
 	public void pause() {
 		super.pause();
-	}	
+	}
+
 	@Override
 	public void resize(int width, int height) {
 		//this.width = width; //Save screen size
-		//this.height = height;	
+		//this.height = height;
 
 		super.resize(width, height);
-	}	
+	}
+
 	@Override
 	public void resume() {
 		super.resume();

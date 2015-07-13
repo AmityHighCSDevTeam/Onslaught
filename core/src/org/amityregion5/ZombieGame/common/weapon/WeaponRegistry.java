@@ -1,28 +1,27 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
-import com.badlogic.gdx.utils.Array;
+import java.util.List;
 
+import org.amityregion5.ZombieGame.common.plugin.PluginManager;
+import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 
 /**
- * 
+ *
  * @author sergeys
  *
  */
 public class WeaponRegistry {
-	
-	private Array<IWeapon> weapons = new Array<IWeapon>();
-	
-	/**
-	 * Register a weapon
-	 * @param wrapper the WeaponWrapper containing the weapon
-	 */
-	public void registerWeapon(WeaponWrapper wrapper) {
-		IWeapon weapon = wrapper.getWeapon();
-		
-		weapons.add(weapon);
+	private PluginManager pluginManager;
+
+	public WeaponRegistry(PluginManager pluginManager) {
+		this.pluginManager = pluginManager;
 	}
 	
-	public Array<IWeapon> getWeapons() {
-		return weapons;
+	public List<IWeapon> getWeapons() {
+		return pluginManager.getActivatedWeapons();
+	}
+
+	public List<Class<? extends IWeapon>> getWeaponClasses() {
+		return pluginManager.getActivatedWeaponClasses();
 	}
 }

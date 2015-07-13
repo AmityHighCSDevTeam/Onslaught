@@ -1,17 +1,15 @@
 /**
- * 
+ *
  */
 package org.amityregion5.ZombieGame.common.entity;
 
 import java.util.Optional;
-
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
-
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -24,26 +22,28 @@ import com.badlogic.gdx.utils.Disposable;
  *
  */
 public class EntityZombie implements IEntity, Disposable {
-	
-	private Body body;
-	private float speed, friction, health;
-	private IEntity target;
-	private Game g;
-	private MassData massData;
-	private int textureIndex = ZombieGame.instance.random.nextInt(TextureRegistry.textures.get("Zombie").size);
-	private Sprite zSprite;
-	
+
+	private Body		body;
+	private float		speed, friction, health;
+	private IEntity		target;
+	private Game		g;
+	private MassData	massData;
+	private int			textureIndex	= ZombieGame.instance.random
+												.nextInt(TextureRegistry.getTexturesFor("*/Zombies/**.png").size());
+	private Sprite		zSprite;
+
 	public EntityZombie(Game g) {
 		this.g = g;
 		massData = new MassData();
-		zSprite = new Sprite(TextureRegistry.textures.get("Zombie").get(textureIndex));
+		zSprite = new Sprite(TextureRegistry.getTexturesFor("*/Zombies/**.png").get(textureIndex));
 	}
 
 	@Override
-	public void setShape(Shape e) {}
+	public void setShape(Shape e) {
+	}
 
 	@Override
-	public Shape getShape() {	
+	public Shape getShape() {
 		CircleShape shape = new CircleShape();
 		shape.setRadius(0.15f);
 		return shape;
@@ -82,11 +82,11 @@ public class EntityZombie implements IEntity, Disposable {
 	public void setFriction(float f) {
 		friction = f;
 	}
-	
+
 	public void setHealth(float health) {
 		this.health = health;
 	}
-	
+
 	public float getHealth() {
 		return health;
 	}
@@ -98,7 +98,8 @@ public class EntityZombie implements IEntity, Disposable {
 			float dist2 = Float.MAX_VALUE;
 			for (IEntity e : g.getEntities()) {
 				if (e instanceof EntityPlayer) {
-					float d = body.getLocalCenter().dst2(e.getBody().getLocalCenter());
+					float d = body.getLocalCenter().dst2(
+							e.getBody().getLocalCenter());
 					if (d < dist2) {
 						closest = e;
 						dist2 = d;
@@ -106,13 +107,16 @@ public class EntityZombie implements IEntity, Disposable {
 				}
 			}
 			target = closest;
-		} else {		
-			body.applyForceToCenter(VectorFactory.createVector(getSpeed(), (float) MathHelper.getDirBetweenPoints(body.getPosition(), target.getBody().getPosition())), true);
-			BodyHelper.setPointing(getBody(), target.getBody().getWorldCenter(), delta, 10);
+		} else {
+			body.applyForceToCenter(VectorFactory.createVector(getSpeed(),
+					(float) MathHelper.getDirBetweenPoints(body.getPosition(),
+							target.getBody().getPosition())), true);
+			BodyHelper.setPointing(getBody(),
+					target.getBody().getWorldCenter(), delta, 10);
 		}
 		zSprite.setOriginCenter();
 	}
-	
+
 	public void setMass(float mass) {
 		massData.mass = mass;
 	}

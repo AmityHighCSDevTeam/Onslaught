@@ -1,0 +1,18 @@
+{
+  "name": "AK47",
+  "desc": "Testing",
+  "className": "SemiAuto",
+  "weapon": [
+    {
+      "price": 10,
+      "ammoPrice": 0.8,
+      "damage": 2,
+      "knockback": 0.018,
+      "accuracy": 5,
+      "maxAmmo": 30,
+      "reloadTime": 2,
+      "preFireDelay": 0,
+      "postFireDelay": 0.05
+    }
+  ]
+}
