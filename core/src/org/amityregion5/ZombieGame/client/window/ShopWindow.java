@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;

@@ -4,7 +4,7 @@
 package org.amityregion5.ZombieGame.common.bullet;
 
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
 import com.badlogic.gdx.graphics.Color;
@@ -24,14 +24,18 @@ public class BasicBullet implements IBullet {
 	private Vector2	hitPoint;
 	private Vector2	start;
 	private PlayerModel source;
+	private Color color;
+	private float bulletThickness;
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage,
-			Vector2 bullVector, PlayerModel source) {
+			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness) {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
 		this.damage = damage;
 		this.source = source;
+		this.color = color;
+		this.bulletThickness = bulletThickness;
 		hitPoint = start.cpy().add(bullVector);
 	}
 
@@ -77,7 +81,7 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public Color getColor() {
-		return Color.YELLOW;
+		return color;
 	}
 
 	@Override
@@ -103,5 +107,10 @@ public class BasicBullet implements IBullet {
 
 		g.getEntityFromBody(hit).ifPresent(e -> e.damage(damage, source));
 		;
+	}
+	
+	@Override
+	public float getThickness() {
+		return bulletThickness;
 	}
 }

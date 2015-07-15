@@ -2,10 +2,14 @@ package org.amityregion5.ZombieGame.common.weapon;
 
 import org.json.simple.JSONObject;
 
+import com.badlogic.gdx.graphics.Color;
+
 public class WeaponData {
 	private double	price, ammoPrice, damage, knockback, accuracy,
 			preFireDelay, postFireDelay, reloadTime;
 	private int		maxAmmo;
+	private float bulletThickness;
+	private Color bulletColor;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -34,6 +38,18 @@ public class WeaponData {
 		}
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
+		}
+		if (o.containsKey("bulletColor")) {
+			String color = ((String) o.get("bulletColor"));
+			
+			if (color == null) {
+				color = "00000000";
+			}
+			
+			bulletColor = Color.valueOf(color);
+		}
+		if (o.containsKey("bulletThickness")) {
+			bulletThickness = ((Number) o.get("bulletThickness")).floatValue();
 		}
 	}
 
@@ -170,6 +186,34 @@ public class WeaponData {
 	 */
 	public void setMaxAmmo(int maxAmmo) {
 		this.maxAmmo = maxAmmo;
+	}
+
+	/**
+	 * @return the bulletThickness
+	 */
+	public float getBulletThickness() {
+		return bulletThickness;
+	}
+
+	/**
+	 * @param bulletThickness the bulletThickness to set
+	 */
+	public void setBulletThickness(float bulletThickness) {
+		this.bulletThickness = bulletThickness;
+	}
+
+	/**
+	 * @return the bulletColor
+	 */
+	public Color getBulletColor() {
+		return bulletColor;
+	}
+
+	/**
+	 * @param bulletColor the bulletColor to set
+	 */
+	public void setBulletColor(Color bulletColor) {
+		this.bulletColor = bulletColor;
 	}
 
 }

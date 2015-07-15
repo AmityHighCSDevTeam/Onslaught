@@ -26,4 +26,6 @@ public interface IBullet extends RayCastCallback {
 	public Vector2 getEnd();
 
 	public Color getColor();
+
+	public float getThickness();
 }

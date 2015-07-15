@@ -12,7 +12,9 @@
       "maxAmmo": 10,
       "reloadTime": 1,
       "preFireDelay": 0,
-      "postFireDelay": 0.2
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1
     },
     {
       "price": 20,
@@ -23,7 +25,9 @@
       "maxAmmo": 10,
       "reloadTime": 1,
       "preFireDelay": 0,
-      "postFireDelay": 0.2
+      "postFireDelay": 0.2,
+      "bulletColor": "ffffffff",
+      "bulletThickness": 1
     }
   ]
 }

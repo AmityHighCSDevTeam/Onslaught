@@ -3,15 +3,6 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
-import java.util.Optional;
-
-import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
-
-import box2dLight.Light;
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.MassData;
@@ -24,15 +15,11 @@ import com.badlogic.gdx.utils.Disposable;
  */
 public class EntityLantern implements IEntity, Disposable {
 
-	public static final Color	LIGHT_COLOR	= new Color(1, 1, 1, 0.9f);
 	private Body				body;
 	private float				friction;
-	private Game				g;
 	private MassData			massData;
-	private Light				light;
 
-	public EntityLantern(Game g) {
-		this.g = g;
+	public EntityLantern() {
 		massData = new MassData();
 	}
 
@@ -62,15 +49,6 @@ public class EntityLantern implements IEntity, Disposable {
 	}
 
 	@Override
-	public float getSpeed() {
-		return 0;
-	}
-
-	@Override
-	public void setSpeed(float f) {
-	}
-
-	@Override
 	public float getFriction() {
 		return friction;
 	}
@@ -80,20 +58,6 @@ public class EntityLantern implements IEntity, Disposable {
 		friction = f;
 	}
 
-	@Override
-	public void tick(float delta) {
-		light.setActive(true);
-		light.setPosition(getBody().getWorldCenter());
-	}
-
-	public Light getLight() {
-		return light;
-	}
-
-	public void setLight(Light light) {
-		this.light = light;
-	}
-
 	public void setMass(float mass) {
 		massData.mass = mass;
 	}
@@ -101,16 +65,5 @@ public class EntityLantern implements IEntity, Disposable {
 	@Override
 	public MassData getMassData() {
 		return massData;
-	}
-
-	@Override
-	public void damage(float damage, PlayerModel source) {
-		g.removeEntity(this);
-		light.remove();
-	}
-
-	@Override
-	public Optional<Sprite> getSprite() {
-		return Optional.ofNullable(null);
 	}
 }

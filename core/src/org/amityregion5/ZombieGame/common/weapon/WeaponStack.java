@@ -1,7 +1,7 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 
 import com.badlogic.gdx.math.Vector2;

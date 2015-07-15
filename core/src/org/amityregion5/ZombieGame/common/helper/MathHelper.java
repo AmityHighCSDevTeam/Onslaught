@@ -6,6 +6,9 @@ public class MathHelper {
 	public static final double	rad180	= Math.toRadians(180);
 
 	public static double getDirBetweenPoints(Vector2 start, Vector2 end) {
+		if (start == null || end == null) {
+			return 0;
+		}
 		return getDirBetweenPoints(start.x, start.y, end.x, end.y);
 	}
 

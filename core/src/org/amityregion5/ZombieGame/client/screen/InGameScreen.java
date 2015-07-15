@@ -3,16 +3,19 @@ package org.amityregion5.ZombieGame.client.screen;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.window.ShopWindow;
 import org.amityregion5.ZombieGame.client.window.Window;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
-import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.amityregion5.ZombieGame.common.game.model.LanternModel;
+import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
 
 import box2dLight.ConeLight;
 import box2dLight.PointLight;
@@ -26,7 +29,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -65,18 +67,18 @@ public class InGameScreen extends GuiScreen {
 		shapeRenderer = new ShapeRenderer();
 		
 		EntityPlayer playerEntity = new EntityPlayer();
-		playerEntity.setSpeed(0.05f);
 		playerEntity.setFriction(0.99f);
 		playerEntity.setMass(100);
 		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.mul(1, 1,
-				1, 0.7f), 10, 0, 0, 0, 30);
-		playerEntity.setLight(light);
-		playerEntity.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.mul(1, 1,
-				1, 0.8f), 2, 0, 0));
+				1, 130f/255), 15, 0, 0, 0, 30);
 
 		player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()));
+		player.setLight(light);
+		player.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.mul(1, 1,
+				1, 130f/255), 3, 0, 0));
+		player.setSpeed(0.05f);
 
-		game.addEntityToWorld(player.getEntity(), 0, 0);
+		game.addEntityToWorld(player, 0, 0);
 	}
 
 	@Override
@@ -95,22 +97,11 @@ public class InGameScreen extends GuiScreen {
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		for (IEntity e : game.getEntities()) {
-			if (e.getSprite().isPresent()) {
-				Sprite s = e.getSprite().get();
-
-				s.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
-				s.setBounds(e.getBody().getWorldCenter().x
-						- e.getShape().getRadius(), e.getBody()
-						.getWorldCenter().y - e.getShape().getRadius(), e
-						.getShape().getRadius() * 2,
-						e.getShape().getRadius() * 2);
-
-				e.getSprite().get().draw(batch);
+		for (IEntityModel<?> e : game.getEntities()) {
+			for (IDrawingLayer s : e.getDrawingLayers()) {
+				s.draw(e, batch, shapeRenderer);
 			}
 		}
-		batch.end();
 		batch.setProjectionMatrix(oldBatchMatrix);
 
 		rayHandler.setCombinedMatrix(camera.combined);
@@ -119,10 +110,10 @@ public class InGameScreen extends GuiScreen {
 		super.render(delta);
 
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		Gdx.gl.glLineWidth(1);
 		shapeRenderer.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
 			if (bull.getEnd() != null) {
+				Gdx.gl.glLineWidth(bull.getThickness());
 				shapeRenderer.setColor(bull.getColor());
 
 				Vector3 start = new Vector3(bull.getStart().x,
@@ -154,18 +145,17 @@ public class InGameScreen extends GuiScreen {
 				Gdx.input.getY(), 0));
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
 		
-		player.tick(delta);
+		//player.tick(delta);
 
 		drawHUD();
 		
 		if (Gdx.input.isKeyJustPressed(Keys.L)) {
-			EntityLantern lantern = new EntityLantern(game);
+			LanternModel lantern = new LanternModel(new EntityLantern(), game);
 			lantern.setLight(new PointLight(rayHandler, 300,
-					EntityLantern.LIGHT_COLOR, 10, mouseCoord.x, mouseCoord.y));
-			lantern.getLight().setXray(false);
-			lantern.setFriction(0.99f);
-			lantern.setMass(10);
-
+					LanternModel.getLIGHT_COLOR(), 10, mouseCoord.x, mouseCoord.y));
+			lantern.getEntity().setFriction(0.99f);
+			lantern.getEntity().setMass(10);
+			
 			game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
 		}
 
@@ -191,13 +181,18 @@ public class InGameScreen extends GuiScreen {
 		}
 
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
-			EntityZombie zom = new EntityZombie(game);
+			EntityZombie zom = new EntityZombie();
 			zom.setMass(100);
-			zom.setSpeed(0.03f);
 			zom.setFriction(0.99f);
-			zom.setHealth(5);
+			
+			ZombieModel model = new ZombieModel(zom, game);
+			
+			model.setAllHealth(5);
+			model.setSpeed(0.03f);
+			model.setRange((float) (zom.getShape().getRadius()*1.1));
+			model.setDamage(5);
 
-			game.addEntityToWorld(zom, mouseCoord.x, mouseCoord.y);
+			game.addEntityToWorld(model, mouseCoord.x, mouseCoord.y);
 		}
 	}
 

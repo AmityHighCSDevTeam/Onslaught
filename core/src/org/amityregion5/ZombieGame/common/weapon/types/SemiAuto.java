@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.bullet.BasicBullet;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponData;
@@ -115,7 +115,9 @@ public class SemiAuto implements IWeapon {
 
 					BasicBullet bull = new BasicBullet(game, v, (float) data
 							.get(stack.getLevel()).getKnockback(), (float) data
-							.get(stack.getLevel()).getDamage(), bullVector, firing);
+							.get(stack.getLevel()).getDamage(), bullVector, firing, 
+							data.get(stack.getLevel()).getBulletColor(),
+							data.get(stack.getLevel()).getBulletThickness());
 					bull.setDir((float) dir);
 
 					game.getActiveBullets().add(bull);
