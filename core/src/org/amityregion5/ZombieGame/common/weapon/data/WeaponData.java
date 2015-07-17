@@ -1,4 +1,4 @@
-package org.amityregion5.ZombieGame.common.weapon;
+package org.amityregion5.ZombieGame.common.weapon.data;
 
 import org.json.simple.JSONObject;
 

@@ -38,9 +38,10 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	}
 
 	@Override
-	public void damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source) {
 		g.removeEntity(this);
 		light.remove();
+		return damage;
 	}
 
 	@Override

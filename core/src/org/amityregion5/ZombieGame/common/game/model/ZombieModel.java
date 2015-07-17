@@ -127,8 +127,9 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	}
 
 	@Override
-	public void damage(float damage, IEntityModel<?> source) {
-		health -= damage;
+	public float damage(float damage, IEntityModel<?> source) {
+		float damageTaken = Math.min(damage, health);
+		health -= damageTaken;
 		if (health <= 0) {
 			if (source != null && source instanceof PlayerModel) {
 				PlayerModel pModel = (PlayerModel) source;
@@ -136,6 +137,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 			}
 			g.removeEntity(this);
 		}
+		return damageTaken; 
 	}
 
 	@Override

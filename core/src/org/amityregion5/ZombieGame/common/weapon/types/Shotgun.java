@@ -9,6 +9,7 @@ import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
+import org.amityregion5.ZombieGame.common.weapon.data.ShotgunWeaponData;
 import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,11 +23,11 @@ import com.badlogic.gdx.utils.Array;
  * @author sergeys
  *
  */
-public class SemiAuto implements IWeapon {
+public class Shotgun implements IWeapon {
 
 	// All the variables!
 	private String				name, description;
-	private Array<WeaponData>	data;
+	private Array<ShotgunWeaponData>	data;
 
 	@Override
 	public String getName() {
@@ -98,31 +99,39 @@ public class SemiAuto implements IWeapon {
 									firing.getEntity().getBody().getPosition(), end), Math
 									.toRadians(maxFireDegrees));
 
-					dir -= Math.toRadians(data.get(stack.getLevel())
-							.getAccuracy() / 2);
+					
+					for (int i = 0; i<data.get(stack.getLevel()).getShots(); i++) {
+						double dirDel = i-data.get(stack.getLevel()).getShots()/2;
+						dirDel *= data.get(stack.getLevel()).getSpread();
+						
+						double newDir = dir + Math.toRadians(dirDel);
+						
+						newDir -= Math.toRadians(data.get(stack.getLevel())
+								.getAccuracy() / 2);
 
-					dir += Math.toRadians(game.getRandom().nextDouble()
-							* data.get(stack.getLevel()).getAccuracy());
+						newDir += Math.toRadians(game.getRandom().nextDouble()
+								* data.get(stack.getLevel()).getAccuracy());
 
-					dir = MathHelper.fixAngle(dir);
+						newDir = MathHelper.fixAngle(newDir);
+						
+						Vector2 v = MathHelper.getEndOfLine(firing.getEntity().getBody()
+								.getPosition(),
+								firing.getEntity().getShape().getRadius() - 0.01, newDir);
 
-					Vector2 v = MathHelper.getEndOfLine(firing.getEntity().getBody()
-							.getPosition(),
-							firing.getEntity().getShape().getRadius() - 0.01, dir);
+						Vector2 bullVector = VectorFactory.createVector(200f,
+								(float) newDir);
 
-					Vector2 bullVector = VectorFactory.createVector(200f,
-							(float) dir);
+						BasicBullet bull = new BasicBullet(game, v, (float) data
+								.get(stack.getLevel()).getKnockback(), (float) data
+								.get(stack.getLevel()).getDamage(), bullVector, firing, 
+								data.get(stack.getLevel()).getBulletColor(),
+								data.get(stack.getLevel()).getBulletThickness());
+						bull.setDir((float) newDir);
 
-					BasicBullet bull = new BasicBullet(game, v, (float) data
-							.get(stack.getLevel()).getKnockback(), (float) data
-							.get(stack.getLevel()).getDamage(), bullVector, firing, 
-							data.get(stack.getLevel()).getBulletColor(),
-							data.get(stack.getLevel()).getBulletThickness());
-					bull.setDir((float) dir);
-
-					game.getActiveBullets().add(bull);
-					game.getWorld().rayCast(bull, v, bullVector);
-					bull.finishRaycast();
+						game.getActiveBullets().add(bull);
+						game.getWorld().rayCast(bull, v, bullVector);
+						bull.finishRaycast();
+					}
 
 					stack.setCooldown(stack.getCooldown()
 							+ data.get(stack.getLevel()).getPostFireDelay());
@@ -147,11 +156,11 @@ public class SemiAuto implements IWeapon {
 			JSONArray arr = (JSONArray) json.get("weapon");
 
 			if (arr != null) {
-				data = new Array<WeaponData>();
+				data = new Array<ShotgunWeaponData>();
 
 				for (Object obj : arr) {
 					JSONObject o = (JSONObject) obj;
-					WeaponData d = new WeaponData(o);
+					ShotgunWeaponData d = new ShotgunWeaponData(o);
 					data.add(d);
 				}
 			} else {
@@ -178,11 +187,13 @@ public class SemiAuto implements IWeapon {
 
 	@Override
 	public Map<String, String> getWeaponDataDescriptors(int level) {
-		WeaponData d = data.get(level);
+		ShotgunWeaponData d = data.get(level);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("Price", d.getPrice() + "");
 		map.put("Ammo Price", d.getAmmoPrice() + "");
 		map.put("Damage", d.getDamage() + "");
+		map.put("Bullets", d.getShots() + "");
+		map.put("Bullet Spread", d.getSpread() + "");
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
 		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
 		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");

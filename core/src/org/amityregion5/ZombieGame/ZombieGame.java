@@ -12,6 +12,7 @@ import org.amityregion5.ZombieGame.common.io.PluginLoader;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
 import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
+import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -99,6 +100,7 @@ public class ZombieGame extends Game {
 					pluginManager.loadPluginJars();
 					
 					pluginManager.getCorePlugin().addWeaponClass(SemiAuto.class);
+					pluginManager.getCorePlugin().addWeaponClass(Shotgun.class);
 					
 					loader.loadPlugins(plugins);
 

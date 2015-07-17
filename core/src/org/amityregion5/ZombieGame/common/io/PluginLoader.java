@@ -153,8 +153,6 @@ public class PluginLoader {
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
-			} else {
-				Gdx.app.debug("Plugin Loader", "Failed to load weapon. Error: Class name does not match");
 			}
 		}
 		Gdx.app.debug("Plugin Loader", "Failed to load weapon. Error: Class not found");

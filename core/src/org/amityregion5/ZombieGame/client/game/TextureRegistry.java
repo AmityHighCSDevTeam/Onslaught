@@ -14,7 +14,8 @@ public class TextureRegistry {
 	// public static Array<Texture> zombieTextures = new Array<Texture>();
 
 	public static void register(String path, FileHandle file) {
-		textures.put(path, new Texture(file));
+		Texture t = new Texture(file, true);
+		textures.put(path, t);
 	}
 	
 	public static List<Texture> getTexturesFor(String str) {

@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
 
@@ -37,7 +38,7 @@ public class Game implements Disposable {
 	private int maxHostiles = 0;
 	private int hostiles = 0;
 	private double moduloConstant;
-	
+
 	private float big = 25;
 	private float small = 12.5f;
 
@@ -63,13 +64,6 @@ public class Game implements Disposable {
 		accumulator += frameTime;
 		while (accumulator >= Constants.TIME_STEP) {
 
-			entities.removeAll(entitiesToDelete);
-			for (IEntityModel<?> e : entitiesToDelete) {
-				world.destroyBody(e.getEntity().getBody());
-			}
-
-			entitiesToDelete.clear();
-
 			for (IEntityModel<?> e : entities) {
 				// Body body = e.getBody();
 
@@ -79,6 +73,19 @@ public class Game implements Disposable {
 			world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS,
 					Constants.POSITION_ITERATIONS);
 			accumulator -= Constants.TIME_STEP;
+			
+			Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
+			if(!world.isLocked()){
+				while(i.hasNext()){
+					IEntityModel<?> b = i.next();
+					world.destroyBody(b.getEntity().getBody());
+					entities.remove(b);
+					i.remove();
+					if (b.isHostile()) {
+						hostiles--;
+					}
+				}
+			}
 
 			if (hostiles < maxHostiles) {
 				if (timeUntilNextWave <= 0) {
@@ -92,7 +99,7 @@ public class Game implements Disposable {
 			}
 		}
 	}
-	
+
 	private void spawnNext() {
 		for (PlayerModel player : players) {
 			Vector2 pos = player.getEntity().getBody().getPosition();
@@ -117,9 +124,9 @@ public class Game implements Disposable {
 		zom.setMass(100);
 		//zom.setSpeed(1f);
 		zom.setFriction(0.99f);
-		
+
 		ZombieModel model = new ZombieModel(zom, this);
-		
+
 		model.setSpeed(0.03f);
 		model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(mobsSpawned)) + 4)*(diff.getDifficultyMultiplier()/2+1));
 		model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier()));
@@ -199,10 +206,9 @@ public class Game implements Disposable {
 	}
 
 	public void removeEntity(IEntityModel<?> e) {
-		if (e.isHostile()) {
-			hostiles--;
+		if (!entitiesToDelete.contains(e)) {
+			entitiesToDelete.add(e);
 		}
-		entitiesToDelete.add(e);
 	}
 
 	public void removeEntity(IEntity entity) {
@@ -216,7 +222,7 @@ public class Game implements Disposable {
 	public Random getRandom() {
 		return rand;
 	}
-	
+
 	public Difficulty getDifficulty() {
 		return diff;
 	}

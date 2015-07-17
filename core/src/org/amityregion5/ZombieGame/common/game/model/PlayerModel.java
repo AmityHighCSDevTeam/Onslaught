@@ -132,8 +132,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	
 
 	@Override
-	public void damage(float damage, IEntityModel<?> source) {
-		health -= damage;
+	public float damage(float damage, IEntityModel<?> source) {
+		float damageTaken = Math.min(damage, health);
+		health -= damageTaken;
+		return damageTaken; 
 	}
 
 	public Light getLight() {

@@ -1,0 +1,22 @@
+{
+  "name": "Shotgun Test",
+  "desc": "A Testing Shotgun",
+  "className": "Shotgun",
+  "weapon": [
+    {
+      "price": 10,
+      "ammoPrice": 0,
+      "damage": 2.5,
+      "knockback": 0.018,
+      "accuracy": 0,
+      "maxAmmo": 100,
+      "reloadTime": 0,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "shots": 5,
+      "spread": 2
+    }
+  ]
+}

@@ -10,7 +10,7 @@ public interface IEntityModel<T extends IEntity> {
 	
 	void dispose();
 
-	void damage(float damage, IEntityModel<?> source);
+	float damage(float damage, IEntityModel<?> source);
 
 	IDrawingLayer[] getDrawingLayers();
 

@@ -25,7 +25,8 @@ public class EntityModelWrapper<T extends IEntity> implements IEntityModel<T> {
 	}
 
 	@Override
-	public void damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source) {
+		return 0;
 	}
 
 	@Override

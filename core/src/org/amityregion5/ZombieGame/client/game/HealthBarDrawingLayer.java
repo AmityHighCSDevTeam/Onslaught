@@ -27,12 +27,14 @@ public class HealthBarDrawingLayer implements IDrawingLayer {
 				(float)(e.getBody().getWorldCenter().y - height/2),
 				(float)(e.getShape().getRadius() * 1.8), 
 				(float)(height));
-		shapeRenderer.setColor(Color.GREEN);
-		shapeRenderer.rect(
-				(float)(e.getBody().getWorldCenter().x - e.getShape().getRadius()*0.9), 
-				(float)(e.getBody().getWorldCenter().y - height/2),
-				(float)(e.getShape().getRadius() * 1.8 * eM.getHealth()/eM.getMaxHealth()), 
-				(float)(height));
+		if (eM.getHealth() > 0) {
+			shapeRenderer.setColor(Color.GREEN);
+			shapeRenderer.rect(
+					(float)(e.getBody().getWorldCenter().x - e.getShape().getRadius()*0.9), 
+					(float)(e.getBody().getWorldCenter().y - height/2),
+					(float)(e.getShape().getRadius() * 1.8 * eM.getHealth()/eM.getMaxHealth()), 
+					(float)(height));
+		}
 		shapeRenderer.end();
 		
 		shapeRenderer.begin(ShapeType.Line);

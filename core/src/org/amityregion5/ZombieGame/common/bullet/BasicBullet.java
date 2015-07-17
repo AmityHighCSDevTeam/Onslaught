@@ -3,7 +3,13 @@
  */
 package org.amityregion5.ZombieGame.common.bullet;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
@@ -20,12 +26,12 @@ public class BasicBullet implements IBullet {
 
 	private float	knockback, dir, damage;
 	private Game	g;
-	private Body	hit;
-	private Vector2	hitPoint;
+	private Vector2	endPoint;
 	private Vector2	start;
 	private PlayerModel source;
 	private Color color;
 	private float bulletThickness;
+	private List<HitData> hits;
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage,
 			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness) {
@@ -36,7 +42,8 @@ public class BasicBullet implements IBullet {
 		this.source = source;
 		this.color = color;
 		this.bulletThickness = bulletThickness;
-		hitPoint = start.cpy().add(bullVector);
+		endPoint = start.cpy().add(bullVector);
+		hits = new ArrayList<HitData>();
 	}
 
 	@Override
@@ -86,31 +93,54 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public Vector2 getEnd() {
-		return hitPoint;
+		return endPoint;
 	}
 
 	@Override
 	public float reportRayFixture(Fixture fixture, Vector2 point,
 			Vector2 normal, float fraction) {
-		hit = fixture.getBody();
-		hitPoint = point.cpy();
 
-		return fraction;
+		HitData hitData = new HitData();
+		hitData.hit = fixture.getBody();
+		hitData.hitPoint = point.cpy();
+		hitData.dist = start.dst2(point);
+		hits.add(hitData);
+
+		return 1;
 	}
 
 	@Override
 	public void finishRaycast() {
-		if (hit != null) {
-			hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir),
-					hitPoint, true);
+		Collections.sort(hits);
+		
+		for (HitData hd : hits) {
+			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
+			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
+			
+			if (entity.isPresent()) {
+				damage -= entity.get().damage(damage, source);
+			}
+			
+			if (damage <= 0) {
+				endPoint = hd.hitPoint;
+				break;
+			}
 		}
-
-		g.getEntityFromBody(hit).ifPresent(e -> e.damage(damage, source));
-		;
 	}
 	
 	@Override
 	public float getThickness() {
 		return bulletThickness;
+	}
+	
+	private class HitData implements Comparable<HitData> {
+		public double dist;
+		public Body hit;
+		public Vector2 hitPoint;
+		
+		@Override
+		public int compareTo(HitData o) {
+			return Double.compare(dist, o.dist);
+		}
 	}
 }
