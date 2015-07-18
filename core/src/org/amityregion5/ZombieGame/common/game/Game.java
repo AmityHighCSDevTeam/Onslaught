@@ -88,14 +88,14 @@ public class Game implements Disposable {
 			}
 
 			if (hostiles < maxHostiles) {
-				if (timeUntilNextWave <= 0) {
+				while (timeUntilNextWave <= 0 && hostiles < maxHostiles) {
 					spawnNext();
-					timeUntilNextWave = Math.min(Math.pow((Math.pow(mobsSpawned, 0.7))%(moduloConstant),6)/10000, 25);
+					timeUntilNextWave += Math.min(Math.pow((Math.pow(mobsSpawned, 0.7))%(moduloConstant),6)/10000, 25);
 					mobsSpawned++;
 					//timeBetWaves -= Math.pow(2, (1.4 * timeBetWaves * diff.getDifficultyMultiplier())/60) - 1;
 					//wavesSpawned++;
 				}
-				timeUntilNextWave -= deltaTime;
+				timeUntilNextWave -= frameTime;
 			}
 		}
 	}
