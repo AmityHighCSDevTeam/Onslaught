@@ -104,6 +104,10 @@ public class PluginLoader {
 	private void loadFile(FileHandle handle, String prevPath, PluginContainer plugin) {
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
 		String[] sections = prevPath.split(Pattern.quote("/"));
+		if (handle.extension().equals("png")) {
+			Gdx.app.debug("Plugin Loader", "Player Found: " + loc);
+			Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
+		}
 		if (sections.length >= 2) {
 			switch (sections[1]) {
 			case "Weapons":
@@ -114,18 +118,6 @@ public class PluginLoader {
 					} catch (IOException | ParseException e) {
 						e.printStackTrace();
 					}
-				}
-				break;
-			case "Players":
-				if (handle.extension().equals("png")) {
-					Gdx.app.debug("Plugin Loader", "Player Found: " + loc);
-					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-				}
-				break;
-			case "Zombies":
-				if (handle.extension().equals("png")) {
-					Gdx.app.debug("Plugin Loader", "Zombie Found: " + loc);
-					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
 				}
 				break;
 			}

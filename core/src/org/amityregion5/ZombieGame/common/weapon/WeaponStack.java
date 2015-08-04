@@ -147,4 +147,17 @@ public class WeaponStack {
 	public String getAmmoString() {
 		return weapon.getAmmoString(this);
 	}
+	
+	public String getIconTextureName() {
+		return weapon.getWeaponData(level).getIconTextureString();
+	}
+	
+	public String getGameTextureIngot() {
+		return weapon.getWeaponData(level).getGameTextureString();
+	}
+	
+	@Override
+	public String toString() {
+		return "WeaponStack{Weapon:" + weapon.getName() + ",Level:" + level + "}";
+	}
 }

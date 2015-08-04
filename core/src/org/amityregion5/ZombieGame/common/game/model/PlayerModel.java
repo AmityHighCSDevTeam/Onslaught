@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
@@ -27,6 +28,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private double				money			= 1000;
 	private Vector2				mousePos;
 	private List<WeaponStack>	weapons;
+	private WeaponStack[] 		hotbar;
 	private int					currentWeapon	= 0;
 	private InGameScreen 		screen;
 	private Game				g;
@@ -42,10 +44,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		this.screen = screen;
 		health = 100;
 		maxHealth = 100;
+		hotbar = new WeaponStack[3];
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
 	}
-	
+
 	public void tick(float delta) {
 		if (screen.getCurrentWindow() == null) {
 			if (Gdx.input.isKeyPressed(Keys.W)) {
@@ -65,41 +68,52 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 				getCircleLight().setActive(getLight().isActive());
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.B)) {
-				weapons.get(currentWeapon).purchaseAmmo(this);
+				hotbar[currentWeapon].purchaseAmmo(this);
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.R)) {
-				weapons.get(currentWeapon).reload();
+				hotbar[currentWeapon].reload();
+			}
+			if (Gdx.input.isKeyJustPressed(Keys.Q)) {
+				Gdx.app.error("Hotbar Dump", Arrays.deepToString(hotbar));
 			}
 			if (Gdx.input.isButtonPressed(Buttons.LEFT) && weapons.size() > 0) {
-				weapons.get(currentWeapon).onUse(mousePos, g, this, 15);
-			}
-			if (Gdx.input.isKeyJustPressed(Keys.C) && weapons.size() > 0) {
-				currentWeapon++;
-				currentWeapon %= weapons.size();
+				hotbar[currentWeapon].onUse(mousePos, g, this, 15);
 			}
 			BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
 			getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
-			getLight().setPosition(entity.getBody().getWorldCenter());
-			//entity.getCircleLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
-			getCircleLight().setPosition(entity.getBody().getWorldCenter());
 		}
 		
-		if (currentWeapon < weapons.size() && currentWeapon >= 0) {
-			weapons.get(currentWeapon).tick(delta);
+		if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
+			currentWeapon = 0;
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
+			currentWeapon = 1;
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
+			currentWeapon = 2;
+		}
+
+		getLight().setPosition(entity.getBody().getWorldCenter());
+		getCircleLight().setPosition(entity.getBody().getWorldCenter());
+		
+		if (currentWeapon < getHotbar().length && currentWeapon >= 0) {
+			getHotbar()[currentWeapon].tick(delta);
 		}
 		sprite.getSprite().setOriginCenter();
 	}
-	
+
 
 	public void setMousePos(Vector2 mousePos) {
 		this.mousePos = mousePos;
 	}
 
 	public WeaponStack getCurrentWeapon() {
+		return hotbar[currentWeapon];
+		/*
 		if (currentWeapon < weapons.size() && currentWeapon >= 0) {
 			return weapons.get(currentWeapon);
 		}
-		return new WeaponStack(new NullWeapon());
+		return new WeaponStack(new NullWeapon());*/
 	}
 
 	public double getMoney() {
@@ -109,8 +123,8 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public void setMoney(double money) {
 		this.money = money;
 	}
-	
-	
+
+
 	public List<WeaponStack> getWeapons() {
 		return weapons;
 	}
@@ -129,7 +143,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		circleLight.remove();
 		entity.dispose();
 	}
-	
+
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source) {
@@ -145,11 +159,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public void setLight(Light light) {
 		this.light = light;
 	}
-	
+
 	public void setCircleLight(Light circleLight) {
 		this.circleLight = circleLight;
 	}
-	
+
 	public Light getCircleLight() {
 		return circleLight;
 	}
@@ -168,11 +182,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public float getMaxHealth() {
 		return maxHealth;
 	}
-	
+
 	public float getSpeed() {
 		return speed;
 	}
-	
+
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
@@ -180,5 +194,18 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	@Override
 	public boolean isHostile() {
 		return false;
+	}
+
+	public WeaponStack[] getHotbar() {
+		for (int i = 0; i<hotbar.length; i++) {
+			if (hotbar[i] == null) {
+				hotbar[i] = new WeaponStack(new NullWeapon());
+			}
+		}
+		return hotbar;
+	}
+
+	public int getCurrWeapIndex() {
+		return currentWeapon;
 	}
 }

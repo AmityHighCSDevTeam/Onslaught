@@ -35,6 +35,7 @@ public class ZombieGame extends Game {
 
 	public BitmapFont			mainFont;	// Font that buttons use
 	public Texture				buttonTexture;	// Texture that buttons use
+	public Texture				missingTexture; //The texture for when texture is missing
 	public boolean				isServer;		// Is the current instance a
 												// server
 	public WeaponRegistry		weaponRegistry; // The registry for the weapons
@@ -108,8 +109,14 @@ public class ZombieGame extends Game {
 					if (!isServer) {
 						// Load the texture for buttons
 						Gdx.app.log("Loading", "Loading button texture");
-						Gdx.app.postRunnable(() -> buttonTexture = new Texture(
-								Gdx.files.internal("images/button.png")));
+						Gdx.app.postRunnable(() -> {
+							buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
+						});
+
+						// Load the missing texture
+						Gdx.app.log("Loading", "Loading missing texture");
+						Gdx.app.postRunnable(() -> missingTexture = new Texture(
+								Gdx.files.internal("images/missing.png")));
 
 						// Create the font generator
 						Gdx.app.log("Loading", "Loading main font");

@@ -14,7 +14,9 @@
       "preFireDelay": 0,
       "postFireDelay": 0.05,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/AK47/1I.png",
+      "gameTxtr": "Core/Weapons/AK47/1G.png"
     }
   ]
 }

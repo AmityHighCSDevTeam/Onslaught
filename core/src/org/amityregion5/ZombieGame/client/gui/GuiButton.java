@@ -205,7 +205,7 @@ public class GuiButton extends Sprite implements Disposable {
 		super.draw(batch);
 
 		// Clear the tint
-		setColor(Color.WHITE);
+		setColor(new Color(1,1,1,1));
 
 		// If there is text for the button
 		if (text != null) {

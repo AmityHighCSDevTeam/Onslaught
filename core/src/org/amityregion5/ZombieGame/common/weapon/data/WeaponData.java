@@ -10,6 +10,7 @@ public class WeaponData {
 	private int		maxAmmo;
 	private float bulletThickness;
 	private Color bulletColor;
+	private String iconTextureString, gameTextureString;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -38,6 +39,16 @@ public class WeaponData {
 		}
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
+		}
+		if (o.containsKey("iconTxtr")) {
+			iconTextureString = ((String) o.get("iconTxtr"));
+		} else {
+			iconTextureString = "";
+		}
+		if (o.containsKey("gameTxtr")) {
+			gameTextureString = ((String) o.get("gameTxtr"));
+		} else {
+			gameTextureString = "";
 		}
 		if (o.containsKey("bulletColor")) {
 			String color = ((String) o.get("bulletColor"));
@@ -214,6 +225,34 @@ public class WeaponData {
 	 */
 	public void setBulletColor(Color bulletColor) {
 		this.bulletColor = bulletColor;
+	}
+
+	/**
+	 * @return the iconTextureString
+	 */
+	public String getIconTextureString() {
+		return iconTextureString;
+	}
+
+	/**
+	 * @param iconTextureString the iconTextureString to set
+	 */
+	public void setIconTextureString(String iconTextureString) {
+		this.iconTextureString = iconTextureString;
+	}
+
+	/**
+	 * @return the gameTextureString
+	 */
+	public String getGameTextureString() {
+		return gameTextureString;
+	}
+
+	/**
+	 * @param gameTextureString the gameTextureString to set
+	 */
+	public void setGameTextureString(String gameTextureString) {
+		this.gameTextureString = gameTextureString;
 	}
 
 }

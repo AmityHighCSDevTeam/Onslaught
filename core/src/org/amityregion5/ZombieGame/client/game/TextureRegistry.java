@@ -1,12 +1,16 @@
 package org.amityregion5.ZombieGame.client.game;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.amityregion5.ZombieGame.ZombieGame;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 public class TextureRegistry {
 	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
@@ -15,11 +19,16 @@ public class TextureRegistry {
 
 	public static void register(String path, FileHandle file) {
 		Texture t = new Texture(file, true);
+		t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
 		textures.put(path, t);
 	}
 	
 	public static List<Texture> getTexturesFor(String str) {
-		return textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).map((k)->textures.get(k)).collect(Collectors.toList());
+		List<Texture> t = textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).map((k)->textures.get(k)).collect(Collectors.toList());
+		if (t == null || t.size() == 0) {
+			return Arrays.asList(new Texture[]{ZombieGame.instance.missingTexture});
+		}
+		return t;
 	}
 	
 	private static String regexify(String str) {

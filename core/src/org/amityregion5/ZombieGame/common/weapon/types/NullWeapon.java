@@ -64,5 +64,4 @@ public final class NullWeapon implements IWeapon {
 	public Map<String, String> getWeaponDataDescriptors(int level) {
 		return new HashMap<String, String>();
 	}
-
 }

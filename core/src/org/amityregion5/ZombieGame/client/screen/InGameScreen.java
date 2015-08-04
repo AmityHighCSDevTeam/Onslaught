@@ -2,10 +2,13 @@ package org.amityregion5.ZombieGame.client.screen;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.client.window.HotbarOverlay;
+import org.amityregion5.ZombieGame.client.window.InventoryWindow;
+import org.amityregion5.ZombieGame.client.window.Screen;
 import org.amityregion5.ZombieGame.client.window.ShopWindow;
-import org.amityregion5.ZombieGame.client.window.Window;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
@@ -52,7 +55,8 @@ public class InGameScreen extends GuiScreen {
 	private ShapeRenderer		shapeRenderer;
 	private RayHandler			rayHandler;
 	private GlyphLayout glyph = new GlyphLayout();
-	private Window currentWindow;
+	private Screen currentWindow;
+	private List<Screen> overlays;
 
 	// Font
 	private BitmapFont			font1, font2;
@@ -65,6 +69,8 @@ public class InGameScreen extends GuiScreen {
 		rayHandler = new RayHandler(game.getWorld());
 
 		shapeRenderer = new ShapeRenderer();
+		
+		overlays = new ArrayList<Screen>();
 		
 		EntityPlayer playerEntity = new EntityPlayer();
 		playerEntity.setFriction(0.99f);
@@ -79,6 +85,7 @@ public class InGameScreen extends GuiScreen {
 		player.setSpeed(0.05f);
 
 		game.addEntityToWorld(player, 0, 0);
+		overlays.add(new HotbarOverlay(this, player));
 	}
 
 	@Override
@@ -126,6 +133,11 @@ public class InGameScreen extends GuiScreen {
 		}
 		shapeRenderer.end();
 		Gdx.gl.glLineWidth(1);
+		
+		
+		for (Screen overlay : overlays) {
+			overlay.drawScreen(delta, camera);
+		}
 
 		if (currentWindow != null) {
 			currentWindow.drawScreen(delta, camera);
@@ -171,6 +183,12 @@ public class InGameScreen extends GuiScreen {
 				currentWindow.dispose();
 			}
 			currentWindow = new ShopWindow(this, player);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.I)) {
+			if (currentWindow != null) {
+				currentWindow.dispose();
+			}
+			currentWindow = new InventoryWindow(this, player);
 		}
 
 		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
@@ -293,7 +311,7 @@ public class InGameScreen extends GuiScreen {
 		}
 	}
 
-	public Window getCurrentWindow() {
+	public Screen getCurrentWindow() {
 		return currentWindow;
 	}
 
