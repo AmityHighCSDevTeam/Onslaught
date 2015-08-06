@@ -1,12 +1,15 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
+import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.game.Game;
 
-import box2dLight.Light;
-
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
+import box2dLight.Light;
 
 public class LanternModel implements IEntityModel<EntityLantern>{
 	public static final Color	LIGHT_COLOR	= new Color(1,1,1,130f/255);
@@ -14,10 +17,14 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	private Light				light;
 	private EntityLantern entity;
 	private Game				g;
+	private Color				c;
+	private SpriteDrawingLayer	sprite;
 
-	public LanternModel(EntityLantern e, Game game) {
+	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture) {
 		entity = e;
 		g = game;
+		c = color;
+		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor(spriteTexture).get(0)));
 	}
 
 	@Override
@@ -29,6 +36,7 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	public void tick(float timeStep) {
 		light.setActive(true);
 		light.setPosition(entity.getBody().getWorldCenter());
+		sprite.getSprite().setOriginCenter();
 	}
 
 	@Override
@@ -46,7 +54,7 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 
 	@Override
 	public IDrawingLayer[] getDrawingLayers() {
-		return new IDrawingLayer[] {};
+		return new IDrawingLayer[] {sprite};
 	}
 
 	@Override
@@ -69,7 +77,11 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	}
 	
 	public static Color getLIGHT_COLOR() {
-		return LIGHT_COLOR;
+		return LIGHT_COLOR;//new Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(), 1);
+	}
+	
+	public Color getColor() {
+		return c;
 	}
 	
 	public Light getLight() {

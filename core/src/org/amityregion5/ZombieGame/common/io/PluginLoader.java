@@ -105,7 +105,7 @@ public class PluginLoader {
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
 		String[] sections = prevPath.split(Pattern.quote("/"));
 		if (handle.extension().equals("png")) {
-			Gdx.app.debug("Plugin Loader", "Player Found: " + loc);
+			Gdx.app.debug("Plugin Loader", "Image Found: " + loc);
 			Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
 		}
 		if (sections.length >= 2) {

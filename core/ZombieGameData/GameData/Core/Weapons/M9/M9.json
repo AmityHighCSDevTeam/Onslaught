@@ -16,7 +16,8 @@
       "bulletColor": "ffff00ff",
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/M9/0I.png",
-      "gameTxtr": "Core/Weapons/M9/0G.png"
+      "gameTxtr": "Core/Weapons/M9/0G.png",
+      "isAuto": "false"
     },
     {
       "price": 20,
@@ -31,7 +32,8 @@
       "bulletColor": "ffffffff",
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/M9/1I.png",
-      "gameTxtr": "Core/Weapons/M9/1G.png"
+      "gameTxtr": "Core/Weapons/M9/1G.png",
+      "isAuto": "true"
     }
   ]
 }

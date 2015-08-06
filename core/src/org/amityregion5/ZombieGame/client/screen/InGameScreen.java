@@ -20,10 +20,6 @@ import org.amityregion5.ZombieGame.common.game.model.LanternModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
 
-import box2dLight.ConeLight;
-import box2dLight.PointLight;
-import box2dLight.RayHandler;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
@@ -40,6 +36,10 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+
+import box2dLight.ConeLight;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 
 /**
  *
@@ -65,8 +65,10 @@ public class InGameScreen extends GuiScreen {
 		super(prevScreen);
 
 		this.game = game;
-
+		
 		rayHandler = new RayHandler(game.getWorld());
+		
+		game.setLighting(rayHandler);
 
 		shapeRenderer = new ShapeRenderer();
 		
@@ -90,7 +92,7 @@ public class InGameScreen extends GuiScreen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0.15f, 0, 1);
+		Gdx.gl.glClearColor(0, 0.25f, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
 		game.tick(delta);
@@ -100,7 +102,7 @@ public class InGameScreen extends GuiScreen {
 				- camera.position.y);
 		camera.update();
 
-		debugRenderer.render(game.getWorld(), camera.combined);
+		//debugRenderer.render(game.getWorld(), camera.combined);
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		batch.setProjectionMatrix(camera.combined);
@@ -111,7 +113,7 @@ public class InGameScreen extends GuiScreen {
 		}
 		batch.setProjectionMatrix(oldBatchMatrix);
 
-		rayHandler.setCombinedMatrix(camera.combined);
+		rayHandler.setCombinedMatrix(camera);
 		rayHandler.updateAndRender();
 
 		super.render(delta);
@@ -162,9 +164,9 @@ public class InGameScreen extends GuiScreen {
 		drawHUD();
 		
 		if (Gdx.input.isKeyJustPressed(Keys.L)) {
-			LanternModel lantern = new LanternModel(new EntityLantern(), game);
+			LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
 			lantern.setLight(new PointLight(rayHandler, 300,
-					LanternModel.getLIGHT_COLOR(), 10, mouseCoord.x, mouseCoord.y));
+					lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			

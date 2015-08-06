@@ -22,15 +22,18 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+import box2dLight.RayHandler;
+
 public class Game implements Disposable {
 
 	private World	world;
 	private float	accumulator;
-	private ArrayList<IEntityModel<?>>	entities, entitiesToDelete;
+	private ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete;
 	private ArrayList<IBullet>	activeBullets;
 	private ArrayList<PlayerModel> players;
 	private Random				rand;
 	private Difficulty diff;
+	private RayHandler lighting;
 
 	private double timeUntilNextWave;
 	//private float waveDifficulty;
@@ -47,6 +50,7 @@ public class Game implements Disposable {
 
 		world = new World(new Vector2(0, 0), true);
 		entities = new ArrayList<IEntityModel<?>>();
+		entitiesToAdd = new ArrayList<IEntityModel<?>>();
 		entitiesToDelete = new ArrayList<IEntityModel<?>>();
 		activeBullets = new ArrayList<IBullet>();
 		players = new ArrayList<PlayerModel>();
@@ -73,16 +77,28 @@ public class Game implements Disposable {
 			world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS,
 					Constants.POSITION_ITERATIONS);
 			accumulator -= Constants.TIME_STEP;
-			
-			Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
-			if(!world.isLocked()){
-				while(i.hasNext()){
-					IEntityModel<?> b = i.next();
-					world.destroyBody(b.getEntity().getBody());
-					entities.remove(b);
-					i.remove();
-					if (b.isHostile()) {
-						hostiles--;
+
+			{
+				Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
+				if(!world.isLocked()){
+					while(i.hasNext()){
+						IEntityModel<?> b = i.next();
+						world.destroyBody(b.getEntity().getBody());
+						entities.remove(b);
+						i.remove();
+						if (b.isHostile()) {
+							hostiles--;
+						}
+					}
+				}
+			}
+			{
+				Iterator<IEntityModel<?>> i = entitiesToAdd.iterator();
+				if(!world.isLocked()){
+					while(i.hasNext()){
+						IEntityModel<?> b = i.next();
+						entities.add(b);
+						i.remove();
 					}
 				}
 			}
@@ -182,7 +198,7 @@ public class Game implements Disposable {
 			players.add((PlayerModel)entity);
 		}
 
-		entities.add(entity);
+		entitiesToAdd.add(entity);
 	}
 
 	public Optional<IEntityModel<?>> getEntityFromBody(Body b) {
@@ -225,5 +241,13 @@ public class Game implements Disposable {
 
 	public Difficulty getDifficulty() {
 		return diff;
+	}
+
+	public RayHandler getLighting() {
+		return lighting;
+	}
+
+	public void setLighting(RayHandler lighting) {
+		this.lighting = lighting;
 	}
 }

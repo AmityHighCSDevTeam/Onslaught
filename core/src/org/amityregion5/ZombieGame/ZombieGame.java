@@ -8,9 +8,12 @@ import java.util.Random;
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
+import org.amityregion5.ZombieGame.common.entity.EntityLantern;
+import org.amityregion5.ZombieGame.common.game.model.LanternModel;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
+import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
 import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
 import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 
@@ -18,10 +21,13 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+
+import box2dLight.PointLight;
 
 /**
  *
@@ -47,6 +53,7 @@ public class ZombieGame extends Game {
 	 *
 	 * @param isServer
 	 *            is the game a server
+ * @param config 
 	 */
 	public ZombieGame(boolean isServer) {
 		instance = this; // Set the instance
@@ -73,6 +80,8 @@ public class ZombieGame extends Game {
 			setScreen(new LoadingScreen()); // Set the screen to a loading
 											// screen
 		}
+		
+		
 
 		// Thread for loading the game
 		new Thread(
@@ -102,11 +111,30 @@ public class ZombieGame extends Game {
 					
 					pluginManager.getCorePlugin().addWeaponClass(SemiAuto.class);
 					pluginManager.getCorePlugin().addWeaponClass(Shotgun.class);
+					pluginManager.getCorePlugin().addWeaponClass(Placeable.class);
+					
+					Placeable.registeredObjects.put("Lantern_0", (g, vector)->{
+						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
+						lantern.setLight(new PointLight(g.getLighting(), 300,
+								lantern.getColor(), 10, vector.x, vector.y));
+						lantern.getEntity().setFriction(0.99f);
+						lantern.getEntity().setMass(10);
+						return lantern;
+					});
+					Placeable.registeredObjects.put("Lantern_1", (g, vector)->{
+						LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1,0,0,1), "Core/Entity/Lantern/1.png");
+						lantern.setLight(new PointLight(g.getLighting(), 300,
+								lantern.getColor(), 10, vector.x, vector.y));
+						lantern.getEntity().setFriction(0.99f);
+						lantern.getEntity().setMass(10);
+						return lantern;
+					});
 					
 					loader.loadPlugins(plugins);
 
 					// If it is a client
 					if (!isServer) {
+						
 						// Load the texture for buttons
 						Gdx.app.log("Loading", "Loading button texture");
 						Gdx.app.postRunnable(() -> {

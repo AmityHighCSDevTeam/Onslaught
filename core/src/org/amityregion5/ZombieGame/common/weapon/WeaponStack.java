@@ -11,6 +11,12 @@ public class WeaponStack {
 	private double	cooldown, warmup;
 	private boolean	warmingUp;
 	private IWeapon	weapon;
+	
+	//warmup stuffs
+	private Vector2 warmupEnd;
+	private Game warmupGame;
+	private PlayerModel warmupFiring;
+	private double warmupMaxFireDegrees;
 
 	public WeaponStack(IWeapon weapon) {
 		this.weapon = weapon;
@@ -140,8 +146,8 @@ public class WeaponStack {
 	}
 
 	public void onUse(Vector2 end, Game game, PlayerModel playerModel,
-			int maxDegrees) {
-		weapon.onUse(end, game, playerModel, maxDegrees, this);
+			int maxDegrees, boolean isMouseJustDown) {
+		weapon.onUse(end, game, playerModel, maxDegrees, this, isMouseJustDown);
 	}
 
 	public String getAmmoString() {
@@ -159,5 +165,61 @@ public class WeaponStack {
 	@Override
 	public String toString() {
 		return "WeaponStack{Weapon:" + weapon.getName() + ",Level:" + level + "}";
+	}
+
+	/**
+	 * @return the warmupEnd
+	 */
+	public Vector2 getWarmupEnd() {
+		return warmupEnd;
+	}
+
+	/**
+	 * @param warmupEnd the warmupEnd to set
+	 */
+	public void setWarmupEnd(Vector2 warmupEnd) {
+		this.warmupEnd = warmupEnd;
+	}
+
+	/**
+	 * @return the warmupGame
+	 */
+	public Game getWarmupGame() {
+		return warmupGame;
+	}
+
+	/**
+	 * @param warmupGame the warmupGame to set
+	 */
+	public void setWarmupGame(Game warmupGame) {
+		this.warmupGame = warmupGame;
+	}
+
+	/**
+	 * @return the warmupFiring
+	 */
+	public PlayerModel getWarmupFiring() {
+		return warmupFiring;
+	}
+
+	/**
+	 * @param warmupFiring the warmupFiring to set
+	 */
+	public void setWarmupFiring(PlayerModel warmupFiring) {
+		this.warmupFiring = warmupFiring;
+	}
+
+	/**
+	 * @return the warmupMaxFireDegrees
+	 */
+	public double getWarmupMaxFireDegrees() {
+		return warmupMaxFireDegrees;
+	}
+
+	/**
+	 * @param warmupMaxFireDegrees the warmupMaxFireDegrees to set
+	 */
+	public void setWarmupMaxFireDegrees(double warmupMaxFireDegrees) {
+		this.warmupMaxFireDegrees = warmupMaxFireDegrees;
 	}
 }

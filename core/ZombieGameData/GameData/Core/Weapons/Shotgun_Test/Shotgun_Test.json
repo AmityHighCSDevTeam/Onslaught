@@ -16,7 +16,8 @@
       "bulletColor": "ffff00ff",
       "bulletThickness": 1,
       "shots": 5,
-      "spread": 2
+      "spread": 2,
+      "isAuto": "false"
     }
   ]
 }

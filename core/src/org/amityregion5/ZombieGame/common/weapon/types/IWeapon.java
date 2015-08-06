@@ -5,7 +5,7 @@ import java.util.Map;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
-import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
@@ -25,7 +25,7 @@ public interface IWeapon {
 
 	public boolean loadWeapon(JSONObject json);
 
-	public WeaponData getWeaponData(int level);
+	public IWeaponDataBase getWeaponData(int level);
 
 	public int getNumLevels();
 
@@ -37,7 +37,7 @@ public interface IWeapon {
 	public String getAmmoString(WeaponStack stack);
 
 	public void onUse(Vector2 end, Game game, PlayerModel playerModel,
-			double maxFireDegrees, WeaponStack stack);
+			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown);
 
 	public void purchaseAmmo(PlayerModel playerModel, WeaponStack stack);
 

@@ -35,6 +35,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private Light				light, circleLight;
 	private SpriteDrawingLayer	sprite;
 	private float health, maxHealth, speed;
+	private boolean shootJustPressed = false;
 
 	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
 		this.entity = entity;
@@ -65,7 +66,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.F)) {
 				getLight().setActive(!getLight().isActive());
-				getCircleLight().setActive(getLight().isActive());
+				//getCircleLight().setActive(getLight().isActive());
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.B)) {
 				hotbar[currentWeapon].purchaseAmmo(this);
@@ -76,8 +77,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			if (Gdx.input.isKeyJustPressed(Keys.Q)) {
 				Gdx.app.error("Hotbar Dump", Arrays.deepToString(hotbar));
 			}
-			if (Gdx.input.isButtonPressed(Buttons.LEFT) && weapons.size() > 0) {
-				hotbar[currentWeapon].onUse(mousePos, g, this, 15);
+			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+				if (weapons.size() > 0) {
+					hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
+				}
+				shootJustPressed = false;
+			} else {
+				shootJustPressed = true;
 			}
 			BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
 			getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));

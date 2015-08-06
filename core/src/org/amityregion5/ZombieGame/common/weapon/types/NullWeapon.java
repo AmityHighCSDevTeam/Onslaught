@@ -45,7 +45,7 @@ public final class NullWeapon implements IWeapon {
 
 	@Override
 	public void onUse(Vector2 end, Game game, PlayerModel firing,
-			double maxFireDegrees, WeaponStack stack) {
+			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
 	}
 
 	@Override

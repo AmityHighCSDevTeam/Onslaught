@@ -30,7 +30,7 @@ public class EntityLantern implements IEntity, Disposable {
 	@Override
 	public Shape getShape() {
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.05f);
+		shape.setRadius(0.1f);
 		return shape;
 	}
 

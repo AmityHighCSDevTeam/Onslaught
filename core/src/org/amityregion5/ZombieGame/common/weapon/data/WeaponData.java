@@ -4,13 +4,14 @@ import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
 
-public class WeaponData {
+public class WeaponData implements IWeaponDataBase {
 	private double	price, ammoPrice, damage, knockback, accuracy,
 			preFireDelay, postFireDelay, reloadTime;
 	private int		maxAmmo;
 	private float bulletThickness;
 	private Color bulletColor;
 	private String iconTextureString, gameTextureString;
+	private boolean isAuto;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -62,6 +63,23 @@ public class WeaponData {
 		if (o.containsKey("bulletThickness")) {
 			bulletThickness = ((Number) o.get("bulletThickness")).floatValue();
 		}
+		if (o.containsKey("isAuto")) {
+			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
+		}
+	}
+
+	/**
+	 * @return the isAuto
+	 */
+	public boolean isAuto() {
+		return isAuto;
+	}
+
+	/**
+	 * @param isAuto the isAuto to set
+	 */
+	public void setAuto(boolean isAuto) {
+		this.isAuto = isAuto;
 	}
 
 	/**

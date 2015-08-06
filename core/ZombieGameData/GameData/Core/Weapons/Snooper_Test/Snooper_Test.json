@@ -14,7 +14,8 @@
       "preFireDelay": 0,
       "postFireDelay": 0.2,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 3
+      "bulletThickness": 3,
+      "isAuto": "false"
     }
   ]
 }

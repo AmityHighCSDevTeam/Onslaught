@@ -1,0 +1,31 @@
+{
+  "name": "Lantern Test",
+  "desc": "Lantern/Placeable item test",
+  "className": "Placeable",
+  "weapon": [
+    {
+      "price": 0,
+      "ammoPrice": 100,
+      "maxAmmo": 1,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Entity/Lantern/0.png",
+      "gameTxtr": "Core/Entity/Lantern/0.png",
+      "maxRange": 25,
+      "object": "Lantern_0"
+    },
+    {
+      "price": 0,
+      "ammoPrice": 100,
+      "maxAmmo": 1,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Entity/Lantern/1.png",
+      "gameTxtr": "Core/Entity/Lantern/1.png",
+      "maxRange": 25,
+      "object": "Lantern_1"
+    }
+  ]
+}
