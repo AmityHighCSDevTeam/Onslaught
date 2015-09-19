@@ -13,6 +13,7 @@ import org.amityregion5.ZombieGame.common.game.model.LanternModel;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
+import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
 import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
 import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
@@ -112,6 +113,7 @@ public class ZombieGame extends Game {
 					pluginManager.getCorePlugin().addWeaponClass(SemiAuto.class);
 					pluginManager.getCorePlugin().addWeaponClass(Shotgun.class);
 					pluginManager.getCorePlugin().addWeaponClass(Placeable.class);
+					pluginManager.getCorePlugin().addWeaponClass(Grenade.class);
 					
 					Placeable.registeredObjects.put("Lantern_0", (g, vector)->{
 						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");

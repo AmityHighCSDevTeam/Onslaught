@@ -24,6 +24,8 @@ public interface IBullet extends RayCastCallback {
 	public Vector2 getStart();
 
 	public Vector2 getEnd();
+	
+	public boolean doDraw();
 
 	public Color getColor();
 

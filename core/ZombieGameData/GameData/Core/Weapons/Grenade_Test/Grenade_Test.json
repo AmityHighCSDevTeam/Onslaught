@@ -1,0 +1,20 @@
+{
+  "name": "Grenade_Test",
+  "desc": "Grenade Test",
+  "className": "Grenade",
+  "weapon": [
+    {
+      "price": 10,
+      "ammoPrice": 10,
+      "strength": 2.5,
+      "accuracy": 2,
+      "maxAmmo": 10,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "iconTxtr": "Core/Weapons/Grenade_Test/0I.png",
+      "gameTxtr": "Core/Weapons/Grenade_Test/0G.png",
+      "isAuto": "false"
+    }
+  ]
+}

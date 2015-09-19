@@ -99,8 +99,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			currentWeapon = 2;
 		}
 
-		getLight().setPosition(entity.getBody().getWorldCenter());
-		getCircleLight().setPosition(entity.getBody().getWorldCenter());
+		getLight().attachToBody(entity.getBody());
+		getCircleLight().attachToBody(entity.getBody());
+		//getLight().setPosition(entity.getBody().getWorldCenter());
+		//getCircleLight().setPosition(entity.getBody().getWorldCenter());
 		
 		if (currentWeapon < getHotbar().length && currentWeapon >= 0) {
 			getHotbar()[currentWeapon].tick(delta);

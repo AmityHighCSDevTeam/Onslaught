@@ -22,26 +22,21 @@ import com.badlogic.gdx.physics.box2d.Fixture;
  * @author savelyevse17
  *
  */
-public class BasicBullet implements IBullet {
+public class ExplosionRaycastBullet implements IBullet {
 
-	private float	knockback, dir, damage;
+	private float	dir, damage;
 	private Game	g;
 	private Vector2	endPoint;
 	private Vector2	start;
 	private PlayerModel source;
-	private Color color;
-	private float bulletThickness;
 	private List<HitData> hits;
 
-	public BasicBullet(Game g, Vector2 start, float speed, float damage,
-			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness) {
+	public ExplosionRaycastBullet(Game g, Vector2 start, float damage,
+			Vector2 bullVector, PlayerModel source) {
 		this.g = g;
 		this.start = start;
-		knockback = speed;
 		this.damage = damage;
 		this.source = source;
-		this.color = color;
-		this.bulletThickness = bulletThickness;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
 	}
@@ -53,7 +48,6 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public void setKnockback(float speed) {
-		knockback = speed;
 	}
 
 	@Override
@@ -63,7 +57,7 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public float getKnockback() {
-		return knockback;
+		return 0;
 	}
 
 	@Override
@@ -88,7 +82,7 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public Color getColor() {
-		return color;
+		return Color.RED;
 	}
 
 	@Override
@@ -114,14 +108,16 @@ public class BasicBullet implements IBullet {
 		Collections.sort(hits);
 		
 		for (HitData hd : hits) {
-			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
+			hd.hit.applyLinearImpulse(VectorFactory.createVector(damage/(start.dst(hd.hitPoint)*100f), dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 			
-			if (entity.isPresent()) {
-				damage -= entity.get().damage(damage, source);
+			float damageToDeal = damage/start.dst(hd.hitPoint);
+			
+			if (entity.isPresent() && damageToDeal > 0) {
+				damage -= entity.get().damage(damageToDeal, source);
 			}
 			
-			if (damage <= 0) {
+			if (damage <= 0 || damageToDeal <= 0) {
 				endPoint = hd.hitPoint;
 				break;
 			}
@@ -130,7 +126,7 @@ public class BasicBullet implements IBullet {
 	
 	@Override
 	public float getThickness() {
-		return bulletThickness;
+		return 1;
 	}
 	
 	private class HitData implements Comparable<HitData> {
@@ -146,6 +142,6 @@ public class BasicBullet implements IBullet {
 
 	@Override
 	public boolean doDraw() {
-		return true;
+		return false;
 	}
 }

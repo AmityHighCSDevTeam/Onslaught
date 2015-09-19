@@ -1,34 +1,28 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
+import org.amityregion5.ZombieGame.client.game.ExplosionParticleDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
-import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
-import org.amityregion5.ZombieGame.common.entity.EntityLantern;
+import org.amityregion5.ZombieGame.common.entity.EntityExplosionParticle;
 import org.amityregion5.ZombieGame.common.game.Game;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import box2dLight.Light;
 
-public class LanternModel implements IEntityModel<EntityLantern>{
-	public static final Color	LIGHT_COLOR	= new Color(1,1,1,130f/255);
-
+public class ExplosionParticleModel implements IEntityModel<EntityExplosionParticle>{
 	private Light				light;
-	private EntityLantern entity;
+	private EntityExplosionParticle entity;
 	private Game				g;
 	private Color				c;
-	private SpriteDrawingLayer	sprite;
 
-	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture) {
+	public ExplosionParticleModel(EntityExplosionParticle e, Game game, Color color) {
 		entity = e;
 		g = game;
 		c = color;
-		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor(spriteTexture).get(0)));
 	}
 
 	@Override
-	public EntityLantern getEntity() {
+	public EntityExplosionParticle getEntity() {
 		return entity;
 	}
 
@@ -36,10 +30,14 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	public void tick(float timeStep) {
 		if (light != null) {
 			light.setActive(true);
+			light.setColor(light.getColor().mul(0.9f));
 			light.attachToBody(entity.getBody());
+			if (light.getColor().a < 0.05) {
+				damage(0, this);
+			}
 		}
 		//light.setPosition(entity.getBody().getWorldCenter());
-		sprite.getSprite().setOriginCenter();
+		//sprite.getSprite().setOriginCenter();
 	}
 
 	@Override
@@ -53,6 +51,9 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source) {
+		if (source != this) {
+			return 0;
+		}
 		g.removeEntity(this);
 		if (light != null) {
 			light.remove();
@@ -63,7 +64,7 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 
 	@Override
 	public IDrawingLayer[] getDrawingLayers() {
-		return new IDrawingLayer[] {sprite};
+		return new IDrawingLayer[]{ExplosionParticleDrawingLayer.instance};//new IDrawingLayer[] {sprite};
 	}
 
 	@Override
@@ -83,10 +84,6 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	@Override
 	public boolean isHostile() {
 		return false;
-	}
-
-	public static Color getLIGHT_COLOR() {
-		return LIGHT_COLOR;//new Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(), 1);
 	}
 
 	public Color getColor() {

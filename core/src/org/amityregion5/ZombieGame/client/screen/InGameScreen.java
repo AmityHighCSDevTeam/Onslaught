@@ -67,6 +67,7 @@ public class InGameScreen extends GuiScreen {
 		this.game = game;
 		
 		rayHandler = new RayHandler(game.getWorld());
+		RayHandler.useDiffuseLight(true);
 		
 		game.setLighting(rayHandler);
 
@@ -92,7 +93,7 @@ public class InGameScreen extends GuiScreen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0.25f, 0, 1);
+		Gdx.gl.glClearColor(0, 0.75f, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
 		game.tick(delta);
@@ -106,6 +107,7 @@ public class InGameScreen extends GuiScreen {
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		batch.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
 				s.draw(e, batch, shapeRenderer);
@@ -121,7 +123,7 @@ public class InGameScreen extends GuiScreen {
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
-			if (bull.getEnd() != null) {
+			if (bull.getEnd() != null && bull.doDraw()) {
 				Gdx.gl.glLineWidth(bull.getThickness());
 				shapeRenderer.setColor(bull.getColor());
 
@@ -198,6 +200,10 @@ public class InGameScreen extends GuiScreen {
 				currentWindow.dispose();
 				currentWindow = null;
 			}
+		}
+		
+		if (Gdx.input.isKeyJustPressed(Keys.E)) {
+			game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 10, player);
 		}
 
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {

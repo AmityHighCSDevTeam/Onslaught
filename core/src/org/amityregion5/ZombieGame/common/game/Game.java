@@ -6,13 +6,18 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.amityregion5.ZombieGame.common.Constants;
+import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
+import org.amityregion5.ZombieGame.common.entity.EntityExplosionParticle;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.game.model.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
+import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -22,6 +27,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 public class Game implements Disposable {
@@ -44,6 +50,10 @@ public class Game implements Disposable {
 
 	private float big = 25;
 	private float small = 12.5f;
+	
+	private float minVal = 0.01f;
+	private int explosionRaycasts = 720;
+	private float areaPerParticle = 0.1f;
 
 	public Game(Difficulty diff) {
 		this.diff = diff;
@@ -89,6 +99,7 @@ public class Game implements Disposable {
 						if (b.isHostile()) {
 							hostiles--;
 						}
+						b.dispose();
 					}
 				}
 			}
@@ -185,7 +196,7 @@ public class Game implements Disposable {
 		fixtureDef.shape = shape;
 		fixtureDef.density = 0.5f;
 		fixtureDef.friction = 0.5f;
-		fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+		fixtureDef.restitution = 0f; // Make it bounce a little bit
 
 		// Create our fixture and attach it to the body
 		/* Fixture fixture = */body.createFixture(fixtureDef);
@@ -249,5 +260,40 @@ public class Game implements Disposable {
 
 	public void setLighting(RayHandler lighting) {
 		this.lighting = lighting;
+	}
+
+	public void makeExplosion(Vector2 pos, double strength, PlayerModel source) {
+		
+		double dist = (strength/explosionRaycasts)/minVal;
+		
+		double radPerRaycast = 2 * Math.PI / explosionRaycasts;
+		for (int i=0; i<explosionRaycasts; i++) {
+			double dir = radPerRaycast * i;
+			
+			Vector2 bullVector = VectorFactory.createVector((float)dist, (float)dir);
+			
+			ExplosionRaycastBullet bull = new ExplosionRaycastBullet(this, pos, (float)(strength/explosionRaycasts), bullVector, source);
+			bull.setDir((float) dir);
+
+			this.getActiveBullets().add(bull);
+			this.getWorld().rayCast(bull, pos, bullVector.add(pos));
+			bull.finishRaycast();
+		}
+		
+		double area = Math.PI * dist * dist;
+		
+		int particles = (int) (area/areaPerParticle);
+		
+		for (int i = 0; i<particles; i++) {
+			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
+			
+			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(new EntityExplosionParticle(), this, new Color(1f, 0.1f, 0.1f, 1f));
+			
+			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
+			explosionParticle.getEntity().setFriction(0.99f);
+			explosionParticle.getEntity().setMass(0.1f);
+			
+			addEntityToWorld(explosionParticle, pos2.x, pos2.y);
+		}
 	}
 }
