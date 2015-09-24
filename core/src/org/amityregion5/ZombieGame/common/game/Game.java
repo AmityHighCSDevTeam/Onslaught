@@ -51,7 +51,7 @@ public class Game implements Disposable {
 	private float big = 25;
 	private float small = 12.5f;
 	
-	private float minVal = 0.01f;
+	private float minVal = 0.05f;
 	private int explosionRaycasts = 720;
 	private float areaPerParticle = 0.1f;
 
@@ -166,8 +166,12 @@ public class Game implements Disposable {
 	public World getWorld() {
 		return world;
 	}
-
+	
 	public void addEntityToWorld(IEntityModel<?> entity, float x, float y) {
+		addEntityToWorld(entity, x, y, (short)1, (short)1);
+	}
+
+	public void addEntityToWorld(IEntityModel<?> entity, float x, float y, short maskBits, short categoryBits) {
 		Body body = entity.getEntity().getBody();
 
 		if (body == null) {
@@ -197,6 +201,8 @@ public class Game implements Disposable {
 		fixtureDef.density = 0.5f;
 		fixtureDef.friction = 0.5f;
 		fixtureDef.restitution = 0f; // Make it bounce a little bit
+		fixtureDef.filter.categoryBits = categoryBits;
+		fixtureDef.filter.maskBits = maskBits;
 
 		// Create our fixture and attach it to the body
 		/* Fixture fixture = */body.createFixture(fixtureDef);
@@ -284,16 +290,21 @@ public class Game implements Disposable {
 		
 		int particles = (int) (area/areaPerParticle);
 		
+		dist/=2;
+		
 		for (int i = 0; i<particles; i++) {
-			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
+			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
 			
 			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(new EntityExplosionParticle(), this, new Color(1f, 0.1f, 0.1f, 1f));
 			
 			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
+			explosionParticle.getLight().setXray(true);
 			explosionParticle.getEntity().setFriction(0.99f);
 			explosionParticle.getEntity().setMass(0.1f);
 			
-			addEntityToWorld(explosionParticle, pos2.x, pos2.y);
+			addEntityToWorld(explosionParticle, pos2.x, pos2.y, (short)0b0001, (short)0b0010);
+			
+			explosionParticle.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad()), true);
 		}
 	}
 }

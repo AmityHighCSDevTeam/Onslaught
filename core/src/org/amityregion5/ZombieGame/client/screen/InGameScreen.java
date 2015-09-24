@@ -38,6 +38,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import box2dLight.ConeLight;
+import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -66,6 +67,8 @@ public class InGameScreen extends GuiScreen {
 
 		this.game = game;
 		
+		Light.setGlobalContactFilter((short)1, (short)0, (short)1);
+		
 		rayHandler = new RayHandler(game.getWorld());
 		RayHandler.useDiffuseLight(true);
 		
@@ -93,8 +96,10 @@ public class InGameScreen extends GuiScreen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0.75f, 0, 1);
+		Gdx.gl.glClearColor(0.5f, 1f, 0.5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+		//Gdx.gl.glClearColor(0f, 1f, 0f, 0.1f);
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
 		game.tick(delta);
 

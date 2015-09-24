@@ -21,6 +21,7 @@ public class EntityGrenade implements IEntity, Disposable {
 
 	public EntityGrenade() {
 		massData = new MassData();
+		friction = 0.975f;
 	}
 
 	@Override

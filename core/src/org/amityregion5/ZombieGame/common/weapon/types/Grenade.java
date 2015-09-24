@@ -3,8 +3,12 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.amityregion5.ZombieGame.common.entity.EntityGrenade;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.model.GrenadeModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
+import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.GrenadeData;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
@@ -107,8 +111,37 @@ public class Grenade implements IWeapon {
 	protected void fireWeapon(Vector2 end, Game game, PlayerModel firing,
 			double maxFireDegrees, WeaponStack stack) {
 		
+		GrenadeData gData = data.get(stack.getLevel());
 		
+		stack.setAmmo(stack.getAmmo() - 1);
 		
+		double dir = MathHelper.clampAngleAroundCenter(firing
+				.getEntity().getBody().getAngle(), MathHelper
+				.getDirBetweenPoints(
+						firing.getEntity().getBody().getPosition(), end), Math
+				.toRadians(maxFireDegrees));
+
+		dir -= Math.toRadians(data.get(stack.getLevel())
+				.getAccuracy() / 2);
+
+		dir += Math.toRadians(game.getRandom().nextDouble()
+				* data.get(stack.getLevel()).getAccuracy());
+
+		dir = MathHelper.fixAngle(dir);
+
+		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade(), game, firing, gData.getGameTextureString());
+		
+		grenadeModel.setStrength(gData.getStrength());
+		grenadeModel.setTimeUntilExplosion((float) gData.getFuseTime());
+		
+		Vector2 playerPos = firing.getEntity().getBody().getWorldCenter();
+		
+		Vector2 pos = VectorFactory.createVector(0.18f, (float)dir);
+		
+		game.addEntityToWorld(grenadeModel, pos.x + playerPos.x, pos.y + playerPos.y);
+		
+		grenadeModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float)gData.getThrowSpeed(), (float)dir), true);
+		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
 	}
 
 	@Override
@@ -131,6 +164,7 @@ public class Grenade implements IWeapon {
 		map.put("Price", d.getPrice() + "");
 		map.put("Ammo Price", d.getAmmoPrice() + "");
 		map.put("Strength", d.getStrength() + "");
+		map.put("Fuse Time", d.getFuseTime() + "");
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
 		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
 		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");

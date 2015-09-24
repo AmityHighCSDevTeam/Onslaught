@@ -3,7 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
-	private double	price, ammoPrice, strength, accuracy,
+	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed,
 			preFireDelay, postFireDelay, reloadTime;
 	private int		maxAmmo;
 	private String iconTextureString, gameTextureString;
@@ -18,6 +18,12 @@ public class GrenadeData implements IWeaponDataBase {
 		}
 		if (o.containsKey("strength")) {
 			strength = ((Number) o.get("strength")).doubleValue();
+		}
+		if (o.containsKey("fuseTime")) {
+			fuseTime = ((Number) o.get("fuseTime")).doubleValue();
+		}
+		if (o.containsKey("throwSpeed")) {
+			throwSpeed = ((Number) o.get("throwSpeed")).doubleValue();
 		}
 		if (o.containsKey("accuracy")) {
 			accuracy = ((Number) o.get("accuracy")).doubleValue();
@@ -47,6 +53,34 @@ public class GrenadeData implements IWeaponDataBase {
 		if (o.containsKey("isAuto")) {
 			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
 		}
+	}
+
+	/**
+	 * @return the throwSpeed
+	 */
+	public double getThrowSpeed() {
+		return throwSpeed;
+	}
+
+	/**
+	 * @param throwSpeed the throwSpeed to set
+	 */
+	public void setThrowSpeed(double throwSpeed) {
+		this.throwSpeed = throwSpeed;
+	}
+
+	/**
+	 * @return the fuseTime
+	 */
+	public double getFuseTime() {
+		return fuseTime;
+	}
+
+	/**
+	 * @param fuseTime the fuseTime to set
+	 */
+	public void setFuseTime(double fuseTime) {
+		this.fuseTime = fuseTime;
 	}
 
 	/**

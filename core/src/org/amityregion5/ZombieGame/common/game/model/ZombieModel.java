@@ -129,8 +129,11 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	@Override
 	public float damage(float damage, IEntityModel<?> source) {
 		float damageTaken = Math.min(damage, health);
+		if (damageTaken < 0) {
+			damageTaken = 0;
+		}
 		health -= damageTaken;
-		if (health <= 0) {
+		if (health <= 0 && damageTaken > 0) {
 			if (source != null && source instanceof PlayerModel) {
 				PlayerModel pModel = (PlayerModel) source;
 				pModel.setMoney(pModel.getMoney() + prizeMoney);
