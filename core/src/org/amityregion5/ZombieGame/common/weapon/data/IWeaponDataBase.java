@@ -7,4 +7,14 @@ public interface IWeaponDataBase {
 	public String getIconTextureString();
 	
 	public String getGameTextureString();
+	
+	public double getGameTextureScale();
+	
+	public double getGameTextureOffsetX();
+	
+	public double getGameTextureOffsetY();
+	
+	public int getGameTextureOriginX();
+	
+	public int getGameTextureOriginY();
 }

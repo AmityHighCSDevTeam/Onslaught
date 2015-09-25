@@ -30,9 +30,12 @@ public class ExplosionParticleModel implements IEntityModel<EntityExplosionParti
 	public void tick(float timeStep) {
 		if (light != null) {
 			light.setActive(true);
-			light.setColor(light.getColor().mul(0.9f));
+			//if (light.getColor().g > 0.1) {
+			//	light.setColor(light.getColor().mul(r, g, b, a));
+			//}
+			light.setColor(light.getColor().mul(0.9f, 0.75f, 0.0f, 0.95f));
 			light.attachToBody(entity.getBody());
-			if (light.getColor().a < 0.05) {
+			if (light.getColor().r < 0.05) {
 				damage(0, this);
 			}
 		}

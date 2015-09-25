@@ -32,10 +32,10 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 		sprite.setOriginCenter();
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
 		sprite.setBounds(e.getBody().getWorldCenter().x
-				- (maxSize * model.getLight().getColor().a), e.getBody()
-				.getWorldCenter().y - (maxSize * model.getLight().getColor().a),
-				maxSize * model.getLight().getColor().a * 2,
-				maxSize * model.getLight().getColor().a * 2);
+				- (maxSize * model.getLight().getColor().r), e.getBody()
+				.getWorldCenter().y - (maxSize * model.getLight().getColor().r),
+				maxSize * model.getLight().getColor().r * 2,
+				maxSize * model.getLight().getColor().r * 2);
 
 		sprite.draw(batch);
 		batch.end();

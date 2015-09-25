@@ -18,9 +18,11 @@ public class EntityZombie implements IEntity, Disposable {
 	private Body		body;
 	private float		friction;
 	private MassData	massData;
+	private float 		size;
 
-	public EntityZombie() {
+	public EntityZombie(float size) {
 		massData = new MassData();
+		this.size= size;
 	}
 
 	@Override
@@ -30,7 +32,7 @@ public class EntityZombie implements IEntity, Disposable {
 	@Override
 	public Shape getShape() {
 		CircleShape shape = new CircleShape();
-		shape.setRadius(0.15f);
+		shape.setRadius(size);
 		return shape;
 	}
 

@@ -3,8 +3,8 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 import org.json.simple.JSONObject;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
-	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange;
-	private int		maxAmmo;
+	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY;
+	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString, placingObject;
 
 	public PlaceableWeaponData(JSONObject o) {
@@ -25,6 +25,23 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
+		}
+		if (o.containsKey("gameScale")) {
+			gameScale = ((Number) o.get("gameScale")).doubleValue();
+		} else {
+			gameScale = 1;
+		}
+		if (o.containsKey("gameOffX")) {
+			gameOffX = ((Number) o.get("gameOffX")).doubleValue();
+		}
+		if (o.containsKey("gameOffY")) {
+			gameOffY = ((Number) o.get("gameOffY")).doubleValue();
+		}
+		if (o.containsKey("gameOriginX")) {
+			gameOrgX = ((Number) o.get("gameOriginX")).intValue();
+		}
+		if (o.containsKey("gameOriginY")) {
+			gameOrgY = ((Number) o.get("gameOriginY")).intValue();
 		}
 		if (o.containsKey("maxRange")) {
 			maxRange = ((Number) o.get("maxRange")).doubleValue();
@@ -184,6 +201,31 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	 */
 	public void setPlacingObject(String placingObject) {
 		this.placingObject = placingObject;
+	}
+
+	@Override
+	public double getGameTextureScale() {
+		return gameScale;
+	}
+
+	@Override
+	public double getGameTextureOffsetX() {
+		return gameOffX;
+	}
+
+	@Override
+	public double getGameTextureOffsetY() {
+		return gameOffY;
+	}
+
+	@Override
+	public int getGameTextureOriginX() {
+		return gameOrgX;
+	}
+
+	@Override
+	public int getGameTextureOriginY() {
+		return gameOrgY;
 	}
 	
 }

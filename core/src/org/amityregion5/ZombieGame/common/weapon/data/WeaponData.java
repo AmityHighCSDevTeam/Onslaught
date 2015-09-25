@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
 	private double	price, ammoPrice, damage, knockback, accuracy,
-			preFireDelay, postFireDelay, reloadTime;
-	private int		maxAmmo;
+			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
+	private int		maxAmmo, gameOrgX, gameOrgY;
 	private float bulletThickness;
 	private Color bulletColor;
 	private String iconTextureString, gameTextureString;
@@ -40,6 +40,23 @@ public class WeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
+		}
+		if (o.containsKey("gameScale")) {
+			gameScale = ((Number) o.get("gameScale")).doubleValue();
+		} else {
+			gameScale = 1;
+		}
+		if (o.containsKey("gameOffX")) {
+			gameOffX = ((Number) o.get("gameOffX")).doubleValue();
+		}
+		if (o.containsKey("gameOffY")) {
+			gameOffY = ((Number) o.get("gameOffY")).doubleValue();
+		}
+		if (o.containsKey("gameOriginX")) {
+			gameOrgX = ((Number) o.get("gameOriginX")).intValue();
+		}
+		if (o.containsKey("gameOriginY")) {
+			gameOrgY = ((Number) o.get("gameOriginY")).intValue();
 		}
 		if (o.containsKey("iconTxtr")) {
 			iconTextureString = ((String) o.get("iconTxtr"));
@@ -271,6 +288,31 @@ public class WeaponData implements IWeaponDataBase {
 	 */
 	public void setGameTextureString(String gameTextureString) {
 		this.gameTextureString = gameTextureString;
+	}
+
+	@Override
+	public double getGameTextureScale() {
+		return gameScale;
+	}
+
+	@Override
+	public double getGameTextureOffsetX() {
+		return gameOffX;
+	}
+
+	@Override
+	public double getGameTextureOffsetY() {
+		return gameOffY;
+	}
+
+	@Override
+	public int getGameTextureOriginX() {
+		return gameOrgX;
+	}
+
+	@Override
+	public int getGameTextureOriginY() {
+		return gameOrgY;
 	}
 
 }

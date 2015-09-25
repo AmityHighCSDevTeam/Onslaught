@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
@@ -15,13 +16,13 @@ import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
-import box2dLight.Light;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+
+import box2dLight.Light;
 
 public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private EntityPlayer 		entity;
@@ -34,6 +35,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private Game				g;
 	private Light				light, circleLight;
 	private SpriteDrawingLayer	sprite;
+	private PlayerExtrasDrawingLayer extras;
 	private float health, maxHealth, speed;
 	private boolean shootJustPressed = false;
 
@@ -48,6 +50,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		hotbar = new WeaponStack[3];
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
+		extras = new PlayerExtrasDrawingLayer(this);
 	}
 
 	public void tick(float delta) {
@@ -178,7 +181,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 	@Override
 	public IDrawingLayer[] getDrawingLayers() {
-		return new IDrawingLayer[] {sprite, HealthBarDrawingLayer.instance};
+		return new IDrawingLayer[] {sprite, extras, HealthBarDrawingLayer.instance};
 	}
 
 	@Override

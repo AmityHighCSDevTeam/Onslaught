@@ -17,6 +17,11 @@
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/M9/0I.png",
       "gameTxtr": "Core/Weapons/M9/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 32,
+      "gameOriginY": 32,
       "isAuto": "false"
     },
     {

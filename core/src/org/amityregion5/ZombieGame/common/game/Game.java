@@ -147,17 +147,24 @@ public class Game implements Disposable {
 	}
 
 	private IEntityModel<?> getSpawningEntity() {
-		EntityZombie zom = new EntityZombie();
+		
+		float maxModifier = 0.8f;
+		
+		
+		float speedModifier = rand.nextFloat()*maxModifier + 1f - maxModifier/1.5f;
+		float sizeModifier = ((maxModifier+1f) - speedModifier);
+		
+		EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
 		zom.setMass(100);
 		//zom.setSpeed(1f);
 		zom.setFriction(0.99f);
 
 		ZombieModel model = new ZombieModel(zom, this);
 
-		model.setSpeed(0.03f);
-		model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(mobsSpawned)) + 4)*(diff.getDifficultyMultiplier()/2+1));
-		model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier()));
-		model.setDamage((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier()));
+		model.setSpeed(0.03f * speedModifier);
+		model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(mobsSpawned)) + 4)*(diff.getDifficultyMultiplier()/2+1) * sizeModifier*sizeModifier);
+		model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier())* sizeModifier*sizeModifier);
+		model.setDamage((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier()) * sizeModifier*sizeModifier);
 		model.setRange(zom.getShape().getRadius()*1.1f);
 
 		return model;
@@ -295,7 +302,7 @@ public class Game implements Disposable {
 		for (int i = 0; i<particles; i++) {
 			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
 			
-			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(new EntityExplosionParticle(), this, new Color(1f, 0.1f, 0.1f, 1f));
+			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(new EntityExplosionParticle(), this, new Color(1f, 1f, 0f, 1f));
 			
 			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
 			explosionParticle.getLight().setXray(true);

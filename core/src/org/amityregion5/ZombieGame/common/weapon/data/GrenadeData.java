@@ -4,8 +4,8 @@ import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
 	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed,
-			preFireDelay, postFireDelay, reloadTime;
-	private int		maxAmmo;
+			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
+	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString;
 	private boolean isAuto;
 
@@ -39,6 +39,23 @@ public class GrenadeData implements IWeaponDataBase {
 		}
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
+		}
+		if (o.containsKey("gameScale")) {
+			gameScale = ((Number) o.get("gameScale")).doubleValue();
+		} else {
+			gameScale = 1;
+		}
+		if (o.containsKey("gameOffX")) {
+			gameOffX = ((Number) o.get("gameOffX")).doubleValue();
+		}
+		if (o.containsKey("gameOffY")) {
+			gameOffY = ((Number) o.get("gameOffY")).doubleValue();
+		}
+		if (o.containsKey("gameOriginX")) {
+			gameOrgX = ((Number) o.get("gameOriginX")).intValue();
+		}
+		if (o.containsKey("gameOriginY")) {
+			gameOrgY = ((Number) o.get("gameOriginY")).intValue();
 		}
 		if (o.containsKey("iconTxtr")) {
 			iconTextureString = ((String) o.get("iconTxtr"));
@@ -242,6 +259,31 @@ public class GrenadeData implements IWeaponDataBase {
 	 */
 	public void setStrength(double strength) {
 		this.strength = strength;
+	}
+
+	@Override
+	public double getGameTextureScale() {
+		return gameScale;
+	}
+
+	@Override
+	public double getGameTextureOffsetX() {
+		return gameOffX;
+	}
+
+	@Override
+	public double getGameTextureOffsetY() {
+		return gameOffY;
+	}
+
+	@Override
+	public int getGameTextureOriginX() {
+		return gameOrgX;
+	}
+
+	@Override
+	public int getGameTextureOriginY() {
+		return gameOrgY;
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.client.window;
 
+import java.text.NumberFormat;
+
 import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
@@ -11,19 +13,21 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.Align;
 
-public class HotbarOverlay implements Screen {
+public class HUDOverlay implements Screen {
 	private ShapeRenderer shapeRender = new ShapeRenderer();
 	private InGameScreen screen;
 	private PlayerModel player;
-	//private GlyphLayout glyph = new GlyphLayout();
+	private GlyphLayout glyph = new GlyphLayout();
 	private SpriteBatch batch = new SpriteBatch();
 	private int eachBoxSize = 64;
 
-	public HotbarOverlay(InGameScreen screen, PlayerModel player) {
+	public HUDOverlay(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
 	}
@@ -32,7 +36,9 @@ public class HotbarOverlay implements Screen {
 	public void drawScreen(float delta, Camera camera) {
 		drawPrepare(delta);
 		
-		drawMain(delta);
+		drawHotbar(delta);
+		
+		drawLeftHUD(delta);
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		Gdx.gl.glLineWidth(1);
@@ -47,7 +53,7 @@ public class HotbarOverlay implements Screen {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
-	public void drawMain(float delta) {
+	public void drawHotbar(float delta) {
 		float startX = (screen.getWidth()-player.getHotbar().length*eachBoxSize)/2;
 		for (int i = 0; i<player.getHotbar().length; i++) {
 			shapeRender.begin(ShapeType.Filled);
@@ -79,6 +85,46 @@ public class HotbarOverlay implements Screen {
 		shapeRender.setColor(Color.LIGHT_GRAY);
 		shapeRender.rect(startX + eachBoxSize * player.getCurrWeapIndex(), 0, eachBoxSize, eachBoxSize);
 		shapeRender.end();
+	}
+
+	private void drawLeftHUD(float delta) {
+
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		shapeRender.setProjectionMatrix(batch.getProjectionMatrix());
+
+		shapeRender.begin(ShapeType.Filled);
+
+		shapeRender.setColor(75 / 255f, 75 / 255f, 75 / 255f, 75 / 255f);
+		shapeRender.rect(screen.getWidth() - 400, 0, 400, 200);
+		shapeRender.end();
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+
+		batch.begin();
+		screen.getFont1().draw(batch, player.getCurrentWeapon().getWeapon().getName(),
+				screen.getWidth() - 390, 190);
+		screen.getFont1().draw(batch, player.getCurrentWeapon().getAmmoString(),
+				screen.getWidth() - 390, 170);
+		screen.getFont1().draw(batch,
+				"$" + NumberFormat.getInstance().format(player.getMoney()),
+				screen.getWidth() - 390, 150);
+		batch.end();
+		
+		shapeRender.begin(ShapeType.Filled);
+		
+		shapeRender.setColor(1f, 0f, 0f, 1f);
+		shapeRender.rect(screen.getWidth() - 395, 110, 90, 20);
+		
+		shapeRender.setColor(0f, 1f, 0f, 1f);
+		shapeRender.rect(screen.getWidth() - 395, 110, 90*player.getHealth()/player.getMaxHealth(), 20);
+		
+		shapeRender.end();
+		
+		batch.begin();
+		glyph.setText(screen.getFont2(), ((int)(player.getHealth()/player.getMaxHealth()*100*10 + 0.5))/10f + "%", new Color(1,1,1,1), 90, Align.center, false);
+		screen.getFont2().draw(batch, glyph, screen.getWidth()-395/* + glyph.width/2*/, 113 + glyph.height);
+		batch.end();
 	}
 
 	@Override

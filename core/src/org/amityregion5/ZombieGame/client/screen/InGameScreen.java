@@ -1,11 +1,10 @@
 package org.amityregion5.ZombieGame.client.screen;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
-import org.amityregion5.ZombieGame.client.window.HotbarOverlay;
+import org.amityregion5.ZombieGame.client.window.HUDOverlay;
 import org.amityregion5.ZombieGame.client.window.InventoryWindow;
 import org.amityregion5.ZombieGame.client.window.Screen;
 import org.amityregion5.ZombieGame.client.window.ShopWindow;
@@ -91,7 +90,7 @@ public class InGameScreen extends GuiScreen {
 		player.setSpeed(0.05f);
 
 		game.addEntityToWorld(player, 0, 0);
-		overlays.add(new HotbarOverlay(this, player));
+		overlays.add(new HUDOverlay(this, player));
 	}
 
 	@Override
@@ -167,8 +166,6 @@ public class InGameScreen extends GuiScreen {
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
 		
 		//player.tick(delta);
-
-		drawHUD();
 		
 		if (Gdx.input.isKeyJustPressed(Keys.L)) {
 			LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
@@ -208,11 +205,11 @@ public class InGameScreen extends GuiScreen {
 		}
 		
 		if (Gdx.input.isKeyJustPressed(Keys.E)) {
-			game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 10, player);
+			game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 50, player);
 		}
 
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
-			EntityZombie zom = new EntityZombie();
+			EntityZombie zom = new EntityZombie(0.15f);
 			zom.setMass(100);
 			zom.setFriction(0.99f);
 			
@@ -250,43 +247,21 @@ public class InGameScreen extends GuiScreen {
 
 		font1 = generator.generateFont(parameter);
 
-		parameter.size = 24;
+		parameter.size = 20;
+		parameter.borderWidth = 1;
+		parameter.borderStraight = true;
+		parameter.borderColor = new Color(0,0,0,1);
 		font2 = generator.generateFont(parameter);
 
 		generator.dispose();
 
 		font1.setColor(1, 1, 1, 1);
-		font2.setColor(0, 0, 0, 1);
+		font2.setColor(1, 1, 1, 1);
 
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false,
 				true);
 
 		camera = new OrthographicCamera(12, 9);
-	}
-
-	private void drawHUD() {
-		batch.end();
-
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-		shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-
-		shapeRenderer.begin(ShapeType.Filled);
-
-		shapeRenderer.setColor(75 / 255f, 75 / 255f, 75 / 255f, 75 / 255f);
-		shapeRenderer.rect(getWidth() - 400, 0, 400, 200);
-		shapeRenderer.end();
-		Gdx.gl.glDisable(GL20.GL_BLEND);
-
-		batch.begin();
-		font1.draw(batch, player.getCurrentWeapon().getWeapon().getName(),
-				getWidth() - 390, 190);
-		font1.draw(batch, player.getCurrentWeapon().getAmmoString(),
-				getWidth() - 390, 170);
-		font1.draw(batch,
-				"$" + NumberFormat.getInstance().format(player.getMoney()),
-				getWidth() - 390, 150);
 	}
 
 	@Override
@@ -330,5 +305,13 @@ public class InGameScreen extends GuiScreen {
 
 	public Matrix4 getScreenProjectionMatrix() {
 		return batch.getProjectionMatrix();
+	}
+	
+	public BitmapFont getFont1() {
+		return font1;
+	}
+	
+	public BitmapFont getFont2() {
+		return font2;
 	}
 }
