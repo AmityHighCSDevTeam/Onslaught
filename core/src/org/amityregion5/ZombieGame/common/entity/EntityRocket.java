@@ -3,9 +3,10 @@
  */
 package org.amityregion5.ZombieGame.common.entity;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -13,17 +14,23 @@ import com.badlogic.gdx.utils.Disposable;
  * @author savelyevse17
  *
  */
-public class EntityGrenade implements IEntity, Disposable {
+public class EntityRocket implements IEntity, Disposable {
 
 	private Body				body;
 	private float				friction;
 	private MassData			massData;
-	private float size;
+	private Vector2[]	shapeDef;
 
-	public EntityGrenade(float size) {
+	public EntityRocket(float size) {
 		massData = new MassData();
 		friction = 0.975f;
-		this.size = size;
+		shapeDef = new Vector2[] {
+				new Vector2(size*2, 0f),
+				new Vector2(0f, size/2),
+				new Vector2(-size*2, size/2),
+				new Vector2(-size*2, -size/2),
+				new Vector2(0f, -size/2)
+			};
 	}
 
 	@Override
@@ -32,9 +39,9 @@ public class EntityGrenade implements IEntity, Disposable {
 
 	@Override
 	public Shape getShape() {
-		CircleShape shape = new CircleShape();
-		shape.setRadius(size);
-		return shape;
+		PolygonShape poly = new PolygonShape();
+		poly.set(shapeDef);
+		return poly;
 	}
 
 	@Override

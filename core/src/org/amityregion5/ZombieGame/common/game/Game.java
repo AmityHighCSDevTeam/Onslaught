@@ -14,9 +14,11 @@ import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.model.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.RocketModel;
 import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -31,6 +33,8 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 public class Game implements Disposable {
+	
+	private GameContactListener contactListener;
 
 	private World	world;
 	private float	accumulator;
@@ -59,6 +63,30 @@ public class Game implements Disposable {
 		this.diff = diff;
 
 		world = new World(new Vector2(0, 0), true);
+		contactListener = new GameContactListener();
+		
+		contactListener.addBeginContactListener((c)->{
+			if (c.getFixtureA().getBody() != null) {
+				Optional<IEntityModel<?>> model = getEntityFromBody(c.getFixtureA().getBody());
+				
+				model.ifPresent((en)->{
+					if (en instanceof RocketModel) {
+						((RocketModel) en).onHit();
+					}
+				});
+			}
+			if (c.getFixtureB().getBody() != null) {
+				Optional<IEntityModel<?>> model = getEntityFromBody(c.getFixtureB().getBody());
+				
+				model.ifPresent((en)->{
+					if (en instanceof RocketModel) {
+						((RocketModel) en).onHit();
+					}
+				});
+			}
+		});
+		
+		world.setContactListener(contactListener);
 		entities = new ArrayList<IEntityModel<?>>();
 		entitiesToAdd = new ArrayList<IEntityModel<?>>();
 		entitiesToDelete = new ArrayList<IEntityModel<?>>();
@@ -277,6 +305,11 @@ public class Game implements Disposable {
 
 	public void makeExplosion(Vector2 pos, double strength, PlayerModel source) {
 		
+		if (strength <= 0) {
+			Gdx.app.error("[Error]", "Explosion Strength value of <= 0 attempted.");
+			return;
+		}
+		
 		double dist = (strength/explosionRaycasts)/minVal;
 		
 		double radPerRaycast = 2 * Math.PI / explosionRaycasts;
@@ -313,5 +346,17 @@ public class Game implements Disposable {
 			
 			explosionParticle.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad()), true);
 		}
+		
+		for (PlayerModel player : players) {
+			float distToExplosion = pos.dst(player.getEntity().getBody().getWorldCenter());
+			if (distToExplosion < 1) {
+				distToExplosion = 1;
+			}
+			player.setScreenVibrate(player.getScreenVibrate() + strength/distToExplosion/4 );
+		}
+	}
+	
+	public GameContactListener getContactListener() {
+		return contactListener;
 	}
 }

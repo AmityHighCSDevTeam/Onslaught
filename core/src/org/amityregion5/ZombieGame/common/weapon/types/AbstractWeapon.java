@@ -185,11 +185,11 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 			if (arr != null) {
 				if (!loadWeaponData(arr)) {
-					Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Error loading weapon data");
+					Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
 					return false;
 				}
 			} else {
-				Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Weapon Array does not exist");
+				Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
 
 				return false;
 			}
@@ -197,7 +197,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 			return true;
 		}
-		Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Class Name is not " + getClass().getSimpleName());
+		Gdx.app.debug("Debug", getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 	

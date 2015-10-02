@@ -10,6 +10,7 @@ import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
+import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -304,6 +305,9 @@ public class ShopWindow implements Screen {
 						} else {
 							WeaponStack newWeap = new WeaponStack(selectedWeapon);
 							player.getWeapons().add(newWeap);
+							if (player.getCurrentWeapon().getWeapon() instanceof NullWeapon) {
+								player.getHotbar()[player.getCurrWeapIndex()] = newWeap;
+							}
 						}
 						player.setMoney(player.getMoney() - price);
 					}

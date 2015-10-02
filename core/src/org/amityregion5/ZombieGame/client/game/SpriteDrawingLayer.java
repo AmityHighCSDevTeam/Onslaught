@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.client.game;
 
+import java.util.function.Supplier;
+
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 
@@ -11,8 +13,15 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 	
 	private Sprite sprite;
 	
+	private Supplier<Float> sizeSupplier;
+	
 	public SpriteDrawingLayer(Sprite sprite) {
+		this(sprite, null);
+	}
+	
+	public SpriteDrawingLayer(Sprite sprite, Supplier<Float> sizeSupplier) {
 		this.sprite = sprite;
+		this.sizeSupplier = sizeSupplier;
 	}
 	
 	public Sprite getSprite() {
@@ -25,10 +34,10 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 		batch.begin();
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
 		sprite.setBounds(e.getBody().getWorldCenter().x
-				- e.getShape().getRadius(), e.getBody()
-				.getWorldCenter().y - e.getShape().getRadius(), e
-				.getShape().getRadius() * 2,
-				e.getShape().getRadius() * 2);
+				- (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()), e.getBody()
+				.getWorldCenter().y - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()), 
+				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2,
+				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2);
 
 		sprite.draw(batch);
 		batch.end();

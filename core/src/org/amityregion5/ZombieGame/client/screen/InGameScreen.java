@@ -105,9 +105,13 @@ public class InGameScreen extends GuiScreen {
 		camera.translate(player.getEntity().getBody().getWorldCenter().x
 				- camera.position.x, player.getEntity().getBody().getWorldCenter().y
 				- camera.position.y);
+		
+		camera.translate((float)(player.getScreenVibrate()*game.getRandom().nextDouble() - player.getScreenVibrate()/2), 
+				(float)(player.getScreenVibrate()*game.getRandom().nextDouble() - player.getScreenVibrate()/2));
+		
 		camera.update();
 
-		//debugRenderer.render(game.getWorld(), camera.combined);
+		debugRenderer.render(game.getWorld(), camera.combined);
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		batch.setProjectionMatrix(camera.combined);

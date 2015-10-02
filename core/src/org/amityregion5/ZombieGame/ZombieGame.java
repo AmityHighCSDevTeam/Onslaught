@@ -15,6 +15,7 @@ import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
 import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
+import org.amityregion5.ZombieGame.common.weapon.types.Rocket;
 import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
 import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 
@@ -76,7 +77,7 @@ public class ZombieGame extends Game {
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 
-		Gdx.app.log("Loading", "Starting the loading process");
+		Gdx.app.log("[Log]", "Loading: Starting the loading process");
 		if (!isServer) {
 			setScreen(new LoadingScreen()); // Set the screen to a loading
 											// screen
@@ -90,8 +91,6 @@ public class ZombieGame extends Game {
 					// The gamedata folder
 					FileHandle gameData = Gdx.files
 							.absolute(workingDir + "/ZombieGameData/GameData");
-
-					
 					
 					// "Mod" loading list of mods
 					FileHandle[] plugins = gameData.list();
@@ -104,7 +103,7 @@ public class ZombieGame extends Game {
 					// Create the plugin loader
 					PluginLoader loader = new PluginLoader(pluginManager);
 					// Load the plugins
-					Gdx.app.log("Loading", "Plugins will be loaded from " + gameData.file().getAbsolutePath());
+					Gdx.app.log("[Log]", "Loading: Plugins will be loaded from " + gameData.file().getAbsolutePath());
 					
 					loader.loadPluginMeta(plugins);
 					
@@ -114,6 +113,7 @@ public class ZombieGame extends Game {
 					pluginManager.getCorePlugin().addWeaponClass(Shotgun.class);
 					pluginManager.getCorePlugin().addWeaponClass(Placeable.class);
 					pluginManager.getCorePlugin().addWeaponClass(Grenade.class);
+					pluginManager.getCorePlugin().addWeaponClass(Rocket.class);
 					
 					Placeable.registeredObjects.put("Lantern_0", (g, vector)->{
 						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
@@ -138,18 +138,18 @@ public class ZombieGame extends Game {
 					if (!isServer) {
 						
 						// Load the texture for buttons
-						Gdx.app.log("Loading", "Loading button texture");
+						Gdx.app.log("[Log]", "Loading: Loading button texture");
 						Gdx.app.postRunnable(() -> {
 							buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
 						});
 
 						// Load the missing texture
-						Gdx.app.log("Loading", "Loading missing texture");
+						Gdx.app.log("[Log]", "Loading: Loading missing texture");
 						Gdx.app.postRunnable(() -> missingTexture = new Texture(
 								Gdx.files.internal("images/missing.png")));
 
 						// Create the font generator
-						Gdx.app.log("Loading", "Loading main font");
+						Gdx.app.log("[Log]", "Loading: Loading main font");
 						FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 								Gdx.files.internal("font/Calibri.ttf"));
 
@@ -167,7 +167,7 @@ public class ZombieGame extends Game {
 						});
 
 						// Go to main menu
-						Gdx.app.log("Loading", "Loading completed");
+						Gdx.app.log("[Log]", "Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
 					}
 				}).start();

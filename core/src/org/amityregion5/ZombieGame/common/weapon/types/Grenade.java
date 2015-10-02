@@ -129,7 +129,7 @@ public class Grenade implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade(), game, firing, gData.getGameTextureString());
+		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade((float)gData.getSize()), game, firing, gData.getGameTextureString());
 		
 		grenadeModel.setStrength(gData.getStrength());
 		grenadeModel.setTimeUntilExplosion((float) gData.getFuseTime());
@@ -163,6 +163,7 @@ public class Grenade implements IWeapon {
 		map.put("Auto", d.isAuto() + "");
 		map.put("Price", d.getPrice() + "");
 		map.put("Ammo Price", d.getAmmoPrice() + "");
+		map.put("Size", d.getSize() + "");
 		map.put("Strength", d.getStrength() + "");
 		map.put("Fuse Time", d.getFuseTime() + "");
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
@@ -184,11 +185,11 @@ public class Grenade implements IWeapon {
 
 			if (arr != null) {
 				if (!loadWeaponData(arr)) {
-					Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Error loading weapon data");
+					Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
 					return false;
 				}
 			} else {
-				Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Weapon Array does not exist");
+				Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
 
 				return false;
 			}
@@ -196,7 +197,7 @@ public class Grenade implements IWeapon {
 
 			return true;
 		}
-		Gdx.app.debug(getClass().getSimpleName() + " Loading", "Error: Class Name is not " + getClass().getSimpleName());
+		Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 	

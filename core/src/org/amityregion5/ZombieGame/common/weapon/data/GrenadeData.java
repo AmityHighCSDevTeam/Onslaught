@@ -4,7 +4,7 @@ import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
 	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed,
-			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
+			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY, size;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString;
 	private boolean isAuto;
@@ -40,6 +40,9 @@ public class GrenadeData implements IWeaponDataBase {
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
 		}
+		if (o.containsKey("size")) {
+			size = ((Number) o.get("size")).doubleValue();
+		}
 		if (o.containsKey("gameScale")) {
 			gameScale = ((Number) o.get("gameScale")).doubleValue();
 		} else {
@@ -70,6 +73,20 @@ public class GrenadeData implements IWeaponDataBase {
 		if (o.containsKey("isAuto")) {
 			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
 		}
+	}
+
+	/**
+	 * @return the size
+	 */
+	public double getSize() {
+		return size;
+	}
+
+	/**
+	 * @param size the size to set
+	 */
+	public void setSize(double size) {
+		this.size = size;
 	}
 
 	/**

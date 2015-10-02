@@ -1,7 +1,6 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
@@ -27,6 +26,7 @@ import box2dLight.Light;
 public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private EntityPlayer 		entity;
 	private double				money			= 1000;
+	private double				screenJitter 	= 0;
 	private Vector2				mousePos;
 	private List<WeaponStack>	weapons;
 	private WeaponStack[] 		hotbar;
@@ -77,9 +77,6 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			if (Gdx.input.isKeyJustPressed(Keys.R)) {
 				hotbar[currentWeapon].reload();
 			}
-			if (Gdx.input.isKeyJustPressed(Keys.Q)) {
-				Gdx.app.error("Hotbar Dump", Arrays.deepToString(hotbar));
-			}
 			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 				if (weapons.size() > 0) {
 					hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
@@ -111,6 +108,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			getHotbar()[currentWeapon].tick(delta);
 		}
 		sprite.getSprite().setOriginCenter();
+		screenJitter *= 0.9;
 	}
 
 
@@ -218,5 +216,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 	public int getCurrWeapIndex() {
 		return currentWeapon;
+	}
+
+	public double getScreenVibrate() {
+		return screenJitter;
+	}
+	
+	public void setScreenVibrate(double screenJitter) {
+		this.screenJitter = screenJitter;
 	}
 }

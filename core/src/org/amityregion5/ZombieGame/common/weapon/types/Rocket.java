@@ -2,14 +2,16 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 
+import org.amityregion5.ZombieGame.common.entity.EntityRocket;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.RocketModel;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
+import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
-import org.amityregion5.ZombieGame.common.weapon.data.PlaceableWeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.RocketData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -17,14 +19,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-public class Placeable implements IWeapon {
-	
-	public static HashMap<String, BiFunction<Game, Vector2, IEntityModel<?>>> registeredObjects =
-			new HashMap<String, BiFunction<Game, Vector2, IEntityModel<?>>>();
+public class Rocket implements IWeapon {
 
 	// All the variables!
 	protected String		name, description;
-	protected Array<PlaceableWeaponData>		data;
+	protected Array<RocketData>		data;
 
 	@Override
 	public String getName() {
@@ -92,9 +91,6 @@ public class Placeable implements IWeapon {
 			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
 		if (isMouseJustDown) {
 			while (stack.getCooldown() <= 0) {
-				if (end.dst2(firing.getEntity().getBody().getWorldCenter()) > data.get(stack.getLevel()).getMaxRange() * data.get(stack.getLevel()).getMaxRange()) {
-					return;
-				}
 				if (stack.getAmmo() > 0 && data.get(stack.getLevel()).getPreFireDelay() > 0 && stack.getWarmup() <= 0) {
 					stack.setWarmup(data.get(stack.getLevel()).getPreFireDelay());
 					stack.setWarmingUp(true);
@@ -115,12 +111,39 @@ public class Placeable implements IWeapon {
 	protected void fireWeapon(Vector2 end, Game game, PlayerModel firing,
 			double maxFireDegrees, WeaponStack stack) {
 		
-		if (registeredObjects.containsKey(data.get(stack.getLevel()).getPlacingObject())) {
-			stack.setAmmo(stack.getAmmo() - 1);
-			
-			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end),
-					end.x, end.y);
-		}
+		RocketData gData = data.get(stack.getLevel());
+		
+		stack.setAmmo(stack.getAmmo() - 1);
+		
+		double dir = MathHelper.clampAngleAroundCenter(firing
+				.getEntity().getBody().getAngle(), MathHelper
+				.getDirBetweenPoints(
+						firing.getEntity().getBody().getPosition(), end), Math
+				.toRadians(maxFireDegrees));
+
+		dir -= Math.toRadians(data.get(stack.getLevel())
+				.getAccuracy() / 2);
+
+		dir += Math.toRadians(game.getRandom().nextDouble()
+				* data.get(stack.getLevel()).getAccuracy());
+
+		dir = MathHelper.fixAngle(dir);
+
+		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getGameTextureString(), (float)gData.getSize());
+		
+		rocketModel.setStrength(gData.getStrength());
+		rocketModel.setAcceleration((float) gData.getAcceleration());
+		rocketModel.setTimeUntilExplosion((float) gData.getFuseTime());
+		
+		Vector2 playerPos = firing.getEntity().getBody().getWorldCenter();
+		
+		Vector2 pos = VectorFactory.createVector(0.16f + 0.2f, (float)dir);
+		
+		game.addEntityToWorld(rocketModel, pos.x + playerPos.x, pos.y + playerPos.y);
+		
+		rocketModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float)gData.getThrowSpeed(), (float)dir), true);
+		rocketModel.getEntity().getBody().setTransform(rocketModel.getEntity().getBody().getWorldCenter(), (float) dir);
+		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
 	}
 
 	@Override
@@ -135,15 +158,20 @@ public class Placeable implements IWeapon {
 
 	@Override
 	public Map<String, String> getWeaponDataDescriptors(int level) {
-		PlaceableWeaponData d = data.get(level);
+		RocketData d = data.get(level);
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("Type", getClass().getSimpleName());
-		map.put("Object", d.getPlacingObject());
+		map.put("Auto", d.isAuto() + "");
 		map.put("Price", d.getPrice() + "");
 		map.put("Ammo Price", d.getAmmoPrice() + "");
-		map.put("Max Range", d.getMaxRange() + "");
+		map.put("Size", d.getSize() + "");
+		map.put("Strength", d.getStrength() + "");
+		map.put("Max Fuse Time", d.getFuseTime() + "");
+		map.put("Acceleration", d.getAcceleration() + "");
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
-		//map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");
+		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
+		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");
 		map.put("Reload time", d.getReloadTime() + "");
 		return map;
 	}
@@ -177,11 +205,11 @@ public class Placeable implements IWeapon {
 	}
 	
 	protected boolean loadWeaponData(JSONArray arr) {
-		data = new Array<PlaceableWeaponData>();
+		data = new Array<RocketData>();
 
 		for (Object obj : arr) {
 			JSONObject o = (JSONObject) obj;
-			PlaceableWeaponData d = new PlaceableWeaponData(o);
+			RocketData d = new RocketData(o);
 			data.add(d);
 		}
 		return true;
