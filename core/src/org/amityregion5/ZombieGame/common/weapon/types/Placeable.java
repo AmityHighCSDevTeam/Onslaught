@@ -10,6 +10,7 @@ import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.PlaceableWeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -56,7 +57,7 @@ public class Placeable implements IWeapon {
 	}
 
 	@Override
-	public void reload(WeaponStack stack) {
+	public void reload(WeaponStack stack, Game game, PlayerModel firing) {
 		if (stack.getAmmo() < data.get(stack.getLevel()).getMaxAmmo()) {
 			int ammoNeeded = data.get(stack.getLevel()).getMaxAmmo()
 					- stack.getAmmo();
@@ -68,6 +69,12 @@ public class Placeable implements IWeapon {
 						+ data.get(stack.getLevel()).getReloadTime());
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				stack.setTotalAmmo(stack.getTotalAmmo() - ammoNeeded);
+			}
+			
+			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+				if (sound.getTrigger().equals("reload")) {
+					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+				}
 			}
 		}
 	}
@@ -105,7 +112,7 @@ public class Placeable implements IWeapon {
 				} else if (stack.getAmmo() > 0) {
 					fireWeapon(end, game, firing, maxFireDegrees, stack);
 				} else {
-					reload(stack);
+					reload(stack, game, firing);
 					break;
 				}
 			}
@@ -120,6 +127,12 @@ public class Placeable implements IWeapon {
 			
 			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end),
 					end.x, end.y);
+			
+			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+				if (sound.getTrigger().equals("fire")) {
+					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+				}
+			}
 		}
 	}
 

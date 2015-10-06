@@ -53,7 +53,7 @@ public final class NullWeapon implements IWeapon {
 	}
 
 	@Override
-	public void reload(WeaponStack stack) {
+	public void reload(WeaponStack stack, Game game, PlayerModel firing) {
 	}
 
 	@Override

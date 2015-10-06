@@ -1,7 +1,7 @@
 package org.amityregion5.ZombieGame.client.window;
 
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;

@@ -1,8 +1,11 @@
 package org.amityregion5.ZombieGame.client.screen;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
+import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.window.HUDOverlay;
 import org.amityregion5.ZombieGame.client.window.InventoryWindow;
@@ -18,10 +21,12 @@ import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.LanternModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -153,6 +158,17 @@ public class InGameScreen extends GuiScreen {
 
 		if (currentWindow != null) {
 			currentWindow.drawScreen(delta, camera);
+		}
+		
+		Iterator<SoundPlayingData> iterator = player.getSoundsToPlay().listIterator();
+		while (iterator.hasNext()) {
+			SoundPlayingData soundData = iterator.next();
+			
+			Sound sound = SoundRegistry.getSoundsFor(soundData.getSound()).get(0);
+			
+			sound.play((float)MathHelper.clamp(0, 1, soundData.getVolume()), (float)MathHelper.clamp(0.5, 2, soundData.getPitch()), 0);
+			
+			iterator.remove();
 		}
 	}
 

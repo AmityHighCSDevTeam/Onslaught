@@ -142,8 +142,8 @@ public class WeaponStack {
 		weapon.purchaseAmmo(playerModel, this);
 	}
 
-	public void reload() {
-		weapon.reload(this);
+	public void reload(Game game, PlayerModel playerModel) {
+		weapon.reload(this, game, playerModel);
 	}
 
 	public void onUse(Vector2 end, Game game, PlayerModel playerModel,

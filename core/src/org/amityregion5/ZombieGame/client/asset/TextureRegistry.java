@@ -1,4 +1,4 @@
-package org.amityregion5.ZombieGame.client.game;
+package org.amityregion5.ZombieGame.client.asset;
 
 import java.util.Arrays;
 import java.util.HashMap;

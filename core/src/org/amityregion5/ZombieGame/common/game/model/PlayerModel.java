@@ -3,11 +3,12 @@ package org.amityregion5.ZombieGame.common.game.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.Game;
@@ -38,6 +39,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private PlayerExtrasDrawingLayer extras;
 	private float health, maxHealth, speed;
 	private boolean shootJustPressed = false;
+	private List<SoundPlayingData> 	soundsToPlay;
 
 	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
 		this.entity = entity;
@@ -51,6 +53,8 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
 		extras = new PlayerExtrasDrawingLayer(this);
+		
+		soundsToPlay = new ArrayList<SoundPlayingData>();
 	}
 
 	public void tick(float delta) {
@@ -75,7 +79,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 				hotbar[currentWeapon].purchaseAmmo(this);
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.R)) {
-				hotbar[currentWeapon].reload();
+				hotbar[currentWeapon].reload(g, this);
 			}
 			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 				if (weapons.size() > 0) {
@@ -224,5 +228,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	
 	public void setScreenVibrate(double screenJitter) {
 		this.screenJitter = screenJitter;
+	}
+	
+	public void playSound(SoundPlayingData sound) {
+		soundsToPlay.add(sound);
+	}
+	
+	public List<SoundPlayingData> getSoundsToPlay() {
+		return soundsToPlay;
 	}
 }

@@ -5,7 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Random;
 
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
+import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
@@ -50,6 +51,7 @@ public class ZombieGame extends Game {
 	public int					width, height;	// The width and height of the
 												// screen
 	public Random				random;
+	public FileHandle			gameData;
 
 	/**
 	 *
@@ -89,7 +91,7 @@ public class ZombieGame extends Game {
 		new Thread(
 				() -> {
 					// The gamedata folder
-					FileHandle gameData = Gdx.files
+					gameData = Gdx.files
 							.absolute(workingDir + "/ZombieGameData/GameData");
 					
 					// "Mod" loading list of mods
@@ -183,6 +185,7 @@ public class ZombieGame extends Game {
 	public void dispose() {
 		super.dispose();
 		TextureRegistry.dispose();
+		SoundRegistry.dispose();
 		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
 

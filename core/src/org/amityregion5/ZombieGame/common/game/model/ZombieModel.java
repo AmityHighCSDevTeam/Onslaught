@@ -3,10 +3,10 @@ package org.amityregion5.ZombieGame.common.game.model;
 import java.util.Optional;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;

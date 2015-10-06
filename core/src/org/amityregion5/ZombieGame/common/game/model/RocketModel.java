@@ -1,8 +1,8 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;

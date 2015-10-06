@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.client.game;
 
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;

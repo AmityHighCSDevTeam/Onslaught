@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
 
+import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
@@ -17,6 +18,7 @@ import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.RocketModel;
 import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -358,5 +360,12 @@ public class Game implements Disposable {
 	
 	public GameContactListener getContactListener() {
 		return contactListener;
+	}
+
+	public void playSound(SoundData sound, Vector2 position) {
+		for (PlayerModel player : players) {
+			SoundPlayingData playing = new SoundPlayingData(sound.getAssetName(), Math.min(sound.getMaxVolume()/player.getEntity().getBody().getWorldCenter().dst2(position),1), sound.getPitch());
+			player.playSound(playing);
+		}
 	}
 }

@@ -1,11 +1,16 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
 	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString, placingObject;
+	private List<SoundData> sounds;
 
 	public PlaceableWeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -61,6 +66,19 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		} else {
 			gameTextureString = "";
 		}
+		sounds = new ArrayList<SoundData>();
+		if (o.containsKey("sounds")) {
+			JSONArray arr = (JSONArray)o.get("sounds");
+			
+			for (Object obj : arr) {
+				JSONObject soundJSON = (JSONObject)obj;
+				SoundData sound = SoundData.getSoundData(soundJSON);
+				if (sound != null) {
+					sounds.add(sound);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -226,6 +244,20 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	@Override
 	public int getGameTextureOriginY() {
 		return gameOrgY;
+	}
+
+	/**
+	 * @return the sounds
+	 */
+	public List<SoundData> getSounds() {
+		return sounds;
+	}
+
+	/**
+	 * @param sounds the sounds to set
+	 */
+	public void setSounds(List<SoundData> sounds) {
+		this.sounds = sounds;
 	}
 	
 }

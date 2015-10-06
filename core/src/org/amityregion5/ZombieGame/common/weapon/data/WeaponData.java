@@ -1,5 +1,9 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
@@ -12,6 +16,7 @@ public class WeaponData implements IWeaponDataBase {
 	private Color bulletColor;
 	private String iconTextureString, gameTextureString;
 	private boolean isAuto;
+	private List<SoundData> sounds;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -82,6 +87,18 @@ public class WeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("isAuto")) {
 			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
+		}
+		sounds = new ArrayList<SoundData>();
+		if (o.containsKey("sounds")) {
+			JSONArray arr = (JSONArray)o.get("sounds");
+			
+			for (Object obj : arr) {
+				JSONObject soundJSON = (JSONObject)obj;
+				SoundData sound = SoundData.getSoundData(soundJSON);
+				if (sound != null) {
+					sounds.add(sound);
+				}
+			}
 		}
 	}
 
@@ -313,6 +330,20 @@ public class WeaponData implements IWeaponDataBase {
 	@Override
 	public int getGameTextureOriginY() {
 		return gameOrgY;
+	}
+
+	/**
+	 * @return the sounds
+	 */
+	public List<SoundData> getSounds() {
+		return sounds;
+	}
+
+	/**
+	 * @param sounds the sounds to set
+	 */
+	public void setSounds(List<SoundData> sounds) {
+		this.sounds = sounds;
 	}
 
 }

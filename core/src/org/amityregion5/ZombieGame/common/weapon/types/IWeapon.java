@@ -41,7 +41,7 @@ public interface IWeapon {
 
 	public void purchaseAmmo(PlayerModel playerModel, WeaponStack stack);
 
-	public void reload(WeaponStack stack);
+	public void reload(WeaponStack stack, Game game, PlayerModel firing);
 
 	// Used by certain weapons to do stuff when not being fired
 	/**

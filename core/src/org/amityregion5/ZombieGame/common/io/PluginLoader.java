@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.game.TextureRegistry;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.plugin.PluginContainer;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;

@@ -22,7 +22,21 @@
       "gameOffY": 0,
       "gameOriginX": 32,
       "gameOriginY": 32,
-      "isAuto": "false"
+      "isAuto": "false",
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 1
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 1
+        }
+      ]
     },
     {
       "price": 20,

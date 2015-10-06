@@ -12,6 +12,7 @@ import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.RocketData;
+import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -55,7 +56,7 @@ public class Rocket implements IWeapon {
 	}
 
 	@Override
-	public void reload(WeaponStack stack) {
+	public void reload(WeaponStack stack, Game game, PlayerModel firing) {
 		if (stack.getAmmo() < data.get(stack.getLevel()).getMaxAmmo()) {
 			int ammoNeeded = data.get(stack.getLevel()).getMaxAmmo()
 					- stack.getAmmo();
@@ -67,6 +68,12 @@ public class Rocket implements IWeapon {
 						+ data.get(stack.getLevel()).getReloadTime());
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				stack.setTotalAmmo(stack.getTotalAmmo() - ammoNeeded);
+			}
+			
+			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+				if (sound.getTrigger().equals("reload")) {
+					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+				}
 			}
 		}
 	}
@@ -101,7 +108,7 @@ public class Rocket implements IWeapon {
 				} else if (stack.getAmmo() > 0) {
 					fireWeapon(end, game, firing, maxFireDegrees, stack);
 				} else {
-					reload(stack);
+					reload(stack, game, firing);
 					break;
 				}
 			}
@@ -144,6 +151,12 @@ public class Rocket implements IWeapon {
 		rocketModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float)gData.getThrowSpeed(), (float)dir), true);
 		rocketModel.getEntity().getBody().setTransform(rocketModel.getEntity().getBody().getWorldCenter(), (float) dir);
 		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
+		
+		for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+			if (sound.getTrigger().equals("fire")) {
+				game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+			}
+		}
 	}
 
 	@Override
