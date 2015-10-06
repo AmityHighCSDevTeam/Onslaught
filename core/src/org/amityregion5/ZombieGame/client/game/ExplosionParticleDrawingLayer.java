@@ -18,7 +18,7 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	private float maxSize = 1f;
 	
 	public ExplosionParticleDrawingLayer() {
-		this.sprite = new Sprite(TextureRegistry.getTexturesFor("Core/explosion_smoke_noAlpha.png").get(0));
+		this.sprite = new Sprite(TextureRegistry.getTexturesFor("Core/explosion.png").get(0));
 	}
 	
 	public Sprite getSprite() {

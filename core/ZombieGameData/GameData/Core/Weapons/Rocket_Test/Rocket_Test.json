@@ -18,7 +18,8 @@
       "postFireDelay": 0.2,
       "iconTxtr": "Core/Weapons/Rocket_Test/0I.png",
       "gameTxtr": "Core/Weapons/Rocket_Test/0G.png",
-      "isAuto": "false"
+      "fieldTxtr": "Core/Weapons/Rocket_Test/0F.png",
+      "isAuto": false
     },
     {
       "price": 10,
@@ -35,7 +36,8 @@
       "postFireDelay": 0.2,
       "iconTxtr": "Core/Weapons/Rocket_Test/1I.png",
       "gameTxtr": "Core/Weapons/Rocket_Test/1G.png",
-      "isAuto": "false"
+      "fieldTxtr": "Core/Weapons/Rocket_Test/1F.png",
+      "isAuto": false
     }
   ]
 }

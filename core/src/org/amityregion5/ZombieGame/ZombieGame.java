@@ -167,6 +167,8 @@ public class ZombieGame extends Game {
 							// Get rid of generator
 							generator.dispose();
 						});
+						
+						TextureRegistry.tryRegister("Core/explosion.png");
 
 						// Go to main menu
 						Gdx.app.log("[Log]", "Loading: Loading completed");
@@ -188,7 +190,6 @@ public class ZombieGame extends Game {
 		SoundRegistry.dispose();
 		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
-
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -10,7 +11,7 @@ public class GrenadeData implements IWeaponDataBase {
 	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed,
 			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY, size;
 	private int		maxAmmo, gameOrgX, gameOrgY;
-	private String iconTextureString, gameTextureString;
+	private String iconTextureString, gameTextureString, fieldTextureString;
 	private boolean isAuto;
 	private List<SoundData> sounds;
 
@@ -67,16 +68,24 @@ public class GrenadeData implements IWeaponDataBase {
 		}
 		if (o.containsKey("iconTxtr")) {
 			iconTextureString = ((String) o.get("iconTxtr"));
+			TextureRegistry.tryRegister(iconTextureString);
 		} else {
 			iconTextureString = "";
 		}
 		if (o.containsKey("gameTxtr")) {
 			gameTextureString = ((String) o.get("gameTxtr"));
+			TextureRegistry.tryRegister(gameTextureString);
 		} else {
 			gameTextureString = "";
 		}
+		if (o.containsKey("fieldTxtr")) {
+			fieldTextureString = ((String) o.get("fieldTxtr"));
+			TextureRegistry.tryRegister(fieldTextureString);
+		} else {
+			fieldTextureString = "";
+		}
 		if (o.containsKey("isAuto")) {
-			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
+			isAuto = (Boolean)o.get("isAuto");
 		}
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
@@ -333,5 +342,12 @@ public class GrenadeData implements IWeaponDataBase {
 	public void setSounds(List<SoundData> sounds) {
 		this.sounds = sounds;
 	}
-
+	
+	public String getFieldTextureString() {
+		return fieldTextureString;
+	}
+	
+	public void setFieldTextureString(String fieldTextureString) {
+		this.fieldTextureString = fieldTextureString;
+	}
 }

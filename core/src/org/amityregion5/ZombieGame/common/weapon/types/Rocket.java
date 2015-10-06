@@ -136,7 +136,7 @@ public class Rocket implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getGameTextureString(), (float)gData.getSize());
+		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getFieldTextureString(), (float)gData.getSize());
 		
 		rocketModel.setStrength(gData.getStrength());
 		rocketModel.setAcceleration((float) gData.getAcceleration());

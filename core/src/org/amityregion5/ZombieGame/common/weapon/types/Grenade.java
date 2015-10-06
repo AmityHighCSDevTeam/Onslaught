@@ -136,7 +136,7 @@ public class Grenade implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade((float)gData.getSize()), game, firing, gData.getGameTextureString());
+		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade((float)gData.getSize()), game, firing, gData.getFieldTextureString());
 		
 		grenadeModel.setStrength(gData.getStrength());
 		grenadeModel.setTimeUntilExplosion((float) gData.getFuseTime());

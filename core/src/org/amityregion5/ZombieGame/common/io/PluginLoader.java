@@ -104,10 +104,10 @@ public class PluginLoader {
 	private void loadFile(FileHandle handle, String prevPath, PluginContainer plugin) {
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
 		String[] sections = prevPath.split(Pattern.quote("/"));
-		if (handle.extension().equals("png")) {
-			Gdx.app.debug("[Debug]", "Plugin Loader: Image Found: " + loc);
-			Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-		}
+		//if (handle.extension().equals("png")) {
+		//	Gdx.app.debug("[Debug]", "Plugin Loader: Image Found: " + loc);
+		//	Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
+		//}
 		if (sections.length >= 2) {
 			switch (sections[1]) {
 			case "Weapons":
@@ -119,6 +119,28 @@ public class PluginLoader {
 						e.printStackTrace();
 					}
 				}
+				break;
+			case "Players":
+				if (handle.extension().equals("png")) {
+					Gdx.app.debug("[Debug]", "Plugin Loader: Image Loading: " + loc);
+					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
+				}
+				break;
+			case "Zombies":
+				if (handle.extension().equals("png")) {
+					Gdx.app.debug("[Debug]", "Plugin Loader: Image Loading: " + loc);
+					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
+				}
+				/*
+				if (handle.extension().equals("json")) {
+					Gdx.app.debug("[Debug]", "Plugin Loader: Zombie Found: " + loc);
+					try {
+						loadZombie((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
+					} catch (IOException | ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				*/
 				break;
 			}
 		}

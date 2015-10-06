@@ -17,7 +17,7 @@
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/AK47/1I.png",
       "gameTxtr": "Core/Weapons/AK47/1G.png",
-      "isAuto": "true"
+      "isAuto": true
     }
   ]
 }

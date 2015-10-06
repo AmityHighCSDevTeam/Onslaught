@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -65,11 +66,13 @@ public class WeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("iconTxtr")) {
 			iconTextureString = ((String) o.get("iconTxtr"));
+			TextureRegistry.tryRegister(iconTextureString);
 		} else {
 			iconTextureString = "";
 		}
 		if (o.containsKey("gameTxtr")) {
 			gameTextureString = ((String) o.get("gameTxtr"));
+			TextureRegistry.tryRegister(gameTextureString);
 		} else {
 			gameTextureString = "";
 		}
@@ -86,7 +89,7 @@ public class WeaponData implements IWeaponDataBase {
 			bulletThickness = ((Number) o.get("bulletThickness")).floatValue();
 		}
 		if (o.containsKey("isAuto")) {
-			isAuto = Boolean.valueOf(((String) o.get("isAuto")));
+			isAuto = (Boolean)o.get("isAuto");
 		}
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {

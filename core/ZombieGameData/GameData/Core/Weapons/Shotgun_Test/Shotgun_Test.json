@@ -17,7 +17,7 @@
       "bulletThickness": 1,
       "shots": 5,
       "spread": 2,
-      "isAuto": "false"
+      "isAuto": false
     }
   ]
 }

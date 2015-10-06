@@ -116,7 +116,7 @@ public class InGameScreen extends GuiScreen {
 		
 		camera.update();
 
-		debugRenderer.render(game.getWorld(), camera.combined);
+		//debugRenderer.render(game.getWorld(), camera.combined);
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		batch.setProjectionMatrix(camera.combined);

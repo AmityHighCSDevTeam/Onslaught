@@ -22,7 +22,7 @@
       "gameOffY": 0,
       "gameOriginX": 32,
       "gameOriginY": 32,
-      "isAuto": "false",
+      "isAuto": false,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -52,7 +52,7 @@
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/M9/1I.png",
       "gameTxtr": "Core/Weapons/M9/1G.png",
-      "isAuto": "true"
+      "isAuto": true
     }
   ]
 }

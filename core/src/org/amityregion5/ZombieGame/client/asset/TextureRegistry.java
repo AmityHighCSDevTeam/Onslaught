@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -17,12 +18,28 @@ public class TextureRegistry {
 
 	// public static Array<Texture> zombieTextures = new Array<Texture>();
 
-	public static void register(String path, FileHandle file) {
-		Texture t = new Texture(file, true);
-		t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
-		textures.put(path, t);
+	public static boolean tryRegister(String path) {
+		if (textures.containsKey(path)) {
+			return false;
+		}
+		FileHandle handle = ZombieGame.instance.gameData.child(path);
+		if (handle.exists() && handle.extension().equals("png")) {
+			Gdx.app.debug("[Debug]", "Texture Registry: registering: " + path);
+			register(path, handle);
+			return true;
+		}
+		return false;
 	}
-	
+
+	public static void register(String path, FileHandle file) {
+		textures.put(path, null);
+		Gdx.app.postRunnable(()->{
+			Texture t = new Texture(file, true);
+			t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
+			textures.put(path, t);
+		});
+	}
+
 	public static List<Texture> getTexturesFor(String str) {
 		List<Texture> t = textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).map((k)->textures.get(k)).collect(Collectors.toList());
 		if (t == null || t.size() == 0) {
@@ -30,13 +47,13 @@ public class TextureRegistry {
 		}
 		return t;
 	}
-	
+
 	private static String regexify(String str) {
 		if (str == null) {
 			return "";
 		}
 		String finalString = "";
-		
+
 		String[] split = str.split(Pattern.quote("**"));
 		for (int i = 0; i<split.length; i++) {
 			String[] split2 = split[i].split(Pattern.quote("*"));
@@ -52,7 +69,7 @@ public class TextureRegistry {
 			finalString += (i == split.length-1 ? "" : ".*");
 		}
 		finalString += (str.endsWith("**") ? ".*" : "");
-		
+
 		return finalString;
 		//return str.replace("*", "[^/]*").replace("?", "[^/]?");
 	}

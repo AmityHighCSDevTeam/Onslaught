@@ -185,7 +185,7 @@ public class Game implements Disposable {
 		float sizeModifier = ((maxModifier+1f) - speedModifier);
 		
 		EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
-		zom.setMass(100);
+		zom.setMass(100*sizeModifier);
 		//zom.setSpeed(1f);
 		zom.setFriction(0.99f);
 
