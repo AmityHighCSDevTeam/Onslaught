@@ -1,8 +1,14 @@
 #!/bin/bash
 cd "$( dirname "$0" )"
 
-echo Creating JAR
-gradle desktop:dist || exit
+echo Deleting Log File
+rm core/ZombieGameData/log.log
+
+echo Deleting Previous Builds
+rm ~/Desktop/ZombieGame.zip
+
+echo Creating JAR and Incrementing Build Number
+gradle desktop:dist incrementBuildNum || exit
 
 echo Copying GameData
 cp -r core/ZombieGameData desktop/build/libs/ZombieGameData || exit

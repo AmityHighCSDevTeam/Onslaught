@@ -1,9 +1,8 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.json.simple.JSONObject;
-
-import com.badlogic.gdx.Gdx;
 
 public class SoundData {
 	private String assetName, trigger;
@@ -29,7 +28,7 @@ public class SoundData {
 		
 		if (SoundRegistry.getSoundsFor(assetName) == null || SoundRegistry.getSoundsFor(null).isEmpty()) {
 			if (!SoundRegistry.tryRegister(assetName)) {
-				Gdx.app.error("[Error]", "SoundData: failed to load sound: " + assetName);
+				ZombieGame.error("SoundData: failed to load sound: " + assetName);
 			}
 		}
 		

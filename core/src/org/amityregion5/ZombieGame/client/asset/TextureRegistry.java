@@ -24,7 +24,7 @@ public class TextureRegistry {
 		}
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
-			Gdx.app.debug("[Debug]", "Texture Registry: registering: " + path);
+			ZombieGame.debug("Texture Registry: registering: " + path);
 			register(path, handle);
 			return true;
 		}

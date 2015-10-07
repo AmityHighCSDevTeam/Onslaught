@@ -52,7 +52,21 @@
       "bulletThickness": 1,
       "iconTxtr": "Core/Weapons/M9/1I.png",
       "gameTxtr": "Core/Weapons/M9/1G.png",
-      "isAuto": true
+      "isAuto": true,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 0.5,
+          "maxVolume": 1
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 0.5,
+          "maxVolume": 1
+        }
+      ]
     }
   ]
 }

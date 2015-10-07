@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
@@ -16,7 +17,6 @@ import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -144,7 +144,7 @@ public class Rocket implements IWeapon {
 		
 		Vector2 playerPos = firing.getEntity().getBody().getWorldCenter();
 		
-		Vector2 pos = VectorFactory.createVector(0.16f + 0.2f, (float)dir);
+		Vector2 pos = VectorFactory.createVector(0.16f + (float)gData.getSize()*2, (float)dir);
 		
 		game.addEntityToWorld(rocketModel, pos.x + playerPos.x, pos.y + playerPos.y);
 		
@@ -201,11 +201,11 @@ public class Rocket implements IWeapon {
 
 			if (arr != null) {
 				if (!loadWeaponData(arr)) {
-					Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
+					ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
 					return false;
 				}
 			} else {
-				Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
+				ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
 
 				return false;
 			}
@@ -213,7 +213,7 @@ public class Rocket implements IWeapon {
 
 			return true;
 		}
-		Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 	

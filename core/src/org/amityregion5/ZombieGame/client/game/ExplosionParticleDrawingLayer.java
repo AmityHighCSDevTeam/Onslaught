@@ -15,7 +15,7 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	
 	private Sprite sprite;
 	
-	private float maxSize = 1f;
+	private float maxSize = 0.15f;
 	
 	public ExplosionParticleDrawingLayer() {
 		this.sprite = new Sprite(TextureRegistry.getTexturesFor("Core/explosion.png").get(0));
@@ -30,13 +30,17 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 		IEntity e = em.getEntity();
 		ExplosionParticleModel model = (ExplosionParticleModel) em;
 		batch.begin();
+		
+		float val = (float) Math.sqrt(model.getLight().getColor().r);
+		
 		sprite.setOriginCenter();
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
+		sprite.setAlpha(val * (float)Math.sqrt(val) * 1.5f);
 		sprite.setBounds(e.getBody().getWorldCenter().x
-				- (maxSize * model.getLight().getColor().r), e.getBody()
-				.getWorldCenter().y - (maxSize * model.getLight().getColor().r),
-				maxSize * model.getLight().getColor().r * 2,
-				maxSize * model.getLight().getColor().r * 2);
+				- (maxSize / val), e.getBody()
+				.getWorldCenter().y - (maxSize / val),
+				maxSize / val * 2,
+				maxSize / val * 2);
 
 		sprite.draw(batch);
 		batch.end();

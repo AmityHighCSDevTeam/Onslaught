@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
@@ -20,7 +21,6 @@ import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -308,7 +308,7 @@ public class Game implements Disposable {
 	public void makeExplosion(Vector2 pos, double strength, PlayerModel source) {
 		
 		if (strength <= 0) {
-			Gdx.app.error("[Error]", "Explosion Strength value of <= 0 attempted.");
+			ZombieGame.error("Explosion Strength value of <= 0 attempted.");
 			return;
 		}
 		

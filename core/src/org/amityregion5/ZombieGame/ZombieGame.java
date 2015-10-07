@@ -52,6 +52,7 @@ public class ZombieGame extends Game {
 												// screen
 	public Random				random;
 	public FileHandle			gameData;
+	private FileHandle logFile;
 
 	/**
 	 *
@@ -60,7 +61,7 @@ public class ZombieGame extends Game {
  * @param config 
 	 */
 	public ZombieGame(boolean isServer) {
-		instance = this; // Set the instance
+		instance = this; // Set the instances
 		this.isServer = isServer; // Set if it is a server
 		random = new Random();
 		try {
@@ -74,12 +75,17 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void create() {
+		logFile = Gdx.files
+				.absolute(workingDir + "/ZombieGameData/log.log");
+		
+		logFile.writeString("", false);
+
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 
-		Gdx.app.log("[Log]", "Loading: Starting the loading process");
+		ZombieGame.log("Loading: Starting the loading process");
 		if (!isServer) {
 			setScreen(new LoadingScreen()); // Set the screen to a loading
 											// screen
@@ -105,7 +111,7 @@ public class ZombieGame extends Game {
 					// Create the plugin loader
 					PluginLoader loader = new PluginLoader(pluginManager);
 					// Load the plugins
-					Gdx.app.log("[Log]", "Loading: Plugins will be loaded from " + gameData.file().getAbsolutePath());
+					ZombieGame.log("Loading: Plugins will be loaded from " + gameData.file().getAbsolutePath());
 					
 					loader.loadPluginMeta(plugins);
 					
@@ -140,18 +146,18 @@ public class ZombieGame extends Game {
 					if (!isServer) {
 						
 						// Load the texture for buttons
-						Gdx.app.log("[Log]", "Loading: Loading button texture");
+						ZombieGame.log("Loading: Loading button texture");
 						Gdx.app.postRunnable(() -> {
 							buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
 						});
 
 						// Load the missing texture
-						Gdx.app.log("[Log]", "Loading: Loading missing texture");
+						ZombieGame.log("Loading: Loading missing texture");
 						Gdx.app.postRunnable(() -> missingTexture = new Texture(
 								Gdx.files.internal("images/missing.png")));
 
 						// Create the font generator
-						Gdx.app.log("[Log]", "Loading: Loading main font");
+						ZombieGame.log("Loading: Loading main font");
 						FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 								Gdx.files.internal("font/Calibri.ttf"));
 
@@ -171,7 +177,7 @@ public class ZombieGame extends Game {
 						TextureRegistry.tryRegister("Core/explosion.png");
 
 						// Go to main menu
-						Gdx.app.log("[Log]", "Loading: Loading completed");
+						ZombieGame.log("Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
 					}
 				}).start();
@@ -208,5 +214,20 @@ public class ZombieGame extends Game {
 	@Override
 	public void resume() {
 		super.resume();
+	}
+	
+	public static void debug(String message){
+		Gdx.app.debug("[Debug]", message);
+		instance.logFile.writeString("[Debug]: " + message + "\n", true);
+	}
+	
+	public static void log(String message){
+		Gdx.app.log("[Log]", message);
+		instance.logFile.writeString("[Log]: " + message + "\n", true);
+	}
+	
+	public static void error(String message){
+		Gdx.app.error("[ERROR]", message);
+		instance.logFile.writeString("[ERROR]: " + message + "\n", true);
 	}
 }

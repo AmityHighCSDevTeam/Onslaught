@@ -104,8 +104,15 @@ public class HUDOverlay implements Screen {
 		batch.begin();
 		screen.getFont1().draw(batch, player.getCurrentWeapon().getWeapon().getName(),
 				screen.getWidth() - 390, 190);
+		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
+			screen.getFont1().setColor(Color.YELLOW);
+		}
+		if (player.getCurrentWeapon().getTotalAmmo() == 0 && player.getCurrentWeapon().getAmmo() == 0) {
+			screen.getFont1().setColor(Color.RED);
+		}
 		screen.getFont1().draw(batch, player.getCurrentWeapon().getAmmoString(),
 				screen.getWidth() - 390, 170);
+		screen.getFont1().setColor(new Color(1,1,1,1));
 		screen.getFont1().draw(batch,
 				"$" + NumberFormat.getInstance().format(player.getMoney()),
 				screen.getWidth() - 390, 150);

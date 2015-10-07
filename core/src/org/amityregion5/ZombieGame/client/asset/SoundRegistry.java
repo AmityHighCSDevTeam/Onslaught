@@ -17,8 +17,12 @@ public class SoundRegistry {
 	// public static Array<Texture> zombieTextures = new Array<Texture>();
 
 	public static boolean tryRegister(String path) {
+		if (sounds.containsKey(path)) {
+			return true;
+		}
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("wav") || handle.extension().equals("mp3") || handle.extension().equals("ogg")) {
+			ZombieGame.debug("Sound Registry: registering: " + path);
 			register(path, handle);
 			return true;
 		}

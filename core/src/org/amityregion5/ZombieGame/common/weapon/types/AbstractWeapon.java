@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.bullet.BasicBullet;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
@@ -15,7 +16,6 @@ import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -198,11 +198,11 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 			if (arr != null) {
 				if (!loadWeaponData(arr)) {
-					Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
+					ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Error loading weapon data");
 					return false;
 				}
 			} else {
-				Gdx.app.debug("[Debug]", getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
+				ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Weapon Array does not exist");
 
 				return false;
 			}
@@ -210,7 +210,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 			return true;
 		}
-		Gdx.app.debug("Debug", getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 	

@@ -3,12 +3,16 @@ package org.amityregion5.ZombieGame.common.game.model;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
+import org.amityregion5.ZombieGame.common.entity.EntityExplosionParticle;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+
+import box2dLight.PointLight;
 
 public class RocketModel implements IEntityModel<EntityRocket>{
 	private EntityRocket entity;
@@ -20,6 +24,8 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 	private SpriteDrawingLayer sprite;
 	private Vector2 explosionPos;
 	private float size;
+	private final float timeStepPerSmoke = 0.05f;
+	private float timeUntilSmoke;
 
 	public RocketModel(EntityRocket e, Game game, PlayerModel parent, String txtr, float size) {
 		entity = e;
@@ -27,6 +33,7 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 		this.parent = parent;
 		this.size = size;
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor(txtr).get(0)), this::getSizeM2);
+		timeUntilSmoke = timeStepPerSmoke;
 	}
 
 	@Override
@@ -36,10 +43,29 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 
 	@Override
 	public void tick(float timeStep) {
-		entity.getBody().applyForceToCenter(VectorFactory.createVector(acceleration,entity.getBody().getAngle()), true);
 		if (timeUntilExplosion > 0) {
 			timeUntilExplosion -= timeStep;
+			timeUntilSmoke -= timeStep;
 			explosionPos = entity.getBody().getWorldCenter().cpy();
+			entity.getBody().applyForceToCenter(VectorFactory.createVector(acceleration,entity.getBody().getAngle()), true);
+			if (timeUntilSmoke < 0) {
+				timeUntilSmoke += timeStepPerSmoke;
+				
+				Vector2 pos2 = VectorFactory.createVector(size*2 + Math.min(0.05f, size*0.1f), entity.getBody().getAngle() + (float)Math.PI);
+				
+				pos2 = pos2.add(entity.getBody().getWorldCenter());
+				
+				ExplosionParticleModel smoke = new ExplosionParticleModel(new EntityExplosionParticle(), g, new Color(1f, 1f, 0f, 1f));
+				
+				smoke.setLight(new PointLight(g.getLighting(), 50, smoke.getColor(), 2, pos2.x, pos2.y));
+				smoke.getLight().setXray(true);
+				smoke.getEntity().setFriction(0.99f);
+				smoke.getEntity().setMass(0.1f);
+				
+				g.addEntityToWorld(smoke, pos2.x, pos2.y, (short)0b0001, (short)0b0010);
+				
+				smoke.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f, entity.getBody().getAngle() + (float)Math.PI), true);
+			}
 		} else {
 			g.removeEntity(this);
 			g.makeExplosion(explosionPos, strength, parent);

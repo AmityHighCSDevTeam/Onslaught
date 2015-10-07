@@ -10,7 +10,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = '0.0.6'
+    version = "${majorVersion}.${minorVersion}.${buildNumber}"
     ext {
         appName = 'ZombieGame'
         gdxVersion = '1.6.4'
@@ -55,4 +55,14 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
+}
+
+task incrementBuildNum << {
+    Properties props = new Properties() 
+    File propsFile = new File('gradle.properties') 
+    props.load(propsFile.newDataInputStream()) 
+    Integer nextbuildnum = ( ((props.getProperty('buildNumber')) as BigDecimal) + 1 ) 
+    props.setProperty('buildNumber', nextbuildnum.toString()) 
+    props.store(propsFile.newWriter(), null) 
+    props.load(propsFile.newDataInputStream())
 }
