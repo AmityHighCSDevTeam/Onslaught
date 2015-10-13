@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
+import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.window.HUDOverlay;
 import org.amityregion5.ZombieGame.client.window.InventoryWindow;
@@ -30,6 +32,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -100,7 +103,8 @@ public class InGameScreen extends GuiScreen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.5f, 1f, 0.5f, 1);
+		//Gdx.gl.glClearColor(0.5f, 1f, 0.5f, 1);
+		Gdx.gl.glClearColor(1f, 1f, 1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 		//Gdx.gl.glClearColor(0f, 1f, 0f, 0.1f);
 		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
@@ -117,10 +121,37 @@ public class InGameScreen extends GuiScreen {
 		camera.update();
 
 		//debugRenderer.render(game.getWorld(), camera.combined);
-
+		
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
-		batch.setProjectionMatrix(camera.combined);
+		
+		Texture tex = TextureRegistry.getTexturesFor("backgroundTile").get(0);
+		float scale = 0.005f;
+		batch.setProjectionMatrix(camera.combined.cpy().scl(scale));
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		
+		float tileX = tex.getWidth()*scale;
+		float tileY = tex.getHeight()*scale;
+		
+		int tilesW = (int)Math.ceil((camera.viewportWidth*camera.zoom*camera.zoom)/tileX);
+		int tilesH = (int)Math.ceil((camera.viewportHeight*camera.zoom*camera.zoom)/tileY);
+		
+		int tileNum = Math.max(tilesW, tilesH) + 2;
+		
+		int startTileX = (int)((camera.position.x-camera.viewportWidth*tileNum/4)/tileX);
+		int startTileY = (int)((camera.position.y-camera.viewportHeight*tileNum/4)/tileY);
+		batch.begin();
+		Color c = batch.getColor();
+		batch.setColor(1, 1, 1, 1);
+		batch.draw(tex, startTileX*tex.getWidth(), startTileY*tex.getHeight(),
+		         tileX/scale*tileNum, 
+		         tileY/scale*tileNum, 
+		         0, tileNum, 
+		         tileNum, 0);
+		batch.end();
+		batch.setColor(c);
+		
+		batch.setProjectionMatrix(camera.combined);
+		
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
 				s.draw(e, batch, shapeRenderer);
@@ -259,11 +290,10 @@ public class InGameScreen extends GuiScreen {
 		super.show();
 
 		// Create the font
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-				Gdx.files.internal("font/Calibri.ttf"));
+		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
 
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 20;
+		parameter.size = 16;
 
 		font1 = generator.generateFont(parameter);
 
@@ -272,8 +302,6 @@ public class InGameScreen extends GuiScreen {
 		parameter.borderStraight = true;
 		parameter.borderColor = new Color(0,0,0,1);
 		font2 = generator.generateFont(parameter);
-
-		generator.dispose();
 
 		font1.setColor(1, 1, 1, 1);
 		font2.setColor(1, 1, 1, 1);

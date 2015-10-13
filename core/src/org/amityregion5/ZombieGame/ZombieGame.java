@@ -26,6 +26,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -42,6 +43,7 @@ public class ZombieGame extends Game {
 	public static ZombieGame	instance;		// The current game
 	public static String workingDir;
 
+	public FreeTypeFontGenerator fontGenerator;
 	public BitmapFont			mainFont;	// Font that buttons use
 	public Texture				buttonTexture;	// Texture that buttons use
 	public Texture				missingTexture; //The texture for when texture is missing
@@ -82,8 +84,10 @@ public class ZombieGame extends Game {
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
-		width = Gdx.graphics.getWidth();
-		height = Gdx.graphics.getHeight();
+		//width = Gdx.graphics.getWidth();
+		width = 1200;
+		height = 900;
+		//height = Gdx.graphics.getHeight();
 
 		ZombieGame.log("Loading: Starting the loading process");
 		if (!isServer) {
@@ -158,23 +162,27 @@ public class ZombieGame extends Game {
 
 						// Create the font generator
 						ZombieGame.log("Loading: Loading main font");
-						FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-								Gdx.files.internal("font/Calibri.ttf"));
+						fontGenerator = new FreeTypeFontGenerator(
+								Gdx.files.internal("font/Helvetica.ttf"));
 
 						// Size 24 font
 						FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-						parameter.size = 24;
+						parameter.size = (int) (24 * getYScalar());
 
 						// Generate the font
 						Gdx.app.postRunnable(() -> {
-							mainFont = generator.generateFont(parameter);
+							mainFont = fontGenerator.generateFont(parameter);
 							// Make the font black
 							mainFont.setColor(0, 0, 0, 1);
-							// Get rid of generator
-							generator.dispose();
 						});
 						
-						TextureRegistry.tryRegister("Core/explosion.png");
+						TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");
+						TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
+						//TextureRegistry.tryRegister("Core/backgroundTile.png");
+						
+						Gdx.app.postRunnable(()->{
+							TextureRegistry.getTexturesFor("backgroundTile").get(0).setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+						});
 
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
@@ -196,6 +204,7 @@ public class ZombieGame extends Game {
 		SoundRegistry.dispose();
 		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
+		fontGenerator.dispose();
 	}
 
 	@Override
@@ -205,8 +214,10 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void resize(int width, int height) {
-		//this.width = width; //Save screen size
-		//this.height = height;
+		this.width = width; //Save screen size
+		this.height = height;
+		
+		//error("XSclr: " + getXScalar() + " ySclr: " + getYScalar() + " w: " + this.width + " h: " + this.height + " gw: " + width + " gh: " + height);
 
 		super.resize(width, height);
 	}
@@ -229,5 +240,21 @@ public class ZombieGame extends Game {
 	public static void error(String message){
 		Gdx.app.error("[ERROR]", message);
 		instance.logFile.writeString("[ERROR]: " + message + "\n", true);
+	}
+	
+	public static float getYScalar() {
+		return Gdx.graphics.getHeight()/900f;
+	}
+	
+	public static float getXScalar() {
+		return Gdx.graphics.getWidth()/1200f;
+	}
+	
+	public static float getScaledY(float y) {
+		return y*getYScalar();
+	}
+	
+	public static float getScaledX(float x) {
+		return x*getXScalar();
 	}
 }

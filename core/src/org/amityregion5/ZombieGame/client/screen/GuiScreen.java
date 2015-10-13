@@ -1,10 +1,12 @@
 package org.amityregion5.ZombieGame.client.screen;
 
 import java.util.HashMap;
-import org.amityregion5.ZombieGame.ZombieGame;
+
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -25,6 +27,8 @@ public abstract class GuiScreen implements Screen {
 	private HashMap<Integer, GuiButton>	buttons			= new HashMap<Integer, GuiButton>();
 	// The screen that we came from
 	protected GuiScreen					prevScreen;
+	// The camera
+	protected OrthographicCamera	camera;
 
 	/**
 	 *
@@ -37,6 +41,11 @@ public abstract class GuiScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		
+		camera.setToOrtho(false);
+		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+		
 		// Get mouse down position
 		Vector2 touchPos = new Vector2();
 		touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -78,6 +87,7 @@ public abstract class GuiScreen implements Screen {
 	@Override
 	public void show() {
 		batch = new SpriteBatch(); // Create a new sprite batch
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	@Override
@@ -137,11 +147,11 @@ public abstract class GuiScreen implements Screen {
 	}
 
 	public int getWidth() {
-		return ZombieGame.instance.width;
+		return Gdx.graphics.getWidth();
 	}
 
 	public int getHeight() {
-		return ZombieGame.instance.height;
+		return Gdx.graphics.getHeight();
 	}
 
 	protected void addButton(GuiButton button) {

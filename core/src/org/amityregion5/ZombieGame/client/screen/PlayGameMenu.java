@@ -64,15 +64,12 @@ public class PlayGameMenu extends GuiScreen {
 		super.show();
 
 		// Create the font
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-				Gdx.files.internal("font/Calibri.ttf"));
+		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
 
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 40;
+		parameter.size = 36;
 
 		calibri30 = generator.generateFont(parameter);
-
-		generator.dispose();
 
 		calibri30.setColor(1, 1, 1, 1);
 

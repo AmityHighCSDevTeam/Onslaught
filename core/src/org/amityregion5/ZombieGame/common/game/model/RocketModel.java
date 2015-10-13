@@ -65,6 +65,9 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 				g.addEntityToWorld(smoke, pos2.x, pos2.y, (short)0b0001, (short)0b0010);
 				
 				smoke.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f, entity.getBody().getAngle() + (float)Math.PI), true);
+				smoke.getEntity().getBody().setTransform(smoke.getEntity().getBody().getWorldCenter(), (float) (2*Math.PI*g.getRandom().nextDouble()));
+				smoke.getEntity().getBody().setAngularDamping(1);
+				smoke.getEntity().getBody().setAngularVelocity(100*(g.getRandom().nextFloat()-0.5f));
 			}
 		} else {
 			g.removeEntity(this);
