@@ -19,7 +19,12 @@
       "iconTxtr": "Core/Weapons/Rocket_Test/0I.png",
       "gameTxtr": "Core/Weapons/Rocket_Test/0G.png",
       "fieldTxtr": "Core/Weapons/Rocket_Test/0F.png",
-      "isAuto": false
+      "isAuto": false,
+      "gameScale": 0.1,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1
     },
     {
       "price": 10,
@@ -37,7 +42,12 @@
       "iconTxtr": "Core/Weapons/Rocket_Test/1I.png",
       "gameTxtr": "Core/Weapons/Rocket_Test/1G.png",
       "fieldTxtr": "Core/Weapons/Rocket_Test/1F.png",
-      "isAuto": false
+      "isAuto": false,
+      "gameScale": 0.1,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1
     }
   ]
 }

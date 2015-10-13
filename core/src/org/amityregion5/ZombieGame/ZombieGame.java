@@ -9,6 +9,8 @@ import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
+import org.amityregion5.ZombieGame.client.settings.InputData;
+import org.amityregion5.ZombieGame.client.settings.Settings;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.game.model.LanternModel;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
@@ -23,6 +25,8 @@ import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -54,7 +58,9 @@ public class ZombieGame extends Game {
 												// screen
 	public Random				random;
 	public FileHandle			gameData;
+	public FileHandle			settingsFile;
 	private FileHandle logFile;
+	public Settings settings;
 
 	/**
 	 *
@@ -104,6 +110,13 @@ public class ZombieGame extends Game {
 					gameData = Gdx.files
 							.absolute(workingDir + "/ZombieGameData/GameData");
 					
+					if (!isServer) {
+						settingsFile = Gdx.files
+								.absolute(workingDir + "/ZombieGameData/settings.json");
+						settings = new Settings();
+						settings.load();
+					}
+					
 					// "Mod" loading list of mods
 					FileHandle[] plugins = gameData.list();
 					
@@ -148,7 +161,6 @@ public class ZombieGame extends Game {
 
 					// If it is a client
 					if (!isServer) {
-						
 						// Load the texture for buttons
 						ZombieGame.log("Loading: Loading button texture");
 						Gdx.app.postRunnable(() -> {
@@ -187,6 +199,24 @@ public class ZombieGame extends Game {
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
+						
+						settings.registerInput("Shoot", new InputData(false, Buttons.LEFT));
+						settings.registerInput("Move_Up", new InputData(true, Keys.W));
+						settings.registerInput("Move_Down", new InputData(true, Keys.S));
+						settings.registerInput("Move_Right", new InputData(true, Keys.D));
+						settings.registerInput("Move_Left", new InputData(true, Keys.A));
+						settings.registerInput("Toggle_Flashlight", new InputData(true, Keys.F));
+						settings.registerInput("Buy_Ammo", new InputData(true, Keys.B));
+						settings.registerInput("Reload", new InputData(true, Keys.R));
+						settings.registerInput("Hotbar_1", new InputData(true, Keys.NUM_1));
+						settings.registerInput("Hotbar_2", new InputData(true, Keys.NUM_2));
+						settings.registerInput("Hotbar_3", new InputData(true, Keys.NUM_3));
+
+						settings.registerInput("Shop_Window", new InputData(true, Keys.P));
+						settings.registerInput("Inventory_Window", new InputData(true, Keys.I));
+						settings.registerInput("Close_Window", new InputData(true, Keys.ESCAPE));
+						
+						settings.save();
 					}
 				}).start();
 		;

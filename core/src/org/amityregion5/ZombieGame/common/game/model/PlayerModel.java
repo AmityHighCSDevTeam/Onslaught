@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.game.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
@@ -16,9 +17,6 @@ import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
@@ -53,55 +51,53 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
 		extras = new PlayerExtrasDrawingLayer(this);
-		
+
 		soundsToPlay = new ArrayList<SoundPlayingData>();
 	}
 
 	public void tick(float delta) {
-		if (screen.getCurrentWindow() == null) {
-			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
-				if (weapons.size() > 0) {
-					hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
-				}
-				shootJustPressed = false;
-			} else {
-				shootJustPressed = true;
+		if (ZombieGame.instance.settings.getInput("Shoot").isDown() && screen.getCurrentWindow() == null) {
+			if (weapons.size() > 0) {
+				hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
 			}
+			shootJustPressed = false;
+		} else {
+			shootJustPressed = true;
 		}
-		
-		if (Gdx.input.isKeyPressed(Keys.W)) {
+
+		if (ZombieGame.instance.settings.getInput("Move_Up").isDown()) {
 			entity.getBody().applyForceToCenter(new Vector2(0, getSpeed()), true);
 		}
-		if (Gdx.input.isKeyPressed(Keys.S)) {
+		if (ZombieGame.instance.settings.getInput("Move_Down").isDown()) {
 			entity.getBody().applyForceToCenter(new Vector2(0, -getSpeed()), true);
 		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
+		if (ZombieGame.instance.settings.getInput("Move_Right").isDown()) {
 			entity.getBody().applyForceToCenter(new Vector2(getSpeed(), 0), true);
 		}
-		if (Gdx.input.isKeyPressed(Keys.A)) {
+		if (ZombieGame.instance.settings.getInput("Move_Left").isDown()) {
 			entity.getBody().applyForceToCenter(new Vector2(-getSpeed(), 0), true);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.F)) {
+		if (ZombieGame.instance.settings.getInput("Toggle_Flashlight").isJustDown()) {
 			getLight().setActive(!getLight().isActive());
 			//getCircleLight().setActive(getLight().isActive());
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.B)) {
+		if (ZombieGame.instance.settings.getInput("Buy_Ammo").isJustDown()) {
 			hotbar[currentWeapon].purchaseAmmo(this);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.R)) {
+		if (ZombieGame.instance.settings.getInput("Reload").isJustDown()) {
 			hotbar[currentWeapon].reload(g, this);
 		}
-		
+
 		BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
 		getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
 
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
+		if (ZombieGame.instance.settings.getInput("Hotbar_1").isJustDown()) {
 			currentWeapon = 0;
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
+		if (ZombieGame.instance.settings.getInput("Hotbar_2").isJustDown()) {
 			currentWeapon = 1;
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
+		if (ZombieGame.instance.settings.getInput("Hotbar_3").isJustDown()) {
 			currentWeapon = 2;
 		}
 
@@ -109,7 +105,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		getCircleLight().attachToBody(entity.getBody());
 		//getLight().setPosition(entity.getBody().getWorldCenter());
 		//getCircleLight().setPosition(entity.getBody().getWorldCenter());
-		
+
 		if (currentWeapon < getHotbar().length && currentWeapon >= 0) {
 			getHotbar()[currentWeapon].tick(delta);
 		}
@@ -227,15 +223,15 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public double getScreenVibrate() {
 		return screenJitter;
 	}
-	
+
 	public void setScreenVibrate(double screenJitter) {
 		this.screenJitter = screenJitter;
 	}
-	
+
 	public void playSound(SoundPlayingData sound) {
 		soundsToPlay.add(sound);
 	}
-	
+
 	public List<SoundPlayingData> getSoundsToPlay() {
 		return soundsToPlay;
 	}

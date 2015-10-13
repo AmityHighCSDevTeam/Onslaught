@@ -235,20 +235,20 @@ public class InGameScreen extends GuiScreen {
 			camera.zoom -= 0.02;
 		}
 
-		if (Gdx.input.isKeyJustPressed(Keys.P)) {
+		if (ZombieGame.instance.settings.getInput("Shop_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 			}
 			currentWindow = new ShopWindow(this, player);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.I)) {
+		if (ZombieGame.instance.settings.getInput("Inventory_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 			}
 			currentWindow = new InventoryWindow(this, player);
 		}
 
-		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
+		if (ZombieGame.instance.settings.getInput("Close_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 				currentWindow = null;

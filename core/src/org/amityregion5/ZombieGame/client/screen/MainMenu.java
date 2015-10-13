@@ -66,7 +66,7 @@ public class MainMenu extends GuiScreen {
 
 		// Add all of the buttons
 		String[] buttons = {"Play Game", "Options", "Credits", null, "Quit"};
-		boolean[] enabled = {true, false, false, false, true};
+		boolean[] enabled = {true, true, false, false, true};
 		for (int i = 0; i<buttons.length; i++) {
 			if (buttons[i] != null) {
 				addButton(new GuiButton(buttonTexture, i, buttons[i],
@@ -131,6 +131,10 @@ public class MainMenu extends GuiScreen {
 			case 0:
 				// Play Game button
 				ZombieGame.instance.setScreen(new PlayGameMenu(this));
+				break;
+			case 1:
+				// Play Game button
+				ZombieGame.instance.setScreen(new OptionMenu(this));
 				break;
 			case 4:
 				// Quit button
