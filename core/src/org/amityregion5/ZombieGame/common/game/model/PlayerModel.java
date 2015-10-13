@@ -59,28 +59,6 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 	public void tick(float delta) {
 		if (screen.getCurrentWindow() == null) {
-			if (Gdx.input.isKeyPressed(Keys.W)) {
-				entity.getBody().applyForceToCenter(new Vector2(0, getSpeed()), true);
-			}
-			if (Gdx.input.isKeyPressed(Keys.S)) {
-				entity.getBody().applyForceToCenter(new Vector2(0, -getSpeed()), true);
-			}
-			if (Gdx.input.isKeyPressed(Keys.D)) {
-				entity.getBody().applyForceToCenter(new Vector2(getSpeed(), 0), true);
-			}
-			if (Gdx.input.isKeyPressed(Keys.A)) {
-				entity.getBody().applyForceToCenter(new Vector2(-getSpeed(), 0), true);
-			}
-			if (Gdx.input.isKeyJustPressed(Keys.F)) {
-				getLight().setActive(!getLight().isActive());
-				//getCircleLight().setActive(getLight().isActive());
-			}
-			if (Gdx.input.isKeyJustPressed(Keys.B)) {
-				hotbar[currentWeapon].purchaseAmmo(this);
-			}
-			if (Gdx.input.isKeyJustPressed(Keys.R)) {
-				hotbar[currentWeapon].reload(g, this);
-			}
 			if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 				if (weapons.size() > 0) {
 					hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
@@ -89,10 +67,34 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			} else {
 				shootJustPressed = true;
 			}
-			BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
-			getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
 		}
 		
+		if (Gdx.input.isKeyPressed(Keys.W)) {
+			entity.getBody().applyForceToCenter(new Vector2(0, getSpeed()), true);
+		}
+		if (Gdx.input.isKeyPressed(Keys.S)) {
+			entity.getBody().applyForceToCenter(new Vector2(0, -getSpeed()), true);
+		}
+		if (Gdx.input.isKeyPressed(Keys.D)) {
+			entity.getBody().applyForceToCenter(new Vector2(getSpeed(), 0), true);
+		}
+		if (Gdx.input.isKeyPressed(Keys.A)) {
+			entity.getBody().applyForceToCenter(new Vector2(-getSpeed(), 0), true);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.F)) {
+			getLight().setActive(!getLight().isActive());
+			//getCircleLight().setActive(getLight().isActive());
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.B)) {
+			hotbar[currentWeapon].purchaseAmmo(this);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.R)) {
+			hotbar[currentWeapon].reload(g, this);
+		}
+		
+		BodyHelper.setPointing(entity.getBody(), mousePos, delta, 10);
+		getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
+
 		if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
 			currentWeapon = 0;
 		}

@@ -347,6 +347,9 @@ public class Game implements Disposable {
 			addEntityToWorld(explosionParticle, pos2.x, pos2.y, (short)0b0001, (short)0b0010);
 			
 			explosionParticle.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad()), true);
+			explosionParticle.getEntity().getBody().setTransform(explosionParticle.getEntity().getBody().getWorldCenter(), (float) (2*Math.PI*rand.nextDouble()));
+			explosionParticle.getEntity().getBody().setAngularDamping(1);
+			explosionParticle.getEntity().getBody().setAngularVelocity(100*(rand.nextFloat()-0.5f));
 		}
 		
 		for (PlayerModel player : players) {

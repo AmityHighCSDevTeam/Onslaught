@@ -11,6 +11,7 @@ public class DesktopLauncher {
 		
 		config.width = 1200;
 		config.height = 900;
+		config.useHDPI = false;
 		//config.addIcon("images/iconTestBMP.bmp", FileType.Internal);
 		//config.addIcon("images/iconTestBMP1.bmp", FileType.Internal);
 		//config.addIcon("images/iconTest.png", FileType.Internal);

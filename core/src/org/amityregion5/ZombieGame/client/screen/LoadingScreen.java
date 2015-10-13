@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import org.amityregion5.ZombieGame.ZombieGame;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -55,19 +57,29 @@ public class LoadingScreen implements Screen {
 
 	@Override
 	public void show() {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-				Gdx.files.internal("font/Calibri.ttf"));
+		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
+		boolean disposeGenerator = false;
+		
+		if (generator == null) {
+			generator = new FreeTypeFontGenerator(
+					Gdx.files.internal("font/Helvetica.ttf"));
+			disposeGenerator = true;
+		} else {
+			generator = ZombieGame.instance.fontGenerator;
+		}
 
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 30;
+		parameter.size = (int) (26);
 
 		calibri30 = generator.generateFont(parameter);
-
-		generator.dispose();
 
 		calibri30.setColor(1, 1, 1, 1);
 
 		batch = new SpriteBatch();
+		
+		if (disposeGenerator) {
+			generator.dispose();
+		}
 	}
 
 	@Override

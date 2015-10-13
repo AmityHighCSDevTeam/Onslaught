@@ -5,6 +5,7 @@ import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.model.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,7 +19,7 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	private float maxSize = 0.15f;
 	
 	public ExplosionParticleDrawingLayer() {
-		this.sprite = new Sprite(TextureRegistry.getTexturesFor("Core/explosion.png").get(0));
+		this.sprite = new Sprite(TextureRegistry.getTexturesFor("explosion").get(0));
 	}
 	
 	public Sprite getSprite() {
@@ -29,7 +30,10 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {
 		IEntity e = em.getEntity();
 		ExplosionParticleModel model = (ExplosionParticleModel) em;
+		Color c = batch.getColor();
 		batch.begin();
+		
+		batch.setColor(new Color(model.getColor().r, model.getColor().g, model.getColor().b, 1));
 		
 		float val = (float) Math.sqrt(model.getLight().getColor().r);
 		
@@ -44,5 +48,6 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 
 		sprite.draw(batch);
 		batch.end();
+		batch.setColor(c);
 	}
 }

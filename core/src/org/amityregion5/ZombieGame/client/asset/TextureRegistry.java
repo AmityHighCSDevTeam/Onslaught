@@ -18,6 +18,19 @@ public class TextureRegistry {
 
 	// public static Array<Texture> zombieTextures = new Array<Texture>();
 
+	public static boolean tryRegisterAs(String path, String toReplace) {
+		if (textures.containsKey(path)) {
+			return false;
+		}
+		FileHandle handle = ZombieGame.instance.gameData.child(path);
+		if (handle.exists() && handle.extension().equals("png")) {
+			ZombieGame.debug("Texture Registry: registering: " + path + " as: " + toReplace);
+			register(toReplace, handle);
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean tryRegister(String path) {
 		if (textures.containsKey(path)) {
 			return false;

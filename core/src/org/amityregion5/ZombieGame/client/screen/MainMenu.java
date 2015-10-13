@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.client.screen;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,7 +21,7 @@ public class MainMenu extends GuiScreen {
 	// Title image
 	private Texture	titleTexture;
 	// Title position
-	private int		titleHeight;
+	private float		titleHeight;
 
 	@Override
 	public void render(float delta) {
@@ -35,15 +36,14 @@ public class MainMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw picture
-		batch.draw(titleTexture, 10, getHeight() - titleHeight - 10,
-				getWidth() - 20, titleHeight);
+		batch.draw(titleTexture, 10, camera.viewportHeight - titleHeight-10,
+				camera.viewportWidth - 20, titleHeight);
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		// Compute title position
-		titleHeight = (int) Math.round((double) titleTexture.getHeight()
-				/ (double) titleTexture.getWidth() * (getWidth() - 20));
+		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());//(float) ((double) titleTexture.getHeight() / (double) titleTexture.getWidth() * (getWidth() - 20));
 
 		super.resize(width, height);
 	}
@@ -65,6 +65,52 @@ public class MainMenu extends GuiScreen {
 		Texture buttonTexture = ZombieGame.instance.buttonTexture;
 
 		// Add all of the buttons
+		String[] buttons = {"Play Game", "Options", "Credits", null, "Quit"};
+		boolean[] enabled = {true, false, false, false, true};
+		for (int i = 0; i<buttons.length; i++) {
+			if (buttons[i] != null) {
+				addButton(new GuiButton(buttonTexture, i, buttons[i],
+						10*ZombieGame.getXScalar(), 
+						getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60*i),
+						getWidth() - ZombieGame.getScaledX(20),
+						ZombieGame.getScaledY(50)).setEnabled(enabled[i]));
+			}
+		}
+		/*
+		addButton(new GuiButton(buttonTexture, 0, "Play Game",
+				ZombieGame.getScaledX(10), 
+				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50 - 60*0),
+				ZombieGame.getScaledX(getWidth() - 20),
+				ZombieGame.getScaledY(50)));
+		addButton(new GuiButton(buttonTexture, 0, "Options",
+				ZombieGame.getScaledX(10), 
+				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50 - 60*1),
+				ZombieGame.getScaledX(getWidth() - 20),
+				ZombieGame.getScaledY(50)).setEnabled(false));
+		addButton(new GuiButton(buttonTexture, 0, "Credits",
+				ZombieGame.getScaledX(10), 
+				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50),
+				ZombieGame.getScaledX(getWidth() - 20),
+				ZombieGame.getScaledY(50)).setEnabled(false));
+		addButton(new GuiButton(buttonTexture, 0, "Quit",
+				ZombieGame.getScaledX(10), 
+				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50),
+				ZombieGame.getScaledX(getWidth() - 20),
+				ZombieGame.getScaledY(50)));
+				*/
+		
+		/*
+		addButton(new GuiButton(buttonTexture, 1, "Options", 10, getHeight()
+				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 1*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar())
+				.setEnabled(false));
+		addButton(new GuiButton(buttonTexture, 2, "Credits", 10, getHeight()
+				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 2*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar())
+				.setEnabled(false));
+		addButton(new GuiButton(buttonTexture, 4, "Quit", 10, getHeight()
+				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 4*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+				*/
+		
+		/*
 		addButton(new GuiButton(buttonTexture, 0, "Play Game", 10, getHeight()
 				- titleHeight - 10 - 50, getWidth() - 20, 50));
 		addButton(new GuiButton(buttonTexture, 1, "Options", 10, getHeight()
@@ -75,6 +121,7 @@ public class MainMenu extends GuiScreen {
 				.setEnabled(false));
 		addButton(new GuiButton(buttonTexture, 4, "Quit", 10, getHeight()
 				- titleHeight - 10 - 50 - 60 - 60 - 60 - 60, getWidth() - 20, 50));
+		 */
 	}
 
 	@Override
