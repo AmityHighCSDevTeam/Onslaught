@@ -125,30 +125,45 @@ public class InGameScreen extends GuiScreen {
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 		
 		Texture tex = TextureRegistry.getTexturesFor("backgroundTile").get(0);
-		float scale = 0.005f;
-		batch.setProjectionMatrix(camera.combined.cpy().scl(scale));
+		float wM = 10.24f;
+		float hM = 10.24f;
+		
+		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		
-		float tileX = tex.getWidth()*scale;
-		float tileY = tex.getHeight()*scale;
+		float tileX = wM;
+		float tileY = hM;
 		
-		int tilesW = (int)Math.ceil((camera.viewportWidth*camera.zoom*camera.zoom)/tileX);
-		int tilesH = (int)Math.ceil((camera.viewportHeight*camera.zoom*camera.zoom)/tileY);
+		Vector2 posStart = new Vector2(camera.position.x - camera.viewportWidth*camera.zoom, camera.position.y - camera.viewportHeight*camera.zoom*camera.zoom);
+		Vector2 posEnd = new Vector2(camera.position.x + camera.viewportWidth*camera.zoom, camera.position.y + camera.viewportHeight*camera.zoom*camera.zoom);
 		
-		int tileNum = Math.max(tilesW, tilesH) + 2;
+		int startTileX = (int)((posStart.x)/tileX);
+		if (posStart.x < 0)
+			startTileX--;
+		int startTileY = (int)((posStart.y)/tileY);
+		if (posStart.y < 0)
+			startTileY--;
 		
-		int startTileX = (int)((camera.position.x-camera.viewportWidth*tileNum/4)/tileX);
-		int startTileY = (int)((camera.position.y-camera.viewportHeight*tileNum/4)/tileY);
+		startTileX--;
+		startTileY--;
+		
+		int endTileX = (int)((posEnd.x)/tileX);
+		int endTileY = (int)((posEnd.y)/tileY);
+		
+		endTileX++;
+		endTileY++;
+				
 		batch.begin();
 		Color c = batch.getColor();
 		batch.setColor(1, 1, 1, 1);
-		batch.draw(tex, startTileX*tex.getWidth(), startTileY*tex.getHeight(),
-		         tileX/scale*tileNum, 
-		         tileY/scale*tileNum, 
-		         0, tileNum, 
-		         tileNum, 0);
+		for (int x = startTileX; x<endTileX; x++) {
+			for (int y = startTileY; y<endTileY; y++) {
+				batch.draw(tex, x*tileX, y*tileY, tileX, tileY);
+			}
+		}
 		batch.end();
 		batch.setColor(c);
+		
 		
 		batch.setProjectionMatrix(camera.combined);
 		
@@ -197,7 +212,7 @@ public class InGameScreen extends GuiScreen {
 			
 			Sound sound = SoundRegistry.getSoundsFor(soundData.getSound()).get(0);
 			
-			sound.play((float)MathHelper.clamp(0, 1, soundData.getVolume()), (float)MathHelper.clamp(0.5, 2, soundData.getPitch()), 0);
+			sound.play((float)MathHelper.clamp(0, 1, soundData.getVolume()*ZombieGame.instance.settings.getMasterVolume()), (float)MathHelper.clamp(0.5, 2, soundData.getPitch()), 0);
 			
 			iterator.remove();
 		}

@@ -92,7 +92,7 @@ public class ControlsMenu extends GuiScreen {
 			boolean right = false;
 			float h = 50;
 			float blankSpace = 10;
-			float y = (float) ((getHeight()-100) - h - blankSpace + scrollPos);
+			float y = (float) ((getHeight()-50) - h - blankSpace + scrollPos);
 			float w = (getWidth()-40)/2 - 20;
 			
 			boolean clickOn = false;
@@ -119,8 +119,8 @@ public class ControlsMenu extends GuiScreen {
 				}
 				batch.draw(buttText, x, y, w, h);
 				batch.setColor(1, 1, 1, 1);
-				glyph.setText(calibri30, entry.getKey().replace('_', ' ') + ": " + entry.getValue().getName(), (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.BLACK : Color.RED), w-20, Align.center, false);
-				calibri30.draw(batch, glyph, x, y + h*3/4);
+				glyph.setText(ZombieGame.instance.mainFont, entry.getKey().replace('_', ' ') + ": " + entry.getValue().getName(), (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.BLACK : Color.RED), w-20, Align.center, false);
+				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h+glyph.height)/2);
 			}
 			if (Gdx.input.isTouched() && Gdx.input.justTouched() && !clickOn) {
 				selected = null;
@@ -244,7 +244,7 @@ public class ControlsMenu extends GuiScreen {
 	}
 
 	private double getMaxScrollAmount() {
-		return 60*((ZombieGame.instance.settings.getEntries().size()+1)/2);
+		return 60*((ZombieGame.instance.settings.getEntries().size()+1)/2) + 20;
 	}
 
 	private float getScrollBarPos() {

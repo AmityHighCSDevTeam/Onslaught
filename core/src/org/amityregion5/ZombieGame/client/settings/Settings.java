@@ -148,4 +148,12 @@ public class Settings {
 	public double getSameValues(InputData data) {
 		return inputSettings.values().parallelStream().filter((v)->v.equals(data)).count();
 	}
+	
+	public double getMasterVolume() {
+		return masterVolume;
+	}
+	
+	public void setMasterVolume(double masterVolume) {
+		this.masterVolume = masterVolume;
+	}
 }

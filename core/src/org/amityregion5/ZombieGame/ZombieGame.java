@@ -30,7 +30,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -191,11 +190,7 @@ public class ZombieGame extends Game {
 						TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");
 						TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
 						//TextureRegistry.tryRegister("Core/backgroundTile.png");
-						
-						Gdx.app.postRunnable(()->{
-							TextureRegistry.getTexturesFor("backgroundTile").get(0).setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-						});
-
+ 
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));

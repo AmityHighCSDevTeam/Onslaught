@@ -1,8 +1,9 @@
 #!/bin/bash
 cd "$( dirname "$0" )"
 
-echo Deleting Log File
+echo Deleting Extraneous Files
 rm core/ZombieGameData/log.log
+rm core/ZombieGameData/settings.json
 
 echo Deleting Previous Builds
 rm ~/Desktop/ZombieGame.zip
