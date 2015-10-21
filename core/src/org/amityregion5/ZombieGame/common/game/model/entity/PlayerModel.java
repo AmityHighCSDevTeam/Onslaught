@@ -1,4 +1,4 @@
-package org.amityregion5.ZombieGame.common.game.model;
+package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
@@ -234,5 +235,9 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 	public List<SoundPlayingData> getSoundsToPlay() {
 		return soundsToPlay;
+	}
+	
+	public void setHealth(float health) {
+		this.health = health;
 	}
 }

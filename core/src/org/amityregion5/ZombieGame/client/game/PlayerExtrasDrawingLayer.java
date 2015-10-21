@@ -2,7 +2,8 @@ package org.amityregion5.ZombieGame.client.game;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.IParticle;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
@@ -55,4 +56,7 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 		sprite.draw(batch);
 		batch.end();
 	}
+
+	@Override
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
 }

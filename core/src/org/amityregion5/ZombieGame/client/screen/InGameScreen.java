@@ -20,9 +20,11 @@ import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.amityregion5.ZombieGame.common.game.model.LanternModel;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
-import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
+import org.amityregion5.ZombieGame.common.game.model.IParticle;
+import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.game.model.particle.HealthPackParticle;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
 import com.badlogic.gdx.Gdx;
@@ -167,6 +169,11 @@ public class InGameScreen extends GuiScreen {
 		
 		batch.setProjectionMatrix(camera.combined);
 		
+		for (IParticle p : game.getParticles()) {
+			for (IDrawingLayer s : p.getDrawingLayers()) {
+				s.draw(p, batch, shapeRenderer);
+			}
+		}
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
 				s.draw(e, batch, shapeRenderer);
@@ -273,13 +280,17 @@ public class InGameScreen extends GuiScreen {
 		if (Gdx.input.isKeyJustPressed(Keys.E)) {
 			game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 50, player);
 		}
+		
+		if (Gdx.input.isKeyJustPressed(Keys.R)) {
+			game.addParticleToWorld(new HealthPackParticle(mouseCoord.x, mouseCoord.y, game));
+		}
 
 		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			EntityZombie zom = new EntityZombie(0.15f);
 			zom.setMass(100);
 			zom.setFriction(0.99f);
 			
-			ZombieModel model = new ZombieModel(zom, game);
+			ZombieModel model = new ZombieModel(zom, game,1);
 			
 			model.setAllHealth(5);
 			model.setSpeed(0.03f);

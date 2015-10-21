@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.amityregion5.ZombieGame.common.game.model.IParticle;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -42,4 +43,7 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 		sprite.draw(batch);
 		batch.end();
 	}
+
+	@Override
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
 }

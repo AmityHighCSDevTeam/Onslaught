@@ -1,7 +1,7 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 

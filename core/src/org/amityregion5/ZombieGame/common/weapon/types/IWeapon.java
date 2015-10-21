@@ -3,7 +3,7 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.json.simple.JSONObject;

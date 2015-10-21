@@ -1,7 +1,8 @@
-package org.amityregion5.ZombieGame.common.game.model;
+package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 
 public class EntityModelWrapper<T extends IEntity> implements IEntityModel<T> {
 

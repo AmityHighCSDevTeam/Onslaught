@@ -1,28 +1,98 @@
 {
-  "name": "M9",
-  "desc": "A Basic Pistol",
+  "name": "SVD",
+  "desc": "A legendary quickscoping rifle by the call of duty gods that are dweeboes that can't quickscope only hardscope.",
   "className": "SemiAuto",
   "weapon": [
     {
-      "price": 200,
+      "price": 3500,
       "ammoPrice": 2,
-      "damage": 6.7,
-      "knockback": 0,
-      "accuracy": 2.5,
+      "damage": 18,
+      "knockback": 0.010,
+      "accuracy": 1,
+      "maxAmmo": 7,
+      "reloadTime": 1.5,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 2,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/SVD/0I.png",
+      "gameTxtr": "Core/Weapons/SVD/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.4
+        }
+      ]
+    },
+    {
+      "price": 5000,
+      "ammoPrice": 2,
+      "damage": 23,
+      "knockback": 0.010,
+      "accuracy": 1,
+      "maxAmmo": 10,
+      "reloadTime": 1.5,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 2,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/SVD/0I.png",
+      "gameTxtr": "Core/Weapons/SVD/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.4
+        }
+      ]
+    },
+    {
+      "price": 8000,
+      "ammoPrice": 2.5,
+      "damage": 30,
+      "knockback": 0.010,
+      "accuracy": 1,
       "maxAmmo": 15,
       "reloadTime": 1.5,
       "preFireDelay": 0,
-      "postFireDelay": 0.15,
+      "postFireDelay": 0.175,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/0G.png",
+      "bulletThickness": 2,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/SVD/0I.png",
+      "gameTxtr": "Core/Weapons/SVD/0G.png",
       "gameScale": 0.01,
       "gameOffX": 0.05,
       "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "isAuto": false,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -34,77 +104,7 @@
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
           "pitch": 1,
-          "maxVolume": 0.3
-        }
-      ]
-    },
-    {
-      "price": 1000,
-      "ammoPrice": 2,
-      "damage": 10,
-      "knockback": 0,
-      "accuracy": 1.5,
-      "maxAmmo": 20,
-      "reloadTime": 0.75,
-      "preFireDelay": 0,
-      "postFireDelay": 0.125,
-      "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/1G.png",
-      "isAuto": false,
-      "gameScale": 0.01,
-      "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "sounds": [
-        {
-          "path": "Core/Audio/reload.wav",
-          "trigger": "reload",
-          "pitch": 1,
-          "maxVolume": 0.05
-        },
-        {
-          "path": "Core/Audio/pistolShot.wav",
-          "trigger": "fire",
-          "pitch": 1,
-          "maxVolume": 0.3
-        }
-      ]
-    },
-    {
-      "price": 2000,
-      "ammoPrice": 3.33,
-      "damage": 15,
-      "knockback": 0,
-      "accuracy": 1.25,
-      "maxAmmo": 30,
-      "reloadTime": 0.5,
-      "preFireDelay": 0,
-      "postFireDelay": 0.1,
-      "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/1G.png",
-      "isAuto": false,
-      "gameScale": 0.01,
-      "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "sounds": [
-        {
-          "path": "Core/Audio/reload.wav",
-          "trigger": "reload",
-          "pitch": 1,
-          "maxVolume": 0.05
-        },
-        {
-          "path": "Core/Audio/pistolShot.wav",
-          "trigger": "fire",
-          "pitch": 1,
-          "maxVolume": 0.3
+          "maxVolume": 0.4
         }
       ]
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 import org.json.simple.JSONObject;

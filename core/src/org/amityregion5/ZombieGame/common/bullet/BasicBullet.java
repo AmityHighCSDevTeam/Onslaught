@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 
 import com.badlogic.gdx.graphics.Color;

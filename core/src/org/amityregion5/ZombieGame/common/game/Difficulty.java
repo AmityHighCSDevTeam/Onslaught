@@ -60,4 +60,8 @@ public enum Difficulty {
 
 		return result;
 	}
+	
+	public float getHealthPackChance() {
+		return (diffInvertNum - difficultyMultiplier)/200;
+	}
 }

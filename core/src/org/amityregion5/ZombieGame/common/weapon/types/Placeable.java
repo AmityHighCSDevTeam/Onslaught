@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.PlaceableWeaponData;

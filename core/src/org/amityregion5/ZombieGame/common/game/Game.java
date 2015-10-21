@@ -10,14 +10,14 @@ import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
-import org.amityregion5.ZombieGame.common.entity.EntityExplosionParticle;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
-import org.amityregion5.ZombieGame.common.game.model.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
-import org.amityregion5.ZombieGame.common.game.model.RocketModel;
-import org.amityregion5.ZombieGame.common.game.model.ZombieModel;
+import org.amityregion5.ZombieGame.common.game.model.IParticle;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 
@@ -41,6 +41,7 @@ public class Game implements Disposable {
 	private World	world;
 	private float	accumulator;
 	private ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete;
+	private ArrayList<IParticle>	particles, particlesToAdd, particlesToDelete;
 	private ArrayList<IBullet>	activeBullets;
 	private ArrayList<PlayerModel> players;
 	private Random				rand;
@@ -92,6 +93,9 @@ public class Game implements Disposable {
 		entities = new ArrayList<IEntityModel<?>>();
 		entitiesToAdd = new ArrayList<IEntityModel<?>>();
 		entitiesToDelete = new ArrayList<IEntityModel<?>>();
+		particles = new ArrayList<IParticle>();
+		particlesToAdd = new ArrayList<IParticle>();
+		particlesToDelete = new ArrayList<IParticle>();
 		activeBullets = new ArrayList<IBullet>();
 		players = new ArrayList<PlayerModel>();
 		rand = new Random();
@@ -108,17 +112,14 @@ public class Game implements Disposable {
 		accumulator += frameTime;
 		while (accumulator >= Constants.TIME_STEP) {
 
-			for (IEntityModel<?> e : entities) {
-				// Body body = e.getBody();
-
-				e.tick(Constants.TIME_STEP);
-			}
+			entities.forEach((e)->e.tick(Constants.TIME_STEP));
+			particles.forEach((p)->p.tick(Constants.TIME_STEP));
 
 			world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS,
 					Constants.POSITION_ITERATIONS);
 			accumulator -= Constants.TIME_STEP;
 
-			{
+			{ //Deletion of Entities
 				Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
 				if(!world.isLocked()){
 					while(i.hasNext()){
@@ -133,7 +134,18 @@ public class Game implements Disposable {
 					}
 				}
 			}
-			{
+			{ //Deletion of Particles
+				Iterator<IParticle> i = particlesToDelete.iterator();
+				if(!world.isLocked()){
+					while(i.hasNext()){
+						IParticle p = i.next();
+						particles.remove(p);
+						i.remove();
+						p.dispose();
+					}
+				}
+			}
+			{ //Addition of Entities
 				Iterator<IEntityModel<?>> i = entitiesToAdd.iterator();
 				if(!world.isLocked()){
 					while(i.hasNext()){
@@ -143,7 +155,18 @@ public class Game implements Disposable {
 					}
 				}
 			}
+			{ //Addition of Particles
+				Iterator<IParticle> i = particlesToAdd.iterator();
+				if(!world.isLocked()){
+					while(i.hasNext()){
+						IParticle p = i.next();
+						particles.add(p);
+						i.remove();
+					}
+				}
+			}
 
+			//Spawning of mobs
 			if (hostiles < maxHostiles) {
 				while (timeUntilNextWave <= 0 && hostiles < maxHostiles) {
 					spawnNext();
@@ -189,7 +212,7 @@ public class Game implements Disposable {
 		//zom.setSpeed(1f);
 		zom.setFriction(0.99f);
 
-		ZombieModel model = new ZombieModel(zom, this);
+		ZombieModel model = new ZombieModel(zom, this, sizeModifier);
 
 		model.setSpeed(0.03f * speedModifier);
 		model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(mobsSpawned)) + 4)*(diff.getDifficultyMultiplier()/2+1) * sizeModifier*sizeModifier);
@@ -202,6 +225,14 @@ public class Game implements Disposable {
 
 	public World getWorld() {
 		return world;
+	}
+	
+	public void addParticleToWorld(IParticle particle) {
+		if (particle instanceof IEntityModel) {
+			ZombieGame.error("Game: attempt to add entity " + particle.getClass().getSimpleName() + " as particle blocked. Use addEntityToWorld for entitites.");
+			return;
+		}
+		particlesToAdd.add(particle);
 	}
 	
 	public void addEntityToWorld(IEntityModel<?> entity, float x, float y) {
@@ -284,6 +315,16 @@ public class Game implements Disposable {
 	public void removeEntity(IEntity entity) {
 		getEntityModelFromEntity(entity).ifPresent((m)->removeEntity(m));
 	}
+	
+	public ArrayList<IParticle> getParticles() {
+		return particles;
+	}
+	
+	public void removeParticle(IParticle p) {
+		if (!particlesToDelete.contains(p)) {
+			particlesToDelete.add(p);
+		}
+	}
 
 	public ArrayList<IBullet> getActiveBullets() {
 		return activeBullets;
@@ -337,19 +378,13 @@ public class Game implements Disposable {
 		for (int i = 0; i<particles; i++) {
 			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
 			
-			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(new EntityExplosionParticle(), this, new Color(1f, 1f, 0f, 1f));
-			
+			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(pos2.x, pos2.y ,new Color(1f, 1f, 0f, 1f), this,
+					(float) (2*Math.PI*rand.nextDouble()), 100*(rand.nextFloat()-0.5f), 0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad());
+	
 			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
 			explosionParticle.getLight().setXray(true);
-			explosionParticle.getEntity().setFriction(0.99f);
-			explosionParticle.getEntity().setMass(0.1f);
 			
-			addEntityToWorld(explosionParticle, pos2.x, pos2.y, (short)0b0001, (short)0b0010);
-			
-			explosionParticle.getEntity().getBody().applyForceToCenter(VectorFactory.createVector(0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad()), true);
-			explosionParticle.getEntity().getBody().setTransform(explosionParticle.getEntity().getBody().getWorldCenter(), (float) (2*Math.PI*rand.nextDouble()));
-			explosionParticle.getEntity().getBody().setAngularDamping(1);
-			explosionParticle.getEntity().getBody().setAngularVelocity(100*(rand.nextFloat()-0.5f));
+			addParticleToWorld(explosionParticle);
 		}
 		
 		for (PlayerModel player : players) {
@@ -359,6 +394,8 @@ public class Game implements Disposable {
 			}
 			player.setScreenVibrate(player.getScreenVibrate() + strength/distToExplosion/4 );
 		}
+		
+		playSound(new SoundData("Core/Audio/explode.wav", 1, strength), pos);
 	}
 	
 	public GameContactListener getContactListener() {
@@ -366,9 +403,14 @@ public class Game implements Disposable {
 	}
 
 	public void playSound(SoundData sound, Vector2 position) {
+		//ZombieGame.debug("Game: Playing Sound: " + sound.getAssetName());
 		for (PlayerModel player : players) {
 			SoundPlayingData playing = new SoundPlayingData(sound.getAssetName(), Math.min(sound.getMaxVolume()/player.getEntity().getBody().getWorldCenter().dst2(position),1), sound.getPitch());
 			player.playSound(playing);
 		}
+	}
+	
+	public ArrayList<PlayerModel> getPlayers() {
+		return players;
 	}
 }

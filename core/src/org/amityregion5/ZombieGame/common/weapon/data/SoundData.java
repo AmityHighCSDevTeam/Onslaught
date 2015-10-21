@@ -41,6 +41,10 @@ public class SoundData {
 		this.pitch = pitch;
 		this.maxVolume = maxVolume;
 	}
+	
+	public SoundData(String assetName, double pitch, double maxVolume) {
+		this(assetName, "", pitch, maxVolume);
+	}
 
 	/**
 	 * @return the assetName

@@ -39,6 +39,11 @@ public class SoundRegistry {
 		return t;
 	}
 	
+	public static List<String> getSoundNamesFor(String str) {
+		List<String> t = sounds.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).collect(Collectors.toList());
+		return t;
+	}
+	
 	private static String regexify(String str) {
 		if (str == null) {
 			return "";

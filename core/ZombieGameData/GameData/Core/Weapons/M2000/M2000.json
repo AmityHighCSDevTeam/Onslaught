@@ -1,28 +1,28 @@
 {
-  "name": "M9",
-  "desc": "A Basic Pistol",
+  "name": "M2000",
+  "desc": "A legendary quickscoping rifle by the call of duty gods.",
   "className": "SemiAuto",
   "weapon": [
     {
-      "price": 200,
+      "price": 3000,
       "ammoPrice": 2,
-      "damage": 6.7,
-      "knockback": 0,
-      "accuracy": 2.5,
-      "maxAmmo": 15,
+      "damage": 20,
+      "knockback": 0.010,
+      "accuracy": 1,
+      "maxAmmo": 5,
       "reloadTime": 1.5,
       "preFireDelay": 0,
-      "postFireDelay": 0.15,
+      "postFireDelay": 0.4,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/0G.png",
+      "bulletThickness": 2,
+      "isAuto": false,
+      "iconTxtr": "Core/Weapons/M2000/0I.png",
+      "gameTxtr": "Core/Weapons/M2000/0G.png",
       "gameScale": 0.01,
       "gameOffX": 0.05,
       "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "isAuto": false,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -34,30 +34,30 @@
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
           "pitch": 1,
-          "maxVolume": 0.3
+          "maxVolume": 0.4
         }
       ]
     },
     {
-      "price": 1000,
-      "ammoPrice": 2,
-      "damage": 10,
-      "knockback": 0,
-      "accuracy": 1.5,
-      "maxAmmo": 20,
-      "reloadTime": 0.75,
+      "price": 4000,
+      "ammoPrice": 2.5,
+      "damage": 30,
+      "knockback": 0.010,
+      "accuracy": 0.75,
+      "maxAmmo": 6,
+      "reloadTime": 1.5,
       "preFireDelay": 0,
-      "postFireDelay": 0.125,
+      "postFireDelay": 0.35,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/1G.png",
+      "bulletThickness": 2,
       "isAuto": false,
+      "iconTxtr": "Core/Weapons/M2000/0I.png",
+      "gameTxtr": "Core/Weapons/M2000/0G.png",
       "gameScale": 0.01,
       "gameOffX": 0.05,
       "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -69,30 +69,30 @@
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
           "pitch": 1,
-          "maxVolume": 0.3
+          "maxVolume": 0.4
         }
       ]
     },
     {
-      "price": 2000,
-      "ammoPrice": 3.33,
-      "damage": 15,
-      "knockback": 0,
-      "accuracy": 1.25,
-      "maxAmmo": 30,
-      "reloadTime": 0.5,
+      "price": 8000,
+      "ammoPrice": 3,
+      "damage": 60,
+      "knockback": 0.010,
+      "accuracy": 0.5,
+      "maxAmmo": 4,
+      "reloadTime": 1.25,
       "preFireDelay": 0,
-      "postFireDelay": 0.1,
+      "postFireDelay": 0.2,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1,
-      "iconTxtr": "Core/Weapons/M9/M9.png",
-      "gameTxtr": "Core/Weapons/M9/1G.png",
+      "bulletThickness": 2,
       "isAuto": false,
+      "iconTxtr": "Core/Weapons/M2000/0I.png",
+      "gameTxtr": "Core/Weapons/M2000/0G.png",
       "gameScale": 0.01,
       "gameOffX": 0.05,
       "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -104,7 +104,7 @@
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
           "pitch": 1,
-          "maxVolume": 0.3
+          "maxVolume": 0.4
         }
       ]
     }

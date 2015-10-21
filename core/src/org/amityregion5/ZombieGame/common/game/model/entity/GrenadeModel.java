@@ -1,10 +1,11 @@
-package org.amityregion5.ZombieGame.common.game.model;
+package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityGrenade;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;

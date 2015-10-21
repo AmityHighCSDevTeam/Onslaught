@@ -6,8 +6,8 @@ import java.util.Map;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.model.PlayerModel;
-import org.amityregion5.ZombieGame.common.game.model.RocketModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
@@ -135,8 +135,17 @@ public class Rocket implements IWeapon {
 				* data.get(stack.getLevel()).getAccuracy());
 
 		dir = MathHelper.fixAngle(dir);
+		
+		SoundData flySound = null;
+		
+		for (SoundData sound : gData.getSounds()) {
+			if (sound.getTrigger().equals("fly")) {
+				flySound = sound;
+				break;
+			}
+		}	
 
-		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getFieldTextureString(), (float)gData.getSize());
+		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getFieldTextureString(), (float)gData.getSize(), flySound);
 		
 		rocketModel.setStrength(gData.getStrength());
 		rocketModel.setAcceleration((float) gData.getAcceleration());

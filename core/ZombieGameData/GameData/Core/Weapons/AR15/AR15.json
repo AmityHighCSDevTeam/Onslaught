@@ -28,13 +28,13 @@
           "path": "Core/Audio/reload.wav",
           "trigger": "reload",
           "pitch": 1,
-          "maxVolume": 1
+          "maxVolume": 0.05
         },
         {
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
           "pitch": 1,
-          "maxVolume": 1
+          "maxVolume": 0.3
         }
       ]
     },
@@ -62,14 +62,14 @@
         {
           "path": "Core/Audio/reload.wav",
           "trigger": "reload",
-          "pitch": 0.5,
-          "maxVolume": 1
+          "pitch": 1,
+          "maxVolume": 0.05
         },
         {
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
-          "pitch": 0.5,
-          "maxVolume": 1
+          "pitch": 1,
+          "maxVolume": 0.3
         }
       ]
     },
@@ -97,14 +97,14 @@
         {
           "path": "Core/Audio/reload.wav",
           "trigger": "reload",
-          "pitch": 0.5,
-          "maxVolume": 1
+          "pitch": 1,
+          "maxVolume": 0.05
         },
         {
           "path": "Core/Audio/pistolShot.wav",
           "trigger": "fire",
-          "pitch": 0.5,
-          "maxVolume": 1
+          "pitch": 1,
+          "maxVolume": 0.3
         }
       ]
     }

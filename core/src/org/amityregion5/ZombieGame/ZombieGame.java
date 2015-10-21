@@ -12,7 +12,7 @@ import org.amityregion5.ZombieGame.client.screen.MainMenu;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.client.settings.Settings;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
-import org.amityregion5.ZombieGame.common.game.model.LanternModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
@@ -189,7 +189,17 @@ public class ZombieGame extends Game {
 						
 						TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");
 						TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
+						TextureRegistry.tryRegisterAs("Core/HealthBox.png", "healthPack");
 						//TextureRegistry.tryRegister("Core/backgroundTile.png");
+						
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl1.wav");
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl2.wav");
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl3.wav");
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl4.wav");
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl5.wav");
+						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl6.wav");
+						
+						SoundRegistry.tryRegister("Core/Audio/explode.wav");
  
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
