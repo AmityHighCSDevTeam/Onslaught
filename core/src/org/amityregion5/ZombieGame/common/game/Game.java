@@ -413,4 +413,13 @@ public class Game implements Disposable {
 	public ArrayList<PlayerModel> getPlayers() {
 		return players;
 	}
+
+	public void doPlayerDie(PlayerModel playerModel) {
+		players.remove(playerModel);
+		removeEntity(playerModel);
+	}
+	
+	public boolean isGameRunning() {
+		return getPlayers().size() > 0;
+	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "AK47",
-  "desc": "An AK",
+  "desc": "You already know this gun.",
   "className": "SemiAuto",
   "weapon": [
     {

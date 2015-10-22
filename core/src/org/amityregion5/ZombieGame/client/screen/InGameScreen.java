@@ -223,6 +223,11 @@ public class InGameScreen extends GuiScreen {
 			
 			iterator.remove();
 		}
+		
+		if (!game.isGameRunning()) {
+			dispose();
+			ZombieGame.instance.setScreen(prevScreen);			
+		}
 	}
 
 	@Override

@@ -86,6 +86,7 @@ public class SinglePlayerMenu extends GuiScreen {
 				break;
 			case 2:
 				// Back button
+				dispose();
 				ZombieGame.instance.setScreen(prevScreen);
 				break;
 		}

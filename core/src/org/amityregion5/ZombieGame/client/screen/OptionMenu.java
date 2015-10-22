@@ -111,6 +111,7 @@ public class OptionMenu extends GuiScreen {
 			case -1:
 				// Back button
 				ZombieGame.instance.settings.save();
+				dispose();
 				ZombieGame.instance.setScreen(prevScreen);
 				break;
 			case 0:

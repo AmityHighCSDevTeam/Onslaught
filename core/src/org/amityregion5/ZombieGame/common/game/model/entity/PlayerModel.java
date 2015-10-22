@@ -161,6 +161,9 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public float damage(float damage, IEntityModel<?> source) {
 		float damageTaken = Math.min(damage, health);
 		health -= damageTaken;
+		if (health <= 0) {
+			g.doPlayerDie(this);
+		}
 		return damageTaken; 
 	}
 

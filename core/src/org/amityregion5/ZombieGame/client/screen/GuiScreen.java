@@ -30,6 +30,8 @@ public abstract class GuiScreen implements Screen {
 	// The camera
 	protected OrthographicCamera	camera;
 
+	private boolean disposed = false;
+
 	/**
 	 *
 	 * @param prevScreen
@@ -41,11 +43,11 @@ public abstract class GuiScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		
+
 		camera.setToOrtho(false);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		
+
 		// Get mouse down position
 		Vector2 touchPos = new Vector2();
 		touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -59,13 +61,17 @@ public abstract class GuiScreen implements Screen {
 			// If the mouse was up register this as a mouseDown
 			if (!lastMouseDown) {
 				lastMouseDown = true;
-				mouseDown(touchPos.x, touchPos.y);
+				if (!disposed) {
+					mouseDown(touchPos.x, touchPos.y);
+				}
 			}
 		} else {
 			// If the mouse was down register this as a mouseUp
 			if (lastMouseDown) {
 				lastMouseDown = false;
-				mouseUp(lastMouseX, lastMouseY);
+				if (!disposed) {
+					mouseUp(lastMouseX, lastMouseY);
+				}
 			}
 		}
 
@@ -73,7 +79,9 @@ public abstract class GuiScreen implements Screen {
 		batch.begin();
 
 		// Call other methods to draw
-		drawScreen(delta);
+		if (!disposed) {
+			drawScreen(delta);
+		}
 
 		// Finish drawing
 		batch.end();
@@ -104,6 +112,7 @@ public abstract class GuiScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		disposed = true;
 		for (GuiButton b : buttons.values()) {
 			b.dispose(); // Dispose all of the buttons
 		}
@@ -135,7 +144,7 @@ public abstract class GuiScreen implements Screen {
 		for (GuiButton b : buttons.values()) {
 			if (b.getBoundingRectangle().contains(x, getHeight() - y)) {
 				buttonClicked(b.getID()); // Register a general button clicked
-											// event
+				// event
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 {
   "name": "UMP",
-  "desc": "A submachine gun",
+  "desc": "A submachine gun.",
   "className": "SemiAuto",
   "weapon": [
     {

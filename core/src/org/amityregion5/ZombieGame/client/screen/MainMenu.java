@@ -36,6 +36,7 @@ public class MainMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw picture
+		batch.setColor(1, 1, 1, 1);
 		batch.draw(titleTexture, 10, camera.viewportHeight - titleHeight-10,
 				camera.viewportWidth - 20, titleHeight);
 	}
