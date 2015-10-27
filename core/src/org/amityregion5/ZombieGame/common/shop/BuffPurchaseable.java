@@ -22,7 +22,7 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public String getDescription() {
-		return null;
+		return "Price: " + buff.getPrice();
 	}
 
 	@Override
