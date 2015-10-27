@@ -16,10 +16,10 @@ public class WeaponRegistry {
 	public WeaponRegistry(PluginManager pluginManager) {
 		this.pluginManager = pluginManager;
 	}
-	
+	/*
 	public List<IWeapon> getWeapons() {
 		return pluginManager.getActivatedWeapons();
-	}
+	}*/
 
 	public List<Class<? extends IWeapon>> getWeaponClasses() {
 		return pluginManager.getActivatedWeaponClasses();

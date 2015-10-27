@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -38,7 +39,7 @@ public class BasicBullet implements IBullet {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
-		this.damage = damage;
+		this.damage = (float) ((damage+source.getTotalBuffs().getAdd("bulletDamage"))*source.getTotalBuffs().getMult("bulletDamage"));
 		this.source = source;
 		this.color = color;
 		this.bulletThickness = bulletThickness;
@@ -118,7 +119,7 @@ public class BasicBullet implements IBullet {
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 			
 			if (entity.isPresent()) {
-				damage -= entity.get().damage(damage, source);
+				damage -= entity.get().damage(damage, source, DamageTypes.BULLET);
 			}
 			
 			if (damage <= 0) {

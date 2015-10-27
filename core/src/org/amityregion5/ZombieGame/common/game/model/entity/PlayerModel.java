@@ -12,7 +12,9 @@ import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
+import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
@@ -36,9 +38,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private Light				light, circleLight;
 	private SpriteDrawingLayer	sprite;
 	private PlayerExtrasDrawingLayer extras;
-	private float health, maxHealth, speed;
+	private float health, maxHealth, speed, baseSpeed, baseHealth;
 	private boolean shootJustPressed = false;
 	private List<SoundPlayingData> 	soundsToPlay;
+	private Buff totalBuffs;
+	private List<Buff> buffs;
 
 	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
 		this.entity = entity;
@@ -46,9 +50,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		this.g = g;
 		this.money = startMoney;
 		this.screen = screen;
-		health = 100;
-		maxHealth = 100;
+		baseHealth = 100;
+		health = baseHealth;
+		maxHealth = baseHealth;
 		hotbar = new WeaponStack[3];
+		
+		totalBuffs = new Buff();
+		buffs = new ArrayList<Buff>();
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
 		extras = new PlayerExtrasDrawingLayer(this);
@@ -108,7 +116,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		//getCircleLight().setPosition(entity.getBody().getWorldCenter());
 
 		if (currentWeapon < getHotbar().length && currentWeapon >= 0) {
-			getHotbar()[currentWeapon].tick(delta);
+			getHotbar()[currentWeapon].tick((float)((delta+getTotalBuffs().getAdd("weaponTime"))*getTotalBuffs().getMult("weaponTime")));
 		}
 		sprite.getSprite().setOriginCenter();
 		screenJitter *= 0.9;
@@ -158,7 +166,15 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 
 	@Override
-	public float damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source, String damageType) {
+		damage  = (float) ((damage - getTotalBuffs().getAdd("allArmor")) * getTotalBuffs().getMult("allArmor"));
+
+		if (damageType == DamageTypes.ZOMBIE) {
+			damage  = (float) ((damage - getTotalBuffs().getAdd("zombieArmor")) * getTotalBuffs().getMult("zombieArmor"));
+		} else if (damageType == DamageTypes.EXPLOSION) {
+			damage  = (float) ((damage - getTotalBuffs().getAdd("explosionArmor")) * getTotalBuffs().getMult("explosionArmor"));
+		}
+
 		float damageTaken = Math.min(damage, health);
 		health -= damageTaken;
 		if (health <= 0) {
@@ -203,6 +219,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	}
 
 	public void setSpeed(float speed) {
+		baseSpeed = speed;
 		this.speed = speed;
 	}
 
@@ -239,8 +256,30 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public List<SoundPlayingData> getSoundsToPlay() {
 		return soundsToPlay;
 	}
-	
+
 	public void setHealth(float health) {
 		this.health = health;
+	}
+
+	public void applyBuff(Buff buff) {
+		totalBuffs = totalBuffs.add(buff);
+		buffs.add(buff);
+		{//Health
+			double newMaxHealth = totalBuffs.getMult("health")*(baseHealth+totalBuffs.getAdd("health"));
+			health = (float) (health/maxHealth*newMaxHealth);
+			maxHealth = (float) newMaxHealth;
+		}
+		{//Speed
+			double newSpeed = totalBuffs.getMult("speed")*(baseSpeed+totalBuffs.getAdd("speed"));
+			speed = (float) newSpeed;
+		}
+	}
+
+	public Buff getTotalBuffs() {
+		return totalBuffs;
+	}
+	
+	public boolean hasBuff(Buff buff) {
+		return buffs.contains(buff);
 	}
 }

@@ -139,8 +139,8 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 				(float) dir);
 
 		BasicBullet bull = new BasicBullet(game, v, (float) data
-				.get(stack.getLevel()).getKnockback(), (float) data
-				.get(stack.getLevel()).getDamage(), bullVector, firing, 
+				.get(stack.getLevel()).getKnockback(), (float) data.get(stack.getLevel())
+				.getDamage(), bullVector, firing, 
 				data.get(stack.getLevel()).getBulletColor(),
 				data.get(stack.getLevel()).getBulletThickness());
 		bull.setDir((float) dir);

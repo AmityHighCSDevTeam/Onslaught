@@ -5,9 +5,12 @@ import java.util.regex.Pattern;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
+import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.plugin.PluginContainer;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -120,6 +123,16 @@ public class PluginLoader {
 					}
 				}
 				break;
+			case "Buffs":
+				if (handle.extension().equals("json")) {
+					ZombieGame.debug("Plugin Loader: Loading Buff: " + loc);
+					try {
+						loadBuff((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
+					} catch (IOException | ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
 			case "Players":
 				if (handle.extension().equals("png")) {
 					ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
@@ -131,19 +144,37 @@ public class PluginLoader {
 					ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
 					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
 				}
-				/*
-				if (handle.extension().equals("json")) {
-					Gdx.app.debug("[Debug]", "Plugin Loader: Zombie Found: " + loc);
-					try {
-						loadZombie((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
-					} catch (IOException | ParseException e) {
-						e.printStackTrace();
-					}
-				}
-				*/
 				break;
 			}
 		}
+	}
+
+	private void loadBuff(JSONObject o, PluginContainer plugin, String pathName) {
+		Buff buff = new Buff();
+		
+		JSONArray arr = (JSONArray) o.get("buffs");
+		
+		String name = (String) o.get("name");
+		
+		double price = ((Number) o.get("price")).doubleValue();
+		
+		for (Object obj : arr) {
+			JSONObject aO = (JSONObject) obj;
+			
+			String type = (String) aO.get("type");
+			String key = (String) aO.get("key");
+			double value = ((Number) aO.get("val")).doubleValue();
+			
+			if (type.equals("mult")) {
+				buff.addMult(key, value);
+			} else if (type.equals("add")) {
+				buff.addAdd(key, value);
+			}
+		}
+		
+		BuffApplicator applicator = new BuffApplicator(buff, name, price);
+		
+		plugin.addBuffApplicator(applicator);
 	}
 
 	private void loadWeapon(JSONObject o, PluginContainer plugin, String pathName) {

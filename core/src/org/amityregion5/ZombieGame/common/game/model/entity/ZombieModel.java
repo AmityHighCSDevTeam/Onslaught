@@ -12,6 +12,7 @@ import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.HealthPackParticle;
@@ -119,7 +120,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 						BodyHelper.setPointing(entity.getBody(),
 								target.getBody().getWorldCenter(), delta, 10);
 						if (attackCooldown == 0) {
-							targetModel.get().damage(damage, this);
+							targetModel.get().damage(damage, this, DamageTypes.ZOMBIE);
 						} else if (attackCooldown >= baseAtkCooldown) {
 							ai = AIMode.FOLLOWING;
 						}
@@ -150,7 +151,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	}
 
 	@Override
-	public float damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		float damageTaken = Math.min(damage, health);
 		if (damageTaken < 0) {
 			damageTaken = 0;

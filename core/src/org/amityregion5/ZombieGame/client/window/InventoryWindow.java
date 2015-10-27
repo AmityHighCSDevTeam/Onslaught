@@ -233,7 +233,7 @@ public class InventoryWindow implements Screen {
 	}
 	
 	private double getMaxScrollAmount() {
-		return (weaponBoxSize/((int)((screen.getWidth() - 221)/(weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2) * ZombieGame.instance.weaponRegistry.getWeapons().size();
+		return (weaponBoxSize/((int)((screen.getWidth() - 221)/(weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2) * ZombieGame.instance.pluginManager.getActivatedWeapons().size();
 	}
 
 	private float getScrollBarPos() {

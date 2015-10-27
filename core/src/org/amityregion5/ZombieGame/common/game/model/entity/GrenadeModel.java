@@ -51,7 +51,7 @@ public class GrenadeModel implements IEntityModel<EntityGrenade>{
 	}
 
 	@Override
-	public float damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		timeUntilExplosion = 0;
 		explosionPos = entity.getBody().getWorldCenter().cpy();
 		return 0;

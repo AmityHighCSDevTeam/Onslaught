@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -35,7 +36,7 @@ public class ExplosionRaycastBullet implements IBullet {
 			Vector2 bullVector, PlayerModel source) {
 		this.g = g;
 		this.start = start;
-		this.damage = damage;
+		this.damage = (float) ((damage+source.getTotalBuffs().getAdd("explodeDamage"))*source.getTotalBuffs().getMult("explodeDamage"));
 		this.source = source;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
@@ -114,7 +115,7 @@ public class ExplosionRaycastBullet implements IBullet {
 			float damageToDeal = damage/start.dst(hd.hitPoint);
 			
 			if (entity.isPresent() && damageToDeal > 0) {
-				damage -= entity.get().damage(damageToDeal, source);
+				damage -= entity.get().damage(damageToDeal, source, DamageTypes.EXPLOSION);
 			}
 			
 			if (damage <= 0 || damageToDeal <= 0) {

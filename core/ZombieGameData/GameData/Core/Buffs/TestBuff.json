@@ -1,0 +1,11 @@
+{
+  "name": "Test Buff",
+  "price": 100,
+  "buffs": [
+    {
+      "type": "mult",
+      "key": "allArmor",
+      "val": 0.01
+    }
+  ]
+}

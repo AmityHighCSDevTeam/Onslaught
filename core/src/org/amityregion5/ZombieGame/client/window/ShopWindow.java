@@ -1,16 +1,13 @@
 package org.amityregion5.ZombieGame.client.window;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
-import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
-import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
-import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
+import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -33,7 +30,7 @@ public class ShopWindow implements Screen {
 	private double mainScrollPos, secScrollPos;
 	private GlyphLayout glyph = new GlyphLayout();
 	private SpriteBatch batch = new SpriteBatch();
-	private float weaponHeight = 100;
+	private float purchaseableHeight = 100;
 	private int selected = -1;
 	private float defInfoWidth = 300;
 	private float infoWidth = defInfoWidth;
@@ -139,29 +136,30 @@ public class ShopWindow implements Screen {
 		shapeRender.end();
 
 
-		boolean clickOnWeapon = false;
+		boolean clickOnPurchaseable = false;
 		if (Gdx.input.isTouched()) {
 			if (clickX >= x && clickX <= x + w) {
 				if (clickY >= 100 && clickY <= screen.getHeight()-100) {
-					clickOnWeapon = true;
+					clickOnPurchaseable = true;
 				}
 			}
 		}
 
-		if (Gdx.input.isTouched() && clickOnWeapon == false && clickX < x && clickX > screen.getWidth() - 232 && clickY < 100 && clickY > screen.getHeight()-100) {
+		if (Gdx.input.isTouched() && clickOnPurchaseable == false && clickX < x && clickX > screen.getWidth() - 232 && clickY < 100 && clickY > screen.getHeight()-100) {
 			selected = -1;
 		}
 
 		Rectangle clipBounds = new Rectangle(x, 100, w, screen.getHeight() - 201);
 		//ScissorStack.calculateScissors(camera, screen.getScreenProjectionMatrix(), clipBounds, scissors);
 		ScissorStack.pushScissors(clipBounds);
-		for (int i = 0; i<ZombieGame.instance.weaponRegistry.getWeapons().size(); i++) {
-			IWeapon weapon = ZombieGame.instance.weaponRegistry.getWeapons().get(i);
-			y -= weaponHeight + 2;
+		//Draw Weapons
+		for (int i = 0; i<ZombieGame.instance.pluginManager.getPurchaseables().size(); i++) {
+			IPurchaseable purchaseable = ZombieGame.instance.pluginManager.getPurchaseables().get(i);
+			y -= purchaseableHeight + 2;
 
-			if (clickOnWeapon) {
+			if (clickOnPurchaseable) {
 				int checkClickY = screen.getHeight() - clickY;
-				if (checkClickY >= y && checkClickY <= y + weaponHeight+2) {
+				if (checkClickY >= y && checkClickY <= y + purchaseableHeight+2) {
 					if (selected != i) {
 						secScrollPos = 0;
 					}
@@ -175,37 +173,26 @@ public class ShopWindow implements Screen {
 			} else {
 				shapeRender.setColor(0.35f, 0.35f, 0.35f, 1f);
 			}
-			shapeRender.rect(x, y, w, weaponHeight);
+			shapeRender.rect(x, y, w, purchaseableHeight);
 			shapeRender.end();
 
 			shapeRender.begin(ShapeType.Line);
 			shapeRender.setColor(0.45f, 0.45f, 0.45f, 1f);
-			shapeRender.rect(x, y, w, weaponHeight);
+			shapeRender.rect(x, y, w, purchaseableHeight);
 			shapeRender.end();
 
 			batch.begin();
 			// Get the size of the text
-			glyph.setText(ZombieGame.instance.mainFont, weapon.getName(), 0, weapon.getName().length(), Color.BLACK, w - 20, Align.left, false, "...");
+			glyph.setText(ZombieGame.instance.mainFont, purchaseable.getName(), 0, purchaseable.getName().length(), Color.BLACK, w - 20, Align.left, false, "...");
 			// Draw the text centered on the button
-			ZombieGame.instance.mainFont.draw(batch, glyph, x + 10, y + weaponHeight - 10 + glyph.height/2);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x + 10, y + purchaseableHeight - 10 + glyph.height/2);
 
-			int level = 0;
-			{
-				Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==weapon).findAny();
+			if (purchaseable.hasIcon()) {
+				Texture icon = TextureRegistry.getTexturesFor(purchaseable.getIconName(player)).get(0);
 
-				if (ws.isPresent()) {
-					level = ws.get().getLevel() + 1;
-				}
+				batch.draw(icon, x + 10, y + 10, 64, 64);
 			}
-			
-			if (level >= weapon.getNumLevels()) {
-				level = weapon.getNumLevels() - 1;
-			}
-			
-			Texture icon = TextureRegistry.getTexturesFor(weapon.getWeaponData(level).getIconTextureString()).get(0);
-			
-			batch.draw(icon, x + 10, y + 10, 64, 64);
-			
+
 			batch.end();
 		}
 
@@ -220,69 +207,58 @@ public class ShopWindow implements Screen {
 
 		float wMult = (float)Gdx.graphics.getWidth()/screen.getWidth();
 		float hMult = (float)Gdx.graphics.getHeight()/screen.getHeight();
-		
+
 		Rectangle clipBounds = new Rectangle(x*wMult, 100*hMult, infoWidth*wMult, (screen.getHeight() - 200)*hMult);
 		ScissorStack.pushScissors(clipBounds);
 
-		IWeapon selectedWeapon = ZombieGame.instance.weaponRegistry.getWeapons().get(selected);
+		IPurchaseable selectedItem = ZombieGame.instance.pluginManager.getPurchaseables().get(selected);
 		batch.begin();
 
-		glyph.setText(ZombieGame.instance.mainFont, selectedWeapon.getName(), 0, selectedWeapon.getName().length(), new Color(1,1,1,1), infoWidth - 20, Align.left, false, "...");
+		glyph.setText(ZombieGame.instance.mainFont, selectedItem.getName(), 0, selectedItem.getName().length(), new Color(1,1,1,1), infoWidth - 20, Align.left, false, "...");
 		ZombieGame.instance.mainFont.draw(batch, glyph, x, y); y -= glyph.height + 20;
 
-		glyph.setText(ZombieGame.instance.mainFont, selectedWeapon.getDescription(), new Color(1,1,1,1), infoWidth - 20, Align.left, true);
-		ZombieGame.instance.mainFont.draw(batch, glyph, x, y); y -= glyph.height + 20;
-
-		int level = 0;
-
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==selectedWeapon).findAny();
-
-		if (ws.isPresent()) {
-			level = ws.get().getLevel();
+		if (selectedItem.getDescription() != null) {
+			glyph.setText(ZombieGame.instance.mainFont, selectedItem.getDescription(), new Color(1,1,1,1), infoWidth - 20, Align.left, true);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y); y -= glyph.height + 20;
 		}
 
-		Map<String, String> currLev = selectedWeapon.getWeaponDataDescriptors(level);
-		Map<String, String> nextLev = null;
+		Map<String, String> currLev = selectedItem.getCurrentDescriptors(player);
+		Map<String, String> nextLev = selectedItem.getNextDescriptors(player);
 
-		if (ws.isPresent() && ws.get().getLevel() + 1 < ws.get().getWeapon().getNumLevels()) {
-			nextLev = selectedWeapon.getWeaponDataDescriptors(level + 1);
-		}
+		if (currLev != null) {
+			for (String key : currLev.keySet()) {
+				String curr = currLev.get(key);
+				String next = (nextLev == null ? null : nextLev.get(key));
 
-		for (String key : currLev.keySet()) {
-			String curr = currLev.get(key);
-			String next = (nextLev == null ? null : nextLev.get(key));
+				float thisX = x;
 
-			float thisX = x;
+				float maxH = 0;
 
-			float maxH = 0;
-
-			glyph.setText(ZombieGame.instance.mainFont, key + ": ", new Color(1,1,1,1), infoWidth - 20, Align.left, true);
-			maxH = Math.max(maxH, glyph.height);
-			ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y); thisX += glyph.width;
-
-			glyph.setText(ZombieGame.instance.mainFont, curr + (next == null ? "" : " -> "), new Color(1,1,1,1), infoWidth - 20, Align.left, true);
-			maxH = Math.max(maxH, glyph.height);
-			ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y); thisX += glyph.width;
-
-			if (next != null) {
-				glyph.setText(ZombieGame.instance.mainFont, next, Color.GREEN, infoWidth - 20, Align.left, true);
+				glyph.setText(ZombieGame.instance.mainFont, key + ": ", new Color(1,1,1,1), infoWidth - 20, Align.left, true);
 				maxH = Math.max(maxH, glyph.height);
 				ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y); thisX += glyph.width;
-			}
 
-			y -= maxH + 5;
+				glyph.setText(ZombieGame.instance.mainFont, curr + (next == null ? "" : " -> "), new Color(1,1,1,1), infoWidth - 20, Align.left, true);
+				maxH = Math.max(maxH, glyph.height);
+				ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y); thisX += glyph.width;
+
+				if (next != null) {
+					glyph.setText(ZombieGame.instance.mainFont, next, Color.GREEN, infoWidth - 20, Align.left, true);
+					maxH = Math.max(maxH, glyph.height);
+					ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y); thisX += glyph.width;
+				}
+
+				y -= maxH + 5;
+			}
 		}
 
-		if (!(nextLev == null && ws.isPresent())) {
+		if (selectedItem.hasNextLevel(player)) {
 			float w = infoWidth - 40;
 			float h = 50;
 			x+=10;
 			y-=60;
 
-			double price = selectedWeapon.getWeaponData(level).getPrice();
-			if (nextLev != null) {
-				price = selectedWeapon.getWeaponData(level + 1).getPrice();
-			}
+			double price = selectedItem.getPrice(player);
 
 			boolean hasEnoughMoney = player.getMoney() >= price;
 
@@ -292,23 +268,13 @@ public class ShopWindow implements Screen {
 			batch.draw(ZombieGame.instance.buttonTexture, x, y, w, h);
 			batch.setColor(new Color(1,1,1,1));
 
-			boolean upgrade = (nextLev == null ? false : true);
-
-			glyph.setText(ZombieGame.instance.mainFont, (upgrade ? "Upgrade" : "Buy"), Color.BLACK, w, Align.center, true);
+			glyph.setText(ZombieGame.instance.mainFont, (selectedItem.getCurrentLevel(player)>-1 ? "Upgrade" : "Buy"), Color.BLACK, w, Align.center, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + h/2 + glyph.height/2);
 
 			if (hasEnoughMoney && Gdx.input.isTouched() && Gdx.input.justTouched()) {
 				if (clickX >= x && clickX <= x + w) {
 					if (screen.getHeight() - clickY >= y && screen.getHeight() - clickY <= y + h) {
-						if (upgrade) {
-							ws.get().setLevel(ws.get().getLevel() + 1);
-						} else {
-							WeaponStack newWeap = new WeaponStack(selectedWeapon);
-							player.getWeapons().add(newWeap);
-							if (player.getCurrentWeapon().getWeapon() instanceof NullWeapon) {
-								player.getHotbar()[player.getCurrWeapIndex()] = newWeap;
-							}
-						}
+						selectedItem.onPurchase(player);
 						player.setMoney(player.getMoney() - price);
 					}
 				}
@@ -346,7 +312,7 @@ public class ShopWindow implements Screen {
 	}
 
 	private double getMaxScrollAmount() {
-		return (weaponHeight + 2) * ZombieGame.instance.weaponRegistry.getWeapons().size();
+		return (purchaseableHeight + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
 	}
 
 	private double getSecMaxScrollAmount() {

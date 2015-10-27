@@ -60,6 +60,7 @@ public class ZombieGame extends Game {
 	public FileHandle			settingsFile;
 	private FileHandle logFile;
 	public Settings settings;
+	public PluginManager pluginManager;
 
 	/**
 	 *
@@ -119,7 +120,7 @@ public class ZombieGame extends Game {
 					// "Mod" loading list of mods
 					FileHandle[] plugins = gameData.list();
 					
-					PluginManager pluginManager = new PluginManager();
+					pluginManager = new PluginManager();
 
 					// Create the weapon registry
 					weaponRegistry = new WeaponRegistry(pluginManager);

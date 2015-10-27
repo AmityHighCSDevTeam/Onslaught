@@ -86,7 +86,7 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 	}
 
 	@Override
-	public float damage(float damage, IEntityModel<?> source) {
+	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		timeUntilExplosion = 0;
 		explosionPos = entity.getBody().getWorldCenter().cpy();
 		return 0;
@@ -155,7 +155,7 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 	}
 
 	public void onHit() {
-		damage(0, this);
+		damage(0, this, "--Rocket Hit Target Damage--");
 	}
 
 	public void setAcceleration(float acceleration) {

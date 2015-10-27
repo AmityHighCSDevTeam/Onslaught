@@ -9,7 +9,7 @@ public interface IEntityModel<T extends IEntity> extends IParticle {
 	
 	//void dispose();
 
-	float damage(float damage, IEntityModel<?> source);
+	float damage(float damage, IEntityModel<?> source, String damageType);
 
 	//IDrawingLayer[] getDrawingLayers();
 
