@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
+
 public interface IWeaponDataBase {
 
 	public double getPrice();
@@ -17,4 +19,6 @@ public interface IWeaponDataBase {
 	public int getGameTextureOriginX();
 	
 	public int getGameTextureOriginY();
+	
+	public Buff getBuff();
 }

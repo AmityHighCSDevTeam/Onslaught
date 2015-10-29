@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -11,13 +12,14 @@ import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
 	private double	price, ammoPrice, damage, knockback, accuracy,
-			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
+	preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private float bulletThickness;
 	private Color bulletColor;
 	private String iconTextureString, gameTextureString;
 	private boolean isAuto;
 	private List<SoundData> sounds;
+	private Buff buff;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -78,11 +80,11 @@ public class WeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("bulletColor")) {
 			String color = ((String) o.get("bulletColor"));
-			
+
 			if (color == null) {
 				color = "00000000";
 			}
-			
+
 			bulletColor = Color.valueOf(color);
 		}
 		if (o.containsKey("bulletThickness")) {
@@ -94,7 +96,7 @@ public class WeaponData implements IWeaponDataBase {
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
 			JSONArray arr = (JSONArray)o.get("sounds");
-			
+
 			for (Object obj : arr) {
 				JSONObject soundJSON = (JSONObject)obj;
 				SoundData sound = SoundData.getSoundData(soundJSON);
@@ -102,6 +104,9 @@ public class WeaponData implements IWeaponDataBase {
 					sounds.add(sound);
 				}
 			}
+		}
+		if (o.containsKey("buff")) {
+			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
 		}
 	}
 
@@ -349,4 +354,8 @@ public class WeaponData implements IWeaponDataBase {
 		this.sounds = sounds;
 	}
 
+	@Override
+	public Buff getBuff() {
+		return buff;
+	}
 }

@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
@@ -42,7 +43,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private boolean shootJustPressed = false;
 	private List<SoundPlayingData> 	soundsToPlay;
 	private Buff totalBuffs;
-	private List<Buff> buffs;
+	private List<Buff> buffs, temporaryBuffs;
 
 	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
 		this.entity = entity;
@@ -54,9 +55,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		health = baseHealth;
 		maxHealth = baseHealth;
 		hotbar = new WeaponStack[3];
-		
+
 		totalBuffs = new Buff();
 		buffs = new ArrayList<Buff>();
+		temporaryBuffs = new ArrayList<Buff>();
 
 		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
 		extras = new PlayerExtrasDrawingLayer(this);
@@ -101,13 +103,19 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		getLight().setDirection((float) Math.toDegrees(entity.getBody().getAngle()));
 
 		if (ZombieGame.instance.settings.getInput("Hotbar_1").isJustDown()) {
+			removeTemporaryWeaponBuff();
 			currentWeapon = 0;
+			addTemporaryWeaponBuff();
 		}
 		if (ZombieGame.instance.settings.getInput("Hotbar_2").isJustDown()) {
+			removeTemporaryWeaponBuff();
 			currentWeapon = 1;
+			addTemporaryWeaponBuff();
 		}
 		if (ZombieGame.instance.settings.getInput("Hotbar_3").isJustDown()) {
+			removeTemporaryWeaponBuff();
 			currentWeapon = 2;
+			addTemporaryWeaponBuff();
 		}
 
 		getLight().attachToBody(entity.getBody());
@@ -264,6 +272,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public void applyBuff(Buff buff) {
 		totalBuffs = totalBuffs.add(buff);
 		buffs.add(buff);
+		recalculateBuffEffects();
+	}
+	
+	private void recalculateBuffEffects() {
 		{//Health
 			double newMaxHealth = totalBuffs.getMult("health")*(baseHealth+totalBuffs.getAdd("health"));
 			health = (float) (health/maxHealth*newMaxHealth);
@@ -278,8 +290,30 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public Buff getTotalBuffs() {
 		return totalBuffs;
 	}
-	
+
 	public boolean hasBuff(Buff buff) {
 		return buffs.contains(buff);
+	}
+
+	public void addTemporaryWeaponBuff() {
+		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null
+				&& hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
+			totalBuffs = totalBuffs.add(hotbar[currentWeapon].getWeaponDataBase().getBuff());
+			temporaryBuffs.add(hotbar[currentWeapon].getWeaponDataBase().getBuff());
+			recalculateBuffEffects();
+		}
+	}
+
+	public void removeTemporaryWeaponBuff() {
+		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null
+				&& hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
+			temporaryBuffs.remove(
+					hotbar[currentWeapon]
+							.getWeaponDataBase()
+							.getBuff());
+			totalBuffs = Stream.concat(buffs.parallelStream(), temporaryBuffs.parallelStream())
+					.reduce(new Buff(), Buff::sum, Buff::sum);
+			recalculateBuffEffects();
+		}
 	}
 }

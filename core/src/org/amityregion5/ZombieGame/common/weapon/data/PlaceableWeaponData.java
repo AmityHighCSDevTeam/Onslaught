@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -12,6 +13,7 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString, placingObject;
 	private List<SoundData> sounds;
+	private Buff buff;
 
 	public PlaceableWeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -81,7 +83,9 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 				}
 			}
 		}
-
+		if (o.containsKey("buff")) {
+			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
+		}
 	}
 
 	/**
@@ -262,5 +266,9 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	public void setSounds(List<SoundData> sounds) {
 		this.sounds = sounds;
 	}
-	
+
+	@Override
+	public Buff getBuff() {
+		return buff;
+	}
 }

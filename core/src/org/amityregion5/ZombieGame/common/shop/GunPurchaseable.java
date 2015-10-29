@@ -9,13 +9,13 @@ import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
 public class GunPurchaseable implements IPurchaseable {
-	
+
 	private IWeapon gun;
-	
+
 	public GunPurchaseable(IWeapon gun) {
 		this.gun = gun;
 	}
-	
+
 	@Override
 	public String getName() {
 		return gun.getName();
@@ -37,6 +37,17 @@ public class GunPurchaseable implements IPurchaseable {
 		}
 
 		Map<String, String> currLev = gun.getWeaponDataDescriptors(level);
+
+		if (gun.getWeaponData(level).getBuff() != null) {
+			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
+				currLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff)*100 + "%");
+			}
+
+			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
+				currLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
+			}
+		}
+
 		return currLev;
 	}
 
@@ -47,16 +58,25 @@ public class GunPurchaseable implements IPurchaseable {
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
 
 		if (ws.isPresent()) {
-			level = ws.get().getLevel();
+			level = ws.get().getLevel() + 1;
 		}
-		
-		level += 1;
-		
-		if (!hasNextLevel(player)) {
+
+		if (!hasNextLevel(player) || level == 0) {
 			return null;
 		}
 
 		Map<String, String> nextLev = gun.getWeaponDataDescriptors(level);
+
+		if (gun.getWeaponData(level).getBuff() != null) {
+			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
+				nextLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff)*100 + "%");
+			}
+
+			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
+				nextLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
+			}
+		}
+
 		return nextLev;
 	}
 
@@ -73,7 +93,7 @@ public class GunPurchaseable implements IPurchaseable {
 	@Override
 	public int getCurrentLevel(PlayerModel player) {
 		int level = 0;
-		
+
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
 
 		if (ws.isPresent()) {
@@ -81,7 +101,7 @@ public class GunPurchaseable implements IPurchaseable {
 		} else {
 			return -1;
 		}
-		
+
 		return level;
 	}
 
@@ -106,14 +126,18 @@ public class GunPurchaseable implements IPurchaseable {
 	@Override
 	public void onPurchase(PlayerModel player) {
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
-		
+
 		if (ws.isPresent()) {
+			player.removeTemporaryWeaponBuff();
 			ws.get().setLevel(ws.get().getLevel()+1);
+			player.addTemporaryWeaponBuff();
 		} else {
 			WeaponStack newWeap = new WeaponStack(gun);
 			player.getWeapons().add(newWeap);
 			if (player.getCurrentWeapon().getWeapon() instanceof NullWeapon) {
+				player.removeTemporaryWeaponBuff();
 				player.getHotbar()[player.getCurrWeapIndex()] = newWeap;
+				player.addTemporaryWeaponBuff();
 			}
 		}
 	}
@@ -125,6 +149,6 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public String getIconName(PlayerModel player) {
-		return gun.getWeaponData(Math.min(getCurrentLevel(player)+1,getNumLevels())).getIconTextureString();
+		return gun.getWeaponData(Math.min(getCurrentLevel(player)+1,getNumLevels()-1)).getIconTextureString();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
+import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -14,6 +15,7 @@ public class GrenadeData implements IWeaponDataBase {
 	private String iconTextureString, gameTextureString, fieldTextureString;
 	private boolean isAuto;
 	private List<SoundData> sounds;
+	private Buff buff;
 
 	public GrenadeData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -98,6 +100,9 @@ public class GrenadeData implements IWeaponDataBase {
 					sounds.add(sound);
 				}
 			}
+		}
+		if (o.containsKey("buff")) {
+			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
 		}
 	}
 
@@ -349,5 +354,10 @@ public class GrenadeData implements IWeaponDataBase {
 	
 	public void setFieldTextureString(String fieldTextureString) {
 		this.fieldTextureString = fieldTextureString;
+	}
+
+	@Override
+	public Buff getBuff() {
+		return buff;
 	}
 }
