@@ -68,11 +68,11 @@ public class Rocket implements IWeapon {
 						+ data.get(stack.getLevel()).getReloadTime());
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				stack.setTotalAmmo(stack.getTotalAmmo() - ammoNeeded);
-			}
-			
-			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
-				if (sound.getTrigger().equals("reload")) {
-					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+				
+				for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+					if (sound.getTrigger().equals("reload")) {
+						game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+					}
 				}
 			}
 		}

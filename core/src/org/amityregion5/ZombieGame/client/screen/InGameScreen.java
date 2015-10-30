@@ -67,6 +67,7 @@ public class InGameScreen extends GuiScreen {
 	private GlyphLayout glyph = new GlyphLayout();
 	private Screen currentWindow;
 	private List<Screen> overlays;
+	private boolean renderHitboxes = false;
 
 	// Font
 	private BitmapFont			font1, font2;
@@ -121,8 +122,6 @@ public class InGameScreen extends GuiScreen {
 				(float)(player.getScreenVibrate()*game.getRandom().nextDouble() - player.getScreenVibrate()/2));
 
 		camera.update();
-
-		//debugRenderer.render(game.getWorld(), camera.combined);
 
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 
@@ -204,6 +203,11 @@ public class InGameScreen extends GuiScreen {
 		shapeRenderer.end();
 		Gdx.gl.glLineWidth(1);
 
+		if (game.isCheatMode()) {
+			if (renderHitboxes) {
+				debugRenderer.render(game.getWorld(), camera.combined);
+			}
+		}
 
 		for (Screen overlay : overlays) {
 			overlay.drawScreen(delta, camera);
@@ -255,7 +259,9 @@ public class InGameScreen extends GuiScreen {
 
 				game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
 			}
-
+			if (Gdx.input.isKeyJustPressed(Keys.F3)) {
+				renderHitboxes = !renderHitboxes;
+			}
 			if (Gdx.input.isKeyPressed(Keys.G)) {
 				camera.zoom += 0.02;
 			}

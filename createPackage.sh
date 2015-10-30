@@ -16,7 +16,7 @@ cp -r core/ZombieGameData desktop/build/libs/ZombieGameData || exit
 
 echo Creating Zip file
 cd desktop/build/libs || exit
-zip -r -q ~/Desktop/ZombieGame.zip ./ || exit
+zip -r -q ~/Desktop/ZombieGame.zip ./ -x "*.DS_Store" || exit
 
 echo Clearing Build Folder
 rm -r *
