@@ -5,6 +5,7 @@ import org.amityregion5.ZombieGame.client.gui.GuiButton;
 import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -92,7 +93,8 @@ public class NewGameMenu extends GuiScreen {
 				break;
 			default:
 				ZombieGame.instance
-						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id])));
+						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id], ZombieGame.instance.isCheatModeAllowed &&
+								Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT))));
 		}
 	}
 

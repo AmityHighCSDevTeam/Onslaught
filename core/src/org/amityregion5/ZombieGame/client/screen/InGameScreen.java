@@ -75,18 +75,18 @@ public class InGameScreen extends GuiScreen {
 		super(prevScreen);
 
 		this.game = game;
-		
+
 		Light.setGlobalContactFilter((short)1, (short)0, (short)1);
-		
+
 		rayHandler = new RayHandler(game.getWorld());
 		RayHandler.useDiffuseLight(true);
-		
+
 		game.setLighting(rayHandler);
 
 		shapeRenderer = new ShapeRenderer();
-		
+
 		overlays = new ArrayList<Screen>();
-		
+
 		EntityPlayer playerEntity = new EntityPlayer();
 		playerEntity.setFriction(0.99f);
 		playerEntity.setMass(100);
@@ -116,45 +116,45 @@ public class InGameScreen extends GuiScreen {
 		camera.translate(player.getEntity().getBody().getWorldCenter().x
 				- camera.position.x, player.getEntity().getBody().getWorldCenter().y
 				- camera.position.y);
-		
+
 		camera.translate((float)(player.getScreenVibrate()*game.getRandom().nextDouble() - player.getScreenVibrate()/2), 
 				(float)(player.getScreenVibrate()*game.getRandom().nextDouble() - player.getScreenVibrate()/2));
-		
+
 		camera.update();
 
 		//debugRenderer.render(game.getWorld(), camera.combined);
-		
+
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
-		
+
 		Texture tex = TextureRegistry.getTexturesFor("backgroundTile").get(0);
 		float wM = 10.24f;
 		float hM = 10.24f;
-		
+
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		
+
 		float tileX = wM;
 		float tileY = hM;
-		
+
 		Vector2 posStart = new Vector2(camera.position.x - camera.viewportWidth*camera.zoom, camera.position.y - camera.viewportHeight*camera.zoom*camera.zoom);
 		Vector2 posEnd = new Vector2(camera.position.x + camera.viewportWidth*camera.zoom, camera.position.y + camera.viewportHeight*camera.zoom*camera.zoom);
-		
+
 		int startTileX = (int)((posStart.x)/tileX);
 		if (posStart.x < 0)
 			startTileX--;
 		int startTileY = (int)((posStart.y)/tileY);
 		if (posStart.y < 0)
 			startTileY--;
-		
+
 		startTileX--;
 		startTileY--;
-		
+
 		int endTileX = (int)((posEnd.x)/tileX);
 		int endTileY = (int)((posEnd.y)/tileY);
-		
+
 		endTileX++;
 		endTileY++;
-				
+
 		batch.begin();
 		Color c = batch.getColor();
 		batch.setColor(1, 1, 1, 1);
@@ -165,10 +165,10 @@ public class InGameScreen extends GuiScreen {
 		}
 		batch.end();
 		batch.setColor(c);
-		
-		
+
+
 		batch.setProjectionMatrix(camera.combined);
-		
+
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getDrawingLayers()) {
 				s.draw(p, batch, shapeRenderer);
@@ -203,8 +203,8 @@ public class InGameScreen extends GuiScreen {
 		}
 		shapeRenderer.end();
 		Gdx.gl.glLineWidth(1);
-		
-		
+
+
 		for (Screen overlay : overlays) {
 			overlay.drawScreen(delta, camera);
 		}
@@ -212,18 +212,18 @@ public class InGameScreen extends GuiScreen {
 		if (currentWindow != null) {
 			currentWindow.drawScreen(delta, camera);
 		}
-		
+
 		Iterator<SoundPlayingData> iterator = player.getSoundsToPlay().listIterator();
 		while (iterator.hasNext()) {
 			SoundPlayingData soundData = iterator.next();
-			
+
 			Sound sound = SoundRegistry.getSoundsFor(soundData.getSound()).get(0);
-			
+
 			sound.play((float)MathHelper.clamp(0, 1, soundData.getVolume()*ZombieGame.instance.settings.getMasterVolume()), (float)MathHelper.clamp(0.5, 2, soundData.getPitch()), 0);
-			
+
 			iterator.remove();
 		}
-		
+
 		if (!game.isGameRunning()) {
 			dispose();
 			ZombieGame.instance.setScreen(prevScreen);			
@@ -242,24 +242,57 @@ public class InGameScreen extends GuiScreen {
 		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(),
 				Gdx.input.getY(), 0));
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
-		
-		//player.tick(delta);
-		
-		if (Gdx.input.isKeyJustPressed(Keys.L)) {
-			LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
-			lantern.setLight(new PointLight(rayHandler, 300,
-					lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
-			lantern.getEntity().setFriction(0.99f);
-			lantern.getEntity().setMass(10);
-			
-			game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
-		}
 
-		if (Gdx.input.isKeyPressed(Keys.G)) {
-			camera.zoom += 0.02;
-		}
-		if (Gdx.input.isKeyPressed(Keys.H) && camera.zoom > 0.02) {
-			camera.zoom -= 0.02;
+		//player.tick(delta);
+
+		if (game.isCheatMode()) {
+			if (Gdx.input.isKeyJustPressed(Keys.L)) {
+				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
+				lantern.setLight(new PointLight(rayHandler, 300,
+						lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
+				lantern.getEntity().setFriction(0.99f);
+				lantern.getEntity().setMass(10);
+
+				game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
+			}
+
+			if (Gdx.input.isKeyPressed(Keys.G)) {
+				camera.zoom += 0.02;
+			}
+			if (Gdx.input.isKeyPressed(Keys.H) && camera.zoom > 0.02) {
+				camera.zoom -= 0.02;
+			}
+
+			if (Gdx.input.isKeyJustPressed(Keys.E)) {
+				game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 50, player);
+			}
+
+			if (Gdx.input.isKeyJustPressed(Keys.R)) {
+				game.addParticleToWorld(new HealthPackParticle(mouseCoord.x, mouseCoord.y, game));
+			}
+
+			if (Gdx.input.isKeyJustPressed(Keys.PERIOD)) {
+				player.setMoney(player.getMoney()+1000);
+			}
+
+			if (Gdx.input.isKeyJustPressed(Keys.COMMA)) {
+				player.setMoney(Math.max(0,player.getMoney()-1000));
+			}
+
+			if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
+				EntityZombie zom = new EntityZombie(0.15f);
+				zom.setMass(100);
+				zom.setFriction(0.99f);
+
+				ZombieModel model = new ZombieModel(zom, game,1);
+
+				model.setAllHealth(5);
+				model.setSpeed(0.03f);
+				model.setRange((float) (zom.getShape().getRadius()*1.1));
+				model.setDamage(5);
+
+				game.addEntityToWorld(model, mouseCoord.x, mouseCoord.y);
+			}
 		}
 
 		if (ZombieGame.instance.settings.getInput("Shop_Window").isJustDown()) {
@@ -280,29 +313,6 @@ public class InGameScreen extends GuiScreen {
 				currentWindow.dispose();
 				currentWindow = null;
 			}
-		}
-		
-		if (Gdx.input.isKeyJustPressed(Keys.E)) {
-			game.makeExplosion(new Vector2(mouseCoord.x, mouseCoord.y), 50, player);
-		}
-		
-		if (Gdx.input.isKeyJustPressed(Keys.R)) {
-			game.addParticleToWorld(new HealthPackParticle(mouseCoord.x, mouseCoord.y, game));
-		}
-
-		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
-			EntityZombie zom = new EntityZombie(0.15f);
-			zom.setMass(100);
-			zom.setFriction(0.99f);
-			
-			ZombieModel model = new ZombieModel(zom, game,1);
-			
-			model.setAllHealth(5);
-			model.setSpeed(0.03f);
-			model.setRange((float) (zom.getShape().getRadius()*1.1));
-			model.setDamage(5);
-
-			game.addEntityToWorld(model, mouseCoord.x, mouseCoord.y);
 		}
 	}
 
@@ -385,11 +395,11 @@ public class InGameScreen extends GuiScreen {
 	public Matrix4 getScreenProjectionMatrix() {
 		return batch.getProjectionMatrix();
 	}
-	
+
 	public BitmapFont getFont1() {
 		return font1;
 	}
-	
+
 	public BitmapFont getFont2() {
 		return font2;
 	}

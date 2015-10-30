@@ -1,5 +1,8 @@
 package org.amityregion5.ZombieGame.desktop;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.amityregion5.ZombieGame.ZombieGame;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -17,8 +20,10 @@ public class DesktopLauncher {
 		//config.addIcon("images/iconTest.png", FileType.Internal);
 		//config.addIcon("images/iconTest3.png", FileType.Internal);
 		config.title = "ZombieGame";
+		
+		List<String> args = Arrays.asList(arg);
 
-		new LwjglApplication(new ZombieGame(false), config);
+		new LwjglApplication(new ZombieGame(false, args.contains("--AllowCheatMode")), config);
 
 	}
 }

@@ -78,6 +78,7 @@ public class Rocket implements IWeapon {
 		}
 	}
 
+
 	@Override
 	public void tick(float delta, WeaponStack stack) {
 		if (stack.getCooldown() > 0) {
@@ -96,10 +97,17 @@ public class Rocket implements IWeapon {
 	@Override
 	public void onUse(Vector2 end, Game game, PlayerModel firing,
 			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
+		if (stack.getAmmo() <= 0) {
+			reload(stack, game, firing);
+			return;
+		}
 		if (isMouseJustDown) {
+			stack.setCooldown(stack.getCooldown() + data.get(stack.getLevel()).getWarmup());
+		}
+		if (data.get(stack.getLevel()).isAuto() || (!data.get(stack.getLevel()).isAuto() && isMouseJustDown)) {
 			while (stack.getCooldown() <= 0) {
 				if (stack.getAmmo() > 0 && data.get(stack.getLevel()).getPreFireDelay() > 0 && stack.getWarmup() <= 0) {
-					stack.setWarmup(data.get(stack.getLevel()).getPreFireDelay());
+					stack.setWarmup(data.get(stack.getLevel()).getPreFireDelay() + stack.getWarmup());
 					stack.setWarmingUp(true);
 					stack.setWarmupEnd(end);
 					stack.setWarmupGame(game);
@@ -194,6 +202,7 @@ public class Rocket implements IWeapon {
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
 		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
 		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");
+		map.put("Warmup", d.getWarmup() + "s");
 		map.put("Reload time", d.getReloadTime() + "");
 		return map;
 	}

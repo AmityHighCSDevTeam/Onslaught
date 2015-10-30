@@ -61,15 +61,18 @@ public class ZombieGame extends Game {
 	private FileHandle logFile;
 	public Settings settings;
 	public PluginManager pluginManager;
+	public boolean isCheatModeAllowed;
 
 	/**
 	 *
 	 * @param isServer
 	 *            is the game a server
+	 * @param cheatMode 
  * @param config 
 	 */
-	public ZombieGame(boolean isServer) {
+	public ZombieGame(boolean isServer, boolean cheatMode) {
 		instance = this; // Set the instances
+		this.isCheatModeAllowed = cheatMode;
 		this.isServer = isServer; // Set if it is a server
 		random = new Random();
 		try {

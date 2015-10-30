@@ -68,7 +68,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				stack.setTotalAmmo(stack.getTotalAmmo() - ammoNeeded);
 			}
-			
+
 			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 				if (sound.getTrigger().equals("reload")) {
 					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
@@ -95,10 +95,17 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 	@Override
 	public void onUse(Vector2 end, Game game, PlayerModel firing,
 			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
+		if (stack.getAmmo() <= 0) {
+			reload(stack, game, firing);
+			return;
+		}
+		if (isMouseJustDown) {
+			stack.setCooldown(stack.getCooldown() + data.get(stack.getLevel()).getWarmup());
+		}
 		if (data.get(stack.getLevel()).isAuto() || (!data.get(stack.getLevel()).isAuto() && isMouseJustDown)) {
 			while (stack.getCooldown() <= 0) {
 				if (stack.getAmmo() > 0 && data.get(stack.getLevel()).getPreFireDelay() > 0 && stack.getWarmup() <= 0) {
-					stack.setWarmup(data.get(stack.getLevel()).getPreFireDelay());
+					stack.setWarmup(data.get(stack.getLevel()).getPreFireDelay() + stack.getWarmup());
 					stack.setWarmingUp(true);
 					stack.setWarmupEnd(end);
 					stack.setWarmupGame(game);
@@ -151,7 +158,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 		stack.setCooldown(stack.getCooldown()
 				+ data.get(stack.getLevel()).getPostFireDelay());
-		
+
 		for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 			if (sound.getTrigger().equals("fire")) {
 				game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
@@ -181,11 +188,12 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
 		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
 		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");
+		map.put("Warmup", d.getWarmup() + "s");
 		map.put("Reload time", d.getReloadTime() + "");
 		map.put("Knockback", d.getKnockback() + "");
 		return map;
 	}
-	
+
 	@Override
 	public boolean loadWeapon(JSONObject json) {
 		if (((String) json.get("className")).equals(getClass().getSimpleName())) {
@@ -213,6 +221,6 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
-	
+
 	protected abstract boolean loadWeaponData(JSONArray arr);
 }

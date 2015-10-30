@@ -11,7 +11,7 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
-	private double	price, ammoPrice, damage, knockback, accuracy,
+	private double	price, ammoPrice, damage, knockback, accuracy, warmup,
 	preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private float bulletThickness;
@@ -42,6 +42,9 @@ public class WeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("reloadTime")) {
 			reloadTime = ((Number) o.get("reloadTime")).doubleValue();
+		}
+		if (o.containsKey("warmup")) {
+			warmup = ((Number) o.get("warmup")).doubleValue();
 		}
 		if (o.containsKey("preFireDelay")) {
 			preFireDelay = ((Number) o.get("preFireDelay")).doubleValue();
@@ -357,5 +360,19 @@ public class WeaponData implements IWeaponDataBase {
 	@Override
 	public Buff getBuff() {
 		return buff;
+	}
+
+	/**
+	 * @return the warmup
+	 */
+	public double getWarmup() {
+		return warmup;
+	}
+
+	/**
+	 * @param warmup the warmup to set
+	 */
+	public void setWarmup(double warmup) {
+		this.warmup = warmup;
 	}
 }

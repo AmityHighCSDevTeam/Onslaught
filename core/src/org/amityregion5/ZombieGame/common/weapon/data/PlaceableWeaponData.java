@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
-	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY;
+	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY, warmup;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString, placingObject;
 	private List<SoundData> sounds;
@@ -27,6 +27,9 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("reloadTime")) {
 			reloadTime = ((Number) o.get("reloadTime")).doubleValue();
+		}
+		if (o.containsKey("warmup")) {
+			warmup = ((Number) o.get("warmup")).doubleValue();
 		}
 		if (o.containsKey("preFireDelay")) {
 			preFireDelay = ((Number) o.get("preFireDelay")).doubleValue();
@@ -270,5 +273,16 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	@Override
 	public Buff getBuff() {
 		return buff;
+	}
+
+	/**
+	 * @param warmup the warmup to set
+	 */
+	public void setWarmup(double warmup) {
+		this.warmup = warmup;
+	}
+	
+	public double getWarmup() {
+		return warmup;
 	}
 }

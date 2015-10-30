@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
-	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed,
+	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed, warmup,
 			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY, size;
 	private int		maxAmmo, gameOrgX, gameOrgY;
 	private String iconTextureString, gameTextureString, fieldTextureString;
@@ -41,6 +41,9 @@ public class GrenadeData implements IWeaponDataBase {
 		}
 		if (o.containsKey("reloadTime")) {
 			reloadTime = ((Number) o.get("reloadTime")).doubleValue();
+		}
+		if (o.containsKey("warmup")) {
+			warmup = ((Number) o.get("warmup")).doubleValue();
 		}
 		if (o.containsKey("preFireDelay")) {
 			preFireDelay = ((Number) o.get("preFireDelay")).doubleValue();
@@ -359,5 +362,16 @@ public class GrenadeData implements IWeaponDataBase {
 	@Override
 	public Buff getBuff() {
 		return buff;
+	}
+
+	/**
+	 * @param warmup the warmup to set
+	 */
+	public void setWarmup(double warmup) {
+		this.warmup = warmup;
+	}
+	
+	public double getWarmup() {
+		return warmup;
 	}
 }

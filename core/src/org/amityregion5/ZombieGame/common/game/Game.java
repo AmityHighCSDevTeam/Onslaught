@@ -47,6 +47,8 @@ public class Game implements Disposable {
 	private Random				rand;
 	private Difficulty diff;
 	private RayHandler lighting;
+	
+	private boolean isCheatMode;
 
 	private double timeUntilNextWave;
 	//private float waveDifficulty;
@@ -62,8 +64,9 @@ public class Game implements Disposable {
 	private int explosionRaycasts = 720;
 	private float areaPerParticle = 0.1f;
 
-	public Game(Difficulty diff) {
+	public Game(Difficulty diff, boolean cheatMode) {
 		this.diff = diff;
+		this.isCheatMode = cheatMode;
 
 		world = new World(new Vector2(0, 0), true);
 		contactListener = new GameContactListener();
@@ -421,5 +424,9 @@ public class Game implements Disposable {
 	
 	public boolean isGameRunning() {
 		return getPlayers().size() > 0;
+	}
+	
+	public boolean isCheatMode() {
+		return isCheatMode;
 	}
 }
