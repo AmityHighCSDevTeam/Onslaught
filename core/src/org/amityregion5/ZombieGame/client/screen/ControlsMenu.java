@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.client.screen;
 import java.util.Map.Entry;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
@@ -33,11 +34,12 @@ public class ControlsMenu extends GuiScreen {
 	private ShapeRenderer shapeRender = new ShapeRenderer();
 	private double scrollPos;
 	private String selected;
+	private InputProcessor processor;
 
 	public ControlsMenu(GuiScreen prevScreen) {
 		super(prevScreen);
 
-		Gdx.input.setInputProcessor(new InputProcessor() {
+		processor = new InputProcessor() {
 			public boolean keyDown(int keycode) {
 				if (selected != null) {
 					ZombieGame.instance.settings.setInput(selected, new InputData(true, keycode));
@@ -63,7 +65,9 @@ public class ControlsMenu extends GuiScreen {
 				scrollPos = MathHelper.clamp(0, (maxAmt > 0 ? maxAmt : 0), scrollPos + amount*5);
 				return true;
 			}
-		});
+		};
+		
+		Client.inputMultiplexer.addProcessor(processor);
 	}
 
 	// Font
@@ -242,6 +246,7 @@ public class ControlsMenu extends GuiScreen {
 		batch.dispose(); // Clear memory
 		calibri30.dispose();
 		shapeRender.dispose();
+		Client.inputMultiplexer.removeProcessor(processor);
 	}
 
 	private double getMaxScrollAmount() {

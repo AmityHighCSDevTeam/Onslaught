@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.client.window;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -36,12 +37,13 @@ public class ShopWindow implements Screen {
 	private float infoWidth = defInfoWidth;
 	private float secHeight = 0;
 	private int clickX, clickY;
+	private InputProcessor processor;
 
 	public ShopWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
-
-		Gdx.input.setInputProcessor(new InputProcessor() {
+		
+		processor = new InputProcessor() {
 			public boolean keyDown(int keycode) {return false;}
 			public boolean keyUp(int keycode) {return false;}
 			public boolean keyTyped(char character) {return false;}
@@ -61,7 +63,9 @@ public class ShopWindow implements Screen {
 				}
 				return true;
 			}
-		});
+		};
+		
+		Client.inputMultiplexer.addProcessor(processor);
 	}
 
 	@Override
@@ -353,5 +357,6 @@ public class ShopWindow implements Screen {
 	public void dispose() {
 		shapeRender.dispose();
 		batch.dispose();
+		Client.inputMultiplexer.removeProcessor(processor);
 	}
 }

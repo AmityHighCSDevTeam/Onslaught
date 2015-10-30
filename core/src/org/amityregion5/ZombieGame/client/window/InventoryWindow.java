@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.client.window;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -32,12 +33,13 @@ public class InventoryWindow implements Screen {
 	private float weaponBoxSize = 128;
 	private float weaponBoxBorder = 8;
 	private int mouseX, mouseY;
+	private InputProcessor processor;
 	
 	public InventoryWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
 
-		Gdx.input.setInputProcessor(new InputProcessor() {
+		processor = new InputProcessor() {
 			public boolean keyDown(int keycode) {return false;}
 			public boolean keyUp(int keycode) {return false;}
 			public boolean keyTyped(char character) {return false;}
@@ -52,7 +54,9 @@ public class InventoryWindow implements Screen {
 					scrollPos = MathHelper.clamp(0, (maxAmt > 0 ? maxAmt : 0), scrollPos + amount*5);
 				return true;
 			}
-		});
+		};
+		
+		Client.inputMultiplexer.addProcessor(processor);
 	}
 
 	@Override
@@ -230,6 +234,7 @@ public class InventoryWindow implements Screen {
 
 	@Override
 	public void dispose() {
+		Client.inputMultiplexer.removeProcessor(processor);
 	}
 	
 	private double getMaxScrollAmount() {
