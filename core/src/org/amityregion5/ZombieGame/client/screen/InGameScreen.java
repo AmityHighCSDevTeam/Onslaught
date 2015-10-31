@@ -91,12 +91,12 @@ public class InGameScreen extends GuiScreen {
 		EntityPlayer playerEntity = new EntityPlayer();
 		playerEntity.setFriction(0.99f);
 		playerEntity.setMass(100);
-		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.mul(1, 1,
+		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1,
 				1, 130f/255), 15, 0, 0, 0, 30);
 
 		player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()));
 		player.setLight(light);
-		player.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.mul(1, 1,
+		player.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1,
 				1, 130f/255), 3, 0, 0));
 		player.setSpeed(0.05f);
 
