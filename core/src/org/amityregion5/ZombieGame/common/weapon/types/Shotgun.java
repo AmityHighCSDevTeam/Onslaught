@@ -46,9 +46,7 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 
 			newDir = MathHelper.fixAngle(newDir);
 			
-			Vector2 v = MathHelper.getEndOfLine(firing.getEntity().getBody()
-					.getPosition(),
-					firing.getEntity().getShape().getRadius() - 0.01, newDir);
+			Vector2 v = firing.getEntity().getBody().getWorldCenter();
 
 			Vector2 bullVector = VectorFactory.createVector(200f,
 					(float) newDir);

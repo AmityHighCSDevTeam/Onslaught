@@ -138,9 +138,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		Vector2 v = MathHelper.getEndOfLine(firing.getEntity().getBody()
-				.getPosition(),
-				firing.getEntity().getShape().getRadius() - 0.01, dir);
+		Vector2 v = firing.getEntity().getBody().getWorldCenter();
 
 		Vector2 bullVector = VectorFactory.createVector(200f,
 				(float) dir);
