@@ -32,8 +32,9 @@ public class ShopWindow implements Screen {
 	private GlyphLayout glyph = new GlyphLayout();
 	private SpriteBatch batch = new SpriteBatch();
 	private float purchaseableHeight = 100;
+	private float purchaseableBorder = 2;
 	private int selected = -1;
-	private float defInfoWidth = 300;
+	private float defInfoWidth = 400;
 	private float infoWidth = defInfoWidth;
 	private float secHeight = 0;
 	private int clickX, clickY;
@@ -42,7 +43,7 @@ public class ShopWindow implements Screen {
 	public ShopWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
-		
+
 		processor = new InputProcessor() {
 			public boolean keyDown(int keycode) {return false;}
 			public boolean keyUp(int keycode) {return false;}
@@ -64,7 +65,7 @@ public class ShopWindow implements Screen {
 				return true;
 			}
 		};
-		
+
 		Client.inputMultiplexer.addProcessor(processor);
 	}
 
@@ -153,54 +154,155 @@ public class ShopWindow implements Screen {
 			selected = -1;
 		}
 
+		float trueWeaponBoxSize = purchaseableHeight + purchaseableBorder + purchaseableBorder;
+		int cols = ((int)((w)/(trueWeaponBoxSize)));
+
+		int mouseOverIndex = -1;
+
 		Rectangle clipBounds = new Rectangle(x, 100, w, screen.getHeight() - 201);
 		//ScissorStack.calculateScissors(camera, screen.getScreenProjectionMatrix(), clipBounds, scissors);
 		ScissorStack.pushScissors(clipBounds);
 		//Draw Weapons
 		for (int i = 0; i<ZombieGame.instance.pluginManager.getPurchaseables().size(); i++) {
 			IPurchaseable purchaseable = ZombieGame.instance.pluginManager.getPurchaseables().get(i);
-			y -= purchaseableHeight + 2;
 
-			if (clickOnPurchaseable) {
-				int checkClickY = screen.getHeight() - clickY;
-				if (checkClickY >= y && checkClickY <= y + purchaseableHeight+2) {
-					if (selected != i) {
-						secScrollPos = 0;
-					}
-					selected = i;
-				}
-			}
+			int row = i/cols;
+			int col = i%cols;
+
+			float boxX = trueWeaponBoxSize * col + purchaseableBorder + x;
+			float boxY =  y - (trueWeaponBoxSize * (row + 1));
 
 			shapeRender.begin(ShapeType.Filled);
-			if (selected == i) {
-				shapeRender.setColor(0.6f, 0.6f, 0.6f, 1f);
-			} else {
-				shapeRender.setColor(0.35f, 0.35f, 0.35f, 1f);
+
+			shapeRender.setColor(Color.LIGHT_GRAY);
+			shapeRender.rect(boxX,boxY, purchaseableHeight, purchaseableHeight);
+
+			shapeRender.end();
+
+			if (purchaseable.hasIcon()) {
+				batch.begin();
+				Texture icon = TextureRegistry.getTexturesFor(purchaseable.getIconName(player)).get(0);
+
+				batch.setColor(new Color(1, 1, 1, 1));
+				batch.draw(icon, boxX,boxY, purchaseableHeight, purchaseableHeight);
+
+				batch.end();
 			}
-			shapeRender.rect(x, y, w, purchaseableHeight);
+
+			Gdx.gl.glLineWidth(2);
+			shapeRender.begin(ShapeType.Line);
+
+			shapeRender.setColor(Color.DARK_GRAY);
+			shapeRender.rect(boxX,boxY, purchaseableHeight, purchaseableHeight);
+
+			shapeRender.end();
+			Gdx.gl.glLineWidth(1);
+
+			if (clickX > boxX && Gdx.graphics.getHeight() - clickY > boxY &&
+					clickX < boxX + purchaseableHeight &&
+					Gdx.graphics.getHeight() - clickY < boxY + purchaseableHeight) {
+				mouseOverIndex = i;
+			}
+		}
+
+		ScissorStack.popScissors();
+		if (mouseOverIndex != -1) {
+			IPurchaseable purchaseable = ZombieGame.instance.pluginManager.getPurchaseables().get(mouseOverIndex);
+
+			if (Gdx.input.isTouched()) {
+				selected = mouseOverIndex;
+			}			
+
+			float boxWidth = 0;
+			float boxHeight = 0;
+
+			//Box Size Calculation
+
+			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getName(),
+					0, purchaseable.getName().length(), Color.BLACK,
+					300, Align.left, false, "...");
+
+			boxWidth = Math.max(boxWidth, nameGlyph.width + 8);
+			boxHeight += nameGlyph.height + 4 + 4;
+
+			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getDescription(),
+					Color.BLACK, 300, Align.left, true);
+
+			boxWidth = Math.max(boxWidth, descGlyph.width + 8);
+			boxHeight += descGlyph.height + 4;
+
+			boxHeight += 10;
+
+			GlyphLayout owned = null;
+			if (purchaseable.getCurrentLevel(player) > -1 ) {
+				owned = new GlyphLayout(ZombieGame.instance.mainFont, "Owned",
+						Color.BLUE, 300, Align.left, true);
+
+				boxWidth = Math.max(boxWidth, owned.width + 8);
+				boxHeight += descGlyph.height + 4;
+
+				boxHeight += 10;
+			}
+
+			GlyphLayout canPurchase = null;
+			if (purchaseable.canPurchase(player) && purchaseable.getPrice(player) <= player.getMoney()) {
+				canPurchase = new GlyphLayout(ZombieGame.instance.mainFont, "Purchase Available",
+						Color.RED, 300, Align.left, true);
+
+				boxWidth = Math.max(boxWidth, canPurchase.width + 8);
+				boxHeight += descGlyph.height + 4;
+
+				boxHeight += 10;
+			}
+
+			boxHeight += 10;
+
+			//Box Outline Drawing
+
+			shapeRender.begin(ShapeType.Filled);
+
+			shapeRender.setColor(Color.LIGHT_GRAY);
+			shapeRender.rect(clickX, screen.getHeight() - clickY - boxHeight, boxWidth, boxHeight);
+
 			shapeRender.end();
 
 			shapeRender.begin(ShapeType.Line);
-			shapeRender.setColor(0.45f, 0.45f, 0.45f, 1f);
-			shapeRender.rect(x, y, w, purchaseableHeight);
+
+			shapeRender.setColor(Color.DARK_GRAY);
+			shapeRender.rect(clickX, screen.getHeight() - clickY - boxHeight, boxWidth, boxHeight);
+
 			shapeRender.end();
 
 			batch.begin();
-			// Get the size of the text
-			glyph.setText(ZombieGame.instance.mainFont, purchaseable.getName(), 0, purchaseable.getName().length(), Color.BLACK, w - 20, Align.left, false, "...");
-			// Draw the text centered on the button
-			ZombieGame.instance.mainFont.draw(batch, glyph, x + 10, y + purchaseableHeight - 10 + glyph.height/2);
 
-			if (purchaseable.hasIcon()) {
-				Texture icon = TextureRegistry.getTexturesFor(purchaseable.getIconName(player)).get(0);
+			//Text Drawing
 
-				batch.draw(icon, x + 10, y + 10, 64, 64);
+			float textDrawing = screen.getHeight() - clickY - 3;
+
+			ZombieGame.instance.mainFont.draw(batch, nameGlyph, clickX + 4, textDrawing);
+			textDrawing -= nameGlyph.height + 4;
+
+			textDrawing -= 10;
+
+			ZombieGame.instance.mainFont.draw(batch, descGlyph, clickX + 4, textDrawing);
+			textDrawing -= descGlyph.height + 4;
+
+			if (owned != null) {
+				textDrawing -= 10;
+
+				ZombieGame.instance.mainFont.draw(batch, owned, clickX + 4, textDrawing);
+				textDrawing -= owned.height + 4;
+			}
+
+			if (canPurchase != null) {
+				textDrawing -= 10;
+
+				ZombieGame.instance.mainFont.draw(batch, canPurchase, clickX + 4, textDrawing);
+				textDrawing -= canPurchase.height + 4;
 			}
 
 			batch.end();
 		}
-
-		ScissorStack.popScissors();
 	}
 
 	public void drawInfoRegion(float delta) {
@@ -269,10 +371,12 @@ public class ShopWindow implements Screen {
 			if (!hasEnoughMoney) {
 				batch.setColor(Color.GRAY);
 			}
-			batch.draw(ZombieGame.instance.buttonTexture, x, y, w, h);
+			//batch.draw(ZombieGame.instance.buttonTexture, x, y, w, h);
 			batch.setColor(new Color(1,1,1,1));
 
-			glyph.setText(ZombieGame.instance.mainFont, (selectedItem.getCurrentLevel(player)>-1 ? "Upgrade" : "Buy"), Color.BLACK, w, Align.center, true);
+			glyph.setText(ZombieGame.instance.mainFont, (selectedItem.getCurrentLevel(player)>-1 ? "Upgrade" : "Buy"), (!hasEnoughMoney ? Color.DARK_GRAY :
+					(clickX >= x && clickX <= x+w && screen.getHeight()-clickY >= y && screen.getHeight()-clickY <= y+h? new Color(27/255f, 168/255f, 55/255f, 1f) :Color.WHITE))
+					, w, Align.center, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + h/2 + glyph.height/2);
 
 			if (hasEnoughMoney && Gdx.input.isTouched() && Gdx.input.justTouched()) {
@@ -316,7 +420,8 @@ public class ShopWindow implements Screen {
 	}
 
 	private double getMaxScrollAmount() {
-		return (purchaseableHeight + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
+		return (purchaseableHeight/((int)((screen.getWidth() - 232 - infoWidth - 22)/(purchaseableHeight + purchaseableBorder + purchaseableBorder))) + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
+		//return (purchaseableHeight + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
 	}
 
 	private double getSecMaxScrollAmount() {

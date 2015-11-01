@@ -40,30 +40,38 @@ public class OptionMenu extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 
+		int mX = Gdx.input.getX();
+		int mY = getHeight() - Gdx.input.getY();
+
 		// Draw name of screen
 		calibri30.draw(batch, "Options", 10, getHeight() - 45,
 				getWidth() - 20, Align.center, false);
-		
+
 		float x = 10;
 		float y = getHeight() - 210;
 		float w = getWidth()-20;
 		float h = 50;
-		
+
 		Texture buttText = ZombieGame.instance.buttonTexture;
-		
-		batch.draw(buttText, x, y, w, h);
+
 		Color c = batch.getColor();
-		batch.setColor(0,0,0,1);
-		batch.draw(buttText, x + (float)(w*ZombieGame.instance.settings.getMasterVolume()) - 1, y, 2, h);
 		batch.setColor(1, 1, 1, 1);
-		glyph.setText(ZombieGame.instance.mainFont, "Master Volume: " + ((int)(ZombieGame.instance.settings.getMasterVolume()*10000))/100f + "%", Color.BLACK, w, Align.center, false);
+		glyph.setText(ZombieGame.instance.mainFont, "Master Volume: " + ((int)(ZombieGame.instance.settings.getMasterVolume()*10000))/100f + "%", Color.WHITE, w, Align.left, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h+glyph.height)/2);
 		batch.setColor(c);
-		
+
+		x += 300 + 10;
+		w = getWidth() - x - 50;
+
+		batch.setColor(1,1,1,1);
+		if (mX>=x && mX<=x+w && mY>=y && mY<=y+h) {
+			batch.setColor(new Color(27/255f, 168/255f, 55/255f, 1f));
+		}
+		batch.draw(buttText, x, y+h/2-1, w, 2);
+		batch.draw(buttText, x + (float)(w*ZombieGame.instance.settings.getMasterVolume()) - 1, y, 2, h);
+		batch.setColor(c);
+
 		if (Gdx.input.isTouched()) {
-			int mX = Gdx.input.getX();
-			int mY = getHeight() - Gdx.input.getY();
-			
 			if (mX>=x && mX<=x+w && mY>=y && mY<=y+h) {
 				mX-=x;
 				double maxVolume = mX/w;
@@ -108,16 +116,16 @@ public class OptionMenu extends GuiScreen {
 	protected void buttonClicked(int id) {
 		super.buttonClicked(id);
 		switch (id) {
-			case -1:
-				// Back button
-				ZombieGame.instance.settings.save();
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			case 0:
-				// Controls button
-				ZombieGame.instance.setScreen(new ControlsMenu(this));
-				break;
+		case -1:
+			// Back button
+			ZombieGame.instance.settings.save();
+			dispose();
+			ZombieGame.instance.setScreen(prevScreen);
+			break;
+		case 0:
+			// Controls button
+			ZombieGame.instance.setScreen(new ControlsMenu(this));
+			break;
 		}
 	}
 

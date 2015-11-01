@@ -184,6 +184,7 @@ public class GuiButton extends Sprite implements Disposable {
 	@Override
 	public void draw(Batch batch) {
 
+		setColor(new Color(1,1,1,1));
 		// If the button is enabled
 		if (isEnabled()) {
 			// Get mouse location
@@ -193,7 +194,7 @@ public class GuiButton extends Sprite implements Disposable {
 			if (getBoundingRectangle().contains(touchPos.x,
 					ZombieGame.instance.height - touchPos.y)) {
 				// Tint the button
-				setColor(new Color(0.7f, 0.7f, 0.7f, 1f));
+				setColor(new Color(27/255f, 168/255f, 55/255f, 1f));
 			}
 		} else {
 			// If the button isn't enabled
@@ -202,15 +203,14 @@ public class GuiButton extends Sprite implements Disposable {
 		}
 
 		// Draw the button
-		super.draw(batch);
+		//super.draw(batch);
 
 		// Clear the tint
-		setColor(new Color(1,1,1,1));
 
 		// If there is text for the button
 		if (text != null) {
 			// Get the size of the text
-			glyph.setText(ZombieGame.instance.mainFont, text, Color.BLACK, getWidth(), Align.center, true);
+			glyph.setText(ZombieGame.instance.mainFont, text, getColor(), getWidth(), Align.center, true);
 			// Draw the text centered on the button
 			ZombieGame.instance.mainFont.draw(batch, glyph, getX(),getY() + (getHeight() + glyph.height) / 2);
 		}

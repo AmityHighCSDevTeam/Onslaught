@@ -93,11 +93,11 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public boolean hasIcon() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public String getIconName(PlayerModel player) {
-		return null;
+		return buff.getIconLoc();
 	}
 }

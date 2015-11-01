@@ -156,6 +156,8 @@ public class PluginLoader {
 		
 		String name = (String) o.get("name");
 		
+		String icon = (String) o.get("icon");
+		
 		double price = ((Number) o.get("price")).doubleValue();
 		
 		for (Object obj : arr) {
@@ -172,7 +174,7 @@ public class PluginLoader {
 			}
 		}
 		
-		BuffApplicator applicator = new BuffApplicator(buff, name, price);
+		BuffApplicator applicator = new BuffApplicator(buff, name, price, icon);
 		
 		plugin.addBuffApplicator(applicator);
 	}

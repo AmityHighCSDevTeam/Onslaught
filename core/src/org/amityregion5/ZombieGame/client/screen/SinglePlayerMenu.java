@@ -38,7 +38,7 @@ public class SinglePlayerMenu extends GuiScreen {
 		
 
 		// Draw name of screen
-		calibri30.draw(batch, "Singleplayer", 10, getHeight() - 45,
+		calibri30.draw(batch, "Single Player", 10, getHeight() - 45,
 				getWidth() - 20, Align.center, false);
 	}
 

@@ -188,7 +188,7 @@ public class ZombieGame extends Game {
 						Gdx.app.postRunnable(() -> {
 							mainFont = fontGenerator.generateFont(parameter);
 							// Make the font black
-							mainFont.setColor(0, 0, 0, 1);
+							mainFont.setColor(1, 1, 1, 1);
 						});
 						
 						TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");

@@ -12,7 +12,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -66,7 +65,7 @@ public class ControlsMenu extends GuiScreen {
 				return true;
 			}
 		};
-		
+
 		Client.inputMultiplexer.addProcessor(processor);
 	}
 
@@ -91,20 +90,19 @@ public class ControlsMenu extends GuiScreen {
 			//ScissorStack.calculateScissors(camera, screen.getScreenProjectionMatrix(), clipBounds, scissors);
 			ScissorStack.pushScissors(clipBounds);
 			batch.begin();
-			Texture buttText = ZombieGame.instance.buttonTexture;
 
 			boolean right = false;
 			float h = 50;
 			float blankSpace = 10;
 			float y = (float) ((getHeight()-50) - h - blankSpace + scrollPos);
-			float w = (getWidth()-40)/2 - 20;
-			
+			float w = (getWidth()-40)/2 - 100;
+
 			boolean clickOn = false;
 
 			for (Entry<String, InputData> entry : ZombieGame.instance.settings.getEntries()){
 				float x;
 				if (right) {
-					x = getWidth()/2 - 10;
+					x = getWidth()/2 - 10 + 50;
 					right = false;
 				} else {
 					x = 10;
@@ -121,9 +119,20 @@ public class ControlsMenu extends GuiScreen {
 				if (selected == entry.getKey()) {
 					batch.setColor(0.75f, 0.75f, 0.75f, 1);
 				}
-				batch.draw(buttText, x, y, w, h);
+				//batch.draw(buttText, x, y, w, h);
 				batch.setColor(1, 1, 1, 1);
-				glyph.setText(ZombieGame.instance.mainFont, entry.getKey().replace('_', ' ') + ": " + entry.getValue().getName(), (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.BLACK : Color.RED), w-20, Align.center, false);
+				
+				Color color = (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.WHITE : Color.RED);
+				
+				if (color == Color.WHITE) {
+					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y && Gdx.input.getX() < x+w && ZombieGame.instance.height -Gdx.input.getY() < y+h) {
+						color = new Color(27/255f, 168/255f, 55/255f, 1f);
+					}
+				}
+				
+				glyph.setText(ZombieGame.instance.mainFont, entry.getKey().replace('_', ' ') + ": ", color, w-20, Align.left, false);
+				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h+glyph.height)/2);
+				glyph.setText(ZombieGame.instance.mainFont, entry.getValue().getName(), color, w-20, Align.right, false);
 				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h+glyph.height)/2);
 			}
 			if (Gdx.input.isTouched() && Gdx.input.justTouched() && !clickOn) {
@@ -172,8 +181,42 @@ public class ControlsMenu extends GuiScreen {
 		batch.begin();
 
 		// Draw name of screen
-		calibri30.draw(batch, "Controls" + (selected == null ? "" : " --Press a button to set new--"), 10, getHeight() - 45,
+		calibri30.draw(batch, "Controls", 10, getHeight() - 45,
 				getWidth() - 20, Align.center, false);
+
+		batch.end();
+
+		if (selected != null) {
+			float x = getWidth()/2-150;
+			float y = getHeight()/2-50;
+			float w = 300;
+			float h = 100;
+
+			shapeRender.begin(ShapeType.Filled);
+			
+			shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
+
+			shapeRender.rect(x, y, w, h);
+
+			shapeRender.end();
+
+			shapeRender.begin(ShapeType.Line);
+			
+			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+
+			shapeRender.rect(x, y, w, h);
+
+			shapeRender.end();
+
+			batch.begin();
+			
+			glyph.setText(ZombieGame.instance.mainFont, "Press a Button to set", Color.BLACK, w-20, Align.center, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h+glyph.height)/2);
+			
+			batch.end();
+		}
+
+		batch.begin();
 	}
 
 	@Override
