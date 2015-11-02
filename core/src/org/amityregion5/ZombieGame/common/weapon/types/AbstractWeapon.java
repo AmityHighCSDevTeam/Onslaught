@@ -138,12 +138,15 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		Vector2 v = firing.getEntity().getBody().getWorldCenter();
+		Vector2 firingPos = firing.getEntity().getBody().getWorldCenter();
+		Vector2 firingPosVisual = MathHelper.getEndOfLine(firing.getEntity().getBody()
+				.getWorldCenter(),
+				firing.getEntity().getShape().getRadius() - 0.01, dir);
 
 		Vector2 bullVector = VectorFactory.createVector(200f,
 				(float) dir);
 
-		BasicBullet bull = new BasicBullet(game, v, (float) data
+		BasicBullet bull = new BasicBullet(game, firingPosVisual, (float) data
 				.get(stack.getLevel()).getKnockback(), (float) data.get(stack.getLevel())
 				.getDamage(), bullVector, firing, 
 				data.get(stack.getLevel()).getBulletColor(),
@@ -151,7 +154,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 		bull.setDir((float) dir);
 
 		game.getActiveBullets().add(bull);
-		game.getWorld().rayCast(bull, v, bullVector);
+		game.getWorld().rayCast(bull, firingPos, bullVector);
 		bull.finishRaycast();
 
 		stack.setCooldown(stack.getCooldown()
