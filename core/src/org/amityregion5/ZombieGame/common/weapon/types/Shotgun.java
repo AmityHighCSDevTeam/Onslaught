@@ -46,12 +46,15 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 
 			newDir = MathHelper.fixAngle(newDir);
 			
-			Vector2 v = firing.getEntity().getBody().getWorldCenter();
+			Vector2 firingPos = firing.getEntity().getBody().getWorldCenter();
+			Vector2 firingPosVisual = MathHelper.getEndOfLine(firing.getEntity().getBody()
+					.getWorldCenter(),
+					firing.getEntity().getShape().getRadius() - 0.01, dir);
 
 			Vector2 bullVector = VectorFactory.createVector(200f,
 					(float) newDir);
 
-			BasicBullet bull = new BasicBullet(game, v, (float) data
+			BasicBullet bull = new BasicBullet(game, firingPosVisual, (float) data
 					.get(stack.getLevel()).getKnockback(), (float) data
 					.get(stack.getLevel()).getDamage(), bullVector, firing, 
 					data.get(stack.getLevel()).getBulletColor(),
@@ -59,7 +62,7 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 			bull.setDir((float) newDir);
 
 			game.getActiveBullets().add(bull);
-			game.getWorld().rayCast(bull, v, bullVector);
+			game.getWorld().rayCast(bull, firingPos, bullVector);
 			bull.finishRaycast();
 		}
 
