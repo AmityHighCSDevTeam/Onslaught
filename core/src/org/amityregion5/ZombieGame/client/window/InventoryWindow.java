@@ -85,7 +85,7 @@ public class InventoryWindow implements Screen {
 		shapeRender.rect(0, 0, screen.getWidth(), screen.getHeight());
 
 		//Main box in the center
-		shapeRender.setColor(0.3f, 0.3f, 0.3f, 1f);
+		shapeRender.setColor(0.3f, 0.3f, 0.3f, 0.6f);
 		shapeRender.rect(100, 100, screen.getWidth()-200, screen.getHeight()-200);
 
 		shapeRender.end();
@@ -135,6 +135,8 @@ public class InventoryWindow implements Screen {
 		Rectangle clipBounds = new Rectangle(x*wMult, 100*hMult, w*wMult, (screen.getHeight() - 201)*hMult);
 		ScissorStack.pushScissors(clipBounds);
 		for (int i = 0; i<player.getWeapons().size(); i++) {
+			Gdx.gl.glEnable(GL20.GL_BLEND);
+			
 			int row = i/cols;
 			int col = i%cols;
 			
@@ -143,7 +145,7 @@ public class InventoryWindow implements Screen {
 			
 			shapeRender.begin(ShapeType.Filled);
 			
-			shapeRender.setColor(Color.LIGHT_GRAY);
+			shapeRender.setColor(new Color(191/255f, 191/255f, 191/255f, 100/255f));
 			shapeRender.rect(boxX,boxY, weaponBoxSize, weaponBoxSize);
 			
 			shapeRender.end();

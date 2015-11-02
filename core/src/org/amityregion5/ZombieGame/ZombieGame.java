@@ -210,6 +210,7 @@ public class ZombieGame extends Game {
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
 						
 						settings.registerInput("Shoot", new InputData(false, Buttons.LEFT));
+						settings.registerInput("Melee", new InputData(false, Buttons.RIGHT));
 						settings.registerInput("Move_Up", new InputData(true, Keys.W));
 						settings.registerInput("Move_Down", new InputData(true, Keys.S));
 						settings.registerInput("Move_Right", new InputData(true, Keys.D));

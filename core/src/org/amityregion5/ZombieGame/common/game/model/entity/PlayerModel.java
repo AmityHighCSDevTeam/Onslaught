@@ -41,6 +41,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private PlayerExtrasDrawingLayer extras;
 	private float health, maxHealth, speed, baseSpeed, baseHealth;
 	private boolean shootJustPressed = false;
+	private boolean meleeJustPressed = false;
 	private List<SoundPlayingData> 	soundsToPlay;
 	private Buff totalBuffs;
 	private List<Buff> buffs, temporaryBuffs;
@@ -74,6 +75,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			shootJustPressed = false;
 		} else {
 			shootJustPressed = true;
+		}
+		if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen.getCurrentWindow() == null) {
+			//DO MELEE
+			meleeJustPressed = false;
+		} else {
+			meleeJustPressed = true;
 		}
 
 		if (ZombieGame.instance.settings.getInput("Move_Up").isDown()) {
