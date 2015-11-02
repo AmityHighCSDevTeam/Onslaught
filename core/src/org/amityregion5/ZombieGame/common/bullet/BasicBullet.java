@@ -25,7 +25,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
  */
 public class BasicBullet implements IBullet {
 
-	private float	knockback, dir, damage;
+	private float	knockback, dir, damage, range;
 	private Game	g;
 	private Vector2	endPoint;
 	private Vector2	start;
@@ -35,13 +35,14 @@ public class BasicBullet implements IBullet {
 	private List<HitData> hits;
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage,
-			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness) {
+			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness, float range) {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
 		this.damage = (float) ((damage+source.getTotalBuffs().getAdd("bulletDamage"))*source.getTotalBuffs().getMult("bulletDamage"));
 		this.source = source;
 		this.color = color;
+		this.range = range;
 		this.bulletThickness = bulletThickness;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
@@ -105,7 +106,10 @@ public class BasicBullet implements IBullet {
 		hitData.hit = fixture.getBody();
 		hitData.hitPoint = point.cpy();
 		hitData.dist = start.dst2(point);
-		hits.add(hitData);
+
+		if (start.dst2(point) <= range*range) {
+			hits.add(hitData);
+		}
 
 		return 1;
 	}
@@ -113,32 +117,32 @@ public class BasicBullet implements IBullet {
 	@Override
 	public void finishRaycast() {
 		Collections.sort(hits);
-		
+
 		for (HitData hd : hits) {
 			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
-			
+
 			if (entity.isPresent()) {
 				damage -= entity.get().damage(damage, source, DamageTypes.BULLET);
 			}
-			
+
 			if (damage <= 0) {
 				endPoint = hd.hitPoint;
 				break;
 			}
 		}
 	}
-	
+
 	@Override
 	public float getThickness() {
 		return bulletThickness;
 	}
-	
+
 	private class HitData implements Comparable<HitData> {
 		public double dist;
 		public Body hit;
 		public Vector2 hitPoint;
-		
+
 		@Override
 		public int compareTo(HitData o) {
 			return Double.compare(dist, o.dist);

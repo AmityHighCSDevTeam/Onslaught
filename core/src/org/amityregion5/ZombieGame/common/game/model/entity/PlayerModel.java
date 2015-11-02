@@ -12,15 +12,19 @@ import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
+import org.amityregion5.ZombieGame.common.bullet.BasicBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
+import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
@@ -77,7 +81,36 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			shootJustPressed = true;
 		}
 		if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen.getCurrentWindow() == null) {
-			//DO MELEE
+			if (meleeJustPressed) {
+				double dir = MathHelper.clampAngleAroundCenter(this
+						.getEntity().getBody().getAngle(), MathHelper
+						.getDirBetweenPoints(
+								this.getEntity().getBody().getPosition(), mousePos), Math
+						.toRadians(10));
+
+				dir = MathHelper.fixAngle(dir);
+
+				Vector2 firingPos = this.getEntity().getBody().getWorldCenter();
+				Vector2 firingPosVisual = MathHelper.getEndOfLine(this.getEntity().getBody()
+						.getWorldCenter(),
+						this.getEntity().getShape().getRadius() - 0.01, dir);
+
+				Vector2 bullVector = VectorFactory.createVector(0.25f,
+						(float) dir);
+
+				BasicBullet bull = new BasicBullet(g, firingPosVisual, 0, 
+						(float)((3+getTotalBuffs().getAdd("meleeDamage"))*getTotalBuffs().getMult("meleeDamage")),
+						bullVector, this, 
+						Color.WHITE, 1, 0.2f);
+				bull.setDir((float) dir);
+
+				g.getActiveBullets().add(bull);
+
+				bullVector = VectorFactory.createVector(200f,
+						(float) dir);
+				g.getWorld().rayCast(bull, firingPos, bullVector);
+				bull.finishRaycast();
+			}
 			meleeJustPressed = false;
 		} else {
 			meleeJustPressed = true;

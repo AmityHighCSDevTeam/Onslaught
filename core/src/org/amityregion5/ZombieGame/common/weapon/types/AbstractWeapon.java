@@ -143,14 +143,14 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 				.getWorldCenter(),
 				firing.getEntity().getShape().getRadius() - 0.01, dir);
 
-		Vector2 bullVector = VectorFactory.createVector(200f,
+		Vector2 bullVector = VectorFactory.createVector(1000f,
 				(float) dir);
 
 		BasicBullet bull = new BasicBullet(game, firingPosVisual, (float) data
 				.get(stack.getLevel()).getKnockback(), (float) data.get(stack.getLevel())
 				.getDamage(), bullVector, firing, 
 				data.get(stack.getLevel()).getBulletColor(),
-				data.get(stack.getLevel()).getBulletThickness());
+				data.get(stack.getLevel()).getBulletThickness(), 200f);
 		bull.setDir((float) dir);
 
 		game.getActiveBullets().add(bull);
