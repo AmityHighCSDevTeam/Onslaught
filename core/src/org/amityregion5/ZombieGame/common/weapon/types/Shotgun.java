@@ -9,6 +9,7 @@ import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.ShotgunWeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -29,15 +30,15 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 				.getEntity().getBody().getAngle(), MathHelper
 				.getDirBetweenPoints(
 						firing.getEntity().getBody().getPosition(), end), Math
-						.toRadians(maxFireDegrees));
+				.toRadians(maxFireDegrees));
 
-		
+
 		for (int i = 0; i<data.get(stack.getLevel()).getShots(); i++) {
 			double dirDel = i-data.get(stack.getLevel()).getShots()/2;
 			dirDel *= data.get(stack.getLevel()).getSpread();
-			
+
 			double newDir = dir + Math.toRadians(dirDel);
-			
+
 			newDir -= Math.toRadians(data.get(stack.getLevel())
 					.getAccuracy() / 2);
 
@@ -45,7 +46,7 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 					* data.get(stack.getLevel()).getAccuracy());
 
 			newDir = MathHelper.fixAngle(newDir);
-			
+
 			Vector2 firingPos = firing.getEntity().getBody().getWorldCenter();
 			Vector2 firingPosVisual = MathHelper.getEndOfLine(firing.getEntity().getBody()
 					.getWorldCenter(),
@@ -67,8 +68,15 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 		}
 
 		stack.setCooldown(stack.getCooldown()
-				+ data.get(stack.getLevel()).getPostFireDelay());	}
-	
+				+ data.get(stack.getLevel()).getPostFireDelay());
+
+		for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
+			if (sound.getTrigger().equals("fire")) {
+				game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
+			}
+		}
+	}
+
 	@Override
 	protected boolean loadWeaponData(JSONArray arr) {
 		data = new Array<ShotgunWeaponData>();
@@ -80,15 +88,15 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Map<String, String> getWeaponDataDescriptors(int level) {
 		Map<String, String> map = super.getWeaponDataDescriptors(level);
-		
+
 		map.put("Bullets", data.get(level).getShots() + "");
 		map.put("Bullet Spread", data.get(level).getSpread() + "");
 
-		
+
 		return map;
 	}
 }
