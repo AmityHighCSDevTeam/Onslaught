@@ -99,6 +99,7 @@ public class InGameScreen extends GuiScreen {
 			player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()), "*/Players/**.png");
 		} else {
 			player = game.getSingleplayerPlayer();
+			player.setScreen(this);
 		}
 
 		player.setLight(light);

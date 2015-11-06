@@ -152,13 +152,13 @@ public class GrenadeModel implements IEntityModel<EntityGrenade>{
 		float f = ((Number)obj.get("f")).floatValue();
 		
 		GrenadeModel model = new  GrenadeModel(new EntityGrenade(size), g, null, sprite.getTxtrName());
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
 		model.setTimeUntilExplosion(t);
 		model.setStrength(s);
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
 		
 		return model;
 	}

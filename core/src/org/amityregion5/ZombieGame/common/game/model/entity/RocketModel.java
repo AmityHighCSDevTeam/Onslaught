@@ -211,14 +211,14 @@ public class RocketModel implements IEntityModel<EntityRocket>{
 		SoundData fS = SoundData.getSoundData((JSONObject) obj.get("sound"));
 		
 		RocketModel model = new RocketModel(new EntityRocket(size), g, null, sprite.getTxtrName(), size, fS);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
 		model.setTimeUntilExplosion(t);
 		model.setStrength(s);
 		model.setAcceleration(a);
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
 		
 		return model;
 	}

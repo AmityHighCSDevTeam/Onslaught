@@ -11,22 +11,18 @@ import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
-import org.amityregion5.ZombieGame.common.bullet.BasicBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
-import org.amityregion5.ZombieGame.common.helper.MathHelper;
-import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
@@ -46,7 +42,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private PlayerExtrasDrawingLayer extras;
 	private float health, maxHealth, speed, baseSpeed, baseHealth;
 	private boolean shootJustPressed = false;
-	private boolean meleeJustPressed = false;
+	//private boolean meleeJustPressed = false;
 	private List<SoundPlayingData> 	soundsToPlay;
 	private Buff totalBuffs;
 	private List<Buff> buffs, temporaryBuffs;
@@ -83,7 +79,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			shootJustPressed = false;
 		} else {
 			shootJustPressed = true;
-		}
+		}/*
 		if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen != null && screen.getCurrentWindow() == null) {
 			if (meleeJustPressed) {
 				double dir = MathHelper.clampAngleAroundCenter(this
@@ -118,7 +114,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			meleeJustPressed = false;
 		} else {
 			meleeJustPressed = true;
-		}
+		}*/
 
 		if (ZombieGame.instance.settings.getInput("Move_Up").isDown()) {
 			entity.getBody().applyForceToCenter(new Vector2(0, getSpeed()), true);
@@ -433,6 +429,8 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		JSONObject hotbar = (JSONObject) obj.get("hotbar");
 		
 		PlayerModel model = new  PlayerModel(new EntityPlayer(), g, null, money, txtr);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
 		model.setScreenVibrate(screenJitter);
 		for (Object o : buffs) {
 			model.applyBuff(Buff.getFromJSON((JSONObject)o));
@@ -450,15 +448,16 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			weap.setCooldown(((Number)w.get("cooldown")).doubleValue());
 			weap.setLevel(((Number)w.get("level")).intValue());
 			
-			if (hotbar.containsKey(i)) {
-				model.hotbar[((Number)hotbar.get(i)).intValue()] = weap;
+			model.weapons.add(weap);
+			
+			if (hotbar.containsKey(i+"")) {
+				int i2 = ((Number)hotbar.get(i+"")).intValue();
+				model.hotbar[i2] = weap;
 			}
 		}
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
 		
 		return model;
 	}

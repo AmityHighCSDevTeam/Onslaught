@@ -280,11 +280,11 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		model.prizeMoney = mny;
 		model.health = h;
 		model.setTexture(txtr);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
 		
 		return null;
 	}
