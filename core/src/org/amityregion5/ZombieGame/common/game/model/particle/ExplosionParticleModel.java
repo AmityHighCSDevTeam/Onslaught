@@ -5,11 +5,13 @@ import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
+import box2dLight.PointLight;
 
 public class ExplosionParticleModel implements IParticle{
 	private Light				light;
@@ -39,6 +41,18 @@ public class ExplosionParticleModel implements IParticle{
 		Vector2 vec = VectorFactory.createVector(vel, velDir);
 		xVel = vec.x;
 		yVel = vec.y;
+	}
+	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float xV,
+			float yV, boolean secondThing) {
+		this.x = x;
+		this.y = y;
+		this.c = c;
+		this.g = g;
+		this.rotation = rotation;
+		this.rotationSpeed = rotationSpeed;
+		
+		xVel = xV;
+		yVel = yV;
 	}
 
 	@Override
@@ -102,5 +116,41 @@ public class ExplosionParticleModel implements IParticle{
 	
 	public float getY() {
 		return y;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject convertToJSONObject() {
+		JSONObject obj = new JSONObject();
+		
+		obj.put("c", c.toString());
+		obj.put("x", x);
+		obj.put("y", y);
+		obj.put("xv", xVel);
+		obj.put("yv", yVel);
+		obj.put("r", rotation);
+		obj.put("rv", rotationSpeed);
+		
+		return obj;
+	}
+
+	@Override
+	public IParticle fromJSON(JSONObject obj, Game g) {
+		Color c = Color.valueOf((String) obj.get("c"));
+		float x = ((Number)obj.get("x")).floatValue();
+		float y = ((Number)obj.get("y")).floatValue();
+		float xV = ((Number)obj.get("xv")).floatValue();
+		float yV = ((Number)obj.get("yv")).floatValue();
+		float r = ((Number)obj.get("r")).floatValue();
+		float rV = ((Number)obj.get("rv")).floatValue();
+		
+		ExplosionParticleModel model = new ExplosionParticleModel(x, y, c, g, r, rV, xV, yV);
+
+		g.addParticleToWorld(model);
+		
+		model.setLight(new PointLight(g.getLighting(), 50, c, 2, x, y));
+		model.getLight().setXray(true);
+		
+		return model;
 	}
 }

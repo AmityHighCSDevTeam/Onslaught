@@ -7,6 +7,7 @@ import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
+import org.json.simple.JSONObject;
 
 public class HealthPackParticle implements IParticle{
 	private Game				g;
@@ -73,5 +74,28 @@ public class HealthPackParticle implements IParticle{
 	
 	public float getSize() {
 		return size;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject convertToJSONObject() {
+		JSONObject obj = new JSONObject();
+		
+		obj.put("x", x);
+		obj.put("y", y);
+		
+		return obj;
+	}
+
+	@Override
+	public IParticle fromJSON(JSONObject obj, Game g) {
+		float x = ((Number)obj.get("x")).floatValue();
+		float y = ((Number)obj.get("y")).floatValue();
+		
+		HealthPackParticle model = new HealthPackParticle(x, y, g);
+		
+		g.addParticleToWorld(model);
+		
+		return model;
 	}
 }

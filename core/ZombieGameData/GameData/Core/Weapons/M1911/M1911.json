@@ -1,6 +1,7 @@
 {
   "name": "M1911",
   "desc": "Why do we have gun safeties in the zombie apocalypse?",
+  "id": "Core_M1911",
   "className": "SemiAuto",
   "weapon": [
     {

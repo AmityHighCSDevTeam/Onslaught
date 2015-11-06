@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.desktop;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
+	public static void main (String[] arg) throws FileNotFoundException {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
 		config.width = 1200;

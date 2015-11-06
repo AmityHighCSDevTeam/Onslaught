@@ -69,4 +69,8 @@ public class EntityGrenade implements IEntity, Disposable {
 	public MassData getMassData() {
 		return massData;
 	}
+	
+	public float getSize() {
+		return size;
+	}
 }

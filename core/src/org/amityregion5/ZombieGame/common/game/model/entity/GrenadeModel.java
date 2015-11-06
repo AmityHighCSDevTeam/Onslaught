@@ -1,13 +1,12 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
-import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityGrenade;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.json.simple.JSONObject;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class GrenadeModel implements IEntityModel<EntityGrenade>{
@@ -18,12 +17,15 @@ public class GrenadeModel implements IEntityModel<EntityGrenade>{
 	private PlayerModel parent;
 	private SpriteDrawingLayer sprite;
 	private Vector2 explosionPos;
+	
+	public GrenadeModel() {
+	}
 
 	public GrenadeModel(EntityGrenade e, Game game, PlayerModel parent, String txtr) {
 		entity = e;
 		g = game;
 		this.parent = parent;
-		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor(txtr).get(0)));
+		sprite = new SpriteDrawingLayer(txtr);
 	}
 
 	@Override
@@ -117,5 +119,47 @@ public class GrenadeModel implements IEntityModel<EntityGrenade>{
 	@Override
 	public boolean isHostile() {
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject convertToJSONObject() {
+		JSONObject obj = new JSONObject();
+		
+		obj.put("x", entity.getBody().getWorldCenter().x);
+		obj.put("y", entity.getBody().getWorldCenter().y);
+		obj.put("r", entity.getBody().getTransform().getRotation());
+		obj.put("t", timeUntilExplosion);
+		obj.put("s", strength);
+		obj.put("size", entity.getSize());
+		obj.put("txtr", sprite.getTxtrName());
+		obj.put("m", entity.getMassData().mass);
+		obj.put("f", entity.getFriction());
+		//TODO: Add player to save list
+
+		return obj;
+	}
+
+	@Override
+	public IEntityModel<EntityGrenade> fromJSON(JSONObject obj, Game g) {
+		float x = ((Number)obj.get("x")).floatValue();
+		float y = ((Number)obj.get("y")).floatValue();
+		float r = ((Number)obj.get("r")).floatValue();
+		float t = ((Number)obj.get("t")).floatValue();
+		double s = ((Number)obj.get("s")).doubleValue();
+		float size = ((Number)obj.get("size")).floatValue();
+		float m = ((Number)obj.get("m")).floatValue();
+		float f = ((Number)obj.get("f")).floatValue();
+		
+		GrenadeModel model = new  GrenadeModel(new EntityGrenade(size), g, null, sprite.getTxtrName());
+		model.setTimeUntilExplosion(t);
+		model.setStrength(s);
+		g.addEntityToWorld(model, x, y);
+		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
+		model.getEntity().getBody().getTransform().setRotation(r);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
+		
+		return model;
 	}
 }

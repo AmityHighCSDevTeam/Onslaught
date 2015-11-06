@@ -1,6 +1,7 @@
 {
   "name": "M9",
   "desc": "A Basic Pistol",
+  "id": "Core_M9",
   "className": "SemiAuto",
   "weapon": [
     {

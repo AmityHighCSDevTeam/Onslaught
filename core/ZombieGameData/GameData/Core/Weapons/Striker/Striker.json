@@ -1,6 +1,7 @@
 {
   "name": "Striker",
   "desc": "More impressive gluteus maximus whooping machine.",
+  "id": "Core_Striker",
   "className": "Shotgun",
   "weapon": [
     {

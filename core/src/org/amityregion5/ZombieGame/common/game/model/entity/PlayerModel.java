@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
-import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.HealthBarDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
@@ -22,10 +21,12 @@ import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
+import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
@@ -49,8 +50,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private List<SoundPlayingData> 	soundsToPlay;
 	private Buff totalBuffs;
 	private List<Buff> buffs, temporaryBuffs;
+	
+	public PlayerModel() {
+	}
 
-	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney) {
+	public PlayerModel(EntityPlayer entity, Game g, InGameScreen screen, double startMoney, String txtr) {
 		this.entity = entity;
 		weapons = new ArrayList<WeaponStack>();
 		this.g = g;
@@ -65,14 +69,14 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		buffs = new ArrayList<Buff>();
 		temporaryBuffs = new ArrayList<Buff>();
 
-		sprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Players/**.png").get(0)));
+		sprite = new SpriteDrawingLayer(txtr);//"*/Players/**.png"
 		extras = new PlayerExtrasDrawingLayer(this);
 
 		soundsToPlay = new ArrayList<SoundPlayingData>();
 	}
 
 	public void tick(float delta) {
-		if (ZombieGame.instance.settings.getInput("Shoot").isDown() && screen.getCurrentWindow() == null) {
+		if (ZombieGame.instance.settings.getInput("Shoot").isDown() && screen != null && screen.getCurrentWindow() == null) {
 			if (weapons.size() > 0) {
 				hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);					
 			}
@@ -80,7 +84,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		} else {
 			shootJustPressed = true;
 		}
-		if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen.getCurrentWindow() == null) {
+		if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen != null && screen.getCurrentWindow() == null) {
 			if (meleeJustPressed) {
 				double dir = MathHelper.clampAngleAroundCenter(this
 						.getEntity().getBody().getAngle(), MathHelper
@@ -355,5 +359,107 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 					.reduce(new Buff(), Buff::sum, Buff::sum);
 			recalculateBuffEffects();
 		}
+	}
+	
+	public void setScreen(InGameScreen screen) {
+		this.screen = screen;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject convertToJSONObject() {
+		JSONObject obj = new JSONObject();
+		
+		obj.put("x", entity.getBody().getWorldCenter().x);
+		obj.put("y", entity.getBody().getWorldCenter().y);
+		obj.put("r", entity.getBody().getTransform().getRotation());
+		obj.put("money", money);
+		obj.put("screenJitter", screenJitter);
+		obj.put("txtr", sprite.getTxtrName());
+		obj.put("m", entity.getMassData().mass);
+		obj.put("f", entity.getFriction());
+		obj.put("health", health);
+		
+		JSONArray weaps = new JSONArray();
+		JSONObject hotba = new JSONObject();
+		
+		for (int i=0; i<weapons.size(); i++) {
+			WeaponStack weap = weapons.get(i);
+			
+			JSONObject w = new JSONObject();
+			
+			w.put("id", weap.getID());
+			w.put("ammo",weap.getAmmo());
+			w.put("totalAmmo",weap.getTotalAmmo());
+			w.put("cooldown",weap.getCooldown());
+			w.put("level",weap.getLevel());
+			
+			weaps.add(w);
+			
+			for (int i2=0; i2<hotbar.length; i2++) {
+				if (hotbar[i2] == weap) {
+					hotba.put(i, i2);
+				}
+			}
+		}
+		
+		obj.put("weapons", weaps);
+		obj.put("hotbar", hotba);
+		
+		JSONArray bufs = new JSONArray();
+		
+		for (Buff b : buffs) {
+			bufs.add(b.toJSON());
+		}
+		
+		obj.put("buffs", bufs);
+
+		return obj;
+	}
+
+	@Override
+	public PlayerModel fromJSON(JSONObject obj, Game g) {
+		float x = ((Number)obj.get("x")).floatValue(); //√
+		float y = ((Number)obj.get("y")).floatValue(); //√
+		float r = ((Number)obj.get("r")).floatValue(); //√
+		double money = ((Number)obj.get("money")).doubleValue(); //√
+		double screenJitter = ((Number)obj.get("screenJitter")).doubleValue();
+		String txtr = (String) obj.get("txtr"); //√
+		float m = ((Number)obj.get("m")).floatValue(); //√
+		float f = ((Number)obj.get("f")).floatValue(); //√
+		float heal = ((Number)obj.get("health")).floatValue();
+		JSONArray weaps = (JSONArray) obj.get("weapons");
+		JSONArray buffs = (JSONArray) obj.get("buffs");
+		JSONObject hotbar = (JSONObject) obj.get("hotbar");
+		
+		PlayerModel model = new  PlayerModel(new EntityPlayer(), g, null, money, txtr);
+		model.setScreenVibrate(screenJitter);
+		for (Object o : buffs) {
+			model.applyBuff(Buff.getFromJSON((JSONObject)o));
+		}
+		model.setHealth(heal);
+		for (int i = 0; i<weaps.size(); i++) {
+			JSONObject w = (JSONObject)weaps.get(i);
+			
+			IWeapon iWea = ZombieGame.instance.weaponRegistry.getWeaponFromID((String)w.get("id"));
+			
+			WeaponStack weap = new WeaponStack(iWea);
+			
+			weap.setAmmo(((Number)w.get("ammo")).intValue());
+			weap.setTotalAmmo(((Number)w.get("totalAmmo")).intValue());
+			weap.setCooldown(((Number)w.get("cooldown")).doubleValue());
+			weap.setLevel(((Number)w.get("level")).intValue());
+			
+			if (hotbar.containsKey(i)) {
+				model.hotbar[((Number)hotbar.get(i)).intValue()] = weap;
+			}
+		}
+		g.addEntityToWorld(model, x, y);
+		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
+		model.getEntity().getBody().getTransform().setRotation(r);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
+		
+		return model;
 	}
 }

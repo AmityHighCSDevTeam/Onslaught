@@ -93,8 +93,8 @@ public class NewGameMenu extends GuiScreen {
 				break;
 			default:
 				ZombieGame.instance
-						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id], ZombieGame.instance.isCheatModeAllowed &&
-								Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT))));
+						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id], true, ZombieGame.instance.isCheatModeAllowed &&
+								Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)), true));
 		}
 	}
 

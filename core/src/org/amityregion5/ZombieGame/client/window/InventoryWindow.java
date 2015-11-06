@@ -181,7 +181,13 @@ public class InventoryWindow implements Screen {
 			WeaponStack weapon = player.getWeapons().get(mouseOverIndex);
 			
 			if (Gdx.input.isTouched()) {
-				player.getHotbar()[player.getCurrWeapIndex()] = weapon;
+				for (int i=0; i<player.getHotbar().length;i++) {
+					if (i == player.getCurrWeapIndex()) {
+						player.getHotbar()[i] = weapon;
+					} else {
+						player.getHotbar()[i] = new WeaponStack(new NullWeapon());
+					}
+				}
 			}
 			
 			float boxWidth = 0;

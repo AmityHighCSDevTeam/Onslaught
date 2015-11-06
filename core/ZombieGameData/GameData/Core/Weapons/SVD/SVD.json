@@ -1,6 +1,7 @@
 {
   "name": "SVD",
   "desc": "Pull trigger for flesh confetti.",
+  "id": "Core_SVD",
   "className": "SemiAuto",
   "weapon": [
     {

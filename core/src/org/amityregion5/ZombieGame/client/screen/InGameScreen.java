@@ -11,6 +11,7 @@ import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.window.HUDOverlay;
 import org.amityregion5.ZombieGame.client.window.InventoryWindow;
+import org.amityregion5.ZombieGame.client.window.PauseWindow;
 import org.amityregion5.ZombieGame.client.window.Screen;
 import org.amityregion5.ZombieGame.client.window.ShopWindow;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
@@ -72,7 +73,7 @@ public class InGameScreen extends GuiScreen {
 	// Font
 	private BitmapFont			font1, font2;
 
-	public InGameScreen(GuiScreen prevScreen, Game game) {
+	public InGameScreen(GuiScreen prevScreen, Game game, boolean isNewGame) {
 		super(prevScreen);
 
 		this.game = game;
@@ -88,19 +89,26 @@ public class InGameScreen extends GuiScreen {
 
 		overlays = new ArrayList<Screen>();
 
-		EntityPlayer playerEntity = new EntityPlayer();
-		playerEntity.setFriction(0.99f);
-		playerEntity.setMass(100);
 		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1,
 				1, 130f/255), 15, 0, 0, 0, 30);
+		if (isNewGame) {
+			EntityPlayer playerEntity = new EntityPlayer();
+			playerEntity.setFriction(0.99f);
+			playerEntity.setMass(100);
 
-		player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()));
+			player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()), "*/Players/**.png");
+		} else {
+			player = game.getSingleplayerPlayer();
+		}
+
 		player.setLight(light);
 		player.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1,
 				1, 130f/255), 3, 0, 0));
 		player.setSpeed(0.05f);
 
-		game.addEntityToWorld(player, 0, 0);
+		if (isNewGame) {
+			game.addEntityToWorld(player, 0, 0);
+		}
 		overlays.add(new HUDOverlay(this, player));
 	}
 
@@ -251,7 +259,7 @@ public class InGameScreen extends GuiScreen {
 
 		if (game.isCheatMode()) {
 			if (Gdx.input.isKeyJustPressed(Keys.L)) {
-				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
+				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
 				lantern.setLight(new PointLight(rayHandler, 300,
 						lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
 				lantern.getEntity().setFriction(0.99f);
@@ -301,13 +309,13 @@ public class InGameScreen extends GuiScreen {
 			}
 		}
 
-		if (ZombieGame.instance.settings.getInput("Shop_Window").isJustDown()) {
+		if (currentWindow == null && ZombieGame.instance.settings.getInput("Shop_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 			}
 			currentWindow = new ShopWindow(this, player);
 		}
-		if (ZombieGame.instance.settings.getInput("Inventory_Window").isJustDown()) {
+		if (currentWindow == null && ZombieGame.instance.settings.getInput("Inventory_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 			}
@@ -316,8 +324,14 @@ public class InGameScreen extends GuiScreen {
 
 		if (ZombieGame.instance.settings.getInput("Close_Window").isJustDown()) {
 			if (currentWindow != null) {
+				game.setPaused(false);
 				currentWindow.dispose();
 				currentWindow = null;
+			} else {
+				if (game.isSinglePlayer()) {
+					game.setPaused(true);
+					currentWindow = new PauseWindow(this, player);
+				}
 			}
 		}
 	}
@@ -382,6 +396,9 @@ public class InGameScreen extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
+		if (currentWindow != null) {
+			currentWindow.dispose();
+		}
 		batch.dispose(); // Clear memory
 		font1.dispose();
 		font2.dispose();
@@ -389,9 +406,6 @@ public class InGameScreen extends GuiScreen {
 		game.dispose();
 		shapeRenderer.dispose();
 		rayHandler.dispose();
-		if (currentWindow != null) {
-			currentWindow.dispose();
-		}
 	}
 
 	public Screen getCurrentWindow() {
@@ -408,5 +422,13 @@ public class InGameScreen extends GuiScreen {
 
 	public BitmapFont getFont2() {
 		return font2;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setCurrentWindow(Screen currentWindow) {
+		this.currentWindow = currentWindow;
 	}
 }

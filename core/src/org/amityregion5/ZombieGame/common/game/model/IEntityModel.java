@@ -1,21 +1,34 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
+import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.game.Game;
+import org.json.simple.JSONObject;
 
-public interface IEntityModel<T extends IEntity> extends IParticle {
+/**
+ * 
+ * @author sergeys
+ *
+ * @param <T>
+ */
+public interface IEntityModel<T extends IEntity> {
 	T getEntity();
 
-	//void tick(float timeStep);
+	void tick(float timeStep);
 	
-	//void dispose();
+	void dispose();
+
+	IDrawingLayer[] getDrawingLayers();
 
 	float damage(float damage, IEntityModel<?> source, String damageType);
-
-	//IDrawingLayer[] getDrawingLayers();
 
 	float getHealth();
 
 	float getMaxHealth();
 
 	boolean isHostile();
+	
+	JSONObject convertToJSONObject();
+	
+	IEntityModel<T> fromJSON(JSONObject obj, Game g);
 }

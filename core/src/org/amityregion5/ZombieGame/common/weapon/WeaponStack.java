@@ -227,4 +227,8 @@ public class WeaponStack {
 	public IWeaponDataBase getWeaponDataBase() {
 		return weapon.getWeaponData(level);
 	}
+	
+	public String getID() {
+		return weapon.getID();
+	}
 }

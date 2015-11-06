@@ -34,6 +34,19 @@ public class SoundData {
 		
 		return new SoundData(assetName, trigger, pitch, maxVolume);
 	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		
+		JSONObject obj = new JSONObject();
+		obj.put("path", assetName);
+		obj.put("trigger", trigger);
+		obj.put("pitch", pitch);
+		obj.put("maxVolume", maxVolume);
+		
+		return obj;
+	}
+
 	
 	private SoundData(String assetName, String trigger, double pitch, double maxVolume) {
 		this.assetName = assetName;
@@ -101,5 +114,4 @@ public class SoundData {
 	public void setMaxVolume(double maxVolume) {
 		this.maxVolume = maxVolume;
 	}
-
 }

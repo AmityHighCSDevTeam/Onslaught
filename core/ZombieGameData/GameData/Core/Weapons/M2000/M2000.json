@@ -1,6 +1,7 @@
 {
   "name": "M2000",
   "desc": "Boom Headshot.",
+  "id": "Core_M2000",
   "className": "SemiAuto",
   "weapon": [
     {

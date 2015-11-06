@@ -1,6 +1,7 @@
 {
   "name": "AR-15",
   "desc": "A rifle so basic it's bitching about hair styles.",
+  "id": "Core_AR15",
   "className": "SemiAuto",
   "weapon": [
     {

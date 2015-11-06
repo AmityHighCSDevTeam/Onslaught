@@ -61,6 +61,14 @@ public class TextureRegistry {
 		return t;
 	}
 
+	public static List<String> getTextureNamesFor(String str) {
+		List<String> t = textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).collect(Collectors.toList());
+		if (t == null || t.size() == 0) {
+			return Arrays.asList(new String[]{"--Null Texture--"});
+		}
+		return t;
+	}
+
 	private static String regexify(String str) {
 		if (str == null) {
 			return "";

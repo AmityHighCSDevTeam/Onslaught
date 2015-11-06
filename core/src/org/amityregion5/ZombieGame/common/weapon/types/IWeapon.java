@@ -21,6 +21,8 @@ public interface IWeapon {
 
 	public String getDescription();
 	
+	public String getID();
+	
 	public Map<String, String> getWeaponDataDescriptors(int level);
 
 	public boolean loadWeapon(JSONObject json);

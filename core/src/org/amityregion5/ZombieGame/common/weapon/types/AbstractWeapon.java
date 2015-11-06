@@ -22,7 +22,7 @@ import com.badlogic.gdx.utils.Array;
 public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 	// All the variables!
-	protected String		name, description;
+	protected String		name, description, id;
 	protected Array<T>		data;
 
 	@Override
@@ -202,6 +202,8 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 					: "NAME NOT SET";
 			description = json.containsKey("name") ? (String) json.get("desc")
 					: "DESC NOT SET";
+			id = json.containsKey("id") ? (String) json.get("id")
+					: name;
 
 			JSONArray arr = (JSONArray) json.get("weapon");
 
@@ -221,6 +223,11 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 		}
 		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
+	}
+	
+	@Override
+	public String getID() {
+		return id;
 	}
 
 	protected abstract boolean loadWeaponData(JSONArray arr);

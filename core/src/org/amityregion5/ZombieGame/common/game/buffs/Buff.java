@@ -83,6 +83,26 @@ public class Buff {
 		return buff;
 	}
 
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		JSONObject jo = new JSONObject();
+		
+		JSONObject add = new JSONObject();
+		JSONObject mult = new JSONObject();
+		
+		for (String a : additive.keySet()) {
+			add.put(a, additive.get(a));
+		}
+		
+		for (String m : multiplicative.keySet()) {
+			add.put(m, multiplicative.get(m));
+		}
+		
+		jo.put("add", add);
+		jo.put("mult", mult);
+		
+		return jo;
+	}
 	public Buff add(Buff b) {
 		return sum(this, b);
 	}

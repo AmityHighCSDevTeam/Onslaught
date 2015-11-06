@@ -24,4 +24,8 @@ public class WeaponRegistry {
 	public List<Class<? extends IWeapon>> getWeaponClasses() {
 		return pluginManager.getActivatedWeaponClasses();
 	}
+	
+	public IWeapon getWeaponFromID(String id) {
+		return pluginManager.getActivatedWeapons().parallelStream().filter((w)->w.getID().equals(id)).findAny().orElse(null);
+	}
 }

@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Random;
@@ -62,6 +63,8 @@ public class ZombieGame extends Game {
 	public Settings settings;
 	public PluginManager pluginManager;
 	public boolean isCheatModeAllowed;
+	
+	
 
 	/**
 	 *
@@ -69,8 +72,9 @@ public class ZombieGame extends Game {
 	 *            is the game a server
 	 * @param cheatMode 
  * @param config 
+	 * @throws FileNotFoundException 
 	 */
-	public ZombieGame(boolean isServer, boolean cheatMode) {
+	public ZombieGame(boolean isServer, boolean cheatMode) throws FileNotFoundException {
 		instance = this; // Set the instances
 		this.isCheatModeAllowed = cheatMode;
 		this.isServer = isServer; // Set if it is a server
@@ -144,7 +148,7 @@ public class ZombieGame extends Game {
 					pluginManager.getCorePlugin().addWeaponClass(Rocket.class);
 					
 					Placeable.registeredObjects.put("Lantern_0", (g, vector)->{
-						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png");
+						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
 						lantern.setLight(new PointLight(g.getLighting(), 300,
 								lantern.getColor(), 10, vector.x, vector.y));
 						lantern.getEntity().setFriction(0.99f);
@@ -152,7 +156,7 @@ public class ZombieGame extends Game {
 						return lantern;
 					});
 					Placeable.registeredObjects.put("Lantern_1", (g, vector)->{
-						LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1,0,0,1), "Core/Entity/Lantern/1.png");
+						LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1,0,0,1), "Core/Entity/Lantern/1.png", "Lantern_1");
 						lantern.setLight(new PointLight(g.getLighting(), 300,
 								lantern.getColor(), 10, vector.x, vector.y));
 						lantern.getEntity().setFriction(0.99f);

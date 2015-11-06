@@ -20,8 +20,9 @@ import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
+import org.json.simple.JSONObject;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 public class ZombieModel implements IEntityModel<EntityZombie> {
 
@@ -35,8 +36,6 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	private IEntity		target;
 	private float health, maxHealth, speed, damage, range;
 	private Game		g;
-	private int			textureIndex	= ZombieGame.instance.random
-			.nextInt(TextureRegistry.getTexturesFor("*/Zombies/**.png").size());
 	private SpriteDrawingLayer		zSprite;
 	private double prizeMoney;
 	private AIMode ai;
@@ -45,13 +44,18 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	private float growlVolume = -1;
 	private float growlPitch = -1;
 	private float sizeMultiplier;
+	
+	public ZombieModel() {
+	}
 
 	public ZombieModel(EntityZombie zom, Game g, float sizeMultiplier) {
 		this.entity = zom;
 		this.g = g;
 		ai = AIMode.IDLE;
 		this.sizeMultiplier = sizeMultiplier;
-		zSprite = new SpriteDrawingLayer(new Sprite(TextureRegistry.getTexturesFor("*/Zombies/**.png").get(textureIndex)));
+		int	textureIndex	= ZombieGame.instance.random
+				.nextInt(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").size());
+		zSprite = new SpriteDrawingLayer(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").get(textureIndex));
 	}
 
 	@Override
@@ -221,5 +225,67 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 
 	private enum AIMode {
 		IDLE, FOLLOWING, ATTACKING;
+	}
+	
+	public void setTexture(String txtr) {
+		zSprite.getSprite().setTexture(TextureRegistry.getTexturesFor(txtr).get(0));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject convertToJSONObject() {
+		JSONObject obj = new JSONObject();
+		
+		obj.put("x", entity.getBody().getWorldCenter().x);
+		obj.put("y", entity.getBody().getWorldCenter().y);
+		obj.put("r", entity.getBody().getTransform().getRotation());
+		obj.put("attkCooldown", attackCooldown);
+		obj.put("damage", damage);
+		obj.put("speed", speed);
+		obj.put("range", range);
+		obj.put("maxHealth", maxHealth);
+		obj.put("money", prizeMoney);
+		obj.put("sizeMult", sizeMultiplier);
+		obj.put("txtr", zSprite.getTxtrName());
+		obj.put("m", entity.getMassData().mass);
+		obj.put("f", entity.getFriction());
+		obj.put("health", health);
+		
+		return obj;
+	}
+
+	@Override
+	public ZombieModel fromJSON(JSONObject obj, Game g) {
+		float x = ((Number)obj.get("x")).floatValue();
+		float y = ((Number)obj.get("y")).floatValue();
+		float r = ((Number)obj.get("r")).floatValue();
+		float attCool = ((Number)obj.get("attkCooldown")).floatValue();
+		float dmg = ((Number)obj.get("damage")).floatValue();
+		float spd = ((Number)obj.get("speed")).floatValue();
+		float rng = ((Number)obj.get("range")).floatValue();
+		float mH = ((Number)obj.get("maxHealth")).floatValue();
+		double mny = ((Number)obj.get("money")).doubleValue();
+		float szM = ((Number)obj.get("sizeMult")).floatValue();
+		String txtr = (String)obj.get("txtr");
+		float m = ((Number)obj.get("m")).floatValue();
+		float f = ((Number)obj.get("f")).floatValue();
+		float h = ((Number)obj.get("health")).floatValue();
+		
+		ZombieModel model = new ZombieModel(new EntityZombie(0.15f * szM), g, szM);
+		model.attackCooldown = attCool;
+		model.damage = dmg;
+		model.speed = spd;
+		model.range = rng;
+		model.maxHealth = mH;
+		model.prizeMoney = mny;
+		model.health = h;
+		model.setTexture(txtr);
+		g.addEntityToWorld(model, x, y);
+		model.getEntity().getBody().getTransform().setPosition(new Vector2(x,y));
+		model.getEntity().getBody().getTransform().setRotation(r);
+		model.getEntity().setFriction(f);
+		model.getEntity().setMass(m);
+		
+		return null;
 	}
 }

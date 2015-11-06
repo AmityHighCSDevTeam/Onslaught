@@ -55,8 +55,7 @@ public class SinglePlayerMenu extends GuiScreen {
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0,
 				"New Game", 10, getHeight() - 150, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1,
-				"Continue", 10, getHeight() - 210, getWidth() - 20, 50)
-				.setEnabled(false));
+				"Continue", 10, getHeight() - 210, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back",
 				10, 10, getWidth() - 20, 50));
 	}
@@ -83,6 +82,9 @@ public class SinglePlayerMenu extends GuiScreen {
 		switch (id) {
 			case 0:
 				ZombieGame.instance.setScreen(new NewGameMenu(this));
+				break;
+			case 1:
+				ZombieGame.instance.setScreen(new ContinueMenu(this));
 				break;
 			case 2:
 				// Back button

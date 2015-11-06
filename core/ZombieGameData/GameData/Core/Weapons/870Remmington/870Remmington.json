@@ -1,6 +1,7 @@
 {
-  "name": "870 Remington",
+  "name": "870 Remmington",
   "desc": "Entry level gluteus maximus whooping machine.",
+  "id": "Core_870Remmington",
   "className": "Shotgun",
   "weapon": [
     {

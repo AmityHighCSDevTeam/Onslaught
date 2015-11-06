@@ -24,7 +24,7 @@ public class Placeable implements IWeapon {
 			new HashMap<String, BiFunction<Game, Vector2, IEntityModel<?>>>();
 
 	// All the variables!
-	protected String		name, description;
+	protected String		name, description, id;
 	protected Array<PlaceableWeaponData>		data;
 
 	@Override
@@ -174,6 +174,8 @@ public class Placeable implements IWeapon {
 					: "NAME NOT SET";
 			description = json.containsKey("name") ? (String) json.get("desc")
 					: "DESC NOT SET";
+			id = json.containsKey("id") ? (String) json.get("id")
+					: name;
 
 			JSONArray arr = (JSONArray) json.get("weapon");
 
@@ -204,5 +206,10 @@ public class Placeable implements IWeapon {
 			data.add(d);
 		}
 		return true;
+	}
+	
+	@Override
+	public String getID() {
+		return id;
 	}
 }

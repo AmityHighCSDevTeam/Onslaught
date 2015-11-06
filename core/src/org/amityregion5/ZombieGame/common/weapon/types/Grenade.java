@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.Array;
 public class Grenade implements IWeapon {
 
 	// All the variables!
-	protected String		name, description;
+	protected String		name, description, id;
 	protected Array<GrenadeData>		data;
 
 	@Override
@@ -202,6 +202,8 @@ public class Grenade implements IWeapon {
 					: "NAME NOT SET";
 			description = json.containsKey("name") ? (String) json.get("desc")
 					: "DESC NOT SET";
+			id = json.containsKey("id") ? (String) json.get("id")
+					: name;
 
 			JSONArray arr = (JSONArray) json.get("weapon");
 
@@ -232,5 +234,10 @@ public class Grenade implements IWeapon {
 			data.add(d);
 		}
 		return true;
+	}
+	
+	@Override
+	public String getID() {
+		return id;
 	}
 }
