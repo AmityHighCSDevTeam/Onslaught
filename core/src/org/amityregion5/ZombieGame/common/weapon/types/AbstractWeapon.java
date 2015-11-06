@@ -1,6 +1,8 @@
 package org.amityregion5.ZombieGame.common.weapon.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.ZombieGame;
@@ -23,6 +25,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 	// All the variables!
 	protected String		name, description, id;
+	protected List<String> tags;
 	protected Array<T>		data;
 
 	@Override
@@ -205,6 +208,15 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 			id = json.containsKey("id") ? (String) json.get("id")
 					: name;
 
+			this.tags = new ArrayList<String>();
+			if (json.containsKey("tags")) {
+				JSONArray tags = (JSONArray) json.get("tags");
+				
+				for (Object o : tags) {
+					this.tags.add((String)o);
+				}
+			}
+
 			JSONArray arr = (JSONArray) json.get("weapon");
 
 			if (arr != null) {
@@ -224,10 +236,15 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
-	
+
 	@Override
 	public String getID() {
 		return id;
+	}
+	
+	@Override
+	public List<String> getTags() {
+		return tags;
 	}
 
 	protected abstract boolean loadWeaponData(JSONArray arr);

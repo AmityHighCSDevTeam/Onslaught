@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.common.weapon.types;
 
+import java.util.List;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.game.Game;
@@ -24,6 +25,8 @@ public interface IWeapon {
 	public String getID();
 	
 	public Map<String, String> getWeaponDataDescriptors(int level);
+	
+	public List<String> getTags();
 
 	public boolean loadWeapon(JSONObject json);
 

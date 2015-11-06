@@ -26,6 +26,8 @@ public class SaveWindow implements Screen {
 	private PauseWindow window;
 	private InputProcessor processor;
 	private String saveName = "";
+	private boolean showCursor = false;
+	private float timeUntilShowCursor = 0;
 
 	public SaveWindow(InGameScreen screen, PlayerModel player, PauseWindow pauseWindow) {
 		this.screen = screen;
@@ -61,6 +63,13 @@ public class SaveWindow implements Screen {
 
 	@Override
 	public void drawScreen(float delta, Camera camera) {
+		
+		if (timeUntilShowCursor <= 0) {
+			timeUntilShowCursor = 0.4f;
+			showCursor = !showCursor;
+		}
+		timeUntilShowCursor -= delta;
+		
 		drawPrepare(delta);
 
 		drawMain(delta);
@@ -102,7 +111,7 @@ public class SaveWindow implements Screen {
 		glyph.setText(ZombieGame.instance.mainFont, "Save", Color.WHITE, 600, Align.center, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth()/2-300, screen.getHeight()/2 + 150 - glyph.height - 10);
 
-		glyph.setText(ZombieGame.instance.mainFont, "Name: " + saveName, Color.WHITE, 500, Align.left, false);
+		glyph.setText(ZombieGame.instance.mainFont, "Name: " + saveName + (showCursor ? "|" : ""), Color.WHITE, 500, Align.left, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth()/2-250, screen.getHeight()/2);
 
 		boolean mouseOverBack = Gdx.input.getX() > screen.getWidth()/2-300 && Gdx.input.getX() < screen.getWidth()/2 && screen.getHeight() - Gdx.input.getY() > screen.getHeight()/2-150 && screen.getHeight() - Gdx.input.getY() < screen.getHeight()/2-150+50;

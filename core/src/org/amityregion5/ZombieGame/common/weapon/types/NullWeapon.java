@@ -1,6 +1,8 @@
 package org.amityregion5.ZombieGame.common.weapon.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.game.Game;
@@ -68,5 +70,10 @@ public final class NullWeapon implements IWeapon {
 	@Override
 	public String getID() {
 		return "NullWeapon";
+	}
+
+	@Override
+	public List<String> getTags() {
+		return new ArrayList<String>();
 	}
 }

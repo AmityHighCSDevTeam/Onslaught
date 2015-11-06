@@ -2,40 +2,33 @@ package org.amityregion5.ZombieGame;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
-import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.client.settings.Settings;
-import org.amityregion5.ZombieGame.common.entity.EntityLantern;
-import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
+import org.amityregion5.ZombieGame.common.MultiOutputStream;
 import org.amityregion5.ZombieGame.common.io.PluginLoader;
+import org.amityregion5.ZombieGame.common.plugin.CorePlugin;
+import org.amityregion5.ZombieGame.common.plugin.IPlugin;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
-import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
-import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
-import org.amityregion5.ZombieGame.common.weapon.types.Rocket;
-import org.amityregion5.ZombieGame.common.weapon.types.SemiAuto;
-import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-
-import box2dLight.PointLight;
 
 /**
  *
@@ -59,7 +52,6 @@ public class ZombieGame extends Game {
 	public Random				random;
 	public FileHandle			gameData;
 	public FileHandle			settingsFile;
-	private FileHandle logFile;
 	public Settings settings;
 	public PluginManager pluginManager;
 	public boolean isCheatModeAllowed;
@@ -86,14 +78,27 @@ public class ZombieGame extends Game {
 		} catch (UnsupportedEncodingException e) {
 			workingDir = Gdx.files.getLocalStoragePath(); //Hopefully this will work on your computer if that doesn't
 		}
+		
+		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
+		
+		System.setOut(new PrintStream(
+				new MultiOutputStream(
+						System.out, 
+						fos
+						)));
+		System.setErr(new PrintStream(
+				new MultiOutputStream(
+						System.err, 
+						fos
+						)));
 	}
 
 	@Override
 	public void create() {
-		logFile = Gdx.files
-				.absolute(workingDir + "/ZombieGameData/log.log");
+		//logFile = Gdx.files
+		//		.absolute(workingDir + "/ZombieGameData/log.log");
 		
-		logFile.writeString("", false);
+		//logFile.writeString("", false);
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
@@ -139,33 +144,23 @@ public class ZombieGame extends Game {
 					
 					loader.loadPluginMeta(plugins);
 					
-					pluginManager.loadPluginJars();
+					pluginManager.getCorePlugin().setPlugins(Arrays.asList(new IPlugin[]{new CorePlugin()}));
 					
-					pluginManager.getCorePlugin().addWeaponClass(SemiAuto.class);
-					pluginManager.getCorePlugin().addWeaponClass(Shotgun.class);
-					pluginManager.getCorePlugin().addWeaponClass(Placeable.class);
-					pluginManager.getCorePlugin().addWeaponClass(Grenade.class);
-					pluginManager.getCorePlugin().addWeaponClass(Rocket.class);
+					log("Loading: Initializing Plugins");
+					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.init(p)));
 					
-					Placeable.registeredObjects.put("Lantern_0", (g, vector)->{
-						LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
-						lantern.setLight(new PointLight(g.getLighting(), 300,
-								lantern.getColor(), 10, vector.x, vector.y));
-						lantern.getEntity().setFriction(0.99f);
-						lantern.getEntity().setMass(10);
-						return lantern;
-					});
-					Placeable.registeredObjects.put("Lantern_1", (g, vector)->{
-						LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1,0,0,1), "Core/Entity/Lantern/1.png", "Lantern_1");
-						lantern.setLight(new PointLight(g.getLighting(), 300,
-								lantern.getColor(), 10, vector.x, vector.y));
-						lantern.getEntity().setFriction(0.99f);
-						lantern.getEntity().setMass(10);
-						return lantern;
-					});
+					log("Loading: Beginning Plugin Preloading");
+					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.preLoad()));
 					
+					log("Loading: Loading Plugin Data");
 					loader.loadPlugins(plugins);
-
+					
+					log("Loading: Beginning Plugin Loading");
+					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.load()));
+					
+					log("Loading: Beginning Plugin Postloading");
+					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.postLoad()));
+					
 					// If it is a client
 					if (!isServer) {
 						// Load the texture for buttons
@@ -194,42 +189,11 @@ public class ZombieGame extends Game {
 							// Make the font black
 							mainFont.setColor(1, 1, 1, 1);
 						});
-						
-						TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");
-						TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
-						TextureRegistry.tryRegisterAs("Core/HealthBox.png", "healthPack");
-						//TextureRegistry.tryRegister("Core/backgroundTile.png");
-						
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl1.wav");
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl2.wav");
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl3.wav");
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl4.wav");
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl5.wav");
-						SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl6.wav");
-						
-						SoundRegistry.tryRegister("Core/Audio/explode.wav");
- 
+						 
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
-						
-						settings.registerInput("Shoot", new InputData(false, Buttons.LEFT));
-						settings.registerInput("Melee", new InputData(false, Buttons.RIGHT));
-						settings.registerInput("Move_Up", new InputData(true, Keys.W));
-						settings.registerInput("Move_Down", new InputData(true, Keys.S));
-						settings.registerInput("Move_Right", new InputData(true, Keys.D));
-						settings.registerInput("Move_Left", new InputData(true, Keys.A));
-						settings.registerInput("Toggle_Flashlight", new InputData(true, Keys.F));
-						settings.registerInput("Buy_Ammo", new InputData(true, Keys.B));
-						settings.registerInput("Reload", new InputData(true, Keys.R));
-						settings.registerInput("Hotbar_1", new InputData(true, Keys.NUM_1));
-						settings.registerInput("Hotbar_2", new InputData(true, Keys.NUM_2));
-						settings.registerInput("Hotbar_3", new InputData(true, Keys.NUM_3));
-
-						settings.registerInput("Shop_Window", new InputData(true, Keys.P));
-						settings.registerInput("Inventory_Window", new InputData(true, Keys.I));
-						settings.registerInput("Close_Window", new InputData(true, Keys.ESCAPE));
-						
+												
 						settings.save();
 					}
 				}).start();
@@ -244,6 +208,7 @@ public class ZombieGame extends Game {
 	@Override
 	public void dispose() {
 		super.dispose();
+		pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.dispose()));
 		TextureRegistry.dispose();
 		SoundRegistry.dispose();
 		mainFont.dispose(); // Get rid of all used memory
@@ -273,17 +238,17 @@ public class ZombieGame extends Game {
 	
 	public static void debug(String message){
 		Gdx.app.debug("[Debug]", message);
-		instance.logFile.writeString("[Debug]: " + message + "\n", true);
+		//instance.logFile.writeString("[Debug]: " + message + "\n", true);
 	}
 	
 	public static void log(String message){
 		Gdx.app.log("[Log]", message);
-		instance.logFile.writeString("[Log]: " + message + "\n", true);
+		//instance.logFile.writeString("[Log]: " + message + "\n", true);
 	}
 	
 	public static void error(String message){
 		Gdx.app.error("[ERROR]", message);
-		instance.logFile.writeString("[ERROR]: " + message + "\n", true);
+		//instance.logFile.writeString("[ERROR]: " + message + "\n", true);
 	}
 	
 	public static float getYScalar() {

@@ -22,7 +22,7 @@ public class SoundRegistry {
 		}
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("wav") || handle.extension().equals("mp3") || handle.extension().equals("ogg")) {
-			ZombieGame.debug("Sound Registry: registering: " + path);
+			ZombieGame.log("Sound Registry: registering: " + path);
 			register(path, handle);
 			return true;
 		}

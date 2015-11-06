@@ -2,7 +2,7 @@
   "name": "UMP",
   "desc": "A submachine gun.",
   "id": "Core_UMP",
-  "className": "SemiAuto",
+  "className": "BasicGun",
   "weapon": [
     {
       "price": 500,

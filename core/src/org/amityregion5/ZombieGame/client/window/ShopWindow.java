@@ -1,6 +1,8 @@
 package org.amityregion5.ZombieGame.client.window;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
@@ -12,6 +14,7 @@ import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -39,15 +42,36 @@ public class ShopWindow implements Screen {
 	private float secHeight = 0;
 	private int clickX, clickY;
 	private InputProcessor processor;
+	private List<IPurchaseable> cache;
+	private String searchQuery = "";
+	private boolean isSearchSelected = false;
+	private boolean showCursor = false;
+	private float timeUntilShowCursor = 0;
 
 	public ShopWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
 
+		recalculateCache();
+
 		processor = new InputProcessor() {
 			public boolean keyDown(int keycode) {return false;}
-			public boolean keyUp(int keycode) {return false;}
-			public boolean keyTyped(char character) {return false;}
+			public boolean keyUp(int keycode) {
+				if (keycode == Keys.BACKSPACE && searchQuery.length()>0 && isSearchSelected) {
+					searchQuery = searchQuery.substring(0, searchQuery.length()-1);
+					recalculateCache();
+					return true;
+				}
+				return false;
+			}
+			public boolean keyTyped(char character) {
+				if ((Character.isLetterOrDigit(character) || character == ' ') && isSearchSelected) {
+					searchQuery += character;
+					recalculateCache();
+					return true;
+				}
+				return true;
+			}
 			public boolean touchDown(int screenX, int screenY, int pointer,
 					int button) {return false;}
 			public boolean touchUp(int screenX, int screenY, int pointer,
@@ -69,8 +93,34 @@ public class ShopWindow implements Screen {
 		Client.inputMultiplexer.addProcessor(processor);
 	}
 
+	private void recalculateCache() {
+		if (searchQuery.isEmpty()) {
+			cache = ZombieGame.instance.pluginManager.getPurchaseables();
+			cache.sort((p1, p2)->(int)(p1.getPrice(player)-p2.getPrice(player)));
+		} else {
+			String[] sections = searchQuery.split(" ");
+			cache = ZombieGame.instance.pluginManager.getPurchaseables()
+					.parallelStream()
+					.filter((p)->p.numContained(sections,player)>0)
+					.sorted((p1,p2)->{
+						int countDiff = p2.numContained(sections, player)-p1.numContained(sections, player);
+						if (countDiff != 0) return countDiff;
+						double priceDiff = p1.getPrice(player)-p2.getPrice(player);
+						return (int) Math.signum(priceDiff);
+					})
+					.collect(Collectors.toList());
+		}
+	}
+
 	@Override
 	public void drawScreen(float delta, Camera camera) {
+
+		if (timeUntilShowCursor <= 0) {
+			timeUntilShowCursor = 0.4f;
+			showCursor = !showCursor;
+		}
+		timeUntilShowCursor -= delta;
+
 		drawPrepare(delta);
 
 		clickX = Gdx.input.getX();
@@ -78,6 +128,10 @@ public class ShopWindow implements Screen {
 
 		drawMainRegion(delta);
 
+		
+		if (selected >= cache.size()) {
+			selected = -1;
+		}
 		if (selected != -1) {
 			drawInfoRegion(delta);
 		}
@@ -118,7 +172,7 @@ public class ShopWindow implements Screen {
 
 	public void drawMainRegion(float delta) {
 		float x = 101;
-		float y = (float) (screen.getHeight() - 101 + mainScrollPos);
+		float y = (float) (screen.getHeight() - 101 + mainScrollPos - 50);
 		float w = screen.getWidth() - 232 - infoWidth - 22;
 
 		shapeRender.begin(ShapeType.Filled);
@@ -140,6 +194,32 @@ public class ShopWindow implements Screen {
 
 		shapeRender.end();
 
+		ScissorStack.pushScissors(new Rectangle(x, screen.getHeight() - 201+50 , w, 50));
+		{
+			shapeRender.begin(ShapeType.Filled);
+			shapeRender.setColor(0.4f, 0.4f, 0.4f, 1f);
+			shapeRender.rect(x+5, screen.getHeight() - 201+50, w-12, 48);
+			shapeRender.end();
+
+			shapeRender.begin(ShapeType.Line);
+			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+			shapeRender.rect(x+5, screen.getHeight() - 201+50, w-12, 48);
+			shapeRender.end();
+
+			batch.begin();
+			glyph.setText(ZombieGame.instance.mainFont, searchQuery + (showCursor && isSearchSelected ? "|" : ""), Color.WHITE, w-24, Align.left, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x+10, y + 50/2 + glyph.height/2);
+			batch.end();
+		}
+		ScissorStack.popScissors();
+
+		if (Gdx.input.isTouched() && Gdx.input.justTouched()) {
+			if (Gdx.input.getX()>=x && Gdx.input.getX()<=x+w && screen.getHeight()-clickY>=screen.getHeight()-201+50 && screen.getHeight()-clickY<=screen.getHeight()-201+100) {
+				isSearchSelected = !isSearchSelected;
+			} else {
+				isSearchSelected = false;
+			}
+		}
 
 		boolean clickOnPurchaseable = false;
 		if (Gdx.input.isTouched()) {
@@ -159,14 +239,14 @@ public class ShopWindow implements Screen {
 
 		int mouseOverIndex = -1;
 
-		Rectangle clipBounds = new Rectangle(x, 100, w, screen.getHeight() - 201);
-		//ScissorStack.calculateScissors(camera, screen.getScreenProjectionMatrix(), clipBounds, scissors);
-		ScissorStack.pushScissors(clipBounds);
+		Texture upgradeArrow = TextureRegistry.getTexturesFor("upgradeArrow").get(0);
+
+		ScissorStack.pushScissors(new Rectangle(x, 100, w, screen.getHeight() - 201-50));
 		//Draw Weapons
-		for (int i = 0; i<ZombieGame.instance.pluginManager.getPurchaseables().size(); i++) {
+		for (int i = 0; i<cache.size(); i++) {
 			Gdx.gl.glEnable(GL20.GL_BLEND);
-			
-			IPurchaseable purchaseable = ZombieGame.instance.pluginManager.getPurchaseables().get(i);
+
+			IPurchaseable purchaseable = cache.get(i);
 
 			int row = i/cols;
 			int col = i%cols;
@@ -176,7 +256,11 @@ public class ShopWindow implements Screen {
 
 			shapeRender.begin(ShapeType.Filled);
 
-			shapeRender.setColor(new Color(191/255f, 191/255f, 191/255f, 100/255f));
+			if (purchaseable.getCurrentLevel(player) >= 0) {
+				shapeRender.setColor(new Color(191/255f, 191/255f, 191/255f, 100/255f));
+			} else {
+				shapeRender.setColor(new Color(95/255f, 95/255f, 95/255f, 100/255f));
+			}
 			shapeRender.rect(boxX,boxY, purchaseableHeight, purchaseableHeight);
 
 			shapeRender.end();
@@ -200,6 +284,12 @@ public class ShopWindow implements Screen {
 			shapeRender.end();
 			Gdx.gl.glLineWidth(1);
 
+			if (purchaseable.canPurchase(player) && player.getMoney() > purchaseable.getPrice(player)) {
+				batch.begin();
+				batch.draw(upgradeArrow, boxX + purchaseableHeight*3/4, boxY, purchaseableHeight/4, purchaseableHeight/4);
+				batch.end();
+			}
+
 			if (clickX > boxX && Gdx.graphics.getHeight() - clickY > boxY &&
 					clickX < boxX + purchaseableHeight &&
 					Gdx.graphics.getHeight() - clickY < boxY + purchaseableHeight) {
@@ -209,7 +299,7 @@ public class ShopWindow implements Screen {
 
 		ScissorStack.popScissors();
 		if (mouseOverIndex != -1) {
-			IPurchaseable purchaseable = ZombieGame.instance.pluginManager.getPurchaseables().get(mouseOverIndex);
+			IPurchaseable purchaseable = cache.get(mouseOverIndex);
 
 			if (Gdx.input.isTouched()) {
 				selected = mouseOverIndex;
@@ -319,7 +409,7 @@ public class ShopWindow implements Screen {
 		Rectangle clipBounds = new Rectangle(x*wMult, 100*hMult, infoWidth*wMult, (screen.getHeight() - 200)*hMult);
 		ScissorStack.pushScissors(clipBounds);
 
-		IPurchaseable selectedItem = ZombieGame.instance.pluginManager.getPurchaseables().get(selected);
+		IPurchaseable selectedItem = cache.get(selected);
 		batch.begin();
 
 		glyph.setText(ZombieGame.instance.mainFont, selectedItem.getName(), 0, selectedItem.getName().length(), new Color(1,1,1,1), infoWidth - 20, Align.left, false, "...");
@@ -377,7 +467,7 @@ public class ShopWindow implements Screen {
 			batch.setColor(new Color(1,1,1,1));
 
 			glyph.setText(ZombieGame.instance.mainFont, (selectedItem.getCurrentLevel(player)>-1 ? "Upgrade" : "Buy"), (!hasEnoughMoney ? Color.DARK_GRAY :
-					(clickX >= x && clickX <= x+w && screen.getHeight()-clickY >= y && screen.getHeight()-clickY <= y+h? new Color(27/255f, 168/255f, 55/255f, 1f) :Color.WHITE))
+				(clickX >= x && clickX <= x+w && screen.getHeight()-clickY >= y && screen.getHeight()-clickY <= y+h? new Color(27/255f, 168/255f, 55/255f, 1f) :Color.WHITE))
 					, w, Align.center, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + h/2 + glyph.height/2);
 
@@ -386,6 +476,7 @@ public class ShopWindow implements Screen {
 					if (screen.getHeight() - clickY >= y && screen.getHeight() - clickY <= y + h) {
 						selectedItem.onPurchase(player);
 						player.setMoney(player.getMoney() - price);
+						recalculateCache();
 					}
 				}
 			}
@@ -422,7 +513,7 @@ public class ShopWindow implements Screen {
 	}
 
 	private double getMaxScrollAmount() {
-		return (purchaseableHeight/((int)((screen.getWidth() - 232 - infoWidth - 22)/(purchaseableHeight + purchaseableBorder + purchaseableBorder))) + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
+		return (purchaseableHeight/((int)((screen.getWidth() - 232 - infoWidth - 22)/(purchaseableHeight + purchaseableBorder + purchaseableBorder))) + 2) * cache.size();
 		//return (purchaseableHeight + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
 	}
 

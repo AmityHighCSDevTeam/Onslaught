@@ -2,7 +2,10 @@
   "name": "M2000",
   "desc": "Boom Headshot.",
   "id": "Core_M2000",
-  "className": "SemiAuto",
+  "className": "BasicGun",
+  "tags": [
+    "Sniper"
+  ],
   "weapon": [
     {
       "price": 3000,
@@ -80,7 +83,7 @@
       "damage": 60,
       "knockback": 0.010,
       "accuracy": 0.5,
-      "maxAmmo": 4,
+      "maxAmmo": 7,
       "reloadTime": 1.25,
       "preFireDelay": 0,
       "postFireDelay": 0.2,

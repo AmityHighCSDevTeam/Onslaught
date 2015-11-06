@@ -56,8 +56,10 @@ public class PluginLoader {
 							String s = (String) pluginMeta.get("jarLoc");
 							if (!s.isEmpty() && p.child(s + ".jar").exists()) {
 								plugin.setJarLoc(s);
-
-								//TODO: Load jar
+								
+								JarLoader loader = new JarLoader(p.child(s + ".jar").file());
+								
+								plugin.setPlugins(loader.getIPlugins());
 							}
 						}
 						

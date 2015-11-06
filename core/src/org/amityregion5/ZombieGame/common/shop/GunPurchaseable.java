@@ -112,7 +112,10 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public double getPrice(PlayerModel player) {
-		return gun.getWeaponData(Math.min(getCurrentLevel(player)+1,getNumLevels())).getPrice();
+		if (!hasNextLevel(player)) {
+			return Double.POSITIVE_INFINITY;
+		}
+		return gun.getWeaponData(getCurrentLevel(player)+1).getPrice();
 	}
 
 	@Override
@@ -150,5 +153,25 @@ public class GunPurchaseable implements IPurchaseable {
 	@Override
 	public String getIconName(PlayerModel player) {
 		return gun.getWeaponData(Math.min(getCurrentLevel(player)+1,getNumLevels()-1)).getIconTextureString();
+	}
+
+	@Override
+	public int numContained(String[] sections, PlayerModel player) {
+		int num = 0;
+
+		for (String s : sections) {
+			if (getName().toLowerCase().contains(s.toLowerCase())) num+=100;
+			if (getDescription().toLowerCase().contains(s.toLowerCase())) num+=15;
+			if (gun.getID().toLowerCase().contains(s.toLowerCase())) num+=50;
+			num += gun.getTags().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).keySet().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).values().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+			if (hasNextLevel(player) && getNextDescriptors(player) != null) {
+				num += getNextDescriptors(player).keySet().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).values().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+			}
+		}
+
+		return num;
 	}
 }

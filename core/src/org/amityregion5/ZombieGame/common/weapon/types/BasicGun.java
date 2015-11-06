@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
  * @author sergeys
  *
  */
-public class SemiAuto extends AbstractWeapon<WeaponData> {
+public class BasicGun extends AbstractWeapon<WeaponData> {
 
 	@Override
 	protected boolean loadWeaponData(JSONArray arr) {

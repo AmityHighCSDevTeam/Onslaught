@@ -21,6 +21,7 @@ public class PluginContainer {
 	private String desc;
 	private String jarLoc;
 	private String pluginFolderLoc;
+	private List<IPlugin> plugins;
 
 	public PluginContainer() {
 	}
@@ -107,5 +108,13 @@ public class PluginContainer {
 				).map((o)->{
 					return(IPurchaseable)o;
 				}).collect(Collectors.toList());
+	}
+	
+	public List<IPlugin> getPlugins() {
+		return plugins;
+	}
+	
+	public void setPlugins(List<IPlugin> plugins) {
+		this.plugins = plugins;
 	}
 }

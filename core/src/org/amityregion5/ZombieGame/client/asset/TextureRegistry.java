@@ -24,7 +24,7 @@ public class TextureRegistry {
 		}
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
-			ZombieGame.debug("Texture Registry: registering: " + path + " as: " + toReplace);
+			ZombieGame.log("Texture Registry: registering: " + path + " as: " + toReplace);
 			register(toReplace, handle);
 			return true;
 		}
@@ -37,7 +37,7 @@ public class TextureRegistry {
 		}
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
-			ZombieGame.debug("Texture Registry: registering: " + path);
+			ZombieGame.log("Texture Registry: registering: " + path);
 			register(path, handle);
 			return true;
 		}

@@ -23,4 +23,6 @@ public interface IPurchaseable {
 	
 	public boolean hasIcon();
 	public String getIconName(PlayerModel player);
+	
+	public int numContained(String[] sections, PlayerModel player);
 }

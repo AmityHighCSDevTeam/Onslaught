@@ -2,7 +2,10 @@
   "name": "SVD",
   "desc": "Pull trigger for flesh confetti.",
   "id": "Core_SVD",
-  "className": "SemiAuto",
+  "className": "BasicGun",
+  "tags": [
+    "Sniper"
+  ],
   "weapon": [
     {
       "price": 3500,

@@ -1,6 +1,8 @@
 package org.amityregion5.ZombieGame.common.weapon.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.ZombieGame;
@@ -24,6 +26,7 @@ public class Grenade implements IWeapon {
 
 	// All the variables!
 	protected String		name, description, id;
+	protected List<String> tags;
 	protected Array<GrenadeData>		data;
 
 	@Override
@@ -205,6 +208,15 @@ public class Grenade implements IWeapon {
 			id = json.containsKey("id") ? (String) json.get("id")
 					: name;
 
+			this.tags = new ArrayList<String>();
+			if (json.containsKey("tags")) {
+				JSONArray tags = (JSONArray) json.get("tags");
+				
+				for (Object o : tags) {
+					this.tags.add((String)o);
+				}
+			}
+
 			JSONArray arr = (JSONArray) json.get("weapon");
 
 			if (arr != null) {
@@ -234,6 +246,11 @@ public class Grenade implements IWeapon {
 			data.add(d);
 		}
 		return true;
+	}
+	
+	@Override
+	public List<String> getTags() {
+		return tags;
 	}
 	
 	@Override

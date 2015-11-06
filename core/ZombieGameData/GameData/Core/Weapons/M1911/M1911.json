@@ -2,12 +2,15 @@
   "name": "M1911",
   "desc": "Why do we have gun safeties in the zombie apocalypse?",
   "id": "Core_M1911",
-  "className": "SemiAuto",
+  "className": "BasicGun",
+  "tags": [
+    "Pistol"
+  ],
   "weapon": [
     {
-      "price": 400,
+      "price": 1000,
       "ammoPrice": 0.5,
-      "damage": 7,
+      "damage": 10,
       "knockback": 0,
       "accuracy": 2.5,
       "maxAmmo": 8,
@@ -40,9 +43,9 @@
       ]
     },
     {
-      "price": 800,
+      "price": 3000,
       "ammoPrice": 1,
-      "damage": 13,
+      "damage": 17,
       "knockback": 0,
       "accuracy": 2.5,
       "maxAmmo": 8,
@@ -75,9 +78,9 @@
       ]
     },
     {
-      "price": 1600,
+      "price": 8000,
       "ammoPrice": 1.5,
-      "damage": 15,
+      "damage": 24,
       "knockback": 0,
       "accuracy": 2.5,
       "maxAmmo": 8,

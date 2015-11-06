@@ -45,7 +45,4 @@ public class PluginManager {
 	public PluginContainer getCorePlugin() {
 		return core;
 	}
-
-	public void loadPluginJars() {
-	}
 }
