@@ -91,52 +91,6 @@ public class MainMenu extends GuiScreen {
 						ZombieGame.getScaledY(50)).setEnabled(enabled[i]));
 			}
 		}
-		/*
-		addButton(new GuiButton(buttonTexture, 0, "Play Game",
-				ZombieGame.getScaledX(10), 
-				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50 - 60*0),
-				ZombieGame.getScaledX(getWidth() - 20),
-				ZombieGame.getScaledY(50)));
-		addButton(new GuiButton(buttonTexture, 0, "Options",
-				ZombieGame.getScaledX(10), 
-				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50 - 60*1),
-				ZombieGame.getScaledX(getWidth() - 20),
-				ZombieGame.getScaledY(50)).setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 0, "Credits",
-				ZombieGame.getScaledX(10), 
-				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50),
-				ZombieGame.getScaledX(getWidth() - 20),
-				ZombieGame.getScaledY(50)).setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 0, "Quit",
-				ZombieGame.getScaledX(10), 
-				ZombieGame.getScaledY(getHeight() - titleHeight - 10 - 50),
-				ZombieGame.getScaledX(getWidth() - 20),
-				ZombieGame.getScaledY(50)));
-				*/
-		
-		/*
-		addButton(new GuiButton(buttonTexture, 1, "Options", 10, getHeight()
-				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 1*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar())
-				.setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 2, "Credits", 10, getHeight()
-				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 2*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar())
-				.setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 4, "Quit", 10, getHeight()
-				- titleHeight - 10 - 50*ZombieGame.getYScalar() - 4*60*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
-				*/
-		
-		/*
-		addButton(new GuiButton(buttonTexture, 0, "Play Game", 10, getHeight()
-				- titleHeight - 10 - 50, getWidth() - 20, 50));
-		addButton(new GuiButton(buttonTexture, 1, "Options", 10, getHeight()
-				- titleHeight - 10 - 50 - 60, getWidth() - 20, 50)
-				.setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 2, "Credits", 10, getHeight()
-				- titleHeight - 10 - 50 - 60 - 60, getWidth() - 20, 50)
-				.setEnabled(false));
-		addButton(new GuiButton(buttonTexture, 4, "Quit", 10, getHeight()
-				- titleHeight - 10 - 50 - 60 - 60 - 60 - 60, getWidth() - 20, 50));
-		 */
 	}
 
 	@Override

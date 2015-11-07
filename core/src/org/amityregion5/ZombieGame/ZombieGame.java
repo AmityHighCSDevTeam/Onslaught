@@ -60,7 +60,7 @@ public class ZombieGame extends Game {
 	public Settings settings;
 	public PluginManager pluginManager;
 	public boolean isCheatModeAllowed;
-	public String version = "DEV Version: Version Not Set";
+	public String version = "Error: Version Not Set";
 	public String newestVersion = null;
 
 
@@ -106,19 +106,22 @@ public class ZombieGame extends Game {
 				.absolute(workingDir + "/ZombieGameData/version.txt");
 		version = versionFile.readString();
 
-		new Thread(()->{
+		Thread newerVersionThread = new Thread(()->{
 			try {
 				URL url = new URL("https://raw.githubusercontent.com/AmityHighCSDevTeam/ZombieGame/master/core/ZombieGameData/version.txt");
 				Scanner s = new Scanner(url.openStream());
 				
-				new Thread(()->{
+				Thread timeOutThread = new Thread(()->{
 					try {
 						Thread.sleep(10000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					s.close();
-				}).start();
+				}, "Time Out Thread");
+				
+				timeOutThread.setDaemon(true);
+				timeOutThread.start();
 				
 				newestVersion = s.nextLine();
 				
@@ -129,22 +132,19 @@ public class ZombieGame extends Game {
 				error("Failed to measure most up to date version.");
 				e.printStackTrace();
 			}
-		}).start();
+		}, "Newer Version Thread");
+		
+		newerVersionThread.setDaemon(true);
+		
+		newerVersionThread.start();
 		
 		log("Current Time = " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 		log("Version = " + version);
 
-		//logFile = Gdx.files
-		//		.absolute(workingDir + "/ZombieGameData/log.log");
-
-		//logFile.writeString("", false);
-
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
-		//width = Gdx.graphics.getWidth();
 		width = 1200;
 		height = 900;
-		//height = Gdx.graphics.getHeight();
 
 		ZombieGame.log("Loading: Starting the loading process");
 		if (!isServer) {
@@ -152,10 +152,8 @@ public class ZombieGame extends Game {
 			// screen
 		}
 
-
-
 		// Thread for loading the game
-		new Thread(
+		Thread loadingThread = new Thread(
 				() -> {
 					// The gamedata folder
 					gameData = Gdx.files
@@ -246,8 +244,10 @@ public class ZombieGame extends Game {
 
 						settings.save();
 					}
-				}).start();
-		;
+				}, "Main Loading Thread");
+		
+		loadingThread.setDaemon(true);
+		loadingThread.start();
 	}
 
 	@Override
@@ -276,8 +276,6 @@ public class ZombieGame extends Game {
 		this.width = width; //Save screen size
 		this.height = height;
 
-		//error("XSclr: " + getXScalar() + " ySclr: " + getYScalar() + " w: " + this.width + " h: " + this.height + " gw: " + width + " gh: " + height);
-
 		super.resize(width, height);
 	}
 
@@ -288,17 +286,14 @@ public class ZombieGame extends Game {
 
 	public static void debug(String message){
 		Gdx.app.debug("[Debug]", message);
-		//instance.logFile.writeString("[Debug]: " + message + "\n", true);
 	}
 
 	public static void log(String message){
 		Gdx.app.log("[Log]", message);
-		//instance.logFile.writeString("[Log]: " + message + "\n", true);
 	}
 
 	public static void error(String message){
 		Gdx.app.error("[ERROR]", message);
-		//instance.logFile.writeString("[ERROR]: " + message + "\n", true);
 	}
 
 	public static float getYScalar() {
