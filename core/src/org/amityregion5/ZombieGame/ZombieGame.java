@@ -3,11 +3,16 @@ package org.amityregion5.ZombieGame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Random;
+import java.util.Scanner;
 
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
@@ -41,14 +46,14 @@ public class ZombieGame extends Game {
 	public static String workingDir;
 
 	public FreeTypeFontGenerator fontGenerator;
-	public BitmapFont			mainFont;	// Font that buttons use
+	public BitmapFont			mainFont, bigFont;	// Font that buttons use
 	public Texture				buttonTexture;	// Texture that buttons use
 	public Texture				missingTexture; //The texture for when texture is missing
 	public boolean				isServer;		// Is the current instance a
-												// server
+	// server
 	public WeaponRegistry		weaponRegistry; // The registry for the weapons
 	public int					width, height;	// The width and height of the
-												// screen
+	// screen
 	public Random				random;
 	public FileHandle			gameData;
 	public FileHandle			settingsFile;
@@ -56,14 +61,15 @@ public class ZombieGame extends Game {
 	public PluginManager pluginManager;
 	public boolean isCheatModeAllowed;
 	public String version = "DEV Version: Version Not Set";
-	
+	public String newestVersion = null;
+
 
 	/**
 	 *
 	 * @param isServer
 	 *            is the game a server
 	 * @param cheatMode 
- * @param config 
+	 * @param config 
 	 * @throws FileNotFoundException 
 	 */
 	public ZombieGame(boolean isServer, boolean cheatMode) throws FileNotFoundException {
@@ -73,15 +79,15 @@ public class ZombieGame extends Game {
 		random = new Random();
 		try {
 			String temp = ZombieGame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			
+
 			workingDir = URLDecoder.decode(temp, "UTF-8");
 			workingDir = (new File(workingDir).getParent());
 		} catch (UnsupportedEncodingException e) {
 			workingDir = Gdx.files.getLocalStoragePath(); //Hopefully this will work on your computer if that doesn't
 		}
-	
+
 		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
-		
+
 		System.setOut(new PrintStream(
 				new MultiOutputStream(
 						System.out, 
@@ -99,12 +105,38 @@ public class ZombieGame extends Game {
 		FileHandle versionFile = Gdx.files
 				.absolute(workingDir + "/ZombieGameData/version.txt");
 		version = versionFile.readString();
+
+		new Thread(()->{
+			try {
+				URL url = new URL("https://raw.githubusercontent.com/AmityHighCSDevTeam/ZombieGame/master/core/ZombieGameData/version.txt");
+				Scanner s = new Scanner(url.openStream());
+				
+				new Thread(()->{
+					try {
+						Thread.sleep(10000);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					s.close();
+				}).start();
+				
+				newestVersion = s.nextLine();
+				
+				s.close();
+			
+				debug("Found most up to date version to be = " + newestVersion);
+			} catch (IOException e) {
+				error("Failed to measure most up to date version.");
+				e.printStackTrace();
+			}
+		}).start();
 		
+		log("Current Time = " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 		log("Version = " + version);
 
 		//logFile = Gdx.files
 		//		.absolute(workingDir + "/ZombieGameData/log.log");
-		
+
 		//logFile.writeString("", false);
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
@@ -117,10 +149,10 @@ public class ZombieGame extends Game {
 		ZombieGame.log("Loading: Starting the loading process");
 		if (!isServer) {
 			setScreen(new LoadingScreen()); // Set the screen to a loading
-											// screen
+			// screen
 		}
-		
-		
+
+
 
 		// Thread for loading the game
 		new Thread(
@@ -128,17 +160,17 @@ public class ZombieGame extends Game {
 					// The gamedata folder
 					gameData = Gdx.files
 							.absolute(workingDir + "/ZombieGameData/GameData");
-					
+
 					if (!isServer) {
 						settingsFile = Gdx.files
 								.absolute(workingDir + "/ZombieGameData/settings.json");
 						settings = new Settings();
 						settings.load();
 					}
-					
+
 					// "Mod" loading list of mods
 					FileHandle[] plugins = gameData.list();
-					
+
 					pluginManager = new PluginManager();
 
 					// Create the weapon registry
@@ -148,26 +180,26 @@ public class ZombieGame extends Game {
 					PluginLoader loader = new PluginLoader(pluginManager);
 					// Load the plugins
 					ZombieGame.log("Loading: Plugins will be loaded from " + gameData.file().getAbsolutePath());
-					
+
 					loader.loadPluginMeta(plugins);
-					
+
 					pluginManager.getCorePlugin().setPlugins(Arrays.asList(new IPlugin[]{new CorePlugin()}));
-					
+
 					log("Loading: Initializing Plugins");
 					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.init(p)));
-					
+
 					log("Loading: Beginning Plugin Preloading");
 					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.preLoad()));
-					
+
 					log("Loading: Loading Plugin Data");
 					loader.loadPlugins(plugins);
-					
+
 					log("Loading: Beginning Plugin Loading");
 					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.load()));
-					
+
 					log("Loading: Beginning Plugin Postloading");
 					pluginManager.getPlugins().forEach((p)->p.getPlugins().forEach((ip)->ip.postLoad()));
-					
+
 					// If it is a client
 					if (!isServer) {
 						// Load the texture for buttons
@@ -186,21 +218,32 @@ public class ZombieGame extends Game {
 						fontGenerator = new FreeTypeFontGenerator(
 								Gdx.files.internal("font/Helvetica.ttf"));
 
-						// Size 24 font
-						FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-						parameter.size = (int) (24 * getYScalar());
-
 						// Generate the font
 						Gdx.app.postRunnable(() -> {
+							// Size 24 font
+							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+							parameter.size = (int) (24 * getYScalar());
+							
 							mainFont = fontGenerator.generateFont(parameter);
 							// Make the font black
 							mainFont.setColor(1, 1, 1, 1);
 						});
-						 
+
+						// Generate the font
+						Gdx.app.postRunnable(() -> {
+							// Size 36 font
+							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+							parameter.size = (int) (30 * getYScalar());
+							
+							bigFont = fontGenerator.generateFont(parameter);
+							// Make the font black
+							bigFont.setColor(1, 1, 1, 1);
+						});
+
 						// Go to main menu
 						ZombieGame.log("Loading: Loading completed");
 						Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
-												
+
 						settings.save();
 					}
 				}).start();
@@ -232,7 +275,7 @@ public class ZombieGame extends Game {
 	public void resize(int width, int height) {
 		this.width = width; //Save screen size
 		this.height = height;
-		
+
 		//error("XSclr: " + getXScalar() + " ySclr: " + getYScalar() + " w: " + this.width + " h: " + this.height + " gw: " + width + " gh: " + height);
 
 		super.resize(width, height);
@@ -242,34 +285,34 @@ public class ZombieGame extends Game {
 	public void resume() {
 		super.resume();
 	}
-	
+
 	public static void debug(String message){
 		Gdx.app.debug("[Debug]", message);
 		//instance.logFile.writeString("[Debug]: " + message + "\n", true);
 	}
-	
+
 	public static void log(String message){
 		Gdx.app.log("[Log]", message);
 		//instance.logFile.writeString("[Log]: " + message + "\n", true);
 	}
-	
+
 	public static void error(String message){
 		Gdx.app.error("[ERROR]", message);
 		//instance.logFile.writeString("[ERROR]: " + message + "\n", true);
 	}
-	
+
 	public static float getYScalar() {
 		return Gdx.graphics.getHeight()/900f;
 	}
-	
+
 	public static float getXScalar() {
 		return Gdx.graphics.getWidth()/1200f;
 	}
-	
+
 	public static float getScaledY(float y) {
 		return y*getYScalar();
 	}
-	
+
 	public static float getScaledX(float x) {
 		return x*getXScalar();
 	}

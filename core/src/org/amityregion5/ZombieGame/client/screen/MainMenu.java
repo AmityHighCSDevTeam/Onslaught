@@ -4,8 +4,11 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.utils.Align;
 
 /**
  *
@@ -13,6 +16,8 @@ import com.badlogic.gdx.graphics.Texture;
  *
  */
 public class MainMenu extends GuiScreen {
+	
+	private GlyphLayout glyph = new GlyphLayout();
 
 	public MainMenu() {
 		super(null);
@@ -39,6 +44,15 @@ public class MainMenu extends GuiScreen {
 		batch.setColor(1, 1, 1, 1);
 		batch.draw(titleTexture, 10, camera.viewportHeight - titleHeight-10,
 				camera.viewportWidth - 20, titleHeight);
+		
+		float y = 15;
+		glyph.setText(ZombieGame.instance.mainFont, "Version " + ZombieGame.instance.version, Color.WHITE, getWidth(), Align.left, false);
+		ZombieGame.instance.mainFont.draw(batch, glyph, 10, y + glyph.height/2); y += glyph.height + 15;
+		
+		if (ZombieGame.instance.newestVersion != null && !ZombieGame.instance.newestVersion.equals(ZombieGame.instance.version)) {
+			glyph.setText(ZombieGame.instance.bigFont, "A new version is available: " + ZombieGame.instance.newestVersion, Color.WHITE, getWidth(), Align.left, false);
+			ZombieGame.instance.bigFont.draw(batch, glyph, 10, y + glyph.height/2); y += glyph.height+ 15;
+		}
 	}
 
 	@Override
