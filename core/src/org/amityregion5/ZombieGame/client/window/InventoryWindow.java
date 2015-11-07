@@ -184,7 +184,7 @@ public class InventoryWindow implements Screen {
 				for (int i=0; i<player.getHotbar().length;i++) {
 					if (i == player.getCurrWeapIndex()) {
 						player.getHotbar()[i] = weapon;
-					} else {
+					} else if (player.getHotbar()[i] == weapon) {
 						player.getHotbar()[i] = new WeaponStack(new NullWeapon());
 					}
 				}

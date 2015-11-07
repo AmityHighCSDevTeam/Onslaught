@@ -251,6 +251,11 @@ public class InGameScreen extends GuiScreen {
 		// font1.getBounds("FPS: " + Gdx.graphics.getFramesPerSecond()).height);
 		glyph.setText(font1, "FPS: " + Gdx.graphics.getFramesPerSecond());
 		font1.draw(batch, glyph, 0, glyph.height);
+		
+		float y = glyph.height + 5;
+		
+		glyph.setText(font1, "Version " + ZombieGame.instance.version);
+		font1.draw(batch, glyph, 0, y + glyph.height);
 
 		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(),
 				Gdx.input.getY(), 0));

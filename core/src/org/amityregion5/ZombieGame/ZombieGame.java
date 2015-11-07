@@ -55,7 +55,7 @@ public class ZombieGame extends Game {
 	public Settings settings;
 	public PluginManager pluginManager;
 	public boolean isCheatModeAllowed;
-	
+	public String version = "DEV Version: Version Not Set";
 	
 
 	/**
@@ -73,12 +73,13 @@ public class ZombieGame extends Game {
 		random = new Random();
 		try {
 			String temp = ZombieGame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			
 			workingDir = URLDecoder.decode(temp, "UTF-8");
 			workingDir = (new File(workingDir).getParent());
 		} catch (UnsupportedEncodingException e) {
 			workingDir = Gdx.files.getLocalStoragePath(); //Hopefully this will work on your computer if that doesn't
 		}
-		
+	
 		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
 		
 		System.setOut(new PrintStream(
@@ -95,6 +96,12 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void create() {
+		FileHandle versionFile = Gdx.files
+				.absolute(workingDir + "/ZombieGameData/version.txt");
+		version = versionFile.readString();
+		
+		log("Version = " + version);
+
 		//logFile = Gdx.files
 		//		.absolute(workingDir + "/ZombieGameData/log.log");
 		
