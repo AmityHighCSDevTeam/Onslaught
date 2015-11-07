@@ -128,14 +128,6 @@ public class ShopWindow implements Screen {
 
 		drawMainRegion(delta);
 
-		
-		if (selected >= cache.size()) {
-			selected = -1;
-		}
-		if (selected != -1) {
-			drawInfoRegion(delta);
-		}
-
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
@@ -284,7 +276,7 @@ public class ShopWindow implements Screen {
 			shapeRender.end();
 			Gdx.gl.glLineWidth(1);
 
-			if (purchaseable.canPurchase(player) && player.getMoney() > purchaseable.getPrice(player)) {
+			if (purchaseable.canPurchase(player) && player.getMoney() >= purchaseable.getPrice(player)) {
 				batch.begin();
 				batch.draw(upgradeArrow, boxX + purchaseableHeight*3/4, boxY, purchaseableHeight/4, purchaseableHeight/4);
 				batch.end();
@@ -298,6 +290,14 @@ public class ShopWindow implements Screen {
 		}
 
 		ScissorStack.popScissors();
+		
+		if (selected >= cache.size()) {
+			selected = -1;
+		}
+		if (selected != -1) {
+			drawInfoRegion(delta);
+		}
+		
 		if (mouseOverIndex != -1) {
 			IPurchaseable purchaseable = cache.get(mouseOverIndex);
 
@@ -339,7 +339,7 @@ public class ShopWindow implements Screen {
 			GlyphLayout canPurchase = null;
 			if (purchaseable.canPurchase(player) && purchaseable.getPrice(player) <= player.getMoney()) {
 				canPurchase = new GlyphLayout(ZombieGame.instance.mainFont, "Purchase Available",
-						Color.RED, 300, Align.left, true);
+						new Color(27/255f, 168/255f, 55/255f, 1f), 300, Align.left, true);
 
 				boxWidth = Math.max(boxWidth, canPurchase.width + 8);
 				boxHeight += descGlyph.height + 4;
