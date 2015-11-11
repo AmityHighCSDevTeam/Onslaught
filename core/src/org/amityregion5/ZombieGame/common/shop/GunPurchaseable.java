@@ -174,4 +174,12 @@ public class GunPurchaseable implements IPurchaseable {
 
 		return num;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof GunPurchaseable) {
+			return gun == ((GunPurchaseable)obj).gun;
+		}
+		return false;
+	}
 }

@@ -122,4 +122,12 @@ public class BuffPurchaseable implements IPurchaseable {
 
 		return num;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof BuffPurchaseable) {
+			return buff == ((BuffPurchaseable)obj).buff;
+		}
+		return false;
+	}
 }

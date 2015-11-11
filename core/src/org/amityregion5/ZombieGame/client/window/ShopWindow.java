@@ -94,6 +94,7 @@ public class ShopWindow implements Screen {
 	}
 
 	private void recalculateCache() {
+		IPurchaseable purch = (cache == null ? null : cache.get(selected));
 		if (searchQuery.isEmpty()) {
 			cache = ZombieGame.instance.pluginManager.getPurchaseables();
 			cache.sort((p1, p2)->(int)(p1.getPrice(player)-p2.getPrice(player)));
@@ -109,6 +110,11 @@ public class ShopWindow implements Screen {
 						return (int) Math.signum(priceDiff);
 					})
 					.collect(Collectors.toList());
+		}
+		if (purch == null) {
+			selected = -1;
+		} else {
+			selected = cache.indexOf(purch);
 		}
 	}
 
@@ -290,14 +296,14 @@ public class ShopWindow implements Screen {
 		}
 
 		ScissorStack.popScissors();
-		
+
 		if (selected >= cache.size()) {
 			selected = -1;
 		}
 		if (selected != -1) {
 			drawInfoRegion(delta);
 		}
-		
+
 		if (mouseOverIndex != -1) {
 			IPurchaseable purchaseable = cache.get(mouseOverIndex);
 
