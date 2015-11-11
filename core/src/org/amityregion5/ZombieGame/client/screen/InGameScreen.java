@@ -178,13 +178,18 @@ public class InGameScreen extends GuiScreen {
 		batch.setProjectionMatrix(camera.combined);
 
 		for (IParticle p : game.getParticles()) {
-			for (IDrawingLayer s : p.getDrawingLayers()) {
+			for (IDrawingLayer s : p.getBackDrawingLayers()) {
 				s.draw(p, batch, shapeRenderer);
 			}
 		}
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
 				s.draw(e, batch, shapeRenderer);
+			}
+		}
+		for (IParticle p : game.getParticles()) {
+			for (IDrawingLayer s : p.getFrontDrawingLayers()) {
+				s.draw(p, batch, shapeRenderer);
 			}
 		}
 		batch.setProjectionMatrix(oldBatchMatrix);

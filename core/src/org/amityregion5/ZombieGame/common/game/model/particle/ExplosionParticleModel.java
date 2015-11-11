@@ -19,6 +19,9 @@ public class ExplosionParticleModel implements IParticle{
 	private Color				c;
 	private float x, y, xVel, yVel, rotation, rotationSpeed;
 
+	public ExplosionParticleModel() {
+	}
+	
 	/**
 	 * @param x
 	 * @param y
@@ -90,7 +93,7 @@ public class ExplosionParticleModel implements IParticle{
 	}
 
 	@Override
-	public IDrawingLayer[] getDrawingLayers() {
+	public IDrawingLayer[] getFrontDrawingLayers() {
 		return new IDrawingLayer[]{ExplosionParticleDrawingLayer.instance};//new IDrawingLayer[] {sprite};
 	}
 
@@ -152,5 +155,10 @@ public class ExplosionParticleModel implements IParticle{
 		model.getLight().setXray(true);
 		
 		return model;
+	}
+
+	@Override
+	public IDrawingLayer[] getBackDrawingLayers() {
+		return new IDrawingLayer[]{};
 	}
 }

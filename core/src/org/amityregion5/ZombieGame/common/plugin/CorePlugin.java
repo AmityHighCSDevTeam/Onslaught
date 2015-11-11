@@ -5,11 +5,15 @@ import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
+import org.amityregion5.ZombieGame.common.entity.EntityZombie;
+import org.amityregion5.ZombieGame.common.game.Difficulty;
+import org.amityregion5.ZombieGame.common.game.GameRegistry;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.weapon.types.BasicGun;
 import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
 import org.amityregion5.ZombieGame.common.weapon.types.Rocket;
-import org.amityregion5.ZombieGame.common.weapon.types.BasicGun;
 import org.amityregion5.ZombieGame.common.weapon.types.Shotgun;
 
 import com.badlogic.gdx.Input.Buttons;
@@ -19,7 +23,7 @@ import com.badlogic.gdx.graphics.Color;
 import box2dLight.PointLight;
 
 public class CorePlugin implements IPlugin {
-	
+
 	private PluginContainer container;
 
 	@Override
@@ -54,6 +58,29 @@ public class CorePlugin implements IPlugin {
 			lantern.getEntity().setMass(10);
 			return lantern;
 		});
+
+		GameRegistry.addSpawnable(0, 1, (g)->{
+			float maxModifier = 0.8f;
+
+
+			float speedModifier = g.getRandom().nextFloat()*maxModifier + 1f - maxModifier/1.5f;
+			float sizeModifier = ((maxModifier+1f) - speedModifier);
+
+			EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
+			zom.setMass(100*sizeModifier);
+			//zom.setSpeed(1f);
+			zom.setFriction(0.99f);
+
+			ZombieModel model = new ZombieModel(zom, g, sizeModifier);
+
+			model.setSpeed(0.03f * speedModifier);
+			model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(g.getMobsSpawned())) + 4)*(g.getDifficulty().getDifficultyMultiplier()/2+1) * sizeModifier*sizeModifier);
+			model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - g.getDifficulty().getDifficultyMultiplier())* sizeModifier*sizeModifier);
+			model.setDamage((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - g.getDifficulty().getDifficultyMultiplier()) * sizeModifier*sizeModifier);
+			model.setRange(zom.getShape().getRadius()*1.1f);
+
+			return model;
+		});
 	}
 
 	@Override
@@ -62,16 +89,18 @@ public class CorePlugin implements IPlugin {
 		TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
 		TextureRegistry.tryRegisterAs("Core/HealthBox.png", "healthPack");
 		TextureRegistry.tryRegisterAs("Core/UpgradeArrow.png", "upgradeArrow");
-		
+
+		TextureRegistry.tryRegisterAs("Core/Blood/blood1.png", "blood/core/blood1");
+
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl1.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl2.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl3.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl4.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl5.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl6.wav");
-		
+
 		SoundRegistry.tryRegister("Core/Audio/explode.wav");
-		
+
 		ZombieGame.instance.settings.registerInput("Shoot", new InputData(false, Buttons.LEFT));
 		ZombieGame.instance.settings.registerInput("Move_Up", new InputData(true, Keys.W));
 		ZombieGame.instance.settings.registerInput("Move_Down", new InputData(true, Keys.S));

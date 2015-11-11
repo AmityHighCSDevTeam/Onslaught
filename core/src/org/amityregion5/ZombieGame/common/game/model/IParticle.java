@@ -14,7 +14,9 @@ public interface IParticle {
 	
 	void dispose();
 
-	IDrawingLayer[] getDrawingLayers();
+	IDrawingLayer[] getBackDrawingLayers();
+
+	IDrawingLayer[] getFrontDrawingLayers();
 	
 	JSONObject convertToJSONObject();
 	

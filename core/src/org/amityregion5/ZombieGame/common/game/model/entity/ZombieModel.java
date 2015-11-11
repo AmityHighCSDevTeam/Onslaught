@@ -15,6 +15,7 @@ import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.amityregion5.ZombieGame.common.game.model.particle.BloodParticle;
 import org.amityregion5.ZombieGame.common.game.model.particle.HealthPackParticle;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
@@ -159,6 +160,9 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		float damageTaken = Math.min(damage, health);
 		if (damageTaken < 0) {
 			damageTaken = 0;
+		}
+		for (int i = 0; i<damageTaken; i+=5) {
+			g.addParticleToWorld(new BloodParticle(entity.getBody().getWorldCenter().x - entity.getSize()*1.25f + g.getRandom().nextFloat()*2*entity.getSize()*1.25f, entity.getBody().getWorldCenter().y - entity.getSize()*1.25f + g.getRandom().nextFloat()*2*entity.getSize()*1.25f, g));
 		}
 		health -= damageTaken;
 		if (health <= 0 && damageTaken > 0) {

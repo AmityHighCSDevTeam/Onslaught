@@ -14,13 +14,11 @@ import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
-import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
-import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
@@ -219,29 +217,9 @@ public class Game implements Disposable {
 	}
 
 	private IEntityModel<?> getSpawningEntity() {
-
-		float maxModifier = 0.8f;
-
-
-		float speedModifier = rand.nextFloat()*maxModifier + 1f - maxModifier/1.5f;
-		float sizeModifier = ((maxModifier+1f) - speedModifier);
-
-		EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
-		zom.setMass(100*sizeModifier);
-		//zom.setSpeed(1f);
-		zom.setFriction(0.99f);
-
-		ZombieModel model = new ZombieModel(zom, this, sizeModifier);
-
-		model.setSpeed(0.03f * speedModifier);
-		model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(mobsSpawned)) + 4)*(diff.getDifficultyMultiplier()/2+1) * sizeModifier*sizeModifier);
-		model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier())* sizeModifier*sizeModifier);
-		model.setDamage((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - diff.getDifficultyMultiplier()) * sizeModifier*sizeModifier);
-		model.setRange(zom.getShape().getRadius()*1.1f);
-
-		return model;
+		return GameRegistry.getSpawn(this);
 	}
-
+	
 	public World getWorld() {
 		return world;
 	}
@@ -581,5 +559,9 @@ public class Game implements Disposable {
 	
 	public PlayerModel getSingleplayerPlayer() {
 		return players.get(0);
+	}
+	
+	public int getMobsSpawned() {
+		return mobsSpawned;
 	}
 }

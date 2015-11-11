@@ -14,6 +14,9 @@ public class HealthPackParticle implements IParticle{
 	private static final float timeBetweenChecks = 0.1f;
 	private float x, y, size, timeUntilCheck;
 
+	public HealthPackParticle() {
+	}
+	
 	/**
 	 * @param x
 	 * @param y
@@ -60,7 +63,7 @@ public class HealthPackParticle implements IParticle{
 	}
 
 	@Override
-	public IDrawingLayer[] getDrawingLayers() {
+	public IDrawingLayer[] getBackDrawingLayers() {
 		return new IDrawingLayer[]{HealthPackDrawingLayer.instance};//new IDrawingLayer[] {sprite};
 	}
 	
@@ -97,5 +100,10 @@ public class HealthPackParticle implements IParticle{
 		g.addParticleToWorld(model);
 		
 		return model;
+	}
+
+	@Override
+	public IDrawingLayer[] getFrontDrawingLayers() {
+		return new IDrawingLayer[]{};
 	}
 }

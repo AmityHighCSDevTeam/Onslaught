@@ -16,6 +16,7 @@ import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.amityregion5.ZombieGame.common.game.model.particle.BloodParticle;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
@@ -224,6 +225,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		}
 
 		float damageTaken = Math.min(damage, health);
+		for (int i = 0; i<damageTaken; i+=5) {
+			g.addParticleToWorld(new BloodParticle(
+					entity.getBody().getWorldCenter().x - 0.18f + g.getRandom().nextFloat()*0.18f*2,
+					entity.getBody().getWorldCenter().y - 0.18f + g.getRandom().nextFloat()*0.18f*2,
+					g));
+		}
 		health -= damageTaken;
 		if (health <= 0) {
 			g.doPlayerDie(this);
