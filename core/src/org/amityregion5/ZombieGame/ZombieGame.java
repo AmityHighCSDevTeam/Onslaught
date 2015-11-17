@@ -30,6 +30,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -221,7 +222,8 @@ public class ZombieGame extends Game {
 							// Size 24 font
 							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 							parameter.size = (int) (24 * getYScalar());
-							parameter.borderWidth = 1;
+							parameter.borderWidth = 0.025f;
+							parameter.borderColor = Color.WHITE;
 							
 							mainFont = fontGenerator.generateFont(parameter);
 							// Make the font black
@@ -233,7 +235,8 @@ public class ZombieGame extends Game {
 							// Size 36 font
 							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 							parameter.size = (int) (30 * getYScalar());
-							parameter.borderWidth = 1;
+							parameter.borderWidth = 0.025f;
+							parameter.borderColor = Color.WHITE;
 							
 							bigFont = fontGenerator.generateFont(parameter);
 							// Make the font black
