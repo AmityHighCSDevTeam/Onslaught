@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.client.screen;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.common.game.tutorial.TutorialGame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -54,8 +55,7 @@ public class PlayGameMenu extends GuiScreen {
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0,
 				"Singleplayer", 10, getHeight() - 150, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1,
-				"Multiplayer", 10, getHeight() - 210, getWidth() - 20, 50)
-				.setEnabled(false));
+				"Tutorial", 10, getHeight() - 210, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back",
 				10, 10, getWidth() - 20, 50));
 	}
@@ -82,6 +82,9 @@ public class PlayGameMenu extends GuiScreen {
 		switch (id) {
 			case 0:
 				ZombieGame.instance.setScreen(new SinglePlayerMenu(this));
+				break;
+			case 1:
+				ZombieGame.instance.setScreen(new InGameScreen(this, new TutorialGame(), true));
 				break;
 			case 2:
 				// Back button

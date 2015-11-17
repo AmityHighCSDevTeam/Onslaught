@@ -18,7 +18,6 @@ import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
-import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
@@ -96,7 +95,7 @@ public class InGameScreen extends GuiScreen {
 			playerEntity.setFriction(0.99f);
 			playerEntity.setMass(100);
 
-			player = new PlayerModel(playerEntity, game, this, 500 * (Difficulty.diffInvertNum - game.getDifficulty().getDifficultyMultiplier()), "*/Players/**.png");
+			player = new PlayerModel(playerEntity, game, this, game.getDifficulty().getStartingMoney(), "*/Players/**.png");
 		} else {
 			player = game.getSingleplayerPlayer();
 			player.setScreen(this);
@@ -194,8 +193,10 @@ public class InGameScreen extends GuiScreen {
 		}
 		batch.setProjectionMatrix(oldBatchMatrix);
 
-		rayHandler.setCombinedMatrix(camera);
-		rayHandler.updateAndRender();
+		if (game.isLightingEnabled()) {
+			rayHandler.setCombinedMatrix(camera);
+			rayHandler.updateAndRender();
+		}
 
 		super.render(delta);
 
@@ -230,6 +231,14 @@ public class InGameScreen extends GuiScreen {
 		if (currentWindow != null) {
 			currentWindow.drawScreen(delta, camera);
 		}
+		
+		batch.setProjectionMatrix(camera.combined);
+		for (IParticle p : game.getParticles()) {
+			for (IDrawingLayer s : p.getMaxDrawingLayers()) {
+				s.draw(p, batch, shapeRenderer);
+			}
+		}
+		batch.setProjectionMatrix(oldBatchMatrix);
 
 		Iterator<SoundPlayingData> iterator = player.getSoundsToPlay().listIterator();
 		while (iterator.hasNext()) {
@@ -256,9 +265,9 @@ public class InGameScreen extends GuiScreen {
 		// font1.getBounds("FPS: " + Gdx.graphics.getFramesPerSecond()).height);
 		glyph.setText(font1, "FPS: " + Gdx.graphics.getFramesPerSecond());
 		font1.draw(batch, glyph, 0, glyph.height);
-		
+
 		float y = glyph.height + 5;
-		
+
 		glyph.setText(font1, "Version " + ZombieGame.instance.version);
 		font1.draw(batch, glyph, 0, y + glyph.height);
 
@@ -311,7 +320,7 @@ public class InGameScreen extends GuiScreen {
 
 				ZombieModel model = new ZombieModel(zom, game,1);
 
-				model.setAllHealth(5);
+				model.setAllHealth(100);
 				model.setSpeed(0.03f);
 				model.setRange((float) (zom.getShape().getRadius()*1.1));
 				model.setDamage(5);

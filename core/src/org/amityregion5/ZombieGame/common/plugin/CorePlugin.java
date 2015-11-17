@@ -6,7 +6,7 @@ import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
-import org.amityregion5.ZombieGame.common.game.Difficulty;
+import org.amityregion5.ZombieGame.common.game.BasicDifficulty;
 import org.amityregion5.ZombieGame.common.game.GameRegistry;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
@@ -63,24 +63,29 @@ public class CorePlugin implements IPlugin {
 			float maxModifier = 0.8f;
 
 
-			float speedModifier = g.getRandom().nextFloat()*maxModifier + 1f - maxModifier/1.5f;
+			float speedModifier = (float) (g.getRandom().nextFloat()*maxModifier + 1f - maxModifier/1.5f);
 			float sizeModifier = ((maxModifier+1f) - speedModifier);
 
 			EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
-			zom.setMass(100*sizeModifier);
+			zom.setMass(100*sizeModifier*sizeModifier);
 			//zom.setSpeed(1f);
 			zom.setFriction(0.99f);
 
 			ZombieModel model = new ZombieModel(zom, g, sizeModifier);
 
 			model.setSpeed(0.03f * speedModifier);
-			model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(g.getMobsSpawned())) + 4)*(g.getDifficulty().getDifficultyMultiplier()/2+1) * sizeModifier*sizeModifier);
-			model.setPrizeMoney((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - g.getDifficulty().getDifficultyMultiplier())* sizeModifier*sizeModifier);
-			model.setDamage((5 + model.getHealth()/2)*(Difficulty.diffInvertNum - g.getDifficulty().getDifficultyMultiplier()) * sizeModifier*sizeModifier);
+			model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(g.getMobsSpawned())) + 4)*(g.getDifficulty().getZombieHealthModifier()+1) * sizeModifier*sizeModifier);
+			model.setPrizeMoney((5 + model.getHealth()/2)*(g.getDifficulty().getMoneyMultiplier())* sizeModifier*sizeModifier);
+			model.setDamage((5 + model.getHealth()/2)*(g.getDifficulty().getDamageMultiplier()) * sizeModifier*sizeModifier);
 			model.setRange(zom.getShape().getRadius()*1.1f);
 
 			return model;
 		});
+		
+		GameRegistry.difficulties.add(new BasicDifficulty("EASY", 	"Easy", 	0.5f, 	0.5f, 	0.25f, 	2f, 	2f, 	0.01f, 		1000, 50));
+		GameRegistry.difficulties.add(new BasicDifficulty("MEDIUM", "Medium", 	1f, 	1f, 	0.5f, 	1.5f, 	1.5f, 	0.0075f, 	750,  100));
+		GameRegistry.difficulties.add(new BasicDifficulty("HARD", 	"Hard", 	1.5f, 	1.5f, 	0.75f, 	1.0f, 	1.0f, 	0.005f, 	500,  150));
+		GameRegistry.difficulties.add(new BasicDifficulty("INSANE", "Insane", 	2f, 	2f, 	1f, 	0.5f, 	0.5f, 	0.0025f, 	250,  200));
 	}
 
 	@Override

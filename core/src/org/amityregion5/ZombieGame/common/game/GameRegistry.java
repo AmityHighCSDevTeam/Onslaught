@@ -8,6 +8,8 @@ import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 public class GameRegistry {
 	public static ArrayList<ArrayList<SpawningStorage>> spawning = new ArrayList<ArrayList<SpawningStorage>>();
 	
+	public static ArrayList<Difficulty> difficulties = new ArrayList<Difficulty>();
+	
 	static {
 		spawning.add(new ArrayList<SpawningStorage>());
 	}
@@ -43,5 +45,9 @@ public class GameRegistry {
 	private static class SpawningStorage{
 		protected Function<Game, IEntityModel<?>> func;
 		protected double chance;
+	}
+	
+	public static Difficulty getDifficultyFromID(String id) {
+		return difficulties.parallelStream().filter((d)->d.getUniqueID().equals(id)).findFirst().get();
 	}
 }

@@ -1,9 +1,13 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.util.List;
+
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
 import org.amityregion5.ZombieGame.common.game.Difficulty;
 import org.amityregion5.ZombieGame.common.game.Game;
+import org.amityregion5.ZombieGame.common.game.GameRegistry;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,9 +22,12 @@ import com.badlogic.gdx.utils.Align;
  *
  */
 public class NewGameMenu extends GuiScreen {
+	
+	List<Difficulty> diffs = GameRegistry.difficulties;	
 
 	public NewGameMenu(GuiScreen prevScreen) {
 		super(prevScreen);
+		diffs.sort((a,b)->(int)((a.getOverallMultiplier()-b.getOverallMultiplier())*10));
 	}
 
 	// Font
@@ -55,9 +62,9 @@ public class NewGameMenu extends GuiScreen {
 		// Register buttons
 		{
 			int i = 0;
-			for (Difficulty d : Difficulty.getSortedArray()) {
+			for (Difficulty d : diffs) {
 				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i,
-						d.getLocName(), 10, getHeight() - 150 - 60 * i,
+						d.getHumanName(), 10, getHeight() - 150 - 60 * i,
 						getWidth() - 20, 50));
 				i++;
 			}
@@ -93,7 +100,7 @@ public class NewGameMenu extends GuiScreen {
 				break;
 			default:
 				ZombieGame.instance
-						.setScreen(new InGameScreen(this, new Game(Difficulty.getSortedArray()[id], true, ZombieGame.instance.isCheatModeAllowed &&
+						.setScreen(new InGameScreen(this, new Game(diffs.get(id), true, ZombieGame.instance.isCheatModeAllowed &&
 								Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)), true));
 		}
 	}

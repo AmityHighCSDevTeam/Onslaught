@@ -51,28 +51,28 @@ public class Game implements Disposable {
 	private static final float areaPerParticle = 0.1f;
 
 	//Unsaved variables
-	private GameContactListener contactListener;
-	private World	world;
-	private float	accumulator;
-	private ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete;
-	private ArrayList<IParticle>	particles, particlesToAdd, particlesToDelete;
-	private ArrayList<IBullet>	activeBullets;
-	private ArrayList<PlayerModel> players;
-	private Random				rand;
-	private RayHandler lighting;
+	protected GameContactListener contactListener;
+	protected World	world;
+	protected float	accumulator;
+	protected ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete;
+	protected ArrayList<IParticle>	particles, particlesToAdd, particlesToDelete;
+	protected ArrayList<IBullet>	activeBullets;
+	protected ArrayList<PlayerModel> players;
+	protected Random				rand;
+	protected RayHandler lighting;
 	
 	//Calculated Variables (Unsaved)
-	private int maxHostiles = 0;
-	private double moduloConstant;
-	private int hostiles = 0;
+	protected int maxHostiles = 0;
+	protected double moduloConstant;
+	protected int hostiles = 0;
 
 	//Saved Variables
-	private Difficulty diff;
-	private boolean isCheatMode;
-	private boolean isSinglePlayer;
-	private boolean isPaused;
-	private double timeUntilNextSpawn;
-	private int mobsSpawned = 0;
+	protected Difficulty diff;
+	protected boolean isCheatMode;
+	protected boolean isSinglePlayer;
+	protected boolean isPaused;
+	protected double timeUntilNextSpawn;
+	protected int mobsSpawned = 0;
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
 		this.diff = diff;
@@ -116,8 +116,8 @@ public class Game implements Disposable {
 		rand = new Random();
 
 		timeUntilNextSpawn = 10;
-		moduloConstant = Math.pow(5.5, 10.0/7) - 0.5 - 2*diff.getDifficultyMultiplier();
-		maxHostiles = (int) (100 * diff.getDifficultyMultiplier());
+		moduloConstant = Math.pow(5.5, 10.0/7) - 0.5 - 2*diff.getZombieWaveModifier();
+		maxHostiles = diff.getMaxHostiles();
 		//timeBetWaves = 15 * (Difficulty.diffInvertNum - diff.getDifficultyMultiplier());
 		//waveDifficulty = 3 * diff.getDifficultyMultiplier();
 	}
@@ -464,7 +464,7 @@ public class Game implements Disposable {
 		
 		obj.put("particles", particlesSaving);
 		
-		obj.put("difficulty", diff.name());
+		obj.put("difficulty", diff.getUniqueID());
 		
 		obj.put("cheatMode", isCheatMode);
 		obj.put("singlePlayer", isSinglePlayer);
@@ -488,7 +488,7 @@ public class Game implements Disposable {
 			JSONArray entities = (JSONArray)obj.get("entities");
 			JSONArray particles = (JSONArray)obj.get("particles");
 			
-			Difficulty diff = Difficulty.valueOf((String)obj.get("difficulty")); //√
+			Difficulty diff = GameRegistry.getDifficultyFromID((String)obj.get("difficulty")); //√
 			
 			boolean cheatMode = (Boolean)obj.get("cheatMode"); //√
 			boolean singlePlayer = (Boolean)obj.get("singlePlayer"); //√
@@ -563,5 +563,9 @@ public class Game implements Disposable {
 	
 	public int getMobsSpawned() {
 		return mobsSpawned;
+	}
+	
+	public boolean isLightingEnabled() {
+		return true;
 	}
 }

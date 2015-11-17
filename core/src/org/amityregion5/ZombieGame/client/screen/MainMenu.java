@@ -99,7 +99,7 @@ public class MainMenu extends GuiScreen {
 		switch (id) {
 			case 0:
 				// Play Game button
-				ZombieGame.instance.setScreen(new SinglePlayerMenu(this));
+				ZombieGame.instance.setScreen(new PlayGameMenu(this));
 				break;
 			case 1:
 				// Play Game button

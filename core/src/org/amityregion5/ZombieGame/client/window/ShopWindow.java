@@ -94,7 +94,7 @@ public class ShopWindow implements Screen {
 	}
 
 	private void recalculateCache() {
-		IPurchaseable purch = (cache == null ? null : cache.get(selected));
+		IPurchaseable purch = (cache == null || selected == -1 ? null : cache.get(selected));
 		if (searchQuery.isEmpty()) {
 			cache = ZombieGame.instance.pluginManager.getPurchaseables();
 			cache.sort((p1, p2)->(int)(p1.getPrice(player)-p2.getPrice(player)));

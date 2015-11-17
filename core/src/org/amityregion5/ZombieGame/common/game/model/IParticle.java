@@ -17,6 +17,10 @@ public interface IParticle {
 	IDrawingLayer[] getBackDrawingLayers();
 
 	IDrawingLayer[] getFrontDrawingLayers();
+
+	default IDrawingLayer[] getMaxDrawingLayers() {
+		return new IDrawingLayer[]{};
+	}
 	
 	JSONObject convertToJSONObject();
 	

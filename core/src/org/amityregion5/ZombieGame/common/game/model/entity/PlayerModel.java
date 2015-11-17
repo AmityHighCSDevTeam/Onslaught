@@ -468,4 +468,8 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		
 		return model;
 	}
+	
+	public InGameScreen getScreen() {
+		return screen;
+	}
 }

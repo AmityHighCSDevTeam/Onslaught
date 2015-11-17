@@ -32,7 +32,7 @@ public class BloodParticle implements IParticle{
 		this.x = x;
 		this.y = y;
 		this.g = g;
-		size = 0.0025f;
+		size = 0.004f;
 		r = (float) (g.getRandom().nextFloat()*2*Math.PI);
 		List<String> textureNames = TextureRegistry.getTextureNamesFor("blood/**");
 		textureName = textureNames.get(g.getRandom().nextInt(textureNames.size()));

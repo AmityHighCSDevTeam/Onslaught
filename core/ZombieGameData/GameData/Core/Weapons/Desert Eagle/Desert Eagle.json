@@ -1,0 +1,116 @@
+{
+  "name": "Desert Eagle",
+  "desc": "Shoots bullets as big as its price tag.",
+  "id": "Core_DEagle",
+  "className": "BasicGun",
+  "tags": [
+    "Pistol"
+  ],
+  "weapon": [
+    {
+      "price": 1800,
+      "ammoPrice": 1,
+      "damage": 18,
+      "knockback": 0.01,
+      "accuracy": 2.5,
+      "maxAmmo": 7,
+      "reloadTime": 1.25,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/Desert Eagle/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/Desert Eagle/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 4500,
+      "ammoPrice": 1.1,
+      "damage": 28,
+      "knockback": 0.015,
+      "accuracy": 2,
+      "maxAmmo": 8,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/Desert Eagle/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/Desert Eagle/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 12000,
+      "ammoPrice": 3,
+      "damage": 46,
+      "knockback": 0.02,
+      "accuracy": 1.5,
+      "maxAmmo": 10,
+      "reloadTime": 0.75,
+      "preFireDelay": 0,
+      "postFireDelay": 0.15,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/Desert Eagle/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/Desert Eagle/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    }
+  ]
+}
