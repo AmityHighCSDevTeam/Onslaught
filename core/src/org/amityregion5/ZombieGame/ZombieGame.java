@@ -221,6 +221,7 @@ public class ZombieGame extends Game {
 							// Size 24 font
 							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 							parameter.size = (int) (24 * getYScalar());
+							parameter.borderWidth = 1;
 							
 							mainFont = fontGenerator.generateFont(parameter);
 							// Make the font black
@@ -232,6 +233,7 @@ public class ZombieGame extends Game {
 							// Size 36 font
 							FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 							parameter.size = (int) (30 * getYScalar());
+							parameter.borderWidth = 1;
 							
 							bigFont = fontGenerator.generateFont(parameter);
 							// Make the font black
