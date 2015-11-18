@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class MultiOutputStream extends OutputStream {
-	
+
 	private OutputStream[] streams;
-	
+
 	public MultiOutputStream(OutputStream ... streams) {
 		this.streams = streams;
 	}
@@ -17,14 +17,14 @@ public class MultiOutputStream extends OutputStream {
 			stream.write(b);
 		}
 	}
-	
+
 	@Override
 	public void flush() throws IOException {
 		for (OutputStream stream : streams) {
 			stream.flush();
 		}
 	}
-	
+
 	@Override
 	public void close() throws IOException {
 		for (OutputStream stream : streams) {

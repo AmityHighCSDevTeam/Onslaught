@@ -19,9 +19,7 @@ public class TextureRegistry {
 	// public static Array<Texture> zombieTextures = new Array<Texture>();
 
 	public static boolean tryRegisterAs(String path, String toReplace) {
-		if (textures.containsKey(path)) {
-			return false;
-		}
+		if (textures.containsKey(path)) { return false; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
 			ZombieGame.log("Texture Registry: registering: " + path + " as: " + toReplace);
@@ -32,9 +30,7 @@ public class TextureRegistry {
 	}
 
 	public static boolean tryRegister(String path) {
-		if (textures.containsKey(path)) {
-			return false;
-		}
+		if (textures.containsKey(path)) { return false; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
 			ZombieGame.log("Texture Registry: registering: " + path);
@@ -46,7 +42,7 @@ public class TextureRegistry {
 
 	public static void register(String path, FileHandle file) {
 		textures.put(path, null);
-		Gdx.app.postRunnable(()->{
+		Gdx.app.postRunnable(() -> {
 			Texture t = new Texture(file, true);
 			t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
 			textures.put(path, t);
@@ -54,45 +50,41 @@ public class TextureRegistry {
 	}
 
 	public static List<Texture> getTexturesFor(String str) {
-		List<Texture> t = textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).map((k)->textures.get(k)).collect(Collectors.toList());
-		if (t == null || t.size() == 0) {
-			return Arrays.asList(new Texture[]{ZombieGame.instance.missingTexture});
-		}
+		List<Texture> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
+				.map((k) -> textures.get(k)).collect(Collectors.toList());
+		if (t == null || t.size() == 0) { return Arrays.asList(new Texture[] {ZombieGame.instance.missingTexture}); }
 		return t;
 	}
 
 	public static List<String> getTextureNamesFor(String str) {
-		List<String> t = textures.keySet().stream().sequential().filter((s)->s.matches(regexify(str))).collect(Collectors.toList());
-		if (t == null || t.size() == 0) {
-			return Arrays.asList(new String[]{"--Null Texture--"});
-		}
+		List<String> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
+				.collect(Collectors.toList());
+		if (t == null || t.size() == 0) { return Arrays.asList(new String[] {"--Null Texture--"}); }
 		return t;
 	}
 
 	private static String regexify(String str) {
-		if (str == null) {
-			return "";
-		}
+		if (str == null) { return ""; }
 		String finalString = "";
 
 		String[] split = str.split(Pattern.quote("**"));
-		for (int i = 0; i<split.length; i++) {
+		for (int i = 0; i < split.length; i++) {
 			String[] split2 = split[i].split(Pattern.quote("*"));
-			for (int i2 = 0; i2<split2.length; i2++) {
+			for (int i2 = 0; i2 < split2.length; i2++) {
 				String[] split3 = split2[i2].split(Pattern.quote("?"));
-				for (int i3 = 0; i3<split3.length; i3++) {
-					finalString += split3[i3] + (i3 == split3.length-1  ? "" : "[^/]?");
+				for (int i3 = 0; i3 < split3.length; i3++) {
+					finalString += split3[i3] + (i3 == split3.length - 1 ? "" : "[^/]?");
 				}
 				finalString += (split2[i2].endsWith("?") ? "[^/]?" : "");
-				finalString += (i2 == split2.length-1 ? "" : "[^/]*");
+				finalString += (i2 == split2.length - 1 ? "" : "[^/]*");
 			}
 			finalString += (split[i].endsWith("*") ? "[^/]*" : "");
-			finalString += (i == split.length-1 ? "" : ".*");
+			finalString += (i == split.length - 1 ? "" : ".*");
 		}
 		finalString += (str.endsWith("**") ? ".*" : "");
 
 		return finalString;
-		//return str.replace("*", "[^/]*").replace("?", "[^/]?");
+		// return str.replace("*", "[^/]*").replace("?", "[^/]?");
 	}
 
 	public static void dispose() {

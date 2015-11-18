@@ -19,21 +19,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 /**
- *
  * @author sergeys
- *
  */
 public class PluginLoader {
 
 	private static JSONParser	parser	= new JSONParser();
-	private PluginManager manager;
+	private PluginManager		manager;
 
 	public PluginLoader(PluginManager pluginManager) {
 		manager = pluginManager;
 	}
 
 	/**
-	 *
 	 * @param plugins
 	 *            the list of files that can possibly be plugins
 	 */
@@ -56,15 +53,15 @@ public class PluginLoader {
 							String s = (String) pluginMeta.get("jarLoc");
 							if (!s.isEmpty() && p.child(s + ".jar").exists()) {
 								plugin.setJarLoc(s);
-								
+
 								JarLoader loader = new JarLoader(p.child(s + ".jar").file());
-								
+
 								plugin.setPlugins(loader.getIPlugins());
 							}
 						}
-						
+
 						plugin.setPluginFolderLoc(p.path());
-						
+
 						ZombieGame.log("Plugin Loader: Plugin Found: " + p.name());
 						manager.addPlugin(plugin);
 					} catch (IOException | ParseException e) {
@@ -77,7 +74,6 @@ public class PluginLoader {
 	}
 
 	/**
-	 *
 	 * @param plugins
 	 *            the list of files that can possibly be plugins
 	 */
@@ -109,83 +105,83 @@ public class PluginLoader {
 	private void loadFile(FileHandle handle, String prevPath, PluginContainer plugin) {
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
 		String[] sections = prevPath.split(Pattern.quote("/"));
-		//if (handle.extension().equals("png")) {
-		//	Gdx.app.debug("[Debug]", "Plugin Loader: Image Found: " + loc);
-		//	Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-		//}
+		// if (handle.extension().equals("png")) {
+		// Gdx.app.debug("[Debug]", "Plugin Loader: Image Found: " + loc);
+		// Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
+		// }
 		if (sections.length >= 2) {
 			switch (sections[1]) {
-			case "Weapons":
-				if (handle.extension().equals("json")) {
-					ZombieGame.debug("Plugin Loader: Loading Weapon: " + loc);
-					try {
-						loadWeapon((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
-					} catch (IOException | ParseException e) {
-						e.printStackTrace();
+				case "Weapons":
+					if (handle.extension().equals("json")) {
+						ZombieGame.debug("Plugin Loader: Loading Weapon: " + loc);
+						try {
+							loadWeapon((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
+						} catch (IOException | ParseException e) {
+							e.printStackTrace();
+						}
 					}
-				}
-				break;
-			case "Buffs":
-				if (handle.extension().equals("json")) {
-					ZombieGame.debug("Plugin Loader: Loading Buff: " + loc);
-					try {
-						loadBuff((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
-					} catch (IOException | ParseException e) {
-						e.printStackTrace();
+					break;
+				case "Buffs":
+					if (handle.extension().equals("json")) {
+						ZombieGame.debug("Plugin Loader: Loading Buff: " + loc);
+						try {
+							loadBuff((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
+						} catch (IOException | ParseException e) {
+							e.printStackTrace();
+						}
 					}
-				}
-				break;
-			case "Players":
-				if (handle.extension().equals("png")) {
-					ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
-					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-				}
-				break;
-			case "Zombies":
-				if (handle.extension().equals("png")) {
-					ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
-					Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-				}
-				break;
+					break;
+				case "Players":
+					if (handle.extension().equals("png")) {
+						ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
+						Gdx.app.postRunnable(() -> TextureRegistry.register(loc, handle));
+					}
+					break;
+				case "Zombies":
+					if (handle.extension().equals("png")) {
+						ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
+						Gdx.app.postRunnable(() -> TextureRegistry.register(loc, handle));
+					}
+					break;
 			}
 		}
 	}
 
 	private void loadBuff(JSONObject o, PluginContainer plugin, String pathName) {
 		Buff buff = new Buff();
-		
+
 		JSONArray arr = (JSONArray) o.get("buffs");
-		
+
 		String name = (String) o.get("name");
-		
+
 		String icon = (String) o.get("icon");
-		
+
 		double price = ((Number) o.get("price")).doubleValue();
-		
+
 		for (Object obj : arr) {
 			JSONObject aO = (JSONObject) obj;
-			
+
 			String type = (String) aO.get("type");
 			String key = (String) aO.get("key");
 			double value = ((Number) aO.get("val")).doubleValue();
-			
+
 			if (type.equals("mult")) {
 				buff.addMult(key, value);
 			} else if (type.equals("add")) {
 				buff.addAdd(key, value);
 			}
 		}
-		
+
 		BuffApplicator applicator = new BuffApplicator(buff, name, price, icon);
-		
+
 		plugin.addBuffApplicator(applicator);
 	}
 
 	private void loadWeapon(JSONObject o, PluginContainer plugin, String pathName) {
 		String className = (String) o.get("className");
 		if (className == null) {
-			ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName +  " Error: No class name");
-			return; 
+			ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: No class name");
+			return;
 		}
 		for (Class<? extends IWeapon> c : ZombieGame.instance.weaponRegistry.getWeaponClasses()) {
 			if (c.getSimpleName().equals(className)) {
@@ -197,7 +193,8 @@ public class PluginLoader {
 						plugin.addWeapon(weapon);
 						return;
 					} else {
-						ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
+						ZombieGame.error(
+								"Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
 					}
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();

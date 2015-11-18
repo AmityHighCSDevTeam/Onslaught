@@ -7,9 +7,7 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.utils.Array;
 
 /**
- *
  * @author sergeys
- *
  */
 public class BasicGun extends AbstractWeapon<WeaponData> {
 

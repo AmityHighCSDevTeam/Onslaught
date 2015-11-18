@@ -15,16 +15,15 @@ public class PluginContainer {
 	private ArrayList<IWeapon>					weapons			= new ArrayList<IWeapon>();
 	private ArrayList<Class<? extends IWeapon>>	weaponClasses	= new ArrayList<Class<? extends IWeapon>>();
 
-	private ArrayList<BuffApplicator>			buffApplicators	= new ArrayList<BuffApplicator>();
+	private ArrayList<BuffApplicator> buffApplicators = new ArrayList<BuffApplicator>();
 
-	private String name;
-	private String desc;
-	private String jarLoc;
-	private String pluginFolderLoc;
-	private List<IPlugin> plugins;
+	private String			name;
+	private String			desc;
+	private String			jarLoc;
+	private String			pluginFolderLoc;
+	private List<IPlugin>	plugins;
 
-	public PluginContainer() {
-	}
+	public PluginContainer() {}
 
 	public void setDesc(String desc) {
 		this.desc = desc;
@@ -38,7 +37,8 @@ public class PluginContainer {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -52,7 +52,8 @@ public class PluginContainer {
 	}
 
 	/**
-	 * @param jarLoc the jarLoc to set
+	 * @param jarLoc
+	 *            the jarLoc to set
 	 */
 	public void setJarLoc(String jarLoc) {
 		this.jarLoc = jarLoc;
@@ -102,18 +103,16 @@ public class PluginContainer {
 	}
 
 	public List<IPurchaseable> getPurchaseables() {
-		return Stream.concat(
-				weapons.stream().map((w)->new GunPurchaseable(w)),
-				buffApplicators.stream().map((b)->new BuffPurchaseable(b))
-				).map((o)->{
-					return(IPurchaseable)o;
+		return Stream.concat(weapons.stream().map((w) -> new GunPurchaseable(w)),
+				buffApplicators.stream().map((b) -> new BuffPurchaseable(b))).map((o) -> {
+					return o;
 				}).collect(Collectors.toList());
 	}
-	
+
 	public List<IPlugin> getPlugins() {
 		return plugins;
 	}
-	
+
 	public void setPlugins(List<IPlugin> plugins) {
 		this.plugins = plugins;
 	}

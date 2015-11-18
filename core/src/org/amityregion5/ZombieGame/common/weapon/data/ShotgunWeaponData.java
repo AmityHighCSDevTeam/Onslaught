@@ -2,9 +2,9 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 
 import org.json.simple.JSONObject;
 
-public class ShotgunWeaponData extends WeaponData{
-	private int shots;
-	private double spread;
+public class ShotgunWeaponData extends WeaponData {
+	private int		shots;
+	private double	spread;
 
 	public ShotgunWeaponData(JSONObject o) {
 		super(o);
@@ -24,7 +24,8 @@ public class ShotgunWeaponData extends WeaponData{
 	}
 
 	/**
-	 * @param shots the shots to set
+	 * @param shots
+	 *            the shots to set
 	 */
 	public void setShots(int shots) {
 		this.shots = shots;
@@ -38,7 +39,8 @@ public class ShotgunWeaponData extends WeaponData{
 	}
 
 	/**
-	 * @param spread the spread to set
+	 * @param spread
+	 *            the spread to set
 	 */
 	public void setSpread(double spread) {
 		this.spread = spread;

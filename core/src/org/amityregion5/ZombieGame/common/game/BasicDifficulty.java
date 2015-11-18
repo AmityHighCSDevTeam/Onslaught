@@ -1,12 +1,12 @@
 package org.amityregion5.ZombieGame.common.game;
 
 public class BasicDifficulty implements Difficulty {
-	
-	private String id, name;
-	private float overallMult, waveMod, healthMod, moneyMod, damageMod;
-	private double healthChance, startMoney;
-	private int maxHostiles;
-	
+
+	private String	id, name;
+	private float	overallMult, waveMod, healthMod, moneyMod, damageMod;
+	private double	healthChance, startMoney;
+	private int		maxHostiles;
+
 	/**
 	 * @param id
 	 * @param name
@@ -65,7 +65,7 @@ public class BasicDifficulty implements Difficulty {
 
 	@Override
 	public float getDamageMultiplier() {
-		return damageMod; 
+		return damageMod;
 	}
 
 	@Override

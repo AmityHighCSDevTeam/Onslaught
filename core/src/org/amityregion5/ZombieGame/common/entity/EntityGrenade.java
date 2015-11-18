@@ -11,14 +11,13 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author savelyevse17
- *
  */
 public class EntityGrenade implements IEntity, Disposable {
 
-	private Body				body;
-	private float				friction;
-	private MassData			massData;
-	private float size;
+	private Body		body;
+	private float		friction;
+	private MassData	massData;
+	private float		size;
 
 	public EntityGrenade(float size) {
 		massData = new MassData();
@@ -27,8 +26,7 @@ public class EntityGrenade implements IEntity, Disposable {
 	}
 
 	@Override
-	public void setShape(Shape e) {
-	}
+	public void setShape(Shape e) {}
 
 	@Override
 	public Shape getShape() {
@@ -38,8 +36,7 @@ public class EntityGrenade implements IEntity, Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public void setBody(Body b) {
@@ -69,7 +66,7 @@ public class EntityGrenade implements IEntity, Disposable {
 	public MassData getMassData() {
 		return massData;
 	}
-	
+
 	public float getSize() {
 		return size;
 	}

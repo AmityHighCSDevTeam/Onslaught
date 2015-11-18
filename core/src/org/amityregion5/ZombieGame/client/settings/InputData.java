@@ -5,15 +5,14 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 
 public class InputData {
-	private int keyboard = -1;
-	private int mouseButton = -1;
+	private int	keyboard	= -1;
+	private int	mouseButton	= -1;
 
-	public InputData() {
-	}
+	public InputData() {}
 
 	/**
-	 * 
-	 * @param keyboard if true then it is a keyboard type
+	 * @param keyboard
+	 *            if true then it is a keyboard type
 	 * @param value
 	 */
 	public InputData(boolean keyboard, int value) {
@@ -45,18 +44,14 @@ public class InputData {
 	public boolean isDown() {
 		if (isKeyboard()) {
 			return isKeyDown();
-		} else if (isMouseButton()) {
-			return isMouseDown();
-		}
+		} else if (isMouseButton()) { return isMouseDown(); }
 		return false;
 	}
 
 	public boolean isJustDown() {
 		if (isKeyboard()) {
 			return isKeyJustDown();
-		} else if (isMouseButton()) {
-			return isMouseJustDown();
-		}
+		} else if (isMouseButton()) { return isMouseJustDown(); }
 		return false;
 	}
 
@@ -74,7 +69,7 @@ public class InputData {
 
 	/**
 	 * Warning: May not be accurate
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isMouseJustDown() {
@@ -97,9 +92,7 @@ public class InputData {
 				return "Left Mouse";
 			} else if (mouseButton == Buttons.RIGHT) {
 				return "Right Mouse";
-			} else if (mouseButton == Buttons.MIDDLE) {
-				return "Middle Mouse";
-			}
+			} else if (mouseButton == Buttons.MIDDLE) { return "Middle Mouse"; }
 		}
 		return "ERROR";
 	}
@@ -108,9 +101,7 @@ public class InputData {
 	public boolean equals(Object obj) {
 		if (obj instanceof InputData) {
 			InputData data = (InputData) obj;
-			if (data.getKeyboard() == this.getKeyboard() && data.getMouseButton() == this.getMouseButton()) {
-				return true;
-			}
+			if (data.getKeyboard() == getKeyboard() && data.getMouseButton() == getMouseButton()) { return true; }
 			return false;
 		}
 		return false;

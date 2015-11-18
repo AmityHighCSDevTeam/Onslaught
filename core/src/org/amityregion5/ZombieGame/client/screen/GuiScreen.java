@@ -11,9 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- *
  * @author sergeys
- *
  */
 public abstract class GuiScreen implements Screen {
 
@@ -28,12 +26,11 @@ public abstract class GuiScreen implements Screen {
 	// The screen that we came from
 	protected GuiScreen					prevScreen;
 	// The camera
-	protected OrthographicCamera	camera;
+	protected OrthographicCamera		camera;
 
 	private boolean disposed = false;
 
 	/**
-	 *
 	 * @param prevScreen
 	 *            the screen that we came from
 	 */
@@ -99,16 +96,13 @@ public abstract class GuiScreen implements Screen {
 	}
 
 	@Override
-	public void hide() {
-	}
+	public void hide() {}
 
 	@Override
-	public void pause() {
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-	}
+	public void resume() {}
 
 	@Override
 	public void dispose() {
@@ -128,14 +122,12 @@ public abstract class GuiScreen implements Screen {
 	/**
 	 * Override this to get buttonClicks
 	 */
-	protected void buttonClicked(int id) {
-	}
+	protected void buttonClicked(int id) {}
 
 	/**
 	 * On mouse down
 	 */
-	protected void mouseDown(float x, float y) {
-	}
+	protected void mouseDown(float x, float y) {}
 
 	/**
 	 * On mouse up

@@ -25,52 +25,79 @@ import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
 
 public class InventoryWindow implements Screen {
-	private ShapeRenderer shapeRender = new ShapeRenderer();
-	private InGameScreen screen;
-	private PlayerModel player;
-	private double scrollPos;
-	private SpriteBatch batch = new SpriteBatch();
-	private float weaponBoxSize = 128;
-	private float weaponBoxBorder = 8;
-	private int mouseX, mouseY;
-	private InputProcessor processor;
-	
+	private ShapeRenderer	shapeRender		= new ShapeRenderer();
+	private InGameScreen	screen;
+	private PlayerModel		player;
+	private double			scrollPos;
+	private SpriteBatch		batch			= new SpriteBatch();
+	private float			weaponBoxSize	= 128;
+	private float			weaponBoxBorder	= 8;
+	private int				mouseX, mouseY;
+	private InputProcessor	processor;
+
 	public InventoryWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
 
 		processor = new InputProcessor() {
-			public boolean keyDown(int keycode) {return false;}
-			public boolean keyUp(int keycode) {return false;}
-			public boolean keyTyped(char character) {return false;}
-			public boolean touchDown(int screenX, int screenY, int pointer,
-					int button) {return false;}
-			public boolean touchUp(int screenX, int screenY, int pointer,
-					int button) {return false;}
-			public boolean touchDragged(int screenX, int screenY, int pointer) {return false;}
-			public boolean mouseMoved(int screenX, int screenY) {return false;}
+			@Override
+			public boolean keyDown(int keycode) {
+				return false;
+			}
+
+			@Override
+			public boolean keyUp(int keycode) {
+				return false;
+			}
+
+			@Override
+			public boolean keyTyped(char character) {
+				return false;
+			}
+
+			@Override
+			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				return false;
+			}
+
+			@Override
+			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+				return false;
+			}
+
+			@Override
+			public boolean touchDragged(int screenX, int screenY, int pointer) {
+				return false;
+			}
+
+			@Override
+			public boolean mouseMoved(int screenX, int screenY) {
+				return false;
+			}
+
+			@Override
 			public boolean scrolled(int amount) {
-					double maxAmt = getMaxScrollAmount() - screen.getHeight() + 200;
-					scrollPos = MathHelper.clamp(0, (maxAmt > 0 ? maxAmt : 0), scrollPos + amount*5);
+				double maxAmt = getMaxScrollAmount() - screen.getHeight() + 200;
+				scrollPos = MathHelper.clamp(0, (maxAmt > 0 ? maxAmt : 0), scrollPos + amount * 5);
 				return true;
 			}
 		};
-		
+
 		Client.inputMultiplexer.addProcessor(processor);
 	}
 
 	@Override
 	public void drawScreen(float delta, Camera camera) {
 		drawPrepare(delta);
-		
+
 		mouseX = Gdx.input.getX();
 		mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
-		
+
 		drawMain(delta);
-		
+
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
-	
+
 	private void drawPrepare(float delta) {
 		shapeRender.setProjectionMatrix(screen.getScreenProjectionMatrix());
 		batch.setProjectionMatrix(screen.getScreenProjectionMatrix());
@@ -80,108 +107,105 @@ public class InventoryWindow implements Screen {
 
 		shapeRender.begin(ShapeType.Filled);
 
-		//Gray the entire screen
+		// Gray the entire screen
 		shapeRender.setColor(0.5f, 0.5f, 0.5f, 0.2f);
 		shapeRender.rect(0, 0, screen.getWidth(), screen.getHeight());
 
-		//Main box in the center
+		// Main box in the center
 		shapeRender.setColor(0.3f, 0.3f, 0.3f, 0.6f);
-		shapeRender.rect(100, 100, screen.getWidth()-200, screen.getHeight()-200);
+		shapeRender.rect(100, 100, screen.getWidth() - 200, screen.getHeight() - 200);
 
 		shapeRender.end();
 
 		shapeRender.begin(ShapeType.Line);
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
-		//Main box border
-		shapeRender.rect(100, 100, screen.getWidth()-200, screen.getHeight()-200);
+		// Main box border
+		shapeRender.rect(100, 100, screen.getWidth() - 200, screen.getHeight() - 200);
 
 		shapeRender.end();
 	}
-	
-	private void drawMain(float delta){
+
+	private void drawMain(float delta) {
 		float x = 101;
 		float y = (float) (screen.getHeight() - 101 + scrollPos);
 		float w = screen.getWidth() - 221;
 
 		shapeRender.begin(ShapeType.Filled);
-		//Main Scroll bar box
+		// Main Scroll bar box
 		shapeRender.setColor(0.4f, 0.4f, 0.4f, 1f);
-		shapeRender.rect(x+w, 100, 20, screen.getHeight()-200);
+		shapeRender.rect(x + w, 100, 20, screen.getHeight() - 200);
 
-		//Main Scroll Bar
+		// Main Scroll Bar
 		shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
-		shapeRender.rect(x+w,getScrollBarPos()
-				, 20, getScrollBarHeight());
+		shapeRender.rect(x + w, getScrollBarPos(), 20, getScrollBarHeight());
 		shapeRender.end();
 
 		shapeRender.begin(ShapeType.Line);
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
-		//Scroll bar box border left line
-		shapeRender.line(x+w, 100, x+w, screen.getHeight()-100);
+		// Scroll bar box border left line
+		shapeRender.line(x + w, 100, x + w, screen.getHeight() - 100);
 
 		shapeRender.end();
-		
-		int cols = ((int)((screen.getWidth() - 221)/(weaponBoxSize + weaponBoxBorder + weaponBoxBorder)));
-		
+
+		int cols = ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder)));
+
 		float trueWeaponBoxSize = weaponBoxSize + weaponBoxBorder + weaponBoxBorder;
-		
-		float wMult = (float)Gdx.graphics.getWidth()/screen.getWidth();
-		float hMult = (float)Gdx.graphics.getHeight()/screen.getHeight();
-		
+
+		float wMult = (float) Gdx.graphics.getWidth() / screen.getWidth();
+		float hMult = (float) Gdx.graphics.getHeight() / screen.getHeight();
+
 		int mouseOverIndex = -1;
-		
-		Rectangle clipBounds = new Rectangle(x*wMult, 100*hMult, w*wMult, (screen.getHeight() - 201)*hMult);
+
+		Rectangle clipBounds = new Rectangle(x * wMult, 100 * hMult, w * wMult, (screen.getHeight() - 201) * hMult);
 		ScissorStack.pushScissors(clipBounds);
-		for (int i = 0; i<player.getWeapons().size(); i++) {
+		for (int i = 0; i < player.getWeapons().size(); i++) {
 			Gdx.gl.glEnable(GL20.GL_BLEND);
-			
-			int row = i/cols;
-			int col = i%cols;
-			
+
+			int row = i / cols;
+			int col = i % cols;
+
 			float boxX = trueWeaponBoxSize * col + weaponBoxBorder + x;
-			float boxY =  y - (trueWeaponBoxSize * (row + 1));
-			
+			float boxY = y - (trueWeaponBoxSize * (row + 1));
+
 			shapeRender.begin(ShapeType.Filled);
-			
-			shapeRender.setColor(new Color(191/255f, 191/255f, 191/255f, 100/255f));
-			shapeRender.rect(boxX,boxY, weaponBoxSize, weaponBoxSize);
-			
+
+			shapeRender.setColor(new Color(191 / 255f, 191 / 255f, 191 / 255f, 100 / 255f));
+			shapeRender.rect(boxX, boxY, weaponBoxSize, weaponBoxSize);
+
 			shapeRender.end();
-			
+
 			WeaponStack weapon = player.getWeapons().get(i);
-			
+
 			batch.begin();
 			Texture icon = TextureRegistry.getTexturesFor(weapon.getIconTextureName()).get(0);
 
 			batch.setColor(new Color(1, 1, 1, 1));
-			batch.draw(icon, boxX,boxY, weaponBoxSize, weaponBoxSize);
-			
+			batch.draw(icon, boxX, boxY, weaponBoxSize, weaponBoxSize);
+
 			batch.end();
-			
+
 			Gdx.gl.glLineWidth(2);
 			shapeRender.begin(ShapeType.Line);
-			
+
 			shapeRender.setColor(Color.DARK_GRAY);
-			shapeRender.rect(boxX,boxY, weaponBoxSize, weaponBoxSize);
-			
+			shapeRender.rect(boxX, boxY, weaponBoxSize, weaponBoxSize);
+
 			shapeRender.end();
 			Gdx.gl.glLineWidth(1);
 
-			if (mouseX > boxX && mouseY > boxY &&
-					mouseX < boxX + weaponBoxSize &&
-					mouseY < boxY + weaponBoxSize) {
+			if (mouseX > boxX && mouseY > boxY && mouseX < boxX + weaponBoxSize && mouseY < boxY + weaponBoxSize) {
 				mouseOverIndex = i;
 			}
 		}
 		ScissorStack.popScissors();
-		
+
 		if (mouseOverIndex != -1) {
 			WeaponStack weapon = player.getWeapons().get(mouseOverIndex);
-			
+
 			if (Gdx.input.isTouched()) {
-				for (int i=0; i<player.getHotbar().length;i++) {
+				for (int i = 0; i < player.getHotbar().length; i++) {
 					if (i == player.getCurrWeapIndex()) {
 						player.getHotbar()[i] = weapon;
 					} else if (player.getHotbar()[i] == weapon) {
@@ -189,51 +213,50 @@ public class InventoryWindow implements Screen {
 					}
 				}
 			}
-			
+
 			float boxWidth = 0;
 			float boxHeight = 0;
-			
-			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getName(),
-					0, weapon.getWeapon().getName().length(), Color.BLACK,
-					300, Align.left, false, "...");
-			
+
+			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getName(), 0,
+					weapon.getWeapon().getName().length(), Color.BLACK, 300, Align.left, false, "...");
+
 			boxWidth = Math.max(boxWidth, nameGlyph.width + 8);
 			boxHeight += nameGlyph.height + 4 + 4;
-			
+
 			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getDescription(),
 					Color.BLACK, 300, Align.left, true);
-			
+
 			boxWidth = Math.max(boxWidth, descGlyph.width + 8);
 			boxHeight += descGlyph.height + 4;
-			
+
 			boxHeight += 10;
-			
+
 			shapeRender.begin(ShapeType.Filled);
-			
+
 			shapeRender.setColor(Color.LIGHT_GRAY);
 			shapeRender.rect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
-			
+
 			shapeRender.end();
-			
+
 			shapeRender.begin(ShapeType.Line);
-			
+
 			shapeRender.setColor(Color.DARK_GRAY);
 			shapeRender.rect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
-			
+
 			shapeRender.end();
-			
+
 			batch.begin();
-			
+
 			float textDrawing = mouseY - 3;
-			
+
 			ZombieGame.instance.mainFont.draw(batch, nameGlyph, mouseX + 4, textDrawing);
 			textDrawing -= nameGlyph.height + 4;
-			
+
 			textDrawing -= 10;
-			
+
 			ZombieGame.instance.mainFont.draw(batch, descGlyph, mouseX + 4, textDrawing);
 			textDrawing -= descGlyph.height + 4;
-			
+
 			batch.end();
 		} else if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			player.getHotbar()[player.getCurrWeapIndex()] = new WeaponStack(new NullWeapon());
@@ -244,21 +267,23 @@ public class InventoryWindow implements Screen {
 	public void dispose() {
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
-	
+
 	private double getMaxScrollAmount() {
-		return (weaponBoxSize/((int)((screen.getWidth() - 221)/(weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2) * ZombieGame.instance.pluginManager.getActivatedWeapons().size();
+		return (weaponBoxSize
+				/ ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2)
+				* ZombieGame.instance.pluginManager.getActivatedWeapons().size();
 	}
 
 	private float getScrollBarPos() {
-		double screenHeight = screen.getHeight()-200;
-		double pos = (screenHeight - getScrollBarHeight()) * (scrollPos)/(getMaxScrollAmount() - screenHeight);
+		double screenHeight = screen.getHeight() - 200;
+		double pos = (screenHeight - getScrollBarHeight()) * (scrollPos) / (getMaxScrollAmount() - screenHeight);
 		pos = (screen.getHeight() - 100) - pos - getScrollBarHeight();
 		return (float) pos;
 	}
 
 	private float getScrollBarHeight() {
-		double screenHeight = screen.getHeight()-200;
-		double height = (screenHeight * screenHeight)/getMaxScrollAmount();
+		double screenHeight = screen.getHeight() - 200;
+		double height = (screenHeight * screenHeight) / getMaxScrollAmount();
 		return (float) (height > screenHeight ? screenHeight : height);
 	}
 }

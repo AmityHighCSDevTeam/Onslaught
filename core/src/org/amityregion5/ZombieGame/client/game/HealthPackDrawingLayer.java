@@ -11,15 +11,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class HealthPackDrawingLayer implements IDrawingLayer {
-	
+
 	public static final HealthPackDrawingLayer instance = new HealthPackDrawingLayer();
-	
+
 	private Sprite sprite;
-	
+
 	public HealthPackDrawingLayer() {
-		this.sprite = new Sprite(TextureRegistry.getTexturesFor("healthPack").get(0));
+		sprite = new Sprite(TextureRegistry.getTexturesFor("healthPack").get(0));
 	}
-	
+
 	public Sprite getSprite() {
 		return sprite;
 	}
@@ -32,12 +32,10 @@ public class HealthPackDrawingLayer implements IDrawingLayer {
 		HealthPackParticle model = (HealthPackParticle) p;
 		Color c = batch.getColor();
 		batch.begin();
-		
+
 		sprite.setOriginCenter();
-		//sprite.setRotation((float) (-90));
-		sprite.setBounds(model.getX()
-				- model.getSize(), model.getY() - model.getSize(),
-				model.getSize() * 2,
+		// sprite.setRotation((float) (-90));
+		sprite.setBounds(model.getX() - model.getSize(), model.getY() - model.getSize(), model.getSize() * 2,
 				model.getSize() * 2);
 
 		sprite.draw(batch);

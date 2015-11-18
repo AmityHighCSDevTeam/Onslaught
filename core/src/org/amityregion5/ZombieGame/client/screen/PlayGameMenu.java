@@ -12,9 +12,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.utils.Align;
 
 /**
- *
  * @author sergeys
- *
  */
 public class PlayGameMenu extends GuiScreen {
 
@@ -23,7 +21,7 @@ public class PlayGameMenu extends GuiScreen {
 	}
 
 	// Font
-	private BitmapFont	calibri30;
+	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -38,8 +36,7 @@ public class PlayGameMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		calibri30.draw(batch, "Play Game", 10, getHeight() - 45,
-				getWidth() - 20, Align.center, false);
+		calibri30.draw(batch, "Play Game", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 	}
 
 	@Override
@@ -52,12 +49,11 @@ public class PlayGameMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0,
-				"Singleplayer", 10, getHeight() - 150, getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1,
-				"Tutorial", 10, getHeight() - 210, getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back",
-				10, 10, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Singleplayer", 10, getHeight() - 150,
+				getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Tutorial", 10, getHeight() - 210,
+				getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back", 10, 10, getWidth() - 20, 50));
 	}
 
 	@Override

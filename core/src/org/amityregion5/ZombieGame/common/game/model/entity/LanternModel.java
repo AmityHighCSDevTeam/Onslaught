@@ -13,18 +13,17 @@ import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
 
-public class LanternModel implements IEntityModel<EntityLantern>{
-	public static final Color	LIGHT_COLOR	= new Color(1,1,1,130f/255);
+public class LanternModel implements IEntityModel<EntityLantern> {
+	public static final Color LIGHT_COLOR = new Color(1, 1, 1, 130f / 255);
 
 	private Light				light;
-	private EntityLantern entity;
+	private EntityLantern		entity;
 	private Game				g;
 	private Color				c;
 	private SpriteDrawingLayer	sprite;
-	private String creation;
-	
-	public LanternModel() {
-	}
+	private String				creation;
+
+	public LanternModel() {}
 
 	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString) {
 		entity = e;
@@ -45,7 +44,7 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 			light.setActive(true);
 			light.attachToBody(entity.getBody());
 		}
-		//light.setPosition(entity.getBody().getWorldCenter());
+		// light.setPosition(entity.getBody().getWorldCenter());
 		sprite.getSprite().setOriginCenter();
 	}
 
@@ -93,7 +92,9 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	}
 
 	public static Color getLIGHT_COLOR() {
-		return LIGHT_COLOR;//new Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(), 1);
+		return LIGHT_COLOR;// new
+							// Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),
+							// 1);
 	}
 
 	public Color getColor() {
@@ -108,7 +109,7 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 	@Override
 	public JSONObject convertToJSONObject() {
 		JSONObject obj = new JSONObject();
-		
+
 		obj.put("x", entity.getBody().getWorldCenter().x);
 		obj.put("y", entity.getBody().getWorldCenter().y);
 		obj.put("r", entity.getBody().getTransform().getRotation());
@@ -119,15 +120,15 @@ public class LanternModel implements IEntityModel<EntityLantern>{
 
 	@Override
 	public IEntityModel<EntityLantern> fromJSON(JSONObject obj, Game g) {
-		float x = ((Number)obj.get("x")).floatValue();
-		float y = ((Number)obj.get("y")).floatValue();
-		float r = ((Number)obj.get("r")).floatValue();
+		float x = ((Number) obj.get("x")).floatValue();
+		float y = ((Number) obj.get("y")).floatValue();
+		float r = ((Number) obj.get("r")).floatValue();
 		String creationStr = (String) obj.get("creation");
-		
-		LanternModel model = (LanternModel) Placeable.registeredObjects.get(creationStr).apply(g, new Vector2(x,y));
-		
+
+		LanternModel model = (LanternModel) Placeable.registeredObjects.get(creationStr).apply(g, new Vector2(x, y));
+
 		model.getEntity().getBody().getTransform().setRotation(r);
-		
+
 		return model;
 	}
 }

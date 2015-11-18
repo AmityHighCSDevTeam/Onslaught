@@ -17,21 +17,19 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.utils.Align;
 
 /**
- *
  * @author sergeys
- *
  */
 public class NewGameMenu extends GuiScreen {
-	
-	List<Difficulty> diffs = GameRegistry.difficulties;	
+
+	List<Difficulty> diffs = GameRegistry.difficulties;
 
 	public NewGameMenu(GuiScreen prevScreen) {
 		super(prevScreen);
-		diffs.sort((a,b)->(int)((a.getOverallMultiplier()-b.getOverallMultiplier())*10));
+		diffs.sort((a, b) -> (int) ((a.getOverallMultiplier() - b.getOverallMultiplier()) * 10));
 	}
 
 	// Font
-	private BitmapFont	calibri30;
+	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -46,8 +44,7 @@ public class NewGameMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		calibri30.draw(batch, "New Game", 10, getHeight() - 45,
-				getWidth() - 20, Align.center, false);
+		calibri30.draw(batch, "New Game", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 	}
 
 	@Override
@@ -63,14 +60,12 @@ public class NewGameMenu extends GuiScreen {
 		{
 			int i = 0;
 			for (Difficulty d : diffs) {
-				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i,
-						d.getHumanName(), 10, getHeight() - 150 - 60 * i,
-						getWidth() - 20, 50));
+				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i, d.getHumanName(), 10,
+						getHeight() - 150 - 60 * i, getWidth() - 20, 50));
 				i++;
 			}
 		}
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back",
-				10, 10, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
 	}
 
 	@Override
@@ -99,9 +94,10 @@ public class NewGameMenu extends GuiScreen {
 				ZombieGame.instance.setScreen(prevScreen);
 				break;
 			default:
-				ZombieGame.instance
-						.setScreen(new InGameScreen(this, new Game(diffs.get(id), true, ZombieGame.instance.isCheatModeAllowed &&
-								Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)), true));
+				ZombieGame.instance.setScreen(new InGameScreen(this,
+						new Game(diffs.get(id), true, ZombieGame.instance.isCheatModeAllowed
+								&& Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
+						true));
 		}
 	}
 

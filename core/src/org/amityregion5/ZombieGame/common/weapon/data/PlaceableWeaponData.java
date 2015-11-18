@@ -9,11 +9,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
-	private double	price, ammoPrice,preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY, warmup;
-	private int		maxAmmo, gameOrgX, gameOrgY;
-	private String iconTextureString, gameTextureString, placingObject;
-	private List<SoundData> sounds;
-	private Buff buff;
+	private double			price, ammoPrice, preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX,
+			gameOffY, warmup;
+	private int				maxAmmo, gameOrgX, gameOrgY;
+	private String			iconTextureString, gameTextureString, placingObject;
+	private List<SoundData>	sounds;
+	private Buff			buff;
 
 	public PlaceableWeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -76,10 +77,10 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		}
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
-			JSONArray arr = (JSONArray)o.get("sounds");
-			
+			JSONArray arr = (JSONArray) o.get("sounds");
+
 			for (Object obj : arr) {
-				JSONObject soundJSON = (JSONObject)obj;
+				JSONObject soundJSON = (JSONObject) obj;
 				SoundData sound = SoundData.getSoundData(soundJSON);
 				if (sound != null) {
 					sounds.add(sound);
@@ -87,19 +88,21 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 			}
 		}
 		if (o.containsKey("buff")) {
-			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
+			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
 		}
 	}
 
 	/**
 	 * @return the price
 	 */
+	@Override
 	public double getPrice() {
 		return price;
 	}
 
 	/**
-	 * @param price the price to set
+	 * @param price
+	 *            the price to set
 	 */
 	public void setPrice(double price) {
 		this.price = price;
@@ -113,7 +116,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param ammoPrice the ammoPrice to set
+	 * @param ammoPrice
+	 *            the ammoPrice to set
 	 */
 	public void setAmmoPrice(double ammoPrice) {
 		this.ammoPrice = ammoPrice;
@@ -127,7 +131,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param preFireDelay the preFireDelay to set
+	 * @param preFireDelay
+	 *            the preFireDelay to set
 	 */
 	public void setPreFireDelay(double preFireDelay) {
 		this.preFireDelay = preFireDelay;
@@ -141,7 +146,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param postFireDelay the postFireDelay to set
+	 * @param postFireDelay
+	 *            the postFireDelay to set
 	 */
 	public void setPostFireDelay(double postFireDelay) {
 		this.postFireDelay = postFireDelay;
@@ -155,7 +161,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param reloadTime the reloadTime to set
+	 * @param reloadTime
+	 *            the reloadTime to set
 	 */
 	public void setReloadTime(double reloadTime) {
 		this.reloadTime = reloadTime;
@@ -169,7 +176,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param maxRange the maxRange to set
+	 * @param maxRange
+	 *            the maxRange to set
 	 */
 	public void setMaxRange(double maxRange) {
 		this.maxRange = maxRange;
@@ -183,7 +191,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param maxAmmo the maxAmmo to set
+	 * @param maxAmmo
+	 *            the maxAmmo to set
 	 */
 	public void setMaxAmmo(int maxAmmo) {
 		this.maxAmmo = maxAmmo;
@@ -192,12 +201,14 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	/**
 	 * @return the iconTextureString
 	 */
+	@Override
 	public String getIconTextureString() {
 		return iconTextureString;
 	}
 
 	/**
-	 * @param iconTextureString the iconTextureString to set
+	 * @param iconTextureString
+	 *            the iconTextureString to set
 	 */
 	public void setIconTextureString(String iconTextureString) {
 		this.iconTextureString = iconTextureString;
@@ -206,12 +217,14 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	/**
 	 * @return the gameTextureString
 	 */
+	@Override
 	public String getGameTextureString() {
 		return gameTextureString;
 	}
 
 	/**
-	 * @param gameTextureString the gameTextureString to set
+	 * @param gameTextureString
+	 *            the gameTextureString to set
 	 */
 	public void setGameTextureString(String gameTextureString) {
 		this.gameTextureString = gameTextureString;
@@ -225,7 +238,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param placingObject the placingObject to set
+	 * @param placingObject
+	 *            the placingObject to set
 	 */
 	public void setPlacingObject(String placingObject) {
 		this.placingObject = placingObject;
@@ -264,7 +278,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param sounds the sounds to set
+	 * @param sounds
+	 *            the sounds to set
 	 */
 	public void setSounds(List<SoundData> sounds) {
 		this.sounds = sounds;
@@ -276,12 +291,13 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param warmup the warmup to set
+	 * @param warmup
+	 *            the warmup to set
 	 */
 	public void setWarmup(double warmup) {
 		this.warmup = warmup;
 	}
-	
+
 	public double getWarmup() {
 		return warmup;
 	}

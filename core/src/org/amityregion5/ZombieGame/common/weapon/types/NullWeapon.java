@@ -46,21 +46,17 @@ public final class NullWeapon implements IWeapon {
 	}
 
 	@Override
-	public void onUse(Vector2 end, Game game, PlayerModel firing,
-			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
-	}
+	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack,
+			boolean isMouseJustDown) {}
 
 	@Override
-	public void purchaseAmmo(PlayerModel player, WeaponStack stack) {
-	}
+	public void purchaseAmmo(PlayerModel player, WeaponStack stack) {}
 
 	@Override
-	public void reload(WeaponStack stack, Game game, PlayerModel firing) {
-	}
+	public void reload(WeaponStack stack, Game game, PlayerModel firing) {}
 
 	@Override
-	public void tick(float delta, WeaponStack stack) {
-	}
+	public void tick(float delta, WeaponStack stack) {}
 
 	@Override
 	public Map<String, String> getWeaponDataDescriptors(int level) {

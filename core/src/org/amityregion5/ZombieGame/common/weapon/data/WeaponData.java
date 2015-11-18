@@ -11,15 +11,15 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
-	private double	price, ammoPrice, damage, knockback, accuracy, warmup,
-	preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
-	private int		maxAmmo, gameOrgX, gameOrgY;
-	private float bulletThickness;
-	private Color bulletColor;
-	private String iconTextureString, gameTextureString;
-	private boolean isAuto;
-	private List<SoundData> sounds;
-	private Buff buff;
+	private double			price, ammoPrice, damage, knockback, accuracy, warmup, preFireDelay, postFireDelay,
+			reloadTime, gameScale, gameOffX, gameOffY;
+	private int				maxAmmo, gameOrgX, gameOrgY;
+	private float			bulletThickness;
+	private Color			bulletColor;
+	private String			iconTextureString, gameTextureString;
+	private boolean			isAuto;
+	private List<SoundData>	sounds;
+	private Buff			buff;
 
 	public WeaponData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -94,14 +94,14 @@ public class WeaponData implements IWeaponDataBase {
 			bulletThickness = ((Number) o.get("bulletThickness")).floatValue();
 		}
 		if (o.containsKey("isAuto")) {
-			isAuto = (Boolean)o.get("isAuto");
+			isAuto = (Boolean) o.get("isAuto");
 		}
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
-			JSONArray arr = (JSONArray)o.get("sounds");
+			JSONArray arr = (JSONArray) o.get("sounds");
 
 			for (Object obj : arr) {
-				JSONObject soundJSON = (JSONObject)obj;
+				JSONObject soundJSON = (JSONObject) obj;
 				SoundData sound = SoundData.getSoundData(soundJSON);
 				if (sound != null) {
 					sounds.add(sound);
@@ -109,7 +109,7 @@ public class WeaponData implements IWeaponDataBase {
 			}
 		}
 		if (o.containsKey("buff")) {
-			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
+			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
 		}
 	}
 
@@ -121,7 +121,8 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param isAuto the isAuto to set
+	 * @param isAuto
+	 *            the isAuto to set
 	 */
 	public void setAuto(boolean isAuto) {
 		this.isAuto = isAuto;
@@ -130,6 +131,7 @@ public class WeaponData implements IWeaponDataBase {
 	/**
 	 * @return the price
 	 */
+	@Override
 	public double getPrice() {
 		return price;
 	}
@@ -270,7 +272,8 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param bulletThickness the bulletThickness to set
+	 * @param bulletThickness
+	 *            the bulletThickness to set
 	 */
 	public void setBulletThickness(float bulletThickness) {
 		this.bulletThickness = bulletThickness;
@@ -284,7 +287,8 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param bulletColor the bulletColor to set
+	 * @param bulletColor
+	 *            the bulletColor to set
 	 */
 	public void setBulletColor(Color bulletColor) {
 		this.bulletColor = bulletColor;
@@ -293,12 +297,14 @@ public class WeaponData implements IWeaponDataBase {
 	/**
 	 * @return the iconTextureString
 	 */
+	@Override
 	public String getIconTextureString() {
 		return iconTextureString;
 	}
 
 	/**
-	 * @param iconTextureString the iconTextureString to set
+	 * @param iconTextureString
+	 *            the iconTextureString to set
 	 */
 	public void setIconTextureString(String iconTextureString) {
 		this.iconTextureString = iconTextureString;
@@ -307,12 +313,14 @@ public class WeaponData implements IWeaponDataBase {
 	/**
 	 * @return the gameTextureString
 	 */
+	@Override
 	public String getGameTextureString() {
 		return gameTextureString;
 	}
 
 	/**
-	 * @param gameTextureString the gameTextureString to set
+	 * @param gameTextureString
+	 *            the gameTextureString to set
 	 */
 	public void setGameTextureString(String gameTextureString) {
 		this.gameTextureString = gameTextureString;
@@ -351,7 +359,8 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param sounds the sounds to set
+	 * @param sounds
+	 *            the sounds to set
 	 */
 	public void setSounds(List<SoundData> sounds) {
 		this.sounds = sounds;
@@ -370,7 +379,8 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param warmup the warmup to set
+	 * @param warmup
+	 *            the warmup to set
 	 */
 	public void setWarmup(double warmup) {
 		this.warmup = warmup;

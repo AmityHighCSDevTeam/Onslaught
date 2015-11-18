@@ -25,9 +25,9 @@ import com.badlogic.gdx.utils.Array;
 public class Rocket implements IWeapon {
 
 	// All the variables!
-	protected String		name, description, id;
-	protected List<String> tags;
-	protected Array<RocketData>		data;
+	protected String			name, description, id;
+	protected List<String>		tags;
+	protected Array<RocketData>	data;
 
 	@Override
 	public String getName() {
@@ -41,37 +41,32 @@ public class Rocket implements IWeapon {
 
 	@Override
 	public String getAmmoString(WeaponStack stack) {
-		return stack.getAmmo() + "/" + data.get(stack.getLevel()).getMaxAmmo()
-				+ "/" + stack.getTotalAmmo();
+		return stack.getAmmo() + "/" + data.get(stack.getLevel()).getMaxAmmo() + "/" + stack.getTotalAmmo();
 	}
 
 	@Override
 	public void purchaseAmmo(PlayerModel player, WeaponStack stack) {
-		double ammoMoney = data.get(stack.getLevel()).getMaxAmmo()
-				* data.get(stack.getLevel()).getAmmoPrice();
+		double ammoMoney = data.get(stack.getLevel()).getMaxAmmo() * data.get(stack.getLevel()).getAmmoPrice();
 		int amtToBuy = data.get(stack.getLevel()).getMaxAmmo();
 		if (ammoMoney > player.getMoney()) {
 			amtToBuy = (int) (player.getMoney() / ammoMoney);
 		}
-		player.setMoney(player.getMoney() - amtToBuy
-				* data.get(stack.getLevel()).getAmmoPrice());
+		player.setMoney(player.getMoney() - amtToBuy * data.get(stack.getLevel()).getAmmoPrice());
 		stack.setTotalAmmo(stack.getTotalAmmo() + amtToBuy);
 	}
 
 	@Override
 	public void reload(WeaponStack stack, Game game, PlayerModel firing) {
 		if (stack.getAmmo() < data.get(stack.getLevel()).getMaxAmmo()) {
-			int ammoNeeded = data.get(stack.getLevel()).getMaxAmmo()
-					- stack.getAmmo();
+			int ammoNeeded = data.get(stack.getLevel()).getMaxAmmo() - stack.getAmmo();
 			if (ammoNeeded > stack.getTotalAmmo()) {
 				ammoNeeded = stack.getTotalAmmo();
 			}
 			if (ammoNeeded > 0) {
-				stack.setCooldown(stack.getCooldown()
-						+ data.get(stack.getLevel()).getReloadTime());
+				stack.setCooldown(stack.getCooldown() + data.get(stack.getLevel()).getReloadTime());
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				stack.setTotalAmmo(stack.getTotalAmmo() - ammoNeeded);
-				
+
 				for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 					if (sound.getTrigger().equals("reload")) {
 						game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
@@ -80,7 +75,6 @@ public class Rocket implements IWeapon {
 			}
 		}
 	}
-
 
 	@Override
 	public void tick(float delta, WeaponStack stack) {
@@ -98,8 +92,8 @@ public class Rocket implements IWeapon {
 	}
 
 	@Override
-	public void onUse(Vector2 end, Game game, PlayerModel firing,
-			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
+	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack,
+			boolean isMouseJustDown) {
 		if (stack.getAmmo() <= 0) {
 			reload(stack, game, firing);
 			return;
@@ -126,52 +120,49 @@ public class Rocket implements IWeapon {
 		}
 	}
 
-	protected void fireWeapon(Vector2 end, Game game, PlayerModel firing,
-			double maxFireDegrees, WeaponStack stack) {
-		
+	protected void fireWeapon(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack) {
+
 		RocketData gData = data.get(stack.getLevel());
-		
+
 		stack.setAmmo(stack.getAmmo() - 1);
-		
-		double dir = MathHelper.clampAngleAroundCenter(firing
-				.getEntity().getBody().getAngle(), MathHelper
-				.getDirBetweenPoints(
-						firing.getEntity().getBody().getPosition(), end), Math
-				.toRadians(maxFireDegrees));
 
-		dir -= Math.toRadians(data.get(stack.getLevel())
-				.getAccuracy() / 2);
+		double dir = MathHelper.clampAngleAroundCenter(firing.getEntity().getBody().getAngle(),
+				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end),
+				Math.toRadians(maxFireDegrees));
 
-		dir += Math.toRadians(game.getRandom().nextDouble()
-				* data.get(stack.getLevel()).getAccuracy());
+		dir -= Math.toRadians(data.get(stack.getLevel()).getAccuracy() / 2);
+
+		dir += Math.toRadians(game.getRandom().nextDouble() * data.get(stack.getLevel()).getAccuracy());
 
 		dir = MathHelper.fixAngle(dir);
-		
+
 		SoundData flySound = null;
-		
+
 		for (SoundData sound : gData.getSounds()) {
 			if (sound.getTrigger().equals("fly")) {
 				flySound = sound;
 				break;
 			}
-		}	
+		}
 
-		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getFieldTextureString(), (float)gData.getSize(), flySound);
-		
+		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing,
+				gData.getFieldTextureString(), (float) gData.getSize(), flySound);
+
 		rocketModel.setStrength(gData.getStrength());
 		rocketModel.setAcceleration((float) gData.getAcceleration());
 		rocketModel.setTimeUntilExplosion((float) gData.getFuseTime());
-		
+
 		Vector2 playerPos = firing.getEntity().getBody().getWorldCenter();
-		
-		Vector2 pos = VectorFactory.createVector(0.16f + (float)gData.getSize()*2, (float)dir);
-		
+
+		Vector2 pos = VectorFactory.createVector(0.16f + (float) gData.getSize() * 2, (float) dir);
+
 		game.addEntityToWorld(rocketModel, pos.x + playerPos.x, pos.y + playerPos.y);
-		
-		rocketModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float)gData.getThrowSpeed(), (float)dir), true);
+
+		rocketModel.getEntity().getBody()
+				.applyForceToCenter(VectorFactory.createVector((float) gData.getThrowSpeed(), (float) dir), true);
 		rocketModel.getEntity().getBody().setTransform(rocketModel.getEntity().getBody().getWorldCenter(), (float) dir);
 		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
-		
+
 		for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 			if (sound.getTrigger().equals("fire")) {
 				game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
@@ -192,7 +183,7 @@ public class Rocket implements IWeapon {
 	@Override
 	public Map<String, String> getWeaponDataDescriptors(int level) {
 		RocketData d = data.get(level);
-		
+
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("Type", getClass().getSimpleName());
 		map.put("Auto", d.isAuto() + "");
@@ -204,28 +195,25 @@ public class Rocket implements IWeapon {
 		map.put("Acceleration", d.getAcceleration() + "");
 		map.put("Ammo per clip", d.getMaxAmmo() + "");
 		map.put("Accuracy", (100 - d.getAccuracy()) + "%");
-		map.put("Fire rate", (Math.round(100*(60.0)/(d.getPreFireDelay() + d.getPostFireDelay()))/100) + "");
+		map.put("Fire rate", (Math.round(100 * (60.0) / (d.getPreFireDelay() + d.getPostFireDelay())) / 100) + "");
 		map.put("Warmup", d.getWarmup() + "s");
 		map.put("Reload time", d.getReloadTime() + "");
 		return map;
 	}
-	
+
 	@Override
 	public boolean loadWeapon(JSONObject json) {
 		if (((String) json.get("className")).equals(getClass().getSimpleName())) {
-			name = json.containsKey("name") ? (String) json.get("name")
-					: "NAME NOT SET";
-			description = json.containsKey("name") ? (String) json.get("desc")
-					: "DESC NOT SET";
-			id = json.containsKey("id") ? (String) json.get("id")
-					: name;
+			name = json.containsKey("name") ? (String) json.get("name") : "NAME NOT SET";
+			description = json.containsKey("name") ? (String) json.get("desc") : "DESC NOT SET";
+			id = json.containsKey("id") ? (String) json.get("id") : name;
 
-			this.tags = new ArrayList<String>();
+			tags = new ArrayList<String>();
 			if (json.containsKey("tags")) {
 				JSONArray tags = (JSONArray) json.get("tags");
-				
+
 				for (Object o : tags) {
-					this.tags.add((String)o);
+					this.tags.add((String) o);
 				}
 			}
 
@@ -245,10 +233,11 @@ public class Rocket implements IWeapon {
 
 			return true;
 		}
-		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame
+				.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
-	
+
 	protected boolean loadWeaponData(JSONArray arr) {
 		data = new Array<RocketData>();
 
@@ -259,12 +248,12 @@ public class Rocket implements IWeapon {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public List<String> getTags() {
 		return tags;
 	}
-	
+
 	@Override
 	public String getID() {
 		return id;

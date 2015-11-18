@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.client.gui;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,19 +14,16 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
- *
  * @author sergeys
- *
  */
 public class GuiButton extends Sprite implements Disposable {
 
-	private int		id;
-	private String	text;				// Text to draw on button
-	private boolean	isEnabled	= true;
-	private GlyphLayout glyph = new GlyphLayout();
+	private int			id;
+	private String		text;							// Text to draw on button
+	private boolean		isEnabled	= true;
+	private GlyphLayout	glyph		= new GlyphLayout();
 
 	/**
-	 *
 	 * @param sprite
 	 *            sprite to take the texture of
 	 * @param id
@@ -41,8 +39,7 @@ public class GuiButton extends Sprite implements Disposable {
 	 * @param height
 	 *            of the button
 	 */
-	public GuiButton(Sprite sprite, int id, String text, float x, float y,
-			float width, float height) {
+	public GuiButton(Sprite sprite, int id, String text, float x, float y, float width, float height) {
 		super(sprite);
 		this.id = id;
 		setX(x);
@@ -52,7 +49,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @param texture
 	 *            the texture of the button
 	 * @param id
@@ -68,8 +64,7 @@ public class GuiButton extends Sprite implements Disposable {
 	 * @param height
 	 *            of the button
 	 */
-	public GuiButton(Texture texture, int id, String text, float x, float y,
-			float width, float height) {
+	public GuiButton(Texture texture, int id, String text, float x, float y, float width, float height) {
 		super(texture);
 		this.id = id;
 		setX(x);
@@ -79,7 +74,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @param region
 	 *            textureRegion of the button
 	 * @param srcX
@@ -103,9 +97,8 @@ public class GuiButton extends Sprite implements Disposable {
 	 * @param height
 	 *            of the button
 	 */
-	public GuiButton(TextureRegion region, int srcX, int srcY, int srcWidth,
-			int srcHeight, int id, String text, float x, float y, float width,
-			float height) {
+	public GuiButton(TextureRegion region, int srcX, int srcY, int srcWidth, int srcHeight, int id, String text,
+			float x, float y, float width, float height) {
 		super(region, srcX, srcY, srcWidth, srcHeight);
 		this.id = id;
 		setX(x);
@@ -115,7 +108,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @param x
 	 *            new x position
 	 * @param y
@@ -134,7 +126,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @return the ID number of the button
 	 */
 	public int getID() {
@@ -142,7 +133,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @return the text on the button
 	 */
 	public String getText() {
@@ -150,7 +140,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @param text
 	 *            the text on the button
 	 */
@@ -159,11 +148,9 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	/**
-	 *
 	 * @return is the button enabled
 	 */
 	public boolean isEnabled() {
@@ -171,7 +158,6 @@ public class GuiButton extends Sprite implements Disposable {
 	}
 
 	/**
-	 *
 	 * @param isEnabled
 	 *            set the button enabled or disabled
 	 * @return the button
@@ -184,17 +170,16 @@ public class GuiButton extends Sprite implements Disposable {
 	@Override
 	public void draw(Batch batch) {
 
-		setColor(new Color(1,1,1,1));
+		setColor(new Color(1, 1, 1, 1));
 		// If the button is enabled
 		if (isEnabled()) {
 			// Get mouse location
 			Vector2 touchPos = new Vector2();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY());
 			// If it is inside of the button
-			if (getBoundingRectangle().contains(touchPos.x,
-					ZombieGame.instance.height - touchPos.y)) {
+			if (getBoundingRectangle().contains(touchPos.x, ZombieGame.instance.height - touchPos.y)) {
 				// Tint the button
-				setColor(new Color(27/255f, 168/255f, 55/255f, 1f));
+				setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
 			}
 		} else {
 			// If the button isn't enabled
@@ -203,7 +188,7 @@ public class GuiButton extends Sprite implements Disposable {
 		}
 
 		// Draw the button
-		//super.draw(batch);
+		// super.draw(batch);
 
 		// Clear the tint
 
@@ -212,7 +197,7 @@ public class GuiButton extends Sprite implements Disposable {
 			// Get the size of the text
 			glyph.setText(ZombieGame.instance.mainFont, text, getColor(), getWidth(), Align.center, true);
 			// Draw the text centered on the button
-			ZombieGame.instance.mainFont.draw(batch, glyph, getX(),getY() + (getHeight() + glyph.height) / 2);
+			ZombieGame.instance.mainFont.draw(batch, glyph, getX(), getY() + (getHeight() + glyph.height) / 2);
 		}
 	}
 }

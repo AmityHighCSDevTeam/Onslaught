@@ -13,14 +13,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.utils.Align;
 
 /**
- *
  * @author sergeys
- *
  */
 public class CreditsMenu extends GuiScreen {
 
 	private GlyphLayout glyph = new GlyphLayout();
-	
+
 	private BitmapFont smallFont;
 
 	public CreditsMenu(GuiScreen prevScreen) {
@@ -28,7 +26,7 @@ public class CreditsMenu extends GuiScreen {
 	}
 
 	// Font
-	private BitmapFont	calibri30;
+	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -43,22 +41,22 @@ public class CreditsMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		calibri30.draw(batch, "Credits", 10, getHeight() - 45,
-				getWidth() - 20, Align.center, false);
+		calibri30.draw(batch, "Credits", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 
 		float x = 50;
 		float y = getHeight() - 150;
 		float w = getWidth() - 100;
 		float extraH = 20;
-		
-		for (String s : new String[]{"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian", "Voice Actor: Ray Tian"}) {
-			glyph.setText(smallFont, s, new Color(1,1,1,1), w, Align.left, false);
-			smallFont.draw(batch, glyph, x, y + glyph.height/2);
+
+		for (String s : new String[] {"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian",
+				"Voice Actor: Ray Tian"}) {
+			glyph.setText(smallFont, s, new Color(1, 1, 1, 1), w, Align.left, false);
+			smallFont.draw(batch, glyph, x, y + glyph.height / 2);
 			y -= glyph.height;
 			y -= extraH;
 		}
-		//smallFont.draw(batch, "Lead Programmer: Sergey Saveleyev", x, y,
-		//		w, Align.right, false);
+		// smallFont.draw(batch, "Lead Programmer: Sergey Saveleyev", x, y,
+		// w, Align.right, false);
 	}
 
 	@Override
@@ -71,8 +69,7 @@ public class CreditsMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back",
-				10, 10, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
 	}
 
 	@Override
@@ -88,7 +85,7 @@ public class CreditsMenu extends GuiScreen {
 		calibri30 = generator.generateFont(parameter);
 
 		calibri30.setColor(1, 1, 1, 1);
-		
+
 		parameter.size = 28;
 
 		smallFont = generator.generateFont(parameter);

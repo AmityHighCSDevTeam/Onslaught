@@ -30,7 +30,7 @@ public class GunPurchaseable implements IPurchaseable {
 	public Map<String, String> getCurrentDescriptors(PlayerModel player) {
 		int level = 0;
 
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
+		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
 		if (ws.isPresent()) {
 			level = ws.get().getLevel();
@@ -40,11 +40,12 @@ public class GunPurchaseable implements IPurchaseable {
 
 		if (gun.getWeaponData(level).getBuff() != null) {
 			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
-				currLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff)*100 + "%");
+				currLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff) * 100 + "%");
 			}
 
 			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
-				currLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
+				currLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "")
+						+ gun.getWeaponData(level).getBuff().getAdd(aBuff));
 			}
 		}
 
@@ -55,25 +56,24 @@ public class GunPurchaseable implements IPurchaseable {
 	public Map<String, String> getNextDescriptors(PlayerModel player) {
 		int level = 0;
 
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
+		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
 		if (ws.isPresent()) {
 			level = ws.get().getLevel() + 1;
 		}
 
-		if (!hasNextLevel(player) || level == 0) {
-			return null;
-		}
+		if (!hasNextLevel(player) || level == 0) { return null; }
 
 		Map<String, String> nextLev = gun.getWeaponDataDescriptors(level);
 
 		if (gun.getWeaponData(level).getBuff() != null) {
 			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
-				nextLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff)*100 + "%");
+				nextLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff) * 100 + "%");
 			}
 
 			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
-				nextLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
+				nextLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "")
+						+ gun.getWeaponData(level).getBuff().getAdd(aBuff));
 			}
 		}
 
@@ -82,11 +82,9 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public boolean hasNextLevel(PlayerModel player) {
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
+		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
-		if (ws.isPresent() && ws.get().getLevel() + 1 < ws.get().getWeapon().getNumLevels()) {
-			return true;
-		}
+		if (ws.isPresent() && ws.get().getLevel() + 1 < ws.get().getWeapon().getNumLevels()) { return true; }
 		return !ws.isPresent();
 	}
 
@@ -94,7 +92,7 @@ public class GunPurchaseable implements IPurchaseable {
 	public int getCurrentLevel(PlayerModel player) {
 		int level = 0;
 
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
+		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
 		if (ws.isPresent()) {
 			level = ws.get().getLevel();
@@ -112,27 +110,23 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public double getPrice(PlayerModel player) {
-		if (!hasNextLevel(player)) {
-			return Double.POSITIVE_INFINITY;
-		}
-		return gun.getWeaponData(getCurrentLevel(player)+1).getPrice();
+		if (!hasNextLevel(player)) { return Double.POSITIVE_INFINITY; }
+		return gun.getWeaponData(getCurrentLevel(player) + 1).getPrice();
 	}
 
 	@Override
 	public boolean canPurchase(PlayerModel player) {
-		if (!hasNextLevel(player)) {
-			return false;
-		}
+		if (!hasNextLevel(player)) { return false; }
 		return true;
 	}
 
 	@Override
 	public void onPurchase(PlayerModel player) {
-		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS)->wS.getWeapon()==gun).findAny();
+		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
 		if (ws.isPresent()) {
 			player.removeTemporaryWeaponBuff();
-			ws.get().setLevel(ws.get().getLevel()+1);
+			ws.get().setLevel(ws.get().getLevel() + 1);
 			player.addTemporaryWeaponBuff();
 		} else {
 			WeaponStack newWeap = new WeaponStack(gun);
@@ -152,7 +146,7 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public String getIconName(PlayerModel player) {
-		return gun.getWeaponData(Math.min(getCurrentLevel(player)+1,getNumLevels()-1)).getIconTextureString();
+		return gun.getWeaponData(Math.min(getCurrentLevel(player) + 1, getNumLevels() - 1)).getIconTextureString();
 	}
 
 	@Override
@@ -160,26 +154,34 @@ public class GunPurchaseable implements IPurchaseable {
 		int num = 0;
 
 		for (String s : sections) {
-			if (getName().toLowerCase().contains(s.toLowerCase())) num+=100;
-			if (getDescription().toLowerCase().contains(s.toLowerCase())) num+=15;
-			if (gun.getID().toLowerCase().contains(s.toLowerCase())) num+=50;
-			num += gun.getTags().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
-			num += getCurrentDescriptors(player).keySet().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
-			num += getCurrentDescriptors(player).values().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+			if (getName().toLowerCase().contains(s.toLowerCase())) {
+				num += 100;
+			}
+			if (getDescription().toLowerCase().contains(s.toLowerCase())) {
+				num += 15;
+			}
+			if (gun.getID().toLowerCase().contains(s.toLowerCase())) {
+				num += 50;
+			}
+			num += gun.getTags().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).keySet().parallelStream()
+					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).values().parallelStream()
+					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			if (hasNextLevel(player) && getNextDescriptors(player) != null) {
-				num += getNextDescriptors(player).keySet().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
-				num += getNextDescriptors(player).values().parallelStream().filter((k)->k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).keySet().parallelStream()
+						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).values().parallelStream()
+						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			}
 		}
 
 		return num;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof GunPurchaseable) {
-			return gun == ((GunPurchaseable)obj).gun;
-		}
+		if (obj instanceof GunPurchaseable) { return gun == ((GunPurchaseable) obj).gun; }
 		return false;
 	}
 }

@@ -8,10 +8,9 @@ public class Buff {
 	/*
 	 * Done:
 	 * health, speed, bulletDamage, explodeDamage, allArmor, zombieArmor, explosionArmor, weaponTime
-	 * 
 	 */
-	private HashMap<String, Double> multiplicative;
-	private HashMap<String, Double> additive;
+	private HashMap<String, Double>	multiplicative;
+	private HashMap<String, Double>	additive;
 
 	public static Buff sum(Buff b1, Buff b2) {
 		Buff newBuff = new Buff();
@@ -21,7 +20,7 @@ public class Buff {
 
 		for (String b1s : b1.getMultiplicative().keySet()) {
 			if (mult.containsKey(b1s)) {
-				mult.put(b1s, mult.get(b1s)*b1.getMultiplicative().get(b1s));
+				mult.put(b1s, mult.get(b1s) * b1.getMultiplicative().get(b1s));
 			} else {
 				mult.put(b1s, b1.getMultiplicative().get(b1s));
 			}
@@ -29,7 +28,7 @@ public class Buff {
 
 		for (String b2s : b2.getMultiplicative().keySet()) {
 			if (mult.containsKey(b2s)) {
-				mult.put(b2s, mult.get(b2s)*b2.getMultiplicative().get(b2s));
+				mult.put(b2s, mult.get(b2s) * b2.getMultiplicative().get(b2s));
 			} else {
 				mult.put(b2s, b2.getMultiplicative().get(b2s));
 			}
@@ -37,7 +36,7 @@ public class Buff {
 
 		for (String b1a : b1.getAdditive().keySet()) {
 			if (add.containsKey(b1a)) {
-				add.put(b1a, add.get(b1a)+b1.getAdditive().get(b1a));
+				add.put(b1a, add.get(b1a) + b1.getAdditive().get(b1a));
 			} else {
 				add.put(b1a, b1.getAdditive().get(b1a));
 			}
@@ -45,7 +44,7 @@ public class Buff {
 
 		for (String b2a : b2.getAdditive().keySet()) {
 			if (add.containsKey(b2a)) {
-				add.put(b2a, add.get(b2a)+b2.getAdditive().get(b2a));
+				add.put(b2a, add.get(b2a) + b2.getAdditive().get(b2a));
 			} else {
 				add.put(b2a, b2.getAdditive().get(b2a));
 			}
@@ -66,16 +65,16 @@ public class Buff {
 		Buff buff = new Buff();
 
 		if (json.containsKey("add")) {
-			for (Object o : ((JSONObject)json.get("add")).keySet()) {
-				String key = (String)o;
-				Double val = ((Number)((JSONObject)json.get("add")).get(o)).doubleValue();
+			for (Object o : ((JSONObject) json.get("add")).keySet()) {
+				String key = (String) o;
+				Double val = ((Number) ((JSONObject) json.get("add")).get(o)).doubleValue();
 				buff.addAdd(key, val);
 			}
 		}
 		if (json.containsKey("mult")) {
-			for (Object o : ((JSONObject)json.get("mult")).keySet()) {
-				String key = (String)o;
-				Double val = ((Number)((JSONObject)json.get("mult")).get(o)).doubleValue();
+			for (Object o : ((JSONObject) json.get("mult")).keySet()) {
+				String key = (String) o;
+				Double val = ((Number) ((JSONObject) json.get("mult")).get(o)).doubleValue();
 				buff.addMult(key, val);
 			}
 		}
@@ -86,23 +85,24 @@ public class Buff {
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSON() {
 		JSONObject jo = new JSONObject();
-		
+
 		JSONObject add = new JSONObject();
 		JSONObject mult = new JSONObject();
-		
+
 		for (String a : additive.keySet()) {
 			add.put(a, additive.get(a));
 		}
-		
+
 		for (String m : multiplicative.keySet()) {
 			add.put(m, multiplicative.get(m));
 		}
-		
+
 		jo.put("add", add);
 		jo.put("mult", mult);
-		
+
 		return jo;
 	}
+
 	public Buff add(Buff b) {
 		return sum(this, b);
 	}
@@ -124,11 +124,11 @@ public class Buff {
 	}
 
 	public void addMult(String key, Double val) {
-		multiplicative.put(key, multiplicative.getOrDefault(key, 1d)*val);
+		multiplicative.put(key, multiplicative.getOrDefault(key, 1d) * val);
 	}
 
 	public void addAdd(String key, Double val) {
-		additive.put(key, additive.getOrDefault(key, 0d)*val);
+		additive.put(key, additive.getOrDefault(key, 0d) * val);
 	}
 
 	public Double getMult(String key) {

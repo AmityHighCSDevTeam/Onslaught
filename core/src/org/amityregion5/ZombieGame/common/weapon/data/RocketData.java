@@ -2,7 +2,7 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 
 import org.json.simple.JSONObject;
 
-public class RocketData extends GrenadeData{
+public class RocketData extends GrenadeData {
 	private double acceleration;
 
 	public RocketData(JSONObject o) {
@@ -20,7 +20,8 @@ public class RocketData extends GrenadeData{
 	}
 
 	/**
-	 * @param acceleration the acceleration to set
+	 * @param acceleration
+	 *            the acceleration to set
 	 */
 	public void setAcceleration(double acceleration) {
 		this.acceleration = acceleration;

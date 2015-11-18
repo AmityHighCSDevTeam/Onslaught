@@ -8,13 +8,9 @@ public class BodyHelper {
 		setPointing(body, coord, delta, 1);
 	}
 
-	public static void setPointing(Body body, Vector2 coord, float delta,
-			double timeFactor) {
-		double nextAngle = body.getAngle() + body.getAngularVelocity()
-				/ (1.0 / delta) * timeFactor;
-		double totalRotation = MathHelper.getDirBetweenPoints(
-				body.getWorldCenter(), coord)
-				- nextAngle;
+	public static void setPointing(Body body, Vector2 coord, float delta, double timeFactor) {
+		double nextAngle = body.getAngle() + body.getAngularVelocity() / (1.0 / delta) * timeFactor;
+		double totalRotation = MathHelper.getDirBetweenPoints(body.getWorldCenter(), coord) - nextAngle;
 		while (totalRotation < Math.toRadians(-180)) {
 			totalRotation += Math.toRadians(360);
 		}
@@ -22,8 +18,7 @@ public class BodyHelper {
 			totalRotation -= Math.toRadians(360);
 		}
 		double desiredAngularVelocity = totalRotation * (1.0 / delta);
-		double impulse = body.getInertia() * desiredAngularVelocity
-				/ timeFactor;// disregard time factor
+		double impulse = body.getInertia() * desiredAngularVelocity / timeFactor;// disregard time factor
 		body.applyAngularImpulse((float) impulse, true);
 	}
 }

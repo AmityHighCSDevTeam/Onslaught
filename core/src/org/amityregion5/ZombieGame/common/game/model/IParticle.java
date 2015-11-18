@@ -5,13 +5,11 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.json.simple.JSONObject;
 
 /**
- * 
  * @author sergeys
- *
  */
 public interface IParticle {
 	void tick(float timeStep);
-	
+
 	void dispose();
 
 	IDrawingLayer[] getBackDrawingLayers();
@@ -19,10 +17,10 @@ public interface IParticle {
 	IDrawingLayer[] getFrontDrawingLayers();
 
 	default IDrawingLayer[] getMaxDrawingLayers() {
-		return new IDrawingLayer[]{};
+		return new IDrawingLayer[] {};
 	}
-	
+
 	JSONObject convertToJSONObject();
-	
+
 	IParticle fromJSON(JSONObject obj, Game g);
 }

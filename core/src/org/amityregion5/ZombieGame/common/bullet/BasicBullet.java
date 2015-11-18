@@ -21,25 +21,25 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 
 /**
  * @author savelyevse17
- *
  */
 public class BasicBullet implements IBullet {
 
-	private float	knockback, dir, damage, range;
-	private Game	g;
-	private Vector2	endPoint;
-	private Vector2	start;
-	private PlayerModel source;
-	private Color color;
-	private float bulletThickness;
-	private List<HitData> hits;
+	private float			knockback, dir, damage, range;
+	private Game			g;
+	private Vector2			endPoint;
+	private Vector2			start;
+	private PlayerModel		source;
+	private Color			color;
+	private float			bulletThickness;
+	private List<HitData>	hits;
 
-	public BasicBullet(Game g, Vector2 start, float speed, float damage,
-			Vector2 bullVector, PlayerModel source, Color color, float bulletThickness, float range) {
+	public BasicBullet(Game g, Vector2 start, float speed, float damage, Vector2 bullVector, PlayerModel source,
+			Color color, float bulletThickness, float range) {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
-		this.damage = (float) ((damage+source.getTotalBuffs().getAdd("bulletDamage"))*source.getTotalBuffs().getMult("bulletDamage"));
+		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("bulletDamage"))
+				* source.getTotalBuffs().getMult("bulletDamage"));
 		this.source = source;
 		this.color = color;
 		this.range = range;
@@ -99,15 +99,14 @@ public class BasicBullet implements IBullet {
 	}
 
 	@Override
-	public float reportRayFixture(Fixture fixture, Vector2 point,
-			Vector2 normal, float fraction) {
+	public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 
 		HitData hitData = new HitData();
 		hitData.hit = fixture.getBody();
 		hitData.hitPoint = point.cpy();
 		hitData.dist = start.dst2(point);
 
-		if (start.dst2(point) <= range*range) {
+		if (start.dst2(point) <= range * range) {
 			hits.add(hitData);
 		}
 
@@ -139,9 +138,9 @@ public class BasicBullet implements IBullet {
 	}
 
 	private class HitData implements Comparable<HitData> {
-		public double dist;
-		public Body hit;
-		public Vector2 hitPoint;
+		public double	dist;
+		public Body		hit;
+		public Vector2	hitPoint;
 
 		@Override
 		public int compareTo(HitData o) {

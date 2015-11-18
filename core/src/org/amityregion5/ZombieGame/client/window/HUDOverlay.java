@@ -20,12 +20,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
 
 public class HUDOverlay implements Screen {
-	private ShapeRenderer shapeRender = new ShapeRenderer();
-	private InGameScreen screen;
-	private PlayerModel player;
-	private GlyphLayout glyph = new GlyphLayout();
-	private SpriteBatch batch = new SpriteBatch();
-	private int eachBoxSize = 64;
+	private ShapeRenderer	shapeRender	= new ShapeRenderer();
+	private InGameScreen	screen;
+	private PlayerModel		player;
+	private GlyphLayout		glyph		= new GlyphLayout();
+	private SpriteBatch		batch		= new SpriteBatch();
+	private int				eachBoxSize	= 64;
 
 	public HUDOverlay(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
@@ -35,16 +35,16 @@ public class HUDOverlay implements Screen {
 	@Override
 	public void drawScreen(float delta, Camera camera) {
 		drawPrepare(delta);
-		
+
 		drawHotbar(delta);
-		
+
 		drawLeftHUD(delta);
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		Gdx.gl.glLineWidth(1);
 	}
 
-	public void drawPrepare(float delta) {		
+	public void drawPrepare(float delta) {
 		shapeRender.setProjectionMatrix(screen.getScreenProjectionMatrix());
 		batch.setProjectionMatrix(screen.getScreenProjectionMatrix());
 
@@ -52,26 +52,26 @@ public class HUDOverlay implements Screen {
 		Gdx.gl.glBlendColor(1, 1, 1, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
+
 	public void drawHotbar(float delta) {
-		float startX = (screen.getWidth()-player.getHotbar().length*eachBoxSize)/2;
-		for (int i = 0; i<player.getHotbar().length; i++) {
+		float startX = (screen.getWidth() - player.getHotbar().length * eachBoxSize) / 2;
+		for (int i = 0; i < player.getHotbar().length; i++) {
 			shapeRender.begin(ShapeType.Filled);
 			shapeRender.setColor(Color.GRAY);
 			shapeRender.rect(startX + eachBoxSize * i, 0, eachBoxSize, eachBoxSize);
 			shapeRender.end();
-			
+
 			Gdx.gl.glLineWidth(2);
-			
+
 			if (!(player.getHotbar()[i].getWeapon() instanceof NullWeapon)) {
 				WeaponStack weapon = player.getHotbar()[i];
-				
+
 				batch.begin();
 				Texture icon = TextureRegistry.getTexturesFor(weapon.getIconTextureName()).get(0);
 
 				batch.setColor(new Color(1, 1, 1, 1));
 				batch.draw(icon, startX + eachBoxSize * i, 0, eachBoxSize, eachBoxSize);
-				
+
 				batch.end();
 			}
 
@@ -102,35 +102,34 @@ public class HUDOverlay implements Screen {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		batch.begin();
-		screen.getFont1().draw(batch, player.getCurrentWeapon().getWeapon().getName(),
-				screen.getWidth() - 390, 190);
+		screen.getFont1().draw(batch, player.getCurrentWeapon().getWeapon().getName(), screen.getWidth() - 390, 190);
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
 			screen.getFont1().setColor(Color.YELLOW);
 		}
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 && player.getCurrentWeapon().getAmmo() == 0) {
 			screen.getFont1().setColor(Color.RED);
 		}
-		screen.getFont1().draw(batch, player.getCurrentWeapon().getAmmoString(),
-				screen.getWidth() - 390, 170);
-		screen.getFont1().setColor(new Color(1,1,1,1));
-		screen.getFont1().draw(batch,
-				"$" + NumberFormat.getInstance().format(player.getMoney()),
+		screen.getFont1().draw(batch, player.getCurrentWeapon().getAmmoString(), screen.getWidth() - 390, 170);
+		screen.getFont1().setColor(new Color(1, 1, 1, 1));
+		screen.getFont1().draw(batch, "$" + NumberFormat.getInstance().format(player.getMoney()),
 				screen.getWidth() - 390, 150);
 		batch.end();
-		
+
 		shapeRender.begin(ShapeType.Filled);
-		
+
 		shapeRender.setColor(1f, 0f, 0f, 1f);
 		shapeRender.rect(screen.getWidth() - 395, 110, 90, 20);
-		
+
 		shapeRender.setColor(0f, 1f, 0f, 1f);
-		shapeRender.rect(screen.getWidth() - 395, 110, 90*player.getHealth()/player.getMaxHealth(), 20);
-		
+		shapeRender.rect(screen.getWidth() - 395, 110, 90 * player.getHealth() / player.getMaxHealth(), 20);
+
 		shapeRender.end();
-		
+
 		batch.begin();
-		glyph.setText(screen.getFont2(), ((int)(player.getHealth()/player.getMaxHealth()*100*10 + 0.5))/10f + "%", new Color(1,1,1,1), 90, Align.center, false);
-		screen.getFont2().draw(batch, glyph, screen.getWidth()-395/* + glyph.width/2*/, 113 + glyph.height);
+		glyph.setText(screen.getFont2(),
+				((int) (player.getHealth() / player.getMaxHealth() * 100 * 10 + 0.5)) / 10f + "%",
+				new Color(1, 1, 1, 1), 90, Align.center, false);
+		screen.getFont2().draw(batch, glyph, screen.getWidth() - 395/* + glyph.width/2 */, 113 + glyph.height);
 		batch.end();
 	}
 

@@ -8,16 +8,16 @@ import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import com.badlogic.gdx.math.Vector2;
 
 public class WeaponStack {
-	private int	level, ammo, totalAmmo;
+	private int		level, ammo, totalAmmo;
 	private double	cooldown, warmup;
 	private boolean	warmingUp;
 	private IWeapon	weapon;
-	
-	//warmup stuffs
-	private Vector2 warmupEnd;
-	private Game warmupGame;
-	private PlayerModel warmupFiring;
-	private double warmupMaxFireDegrees;
+
+	// warmup stuffs
+	private Vector2		warmupEnd;
+	private Game		warmupGame;
+	private PlayerModel	warmupFiring;
+	private double		warmupMaxFireDegrees;
 
 	public WeaponStack(IWeapon weapon) {
 		this.weapon = weapon;
@@ -130,7 +130,7 @@ public class WeaponStack {
 
 	/**
 	 * Tick this weapon
-	 * 
+	 *
 	 * @param delta
 	 *            time since last tick
 	 */
@@ -146,23 +146,22 @@ public class WeaponStack {
 		weapon.reload(this, game, playerModel);
 	}
 
-	public void onUse(Vector2 end, Game game, PlayerModel playerModel,
-			int maxDegrees, boolean isMouseJustDown) {
+	public void onUse(Vector2 end, Game game, PlayerModel playerModel, int maxDegrees, boolean isMouseJustDown) {
 		weapon.onUse(end, game, playerModel, maxDegrees, this, isMouseJustDown);
 	}
 
 	public String getAmmoString() {
 		return weapon.getAmmoString(this);
 	}
-	
+
 	public String getIconTextureName() {
 		return weapon.getWeaponData(level).getIconTextureString();
 	}
-	
+
 	public String getGameTextureName() {
 		return weapon.getWeaponData(level).getGameTextureString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "WeaponStack{Weapon:" + weapon.getName() + ",Level:" + level + "}";
@@ -176,7 +175,8 @@ public class WeaponStack {
 	}
 
 	/**
-	 * @param warmupEnd the warmupEnd to set
+	 * @param warmupEnd
+	 *            the warmupEnd to set
 	 */
 	public void setWarmupEnd(Vector2 warmupEnd) {
 		this.warmupEnd = warmupEnd;
@@ -190,7 +190,8 @@ public class WeaponStack {
 	}
 
 	/**
-	 * @param warmupGame the warmupGame to set
+	 * @param warmupGame
+	 *            the warmupGame to set
 	 */
 	public void setWarmupGame(Game warmupGame) {
 		this.warmupGame = warmupGame;
@@ -204,7 +205,8 @@ public class WeaponStack {
 	}
 
 	/**
-	 * @param warmupFiring the warmupFiring to set
+	 * @param warmupFiring
+	 *            the warmupFiring to set
 	 */
 	public void setWarmupFiring(PlayerModel warmupFiring) {
 		this.warmupFiring = warmupFiring;
@@ -218,16 +220,17 @@ public class WeaponStack {
 	}
 
 	/**
-	 * @param warmupMaxFireDegrees the warmupMaxFireDegrees to set
+	 * @param warmupMaxFireDegrees
+	 *            the warmupMaxFireDegrees to set
 	 */
 	public void setWarmupMaxFireDegrees(double warmupMaxFireDegrees) {
 		this.warmupMaxFireDegrees = warmupMaxFireDegrees;
 	}
-	
+
 	public IWeaponDataBase getWeaponDataBase() {
 		return weapon.getWeaponData(level);
 	}
-	
+
 	public String getID() {
 		return weapon.getID();
 	}

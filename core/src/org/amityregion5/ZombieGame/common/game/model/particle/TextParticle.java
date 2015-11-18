@@ -6,13 +6,12 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
-public class TextParticle implements IParticle{
-	private float x, y, size;
-	private String text;
+public class TextParticle implements IParticle {
+	private float	x, y, size;
+	private String	text;
 
-	public TextParticle() {
-	}
-	
+	public TextParticle() {}
+
 	/**
 	 * @param x
 	 * @param y
@@ -31,48 +30,46 @@ public class TextParticle implements IParticle{
 	}
 
 	@Override
-	public void tick(float timeStep) {
-	}
+	public void tick(float timeStep) {}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public IDrawingLayer[] getMaxDrawingLayers() {
-		return new IDrawingLayer[]{TextParticleDrawingLayer.instance};//new IDrawingLayer[] {sprite};
+		return new IDrawingLayer[] {TextParticleDrawingLayer.instance};// new IDrawingLayer[] {sprite};
 	}
 
 	@Override
 	public IDrawingLayer[] getFrontDrawingLayers() {
-		return new IDrawingLayer[]{};//new IDrawingLayer[] {sprite};
+		return new IDrawingLayer[] {};// new IDrawingLayer[] {sprite};
 	}
 
 	@Override
 	public IDrawingLayer[] getBackDrawingLayers() {
-		return new IDrawingLayer[]{};
+		return new IDrawingLayer[] {};
 	}
-	
+
 	public float getX() {
 		return x;
 	}
-	
+
 	public float getY() {
 		return y;
 	}
-	
+
 	public float getSize() {
 		return size;
 	}
-	
+
 	public String getText() {
 		return text;
 	}
-	
+
 	public void setX(float x) {
 		this.x = x;
 	}
-	
+
 	public void setY(float y) {
 		this.y = y;
 	}
@@ -80,7 +77,7 @@ public class TextParticle implements IParticle{
 	@Override
 	public JSONObject convertToJSONObject() {
 		JSONObject obj = new JSONObject();
-		
+
 		return obj;
 	}
 

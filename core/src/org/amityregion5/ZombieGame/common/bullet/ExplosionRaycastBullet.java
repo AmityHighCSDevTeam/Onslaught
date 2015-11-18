@@ -21,22 +21,21 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 
 /**
  * @author savelyevse17
- *
  */
 public class ExplosionRaycastBullet implements IBullet {
 
-	private float	dir, damage;
-	private Game	g;
-	private Vector2	endPoint;
-	private Vector2	start;
-	private PlayerModel source;
-	private List<HitData> hits;
+	private float			dir, damage;
+	private Game			g;
+	private Vector2			endPoint;
+	private Vector2			start;
+	private PlayerModel		source;
+	private List<HitData>	hits;
 
-	public ExplosionRaycastBullet(Game g, Vector2 start, float damage,
-			Vector2 bullVector, PlayerModel source) {
+	public ExplosionRaycastBullet(Game g, Vector2 start, float damage, Vector2 bullVector, PlayerModel source) {
 		this.g = g;
 		this.start = start;
-		this.damage = (float) ((damage+source.getTotalBuffs().getAdd("explodeDamage"))*source.getTotalBuffs().getMult("explodeDamage"));
+		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("explodeDamage"))
+				* source.getTotalBuffs().getMult("explodeDamage"));
 		this.source = source;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
@@ -48,8 +47,7 @@ public class ExplosionRaycastBullet implements IBullet {
 	}
 
 	@Override
-	public void setKnockback(float speed) {
-	}
+	public void setKnockback(float speed) {}
 
 	@Override
 	public float getDamage() {
@@ -92,8 +90,7 @@ public class ExplosionRaycastBullet implements IBullet {
 	}
 
 	@Override
-	public float reportRayFixture(Fixture fixture, Vector2 point,
-			Vector2 normal, float fraction) {
+	public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 
 		HitData hitData = new HitData();
 		hitData.hit = fixture.getBody();
@@ -107,34 +104,35 @@ public class ExplosionRaycastBullet implements IBullet {
 	@Override
 	public void finishRaycast() {
 		Collections.sort(hits);
-		
+
 		for (HitData hd : hits) {
-			hd.hit.applyLinearImpulse(VectorFactory.createVector(damage/(start.dst(hd.hitPoint)*100f), dir), hd.hitPoint, true);
+			hd.hit.applyLinearImpulse(VectorFactory.createVector(damage / (start.dst(hd.hitPoint) * 100f), dir),
+					hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
-			
-			float damageToDeal = damage/start.dst(hd.hitPoint);
-			
+
+			float damageToDeal = damage / start.dst(hd.hitPoint);
+
 			if (entity.isPresent() && damageToDeal > 0) {
 				damage -= entity.get().damage(damageToDeal, source, DamageTypes.EXPLOSION);
 			}
-			
+
 			if (damage <= 0 || damageToDeal <= 0) {
 				endPoint = hd.hitPoint;
 				break;
 			}
 		}
 	}
-	
+
 	@Override
 	public float getThickness() {
 		return 1;
 	}
-	
+
 	private class HitData implements Comparable<HitData> {
-		public double dist;
-		public Body hit;
-		public Vector2 hitPoint;
-		
+		public double	dist;
+		public Body		hit;
+		public Vector2	hitPoint;
+
 		@Override
 		public int compareTo(HitData o) {
 			return Double.compare(dist, o.dist);

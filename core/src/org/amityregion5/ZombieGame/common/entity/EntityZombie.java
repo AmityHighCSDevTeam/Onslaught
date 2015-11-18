@@ -11,23 +11,21 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author savelyevse17
- *
  */
 public class EntityZombie implements IEntity, Disposable {
 
 	private Body		body;
 	private float		friction;
 	private MassData	massData;
-	private float 		size;
+	private float		size;
 
 	public EntityZombie(float size) {
 		massData = new MassData();
-		this.size= size;
+		this.size = size;
 	}
 
 	@Override
-	public void setShape(Shape e) {
-	}
+	public void setShape(Shape e) {}
 
 	@Override
 	public Shape getShape() {
@@ -37,8 +35,7 @@ public class EntityZombie implements IEntity, Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public void setBody(Body b) {
@@ -49,7 +46,7 @@ public class EntityZombie implements IEntity, Disposable {
 	public Body getBody() {
 		return body;
 	}
-	
+
 	@Override
 	public float getFriction() {
 		return friction;
@@ -68,7 +65,7 @@ public class EntityZombie implements IEntity, Disposable {
 	public MassData getMassData() {
 		return massData;
 	}
-	
+
 	public float getSize() {
 		return size;
 	}

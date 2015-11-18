@@ -9,13 +9,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
-	private double	price, ammoPrice, strength, accuracy, fuseTime, throwSpeed, warmup,
-			preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY, size;
-	private int		maxAmmo, gameOrgX, gameOrgY;
-	private String iconTextureString, gameTextureString, fieldTextureString;
-	private boolean isAuto;
-	private List<SoundData> sounds;
-	private Buff buff;
+	private double			price, ammoPrice, strength, accuracy, fuseTime, throwSpeed, warmup, preFireDelay,
+			postFireDelay, reloadTime, gameScale, gameOffX, gameOffY, size;
+	private int				maxAmmo, gameOrgX, gameOrgY;
+	private String			iconTextureString, gameTextureString, fieldTextureString;
+	private boolean			isAuto;
+	private List<SoundData>	sounds;
+	private Buff			buff;
 
 	public GrenadeData(JSONObject o) {
 		if (o.containsKey("price")) {
@@ -90,14 +90,14 @@ public class GrenadeData implements IWeaponDataBase {
 			fieldTextureString = "";
 		}
 		if (o.containsKey("isAuto")) {
-			isAuto = (Boolean)o.get("isAuto");
+			isAuto = (Boolean) o.get("isAuto");
 		}
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
-			JSONArray arr = (JSONArray)o.get("sounds");
-			
+			JSONArray arr = (JSONArray) o.get("sounds");
+
 			for (Object obj : arr) {
-				JSONObject soundJSON = (JSONObject)obj;
+				JSONObject soundJSON = (JSONObject) obj;
 				SoundData sound = SoundData.getSoundData(soundJSON);
 				if (sound != null) {
 					sounds.add(sound);
@@ -105,7 +105,7 @@ public class GrenadeData implements IWeaponDataBase {
 			}
 		}
 		if (o.containsKey("buff")) {
-			buff = Buff.getFromJSON((JSONObject)o.get("buff"));
+			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
 		}
 	}
 
@@ -117,7 +117,8 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param size the size to set
+	 * @param size
+	 *            the size to set
 	 */
 	public void setSize(double size) {
 		this.size = size;
@@ -131,7 +132,8 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param throwSpeed the throwSpeed to set
+	 * @param throwSpeed
+	 *            the throwSpeed to set
 	 */
 	public void setThrowSpeed(double throwSpeed) {
 		this.throwSpeed = throwSpeed;
@@ -145,7 +147,8 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param fuseTime the fuseTime to set
+	 * @param fuseTime
+	 *            the fuseTime to set
 	 */
 	public void setFuseTime(double fuseTime) {
 		this.fuseTime = fuseTime;
@@ -159,7 +162,8 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param isAuto the isAuto to set
+	 * @param isAuto
+	 *            the isAuto to set
 	 */
 	public void setAuto(boolean isAuto) {
 		this.isAuto = isAuto;
@@ -168,6 +172,7 @@ public class GrenadeData implements IWeaponDataBase {
 	/**
 	 * @return the price
 	 */
+	@Override
 	public double getPrice() {
 		return price;
 	}
@@ -273,12 +278,14 @@ public class GrenadeData implements IWeaponDataBase {
 	/**
 	 * @return the iconTextureString
 	 */
+	@Override
 	public String getIconTextureString() {
 		return iconTextureString;
 	}
 
 	/**
-	 * @param iconTextureString the iconTextureString to set
+	 * @param iconTextureString
+	 *            the iconTextureString to set
 	 */
 	public void setIconTextureString(String iconTextureString) {
 		this.iconTextureString = iconTextureString;
@@ -287,12 +294,14 @@ public class GrenadeData implements IWeaponDataBase {
 	/**
 	 * @return the gameTextureString
 	 */
+	@Override
 	public String getGameTextureString() {
 		return gameTextureString;
 	}
 
 	/**
-	 * @param gameTextureString the gameTextureString to set
+	 * @param gameTextureString
+	 *            the gameTextureString to set
 	 */
 	public void setGameTextureString(String gameTextureString) {
 		this.gameTextureString = gameTextureString;
@@ -306,7 +315,8 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param strength the strength to set
+	 * @param strength
+	 *            the strength to set
 	 */
 	public void setStrength(double strength) {
 		this.strength = strength;
@@ -345,16 +355,17 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param sounds the sounds to set
+	 * @param sounds
+	 *            the sounds to set
 	 */
 	public void setSounds(List<SoundData> sounds) {
 		this.sounds = sounds;
 	}
-	
+
 	public String getFieldTextureString() {
 		return fieldTextureString;
 	}
-	
+
 	public void setFieldTextureString(String fieldTextureString) {
 		this.fieldTextureString = fieldTextureString;
 	}
@@ -365,12 +376,13 @@ public class GrenadeData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @param warmup the warmup to set
+	 * @param warmup
+	 *            the warmup to set
 	 */
 	public void setWarmup(double warmup) {
 		this.warmup = warmup;
 	}
-	
+
 	public double getWarmup() {
 		return warmup;
 	}

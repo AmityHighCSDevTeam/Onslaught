@@ -11,21 +11,19 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author savelyevse17
- *
  */
 public class EntityPlayer implements IEntity, Disposable {
 
-	private Body				body;
-	private float				friction;
-	private MassData			massData;
+	private Body		body;
+	private float		friction;
+	private MassData	massData;
 
 	public EntityPlayer() {
 		massData = new MassData();
 	}
 
 	@Override
-	public void setShape(Shape e) {
-	}
+	public void setShape(Shape e) {}
 
 	@Override
 	public Shape getShape() {
@@ -35,8 +33,7 @@ public class EntityPlayer implements IEntity, Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public void setBody(Body b) {

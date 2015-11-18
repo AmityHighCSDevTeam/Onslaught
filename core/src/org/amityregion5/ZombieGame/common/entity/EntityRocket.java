@@ -12,30 +12,23 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author savelyevse17
- *
  */
 public class EntityRocket implements IEntity, Disposable {
 
-	private Body				body;
-	private float				friction;
-	private MassData			massData;
+	private Body		body;
+	private float		friction;
+	private MassData	massData;
 	private Vector2[]	shapeDef;
 
 	public EntityRocket(float size) {
 		massData = new MassData();
 		friction = 0.975f;
-		shapeDef = new Vector2[] {
-				new Vector2(size*2, 0f),
-				new Vector2(0f, size/2),
-				new Vector2(-size*2, size/2),
-				new Vector2(-size*2, -size/2),
-				new Vector2(0f, -size/2)
-			};
+		shapeDef = new Vector2[] {new Vector2(size * 2, 0f), new Vector2(0f, size / 2),
+				new Vector2(-size * 2, size / 2), new Vector2(-size * 2, -size / 2), new Vector2(0f, -size / 2)};
 	}
 
 	@Override
-	public void setShape(Shape e) {
-	}
+	public void setShape(Shape e) {}
 
 	@Override
 	public Shape getShape() {
@@ -45,8 +38,7 @@ public class EntityRocket implements IEntity, Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public void setBody(Body b) {

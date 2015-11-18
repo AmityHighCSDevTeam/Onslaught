@@ -42,52 +42,52 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 public class Game implements Disposable {
-	
-	//Static Variables
-	private static final float bigSpawnRad = 25;
-	private static final float smallSpnRad = 12.5f;
-	private static final float explosionMinVal = 0.05f;
-	private static final int explosionRaycasts = 720;
-	private static final float areaPerParticle = 0.1f;
 
-	//Unsaved variables
-	protected GameContactListener contactListener;
-	protected World	world;
-	protected float	accumulator;
+	// Static Variables
+	private static final float	bigSpawnRad			= 25;
+	private static final float	smallSpnRad			= 12.5f;
+	private static final float	explosionMinVal		= 0.05f;
+	private static final int	explosionRaycasts	= 720;
+	private static final float	areaPerParticle		= 0.1f;
+
+	// Unsaved variables
+	protected GameContactListener			contactListener;
+	protected World							world;
+	protected float							accumulator;
 	protected ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete;
-	protected ArrayList<IParticle>	particles, particlesToAdd, particlesToDelete;
-	protected ArrayList<IBullet>	activeBullets;
-	protected ArrayList<PlayerModel> players;
-	protected Random				rand;
-	protected RayHandler lighting;
-	
-	//Calculated Variables (Unsaved)
-	protected int maxHostiles = 0;
-	protected double moduloConstant;
-	protected int hostiles = 0;
+	protected ArrayList<IParticle>			particles, particlesToAdd, particlesToDelete;
+	protected ArrayList<IBullet>			activeBullets;
+	protected ArrayList<PlayerModel>		players;
+	protected Random						rand;
+	protected RayHandler					lighting;
 
-	//Saved Variables
-	protected Difficulty diff;
-	protected boolean isCheatMode;
-	protected boolean isSinglePlayer;
-	protected boolean isPaused;
-	protected double timeUntilNextSpawn;
-	protected int mobsSpawned = 0;
+	// Calculated Variables (Unsaved)
+	protected int		maxHostiles	= 0;
+	protected double	moduloConstant;
+	protected int		hostiles	= 0;
+
+	// Saved Variables
+	protected Difficulty	diff;
+	protected boolean		isCheatMode;
+	protected boolean		isSinglePlayer;
+	protected boolean		isPaused;
+	protected double		timeUntilNextSpawn;
+	protected int			mobsSpawned	= 0;
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
 		this.diff = diff;
-		this.isCheatMode = cheatMode;
+		isCheatMode = cheatMode;
 		isPaused = false;
 		isSinglePlayer = singlePlayer;
 
 		world = new World(new Vector2(0, 0), true);
 		contactListener = new GameContactListener();
 
-		contactListener.addBeginContactListener((c)->{
+		contactListener.addBeginContactListener((c) -> {
 			if (c.getFixtureA().getBody() != null) {
 				Optional<IEntityModel<?>> model = getEntityFromBody(c.getFixtureA().getBody());
 
-				model.ifPresent((en)->{
+				model.ifPresent((en) -> {
 					if (en instanceof RocketModel) {
 						((RocketModel) en).onHit();
 					}
@@ -96,7 +96,7 @@ public class Game implements Disposable {
 			if (c.getFixtureB().getBody() != null) {
 				Optional<IEntityModel<?>> model = getEntityFromBody(c.getFixtureB().getBody());
 
-				model.ifPresent((en)->{
+				model.ifPresent((en) -> {
 					if (en instanceof RocketModel) {
 						((RocketModel) en).onHit();
 					}
@@ -116,10 +116,10 @@ public class Game implements Disposable {
 		rand = new Random();
 
 		timeUntilNextSpawn = 10;
-		moduloConstant = Math.pow(5.5, 10.0/7) - 0.5 - 2*diff.getZombieWaveModifier();
+		moduloConstant = Math.pow(5.5, 10.0 / 7) - 0.5 - 2 * diff.getZombieWaveModifier();
 		maxHostiles = diff.getMaxHostiles();
-		//timeBetWaves = 15 * (Difficulty.diffInvertNum - diff.getDifficultyMultiplier());
-		//waveDifficulty = 3 * diff.getDifficultyMultiplier();
+		// timeBetWaves = 15 * (Difficulty.diffInvertNum - diff.getDifficultyMultiplier());
+		// waveDifficulty = 3 * diff.getDifficultyMultiplier();
 	}
 
 	public void tick(float deltaTime) {
@@ -128,17 +128,16 @@ public class Game implements Disposable {
 			accumulator += frameTime;
 			while (accumulator >= Constants.TIME_STEP) {
 
-				entities.forEach((e)->e.tick(Constants.TIME_STEP));
-				particles.forEach((p)->p.tick(Constants.TIME_STEP));
+				entities.forEach((e) -> e.tick(Constants.TIME_STEP));
+				particles.forEach((p) -> p.tick(Constants.TIME_STEP));
 
-				world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS,
-						Constants.POSITION_ITERATIONS);
+				world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 				accumulator -= Constants.TIME_STEP;
 
-				{ //Deletion of Entities
+				{ // Deletion of Entities
 					Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
-					if(!world.isLocked()){
-						while(i.hasNext()){
+					if (!world.isLocked()) {
+						while (i.hasNext()) {
 							IEntityModel<?> b = i.next();
 							world.destroyBody(b.getEntity().getBody());
 							entities.remove(b);
@@ -150,10 +149,10 @@ public class Game implements Disposable {
 						}
 					}
 				}
-				{ //Deletion of Particles
+				{ // Deletion of Particles
 					Iterator<IParticle> i = particlesToDelete.iterator();
-					if(!world.isLocked()){
-						while(i.hasNext()){
+					if (!world.isLocked()) {
+						while (i.hasNext()) {
 							IParticle p = i.next();
 							particles.remove(p);
 							i.remove();
@@ -161,20 +160,20 @@ public class Game implements Disposable {
 						}
 					}
 				}
-				{ //Addition of Entities
+				{ // Addition of Entities
 					Iterator<IEntityModel<?>> i = entitiesToAdd.iterator();
-					if(!world.isLocked()){
-						while(i.hasNext()){
+					if (!world.isLocked()) {
+						while (i.hasNext()) {
 							IEntityModel<?> b = i.next();
 							entities.add(b);
 							i.remove();
 						}
 					}
 				}
-				{ //Addition of Particles
+				{ // Addition of Particles
 					Iterator<IParticle> i = particlesToAdd.iterator();
-					if(!world.isLocked()){
-						while(i.hasNext()){
+					if (!world.isLocked()) {
+						while (i.hasNext()) {
 							IParticle p = i.next();
 							particles.add(p);
 							i.remove();
@@ -182,14 +181,15 @@ public class Game implements Disposable {
 					}
 				}
 
-				//Spawning of mobs
+				// Spawning of mobs
 				if (hostiles < maxHostiles) {
 					while (timeUntilNextSpawn <= 0 && hostiles < maxHostiles) {
 						spawnNext();
-						timeUntilNextSpawn += Math.min(Math.pow((Math.pow(mobsSpawned, 0.7))%(moduloConstant),6)/10000, 25);
+						timeUntilNextSpawn += Math
+								.min(Math.pow((Math.pow(mobsSpawned, 0.7)) % (moduloConstant), 6) / 10000, 25);
 						mobsSpawned++;
-						//timeBetWaves -= Math.pow(2, (1.4 * timeBetWaves * diff.getDifficultyMultiplier())/60) - 1;
-						//wavesSpawned++;
+						// timeBetWaves -= Math.pow(2, (1.4 * timeBetWaves * diff.getDifficultyMultiplier())/60) - 1;
+						// wavesSpawned++;
 					}
 					timeUntilNextSpawn -= frameTime;
 				}
@@ -203,9 +203,11 @@ public class Game implements Disposable {
 			Vector2 spawnPos = null;
 			boolean whilePara = true;
 			do {
-				final Vector2 v = new Vector2(pos.x - bigSpawnRad/2 + rand.nextFloat()*bigSpawnRad, pos.y - bigSpawnRad/2 + rand.nextFloat()*bigSpawnRad);
+				final Vector2 v = new Vector2(pos.x - bigSpawnRad / 2 + rand.nextFloat() * bigSpawnRad,
+						pos.y - bigSpawnRad / 2 + rand.nextFloat() * bigSpawnRad);
 				spawnPos = v;
-				whilePara = players.parallelStream().anyMatch((p)->p.getEntity().getBody().getPosition().dst2(v) < smallSpnRad * smallSpnRad);
+				whilePara = players.parallelStream()
+						.anyMatch((p) -> p.getEntity().getBody().getPosition().dst2(v) < smallSpnRad * smallSpnRad);
 			} while (whilePara);
 
 			IEntityModel<?> eModel = getSpawningEntity();
@@ -219,7 +221,7 @@ public class Game implements Disposable {
 	private IEntityModel<?> getSpawningEntity() {
 		return GameRegistry.getSpawn(this);
 	}
-	
+
 	public World getWorld() {
 		return world;
 	}
@@ -229,7 +231,7 @@ public class Game implements Disposable {
 	}
 
 	public void addEntityToWorld(IEntityModel<?> entity, float x, float y) {
-		addEntityToWorld(entity, x, y, (short)1, (short)1);
+		addEntityToWorld(entity, x, y, (short) 1, (short) 1);
 	}
 
 	public void addEntityToWorld(IEntityModel<?> entity, float x, float y, short maskBits, short categoryBits) {
@@ -273,7 +275,7 @@ public class Game implements Disposable {
 		shape.dispose();
 
 		if (entity instanceof PlayerModel) {
-			players.add((PlayerModel)entity);
+			players.add((PlayerModel) entity);
 		}
 
 		entitiesToAdd.add(entity);
@@ -284,6 +286,7 @@ public class Game implements Disposable {
 			return e.getEntity().getBody() == b;
 		}).findFirst();
 	}
+
 	public Optional<IEntityModel<?>> getEntityModelFromEntity(IEntity e) {
 		return entities.parallelStream().filter(e2 -> {
 			return e2.getEntity() == e;
@@ -306,7 +309,7 @@ public class Game implements Disposable {
 	}
 
 	public void removeEntity(IEntity entity) {
-		getEntityModelFromEntity(entity).ifPresent((m)->removeEntity(m));
+		getEntityModelFromEntity(entity).ifPresent((m) -> removeEntity(m));
 	}
 
 	public ArrayList<IParticle> getParticles() {
@@ -346,33 +349,36 @@ public class Game implements Disposable {
 			return;
 		}
 
-		double dist = (strength/explosionRaycasts)/explosionMinVal;
+		double dist = (strength / explosionRaycasts) / explosionMinVal;
 
 		double radPerRaycast = 2 * Math.PI / explosionRaycasts;
-		for (int i=0; i<explosionRaycasts; i++) {
+		for (int i = 0; i < explosionRaycasts; i++) {
 			double dir = radPerRaycast * i;
 
-			Vector2 bullVector = VectorFactory.createVector((float)dist, (float)dir);
+			Vector2 bullVector = VectorFactory.createVector((float) dist, (float) dir);
 
-			ExplosionRaycastBullet bull = new ExplosionRaycastBullet(this, pos, (float)(strength/explosionRaycasts), bullVector, source);
+			ExplosionRaycastBullet bull = new ExplosionRaycastBullet(this, pos, (float) (strength / explosionRaycasts),
+					bullVector, source);
 			bull.setDir((float) dir);
 
-			this.getActiveBullets().add(bull);
-			this.getWorld().rayCast(bull, pos, bullVector.add(pos));
+			getActiveBullets().add(bull);
+			getWorld().rayCast(bull, pos, bullVector.add(pos));
 			bull.finishRaycast();
 		}
 
 		double area = Math.PI * dist * dist;
 
-		int particles = (int) (area/areaPerParticle);
+		int particles = (int) (area / areaPerParticle);
 
-		dist/=2;
+		dist /= 2;
 
-		for (int i = 0; i<particles; i++) {
-			Vector2 pos2 = VectorFactory.createVector((float)(rand.nextDouble() * rand.nextDouble() * dist), (float)(rand.nextDouble()*Math.PI*2)).add(pos);
+		for (int i = 0; i < particles; i++) {
+			Vector2 pos2 = VectorFactory.createVector((float) (rand.nextDouble() * rand.nextDouble() * dist),
+					(float) (rand.nextDouble() * Math.PI * 2)).add(pos);
 
-			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(pos2.x, pos2.y ,new Color(1f, 1f, 0f, 1f), this,
-					(float) (2*Math.PI*rand.nextDouble()), 100*(rand.nextFloat()-0.5f), 0.05f*pos2.dst2(pos), pos2.sub(pos).angleRad());
+			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(pos2.x, pos2.y,
+					new Color(1f, 1f, 0f, 1f), this, (float) (2 * Math.PI * rand.nextDouble()),
+					100 * (rand.nextFloat() - 0.5f), 0.05f * pos2.dst2(pos), pos2.sub(pos).angleRad());
 
 			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
 			explosionParticle.getLight().setXray(true);
@@ -385,7 +391,7 @@ public class Game implements Disposable {
 			if (distToExplosion < 1) {
 				distToExplosion = 1;
 			}
-			player.setScreenVibrate(player.getScreenVibrate() + strength/distToExplosion/4 );
+			player.setScreenVibrate(player.getScreenVibrate() + strength / distToExplosion / 4);
 		}
 
 		playSound(new SoundData("Core/Audio/explode.wav", 1, strength), pos);
@@ -396,9 +402,11 @@ public class Game implements Disposable {
 	}
 
 	public void playSound(SoundData sound, Vector2 position) {
-		//ZombieGame.debug("Game: Playing Sound: " + sound.getAssetName());
+		// ZombieGame.debug("Game: Playing Sound: " + sound.getAssetName());
 		for (PlayerModel player : players) {
-			SoundPlayingData playing = new SoundPlayingData(sound.getAssetName(), Math.min(sound.getMaxVolume()/player.getEntity().getBody().getWorldCenter().dst2(position),1), sound.getPitch());
+			SoundPlayingData playing = new SoundPlayingData(sound.getAssetName(),
+					Math.min(sound.getMaxVolume() / player.getEntity().getBody().getWorldCenter().dst2(position), 1),
+					sound.getPitch());
 			player.playSound(playing);
 		}
 	}
@@ -434,10 +442,10 @@ public class Game implements Disposable {
 
 	@SuppressWarnings("unchecked")
 	public void saveToFile(String saveName) {
-		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/"+saveName+".save");
-		
+		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/" + saveName + ".save");
+
 		JSONObject obj = new JSONObject();
-		
+
 		obj.put("name", saveName);
 
 		JSONArray entitiesSaving = new JSONArray();
@@ -449,7 +457,7 @@ public class Game implements Disposable {
 			container.put("data", o);
 			entitiesSaving.add(container);
 		}
-		
+
 		obj.put("entities", entitiesSaving);
 
 		JSONArray particlesSaving = new JSONArray();
@@ -461,77 +469,77 @@ public class Game implements Disposable {
 			container.put("data", o);
 			particlesSaving.add(container);
 		}
-		
+
 		obj.put("particles", particlesSaving);
-		
+
 		obj.put("difficulty", diff.getUniqueID());
-		
+
 		obj.put("cheatMode", isCheatMode);
 		obj.put("singlePlayer", isSinglePlayer);
 		obj.put("paused", isPaused);
-		
+
 		obj.put("timeUntilSpawn", timeUntilNextSpawn);
-		
+
 		obj.put("mobsSpawned", mobsSpawned);
-		
+
 		file.writeString(obj.toJSONString(), false);
 	}
-	
+
 	public static Game loadFromFile(String saveName) {
-		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/"+saveName+".save");
+		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/" + saveName + ".save");
 		JSONParser parser = new JSONParser();
-		
+
 		Reader reader = file.reader();
 		try {
-			JSONObject obj = (JSONObject)parser.parse(reader);
-			
-			JSONArray entities = (JSONArray)obj.get("entities");
-			JSONArray particles = (JSONArray)obj.get("particles");
-			
-			Difficulty diff = GameRegistry.getDifficultyFromID((String)obj.get("difficulty")); //√
-			
-			boolean cheatMode = (Boolean)obj.get("cheatMode"); //√
-			boolean singlePlayer = (Boolean)obj.get("singlePlayer"); //√
-			boolean paused = (Boolean)obj.get("paused"); //√
-			
-			double timeUntilSpawn = ((Number)obj.get("timeUntilSpawn")).doubleValue(); //√
-			
-			int mobsSpawned = ((Number)obj.get("mobsSpawned")).intValue(); //√
-			
+			JSONObject obj = (JSONObject) parser.parse(reader);
+
+			JSONArray entities = (JSONArray) obj.get("entities");
+			JSONArray particles = (JSONArray) obj.get("particles");
+
+			Difficulty diff = GameRegistry.getDifficultyFromID((String) obj.get("difficulty")); // √
+
+			boolean cheatMode = (Boolean) obj.get("cheatMode"); // √
+			boolean singlePlayer = (Boolean) obj.get("singlePlayer"); // √
+			boolean paused = (Boolean) obj.get("paused"); // √
+
+			double timeUntilSpawn = ((Number) obj.get("timeUntilSpawn")).doubleValue(); // √
+
+			int mobsSpawned = ((Number) obj.get("mobsSpawned")).intValue(); // √
+
 			Game game = new Game(diff, singlePlayer, cheatMode);
 			game.setPaused(paused);
 			game.setTimeUntilNextSpawn(timeUntilSpawn);
 			game.setMobsSpawned(mobsSpawned);
-			
+
 			for (Object o : entities) {
-				JSONObject container = (JSONObject)o;
-				
+				JSONObject container = (JSONObject) o;
+
 				String className = (String) container.get("type");
-				
+
 				try {
 					Class<?> clazz = Class.forName(className);
 					JSONObject e = (JSONObject) container.get("data");
-					
+
 					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
-					@SuppressWarnings("unused")
-					IEntityModel<?> model = (IEntityModel<?>) method.invoke(clazz.newInstance(), e, game);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
+					method.invoke(clazz.newInstance(), e, game);
+				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
+						| IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
 				}
 			}
 			for (Object o : particles) {
-				JSONObject container = (JSONObject)o;
-				
+				JSONObject container = (JSONObject) o;
+
 				String className = (String) container.get("type");
-				
+
 				try {
 					Class<?> clazz = Class.forName(className);
 					JSONObject e = (JSONObject) container.get("data");
-					
+
 					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
-					@SuppressWarnings("unused")
-					IParticle model = (IParticle) method.invoke(clazz.newInstance(), e, game);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
+					method.invoke(clazz.newInstance(), e, game);
+				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
+						| IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -545,26 +553,26 @@ public class Game implements Disposable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	private void setTimeUntilNextSpawn(double timeUntilNextSpawn) {
 		this.timeUntilNextSpawn = timeUntilNextSpawn;
 	}
-	
+
 	private void setMobsSpawned(int mobsSpawned) {
 		this.mobsSpawned = mobsSpawned;
 	}
-	
+
 	public PlayerModel getSingleplayerPlayer() {
 		return players.get(0);
 	}
-	
+
 	public int getMobsSpawned() {
 		return mobsSpawned;
 	}
-	
+
 	public boolean isLightingEnabled() {
 		return true;
 	}

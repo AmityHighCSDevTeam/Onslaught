@@ -12,20 +12,18 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- *
  * @author sergeys
- *
  */
 public interface IWeapon {
 
 	public String getName();
 
 	public String getDescription();
-	
+
 	public String getID();
-	
+
 	public Map<String, String> getWeaponDataDescriptors(int level);
-	
+
 	public List<String> getTags();
 
 	public boolean loadWeapon(JSONObject json);
@@ -36,13 +34,12 @@ public interface IWeapon {
 
 	// Converts the gun's data into a string used for ammo display
 	/**
-	 *
 	 * @return the string to display for the ammo
 	 */
 	public String getAmmoString(WeaponStack stack);
 
-	public void onUse(Vector2 end, Game game, PlayerModel playerModel,
-			double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown);
+	public void onUse(Vector2 end, Game game, PlayerModel playerModel, double maxFireDegrees, WeaponStack stack,
+			boolean isMouseJustDown);
 
 	public void purchaseAmmo(PlayerModel playerModel, WeaponStack stack);
 
@@ -50,7 +47,6 @@ public interface IWeapon {
 
 	// Used by certain weapons to do stuff when not being fired
 	/**
-	 *
 	 * @param delta
 	 *            amount of time since last tick
 	 */

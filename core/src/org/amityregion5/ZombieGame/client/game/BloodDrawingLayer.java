@@ -11,11 +11,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class BloodDrawingLayer implements IDrawingLayer {
-	
+
 	public static final BloodDrawingLayer instance = new BloodDrawingLayer();
-	
-	public BloodDrawingLayer() {
-	}
+
+	public BloodDrawingLayer() {}
 
 	@Override
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
@@ -25,18 +24,18 @@ public class BloodDrawingLayer implements IDrawingLayer {
 		BloodParticle model = (BloodParticle) p;
 		Color c = batch.getColor();
 		batch.begin();
-		
+
 		Sprite sprite = new Sprite(TextureRegistry.getTexturesFor(model.getTextureName()).get(0));
-		
+
 		sprite.setOriginCenter();
 		sprite.setRotation((float) Math.toDegrees(model.getR()));
 		sprite.setAlpha(model.getOpacity());
 		sprite.setScale(model.getSize());
 		sprite.setCenter(model.getX(), model.getY());
-		//sprite.setBounds(model.getX()
-		//		- model.getSize(), model.getY() - model.getSize(),
-		//		model.getSize() * 2,
-		//		model.getSize() * 2);
+		// sprite.setBounds(model.getX()
+		// - model.getSize(), model.getY() - model.getSize(),
+		// model.getSize() * 2,
+		// model.getSize() * 2);
 
 		sprite.draw(batch);
 		batch.end();

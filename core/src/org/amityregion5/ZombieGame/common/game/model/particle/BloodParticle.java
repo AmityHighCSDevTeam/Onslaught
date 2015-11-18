@@ -9,15 +9,14 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
-public class BloodParticle implements IParticle{
-	private Game g;
-	private float x, y, size, r;
-	private String textureName;
-	private float timeAlive;
+public class BloodParticle implements IParticle {
+	private Game	g;
+	private float	x, y, size, r;
+	private String	textureName;
+	private float	timeAlive;
 
-	public BloodParticle() {
-	}
-	
+	public BloodParticle() {}
+
 	/**
 	 * @param x
 	 * @param y
@@ -33,7 +32,7 @@ public class BloodParticle implements IParticle{
 		this.y = y;
 		this.g = g;
 		size = 0.004f;
-		r = (float) (g.getRandom().nextFloat()*2*Math.PI);
+		r = (float) (g.getRandom().nextFloat() * 2 * Math.PI);
 		List<String> textureNames = TextureRegistry.getTextureNamesFor("blood/**");
 		textureName = textureNames.get(g.getRandom().nextInt(textureNames.size()));
 	}
@@ -47,39 +46,38 @@ public class BloodParticle implements IParticle{
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public IDrawingLayer[] getBackDrawingLayers() {
-		return new IDrawingLayer[]{BloodDrawingLayer.instance};//new IDrawingLayer[] {sprite};
+		return new IDrawingLayer[] {BloodDrawingLayer.instance};// new IDrawingLayer[] {sprite};
 	}
 
 	@Override
 	public IDrawingLayer[] getFrontDrawingLayers() {
-		return new IDrawingLayer[]{};
+		return new IDrawingLayer[] {};
 	}
-	
+
 	public float getX() {
 		return x;
 	}
-	
+
 	public float getY() {
 		return y;
 	}
-	
+
 	public float getSize() {
 		return size;
 	}
-	
+
 	public String getTextureName() {
 		return textureName;
 	}
-	
+
 	public float getOpacity() {
-		return (float) (1 - Math.pow(timeAlive/4, 8));
+		return (float) (1 - Math.pow(timeAlive / 4, 8));
 	}
-	
+
 	public float getR() {
 		return r;
 	}
@@ -88,32 +86,32 @@ public class BloodParticle implements IParticle{
 	@Override
 	public JSONObject convertToJSONObject() {
 		JSONObject obj = new JSONObject();
-		
+
 		obj.put("x", x);
 		obj.put("y", y);
 		obj.put("r", r);
 		obj.put("txtr", textureName);
 		obj.put("life", timeAlive);
-		
+
 		return obj;
 	}
 
 	@Override
 	public IParticle fromJSON(JSONObject obj, Game g) {
-		float x = ((Number)obj.get("x")).floatValue();
-		float y = ((Number)obj.get("y")).floatValue();
-		float r = ((Number)obj.get("r")).floatValue();
-		float timeAlive = ((Number)obj.get("life")).floatValue();
+		float x = ((Number) obj.get("x")).floatValue();
+		float y = ((Number) obj.get("y")).floatValue();
+		float r = ((Number) obj.get("r")).floatValue();
+		float timeAlive = ((Number) obj.get("life")).floatValue();
 		String txtr = (String) obj.get("txtr");
-		
+
 		BloodParticle model = new BloodParticle(x, y, g);
-		
+
 		model.textureName = txtr;
 		model.r = r;
 		model.timeAlive = timeAlive;
-		
+
 		g.addParticleToWorld(model);
-		
+
 		return model;
 	}
 }
