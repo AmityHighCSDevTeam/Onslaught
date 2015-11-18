@@ -23,20 +23,19 @@ public class HealthBarDrawingLayer implements IDrawingLayer {
 		float height = e.getShape().getRadius() / 6;
 
 		shapeRenderer.setColor(Color.RED);
-		shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9),
-				e.getBody().getWorldCenter().y - height / 2, (float) (e.getShape().getRadius() * 1.8), (height));
+		shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9), e.getBody().getWorldCenter().y - height / 2,
+				(float) (e.getShape().getRadius() * 1.8), (height));
 		if (eM.getHealth() > 0) {
 			shapeRenderer.setColor(Color.GREEN);
-			shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9),
-					e.getBody().getWorldCenter().y - height / 2,
+			shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9), e.getBody().getWorldCenter().y - height / 2,
 					(float) (e.getShape().getRadius() * 1.8 * eM.getHealth() / eM.getMaxHealth()), (height));
 		}
 		shapeRenderer.end();
 
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9),
-				e.getBody().getWorldCenter().y - height / 2, (float) (e.getShape().getRadius() * 1.8), (height));
+		shapeRenderer.rect((float) (e.getBody().getWorldCenter().x - e.getShape().getRadius() * 0.9), e.getBody().getWorldCenter().y - height / 2,
+				(float) (e.getShape().getRadius() * 1.8), (height));
 		shapeRenderer.end();
 	}
 

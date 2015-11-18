@@ -85,15 +85,15 @@ public class Rocket implements IWeapon {
 			stack.setWarmup(stack.getWarmup() - delta);
 			if (stack.getWarmup() <= 0) {
 				stack.setWarmingUp(false);
-				fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(),
-						stack.getWarmupMaxFireDegrees(), stack);
+				if (stack.getAmmo() > 0) {
+					fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(), stack.getWarmupMaxFireDegrees(), stack);
+				}
 			}
 		}
 	}
 
 	@Override
-	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack,
-			boolean isMouseJustDown) {
+	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
 		if (stack.getAmmo() <= 0) {
 			reload(stack, game, firing);
 			return;
@@ -110,7 +110,7 @@ public class Rocket implements IWeapon {
 					stack.setWarmupGame(game);
 					stack.setWarmupFiring(firing);
 					stack.setWarmupMaxFireDegrees(maxFireDegrees);
-				} else if (stack.getAmmo() > 0) {
+				} else if (stack.getAmmo() > 0 && data.get(stack.getLevel()).getPreFireDelay() <= 0) {
 					fireWeapon(end, game, firing, maxFireDegrees, stack);
 				} else {
 					reload(stack, game, firing);
@@ -127,8 +127,7 @@ public class Rocket implements IWeapon {
 		stack.setAmmo(stack.getAmmo() - 1);
 
 		double dir = MathHelper.clampAngleAroundCenter(firing.getEntity().getBody().getAngle(),
-				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end),
-				Math.toRadians(maxFireDegrees));
+				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end), Math.toRadians(maxFireDegrees));
 
 		dir -= Math.toRadians(data.get(stack.getLevel()).getAccuracy() / 2);
 
@@ -145,8 +144,8 @@ public class Rocket implements IWeapon {
 			}
 		}
 
-		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing,
-				gData.getFieldTextureString(), (float) gData.getSize(), flySound);
+		RocketModel rocketModel = new RocketModel(new EntityRocket((float) gData.getSize()), game, firing, gData.getFieldTextureString(),
+				(float) gData.getSize(), flySound);
 
 		rocketModel.setStrength(gData.getStrength());
 		rocketModel.setAcceleration((float) gData.getAcceleration());
@@ -154,12 +153,11 @@ public class Rocket implements IWeapon {
 
 		Vector2 playerPos = firing.getEntity().getBody().getWorldCenter();
 
-		Vector2 pos = VectorFactory.createVector(0.16f + (float) gData.getSize() * 2, (float) dir);
+		Vector2 pos = VectorFactory.createVector(0.18f + (float) gData.getSize() * 2, (float) dir);
 
 		game.addEntityToWorld(rocketModel, pos.x + playerPos.x, pos.y + playerPos.y);
 
-		rocketModel.getEntity().getBody()
-				.applyForceToCenter(VectorFactory.createVector((float) gData.getThrowSpeed(), (float) dir), true);
+		rocketModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float) gData.getThrowSpeed(), (float) dir), true);
 		rocketModel.getEntity().getBody().setTransform(rocketModel.getEntity().getBody().getWorldCenter(), (float) dir);
 		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
 
@@ -233,8 +231,7 @@ public class Rocket implements IWeapon {
 
 			return true;
 		}
-		ZombieGame
-				.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 

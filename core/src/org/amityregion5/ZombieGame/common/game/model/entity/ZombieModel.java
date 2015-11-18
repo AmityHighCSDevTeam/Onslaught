@@ -53,8 +53,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		this.g = g;
 		ai = AIMode.IDLE;
 		this.sizeMultiplier = sizeMultiplier;
-		int textureIndex = ZombieGame.instance.random
-				.nextInt(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").size());
+		int textureIndex = ZombieGame.instance.random.nextInt(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").size());
 		zSprite = new SpriteDrawingLayer(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").get(textureIndex));
 	}
 
@@ -69,9 +68,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 			growlVolume = g.getRandom().nextFloat() * (maxGrowlVolume - minGrowlVolume) + minGrowlVolume;
 			growlPitch = Math.min(Math.max(sizeMultiplier, 0.5f), 2f);
 			List<String> soundNames = SoundRegistry.getSoundNamesFor("*/Audio/Zombie/*");
-			g.playSound(
-					new SoundData(soundNames.get(g.getRandom().nextInt(soundNames.size())), growlPitch, growlVolume),
-					entity.getBody().getWorldCenter());
+			g.playSound(new SoundData(soundNames.get(g.getRandom().nextInt(soundNames.size())), growlPitch, growlVolume), entity.getBody().getWorldCenter());
 			secUntilGrowl = g.getRandom().nextFloat() * (maxSecUntilGrowl - minSecUntilGrowl) + minSecUntilGrowl;
 		}
 		secUntilGrowl -= delta;
@@ -99,18 +96,12 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 					Optional<IEntityModel<?>> targetModel = g.getEntityModelFromEntity(target);
 					if (targetModel.isPresent()) {
 						if (targetModel.get().getHealth() > 0) {
-							entity.getBody()
-									.applyForceToCenter(
-											VectorFactory.createVector(getSpeed(),
-													(float) MathHelper.getDirBetweenPoints(
-															entity.getBody().getPosition(),
-															target.getBody().getPosition())),
-											true);
+							entity.getBody().applyForceToCenter(VectorFactory.createVector(getSpeed(),
+									(float) MathHelper.getDirBetweenPoints(entity.getBody().getPosition(), target.getBody().getPosition())), true);
 							BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
 
 							float fixedRange = (range + targetModel.get().getEntity().getShape().getRadius());
-							if (entity.getBody().getWorldCenter().dst2(target.getBody().getWorldCenter()) <= fixedRange
-									* fixedRange) {
+							if (entity.getBody().getWorldCenter().dst2(target.getBody().getWorldCenter()) <= fixedRange * fixedRange) {
 								ai = AIMode.ATTACKING;
 								attackCooldown = 0;
 							}
@@ -165,12 +156,9 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 			damageTaken = 0;
 		}
 		for (int i = 0; i < damageTaken; i += 5) {
-			g.addParticleToWorld(new BloodParticle(
-					entity.getBody().getWorldCenter().x - entity.getSize() * 1.25f
-							+ g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
-					entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f
-							+ g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
-					g));
+			g.addParticleToWorld(
+					new BloodParticle(entity.getBody().getWorldCenter().x - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
+							entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f, g));
 		}
 		health -= damageTaken;
 		if (health <= 0 && damageTaken > 0) {
@@ -179,8 +167,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 				pModel.setMoney(pModel.getMoney() + prizeMoney);
 			}
 			if (g.getDifficulty().getHealthPackChance() > g.getRandom().nextDouble()) {
-				g.addParticleToWorld(new HealthPackParticle(entity.getBody().getWorldCenter().x,
-						entity.getBody().getWorldCenter().y, g));
+				g.addParticleToWorld(new HealthPackParticle(entity.getBody().getWorldCenter().x, entity.getBody().getWorldCenter().y, g));
 			}
 			g.removeEntity(this);
 		}

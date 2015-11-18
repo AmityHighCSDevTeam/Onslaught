@@ -125,9 +125,8 @@ public class ContinueMenu extends GuiScreen {
 			float w = getWidth() - 40;
 
 			for (String file : stuff) {
-				if (Gdx.input.isTouched() && Gdx.input.justTouched() && Gdx.input.getX() >= x
-						&& Gdx.input.getX() <= x + w && getHeight() - Gdx.input.getY() >= y
-						&& getHeight() - Gdx.input.getY() <= y + h && selected != file) {
+				if (Gdx.input.isTouched() && Gdx.input.justTouched() && Gdx.input.getX() >= x && Gdx.input.getX() <= x + w
+						&& getHeight() - Gdx.input.getY() >= y && getHeight() - Gdx.input.getY() <= y + h && selected != file) {
 					selected = file;
 				}
 				if (selected == file) {
@@ -139,8 +138,8 @@ public class ContinueMenu extends GuiScreen {
 				Color color = (selected != file ? Color.WHITE : new Color(27 / 255f, 255 / 255f, 55 / 255f, 1f));
 
 				if (color == Color.WHITE) {
-					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y
-							&& Gdx.input.getX() < x + w && ZombieGame.instance.height - Gdx.input.getY() < y + h) {
+					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y && Gdx.input.getX() < x + w
+							&& ZombieGame.instance.height - Gdx.input.getY() < y + h) {
 						color = new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f);
 					}
 				}
@@ -159,11 +158,7 @@ public class ContinueMenu extends GuiScreen {
 			float w = 20;
 			float h = getHeight() - 200;
 			/*
-			 * shapeRender.begin(ShapeType.Filled);
-			 * shapeRender.setColor(r, g, b, a);
-			 * shapeRender.end();
-			 * shapeRender.begin(ShapeType.Line);
-			 * shapeRender.end();
+			 * shapeRender.begin(ShapeType.Filled); shapeRender.setColor(r, g, b, a); shapeRender.end(); shapeRender.begin(ShapeType.Line); shapeRender.end();
 			 */
 
 			shapeRender.begin(ShapeType.Filled);
@@ -202,8 +197,7 @@ public class ContinueMenu extends GuiScreen {
 		super.setUpScreen();
 
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() / 2 - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -2, "Load", getWidth() / 2 + 10, 10,
-				getWidth() / 2 - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -2, "Load", getWidth() / 2 + 10, 10, getWidth() / 2 - 20, 50));
 	}
 
 	@Override

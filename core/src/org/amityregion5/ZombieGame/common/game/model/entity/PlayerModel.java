@@ -73,8 +73,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 
 	@Override
 	public void tick(float delta) {
-		if (ZombieGame.instance.settings.getInput("Shoot").isDown() && screen != null
-				&& screen.getCurrentWindow() == null) {
+		if (ZombieGame.instance.settings.getInput("Shoot").isDown() && screen != null && screen.getCurrentWindow() == null) {
 			if (weapons.size() > 0) {
 				hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);
 			}
@@ -82,36 +81,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		} else {
 			shootJustPressed = true;
 		} /*
-			 * if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen != null &&
-			 * screen.getCurrentWindow() == null) {
-			 * if (meleeJustPressed) {
-			 * double dir = MathHelper.clampAngleAroundCenter(this
-			 * .getEntity().getBody().getAngle(), MathHelper
-			 * .getDirBetweenPoints(
-			 * this.getEntity().getBody().getPosition(), mousePos), Math
-			 * .toRadians(10));
-			 * dir = MathHelper.fixAngle(dir);
-			 * Vector2 firingPos = this.getEntity().getBody().getWorldCenter();
-			 * Vector2 firingPosVisual = MathHelper.getEndOfLine(this.getEntity().getBody()
-			 * .getWorldCenter(),
-			 * this.getEntity().getShape().getRadius() - 0.01, dir);
-			 * Vector2 bullVector = VectorFactory.createVector(0.25f,
-			 * (float) dir);
-			 * BasicBullet bull = new BasicBullet(g, firingPosVisual, 0,
-			 * (float)((3+getTotalBuffs().getAdd("meleeDamage"))*getTotalBuffs().getMult("meleeDamage")),
-			 * bullVector, this,
-			 * Color.WHITE, 1, 0.2f);
-			 * bull.setDir((float) dir);
-			 * g.getActiveBullets().add(bull);
-			 * bullVector = VectorFactory.createVector(200f,
-			 * (float) dir);
-			 * g.getWorld().rayCast(bull, firingPos, bullVector);
-			 * bull.finishRaycast();
-			 * }
-			 * meleeJustPressed = false;
-			 * } else {
-			 * meleeJustPressed = true;
-			 * }
+			 * if (ZombieGame.instance.settings.getInput("Melee").isDown() && screen != null && screen.getCurrentWindow() == null) { if (meleeJustPressed) { double dir = MathHelper.clampAngleAroundCenter(this
+			 * .getEntity().getBody().getAngle(), MathHelper .getDirBetweenPoints( this.getEntity().getBody().getPosition(), mousePos), Math .toRadians(10)); dir = MathHelper.fixAngle(dir); Vector2 firingPos =
+			 * this.getEntity().getBody().getWorldCenter(); Vector2 firingPosVisual = MathHelper.getEndOfLine(this.getEntity().getBody() .getWorldCenter(), this.getEntity().getShape().getRadius() - 0.01, dir); Vector2 bullVector =
+			 * VectorFactory.createVector(0.25f, (float) dir); BasicBullet bull = new BasicBullet(g, firingPosVisual, 0, (float)((3+getTotalBuffs().getAdd("meleeDamage"))*getTotalBuffs().getMult("meleeDamage")), bullVector, this,
+			 * Color.WHITE, 1, 0.2f); bull.setDir((float) dir); g.getActiveBullets().add(bull); bullVector = VectorFactory.createVector(200f, (float) dir); g.getWorld().rayCast(bull, firingPos, bullVector); bull.finishRaycast(); }
+			 * meleeJustPressed = false; } else { meleeJustPressed = true; }
 			 */
 
 		if (ZombieGame.instance.settings.getInput("Move_Up").isDown()) {
@@ -162,8 +137,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		// getCircleLight().setPosition(entity.getBody().getWorldCenter());
 
 		if (currentWeapon < getHotbar().length && currentWeapon >= 0) {
-			getHotbar()[currentWeapon].tick(
-					(float) ((delta + getTotalBuffs().getAdd("weaponTime")) * getTotalBuffs().getMult("weaponTime")));
+			getHotbar()[currentWeapon].tick((float) ((delta + getTotalBuffs().getAdd("weaponTime")) * getTotalBuffs().getMult("weaponTime")));
 		}
 		sprite.getSprite().setOriginCenter();
 		screenJitter *= 0.9;
@@ -176,10 +150,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public WeaponStack getCurrentWeapon() {
 		return hotbar[currentWeapon];
 		/*
-		 * if (currentWeapon < weapons.size() && currentWeapon >= 0) {
-		 * return weapons.get(currentWeapon);
-		 * }
-		 * return new WeaponStack(new NullWeapon());
+		 * if (currentWeapon < weapons.size() && currentWeapon >= 0) { return weapons.get(currentWeapon); } return new WeaponStack(new NullWeapon());
 		 */
 	}
 
@@ -215,17 +186,14 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		damage = (float) ((damage - getTotalBuffs().getAdd("allArmor")) * getTotalBuffs().getMult("allArmor"));
 
 		if (damageType == DamageTypes.ZOMBIE) {
-			damage = (float) ((damage - getTotalBuffs().getAdd("zombieArmor"))
-					* getTotalBuffs().getMult("zombieArmor"));
+			damage = (float) ((damage - getTotalBuffs().getAdd("zombieArmor")) * getTotalBuffs().getMult("zombieArmor"));
 		} else if (damageType == DamageTypes.EXPLOSION) {
-			damage = (float) ((damage - getTotalBuffs().getAdd("explosionArmor"))
-					* getTotalBuffs().getMult("explosionArmor"));
+			damage = (float) ((damage - getTotalBuffs().getAdd("explosionArmor")) * getTotalBuffs().getMult("explosionArmor"));
 		}
 
 		float damageTaken = Math.min(damage, health);
 		for (int i = 0; i < damageTaken; i += 5) {
-			g.addParticleToWorld(new BloodParticle(
-					entity.getBody().getWorldCenter().x - 0.18f + g.getRandom().nextFloat() * 0.18f * 2,
+			g.addParticleToWorld(new BloodParticle(entity.getBody().getWorldCenter().x - 0.18f + g.getRandom().nextFloat() * 0.18f * 2,
 					entity.getBody().getWorldCenter().y - 0.18f + g.getRandom().nextFloat() * 0.18f * 2, g));
 		}
 		health -= damageTaken;
@@ -340,8 +308,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	}
 
 	public void addTemporaryWeaponBuff() {
-		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null
-				&& hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
+		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null && hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
 			totalBuffs = totalBuffs.add(hotbar[currentWeapon].getWeaponDataBase().getBuff());
 			temporaryBuffs.add(hotbar[currentWeapon].getWeaponDataBase().getBuff());
 			recalculateBuffEffects();
@@ -349,11 +316,9 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	}
 
 	public void removeTemporaryWeaponBuff() {
-		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null
-				&& hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
+		if (hotbar[currentWeapon] != null && hotbar[currentWeapon].getWeaponDataBase() != null && hotbar[currentWeapon].getWeaponDataBase().getBuff() != null) {
 			temporaryBuffs.remove(hotbar[currentWeapon].getWeaponDataBase().getBuff());
-			totalBuffs = Stream.concat(buffs.parallelStream(), temporaryBuffs.parallelStream()).reduce(new Buff(),
-					Buff::sum, Buff::sum);
+			totalBuffs = Stream.concat(buffs.parallelStream(), temporaryBuffs.parallelStream()).reduce(new Buff(), Buff::sum, Buff::sum);
 			recalculateBuffEffects();
 		}
 	}

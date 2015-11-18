@@ -6,8 +6,7 @@ import org.json.simple.JSONObject;
 
 public class Buff {
 	/*
-	 * Done:
-	 * health, speed, bulletDamage, explodeDamage, allArmor, zombieArmor, explosionArmor, weaponTime
+	 * Done: health, speed, bulletDamage, explodeDamage, allArmor, zombieArmor, explosionArmor, weaponTime
 	 */
 	private HashMap<String, Double>	multiplicative;
 	private HashMap<String, Double>	additive;

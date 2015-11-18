@@ -49,10 +49,8 @@ public class PlayGameMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Singleplayer", 10, getHeight() - 150,
-				getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Tutorial", 10, getHeight() - 210,
-				getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Singleplayer", 10, getHeight() - 150, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Tutorial", 10, getHeight() - 210, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back", 10, 10, getWidth() - 20, 50));
 	}
 

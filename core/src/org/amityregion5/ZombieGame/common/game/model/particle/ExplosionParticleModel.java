@@ -31,8 +31,7 @@ public class ExplosionParticleModel implements IParticle {
 	 * @param vel
 	 * @param velDir
 	 */
-	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float vel,
-			float velDir) {
+	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float vel, float velDir) {
 		this.x = x;
 		this.y = y;
 		this.c = c;
@@ -45,8 +44,7 @@ public class ExplosionParticleModel implements IParticle {
 		yVel = vec.y;
 	}
 
-	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float xV,
-			float yV, boolean secondThing) {
+	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float xV, float yV, boolean secondThing) {
 		this.x = x;
 		this.y = y;
 		this.c = c;

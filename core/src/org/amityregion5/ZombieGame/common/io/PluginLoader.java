@@ -193,8 +193,7 @@ public class PluginLoader {
 						plugin.addWeapon(weapon);
 						return;
 					} else {
-						ZombieGame.error(
-								"Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
+						ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
 					}
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
@@ -205,11 +204,7 @@ public class PluginLoader {
 	}
 
 	/*
-	 * { "name": "NAME", "desc": "DESCRIPTION", "className": "CLASS_NAME",
-	 * "weapon": [ { "price": 0, "ammoPrice": 0, "damage": 0, "knockback": 0,
-	 * "accuracy": 0, "maxAmmo": 0, "reloadTime": 0, "preFireDelay": 0,
-	 * "postFireDelay": 0 }, { "price": 0, "ammoPrice": 0, "damage": 0,
-	 * "knockback": 0, "accuracy": 0, "maxAmmo": 0, "reloadTime": 0,
-	 * "preFireDelay": 0, "postFireDelay": 0 } ] }
+	 * { "name": "NAME", "desc": "DESCRIPTION", "className": "CLASS_NAME", "weapon": [ { "price": 0, "ammoPrice": 0, "damage": 0, "knockback": 0, "accuracy": 0, "maxAmmo": 0, "reloadTime": 0, "preFireDelay": 0, "postFireDelay": 0 }, {
+	 * "price": 0, "ammoPrice": 0, "damage": 0, "knockback": 0, "accuracy": 0, "maxAmmo": 0, "reloadTime": 0, "preFireDelay": 0, "postFireDelay": 0 } ] }
 	 */
 }

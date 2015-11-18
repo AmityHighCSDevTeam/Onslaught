@@ -50,15 +50,14 @@ public class TextureRegistry {
 	}
 
 	public static List<Texture> getTexturesFor(String str) {
-		List<Texture> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
-				.map((k) -> textures.get(k)).collect(Collectors.toList());
+		List<Texture> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).map((k) -> textures.get(k))
+				.collect(Collectors.toList());
 		if (t == null || t.size() == 0) { return Arrays.asList(new Texture[] {ZombieGame.instance.missingTexture}); }
 		return t;
 	}
 
 	public static List<String> getTextureNamesFor(String str) {
-		List<String> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
-				.collect(Collectors.toList());
+		List<String> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).collect(Collectors.toList());
 		if (t == null || t.size() == 0) { return Arrays.asList(new String[] {"--Null Texture--"}); }
 		return t;
 	}

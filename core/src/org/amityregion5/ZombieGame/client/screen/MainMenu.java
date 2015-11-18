@@ -47,13 +47,11 @@ public class MainMenu extends GuiScreen {
 		batch.draw(titleTexture, 10, camera.viewportHeight - titleHeight - 10, camera.viewportWidth - 20, titleHeight);
 
 		float y = 15;
-		glyph.setText(ZombieGame.instance.mainFont, "Version " + ZombieGame.instance.version, Color.WHITE, getWidth(),
-				Align.left, false);
+		glyph.setText(ZombieGame.instance.mainFont, "Version " + ZombieGame.instance.version, Color.WHITE, getWidth(), Align.left, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, 10, y + glyph.height / 2);
 		y += glyph.height + 15;
 
-		if (newerVersionMode == 0 && ZombieGame.instance.newestVersion != null
-				&& !ZombieGame.instance.newestVersion.equals(ZombieGame.instance.version)) {
+		if (newerVersionMode == 0 && ZombieGame.instance.newestVersion != null && !ZombieGame.instance.newestVersion.equals(ZombieGame.instance.version)) {
 			newerVersionMode = 1;
 		}
 
@@ -83,13 +81,11 @@ public class MainMenu extends GuiScreen {
 
 			batch.begin();
 
-			glyph.setText(ZombieGame.instance.mainFont,
-					"A new version is available: " + ZombieGame.instance.newestVersion + "\nClick to close",
-					Color.WHITE, w - 20, Align.center, false);
+			glyph.setText(ZombieGame.instance.mainFont, "A new version is available: " + ZombieGame.instance.newestVersion + "\nClick to close", Color.WHITE,
+					w - 20, Align.center, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y1 + (h + glyph.height) / 2);
 
-			if (Gdx.input.isTouched() && Gdx.input.getX() > x && Gdx.input.getX() < x + w
-					&& Gdx.graphics.getHeight() - Gdx.input.getY() > y1
+			if (Gdx.input.isTouched() && Gdx.input.getX() > x && Gdx.input.getX() < x + w && Gdx.graphics.getHeight() - Gdx.input.getY() > y1
 					&& Gdx.graphics.getHeight() - Gdx.input.getY() < y1 + h) {
 				newerVersionMode = 2;
 			}
@@ -127,8 +123,8 @@ public class MainMenu extends GuiScreen {
 		for (int i = 0; i < buttons.length; i++) {
 			if (buttons[i] != null) {
 				addButton(new GuiButton(buttonTexture, i, buttons[i], 10 * ZombieGame.getXScalar(),
-						getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * i),
-						getWidth() - ZombieGame.getScaledX(20), ZombieGame.getScaledY(50)).setEnabled(enabled[i]));
+						getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * i), getWidth() - ZombieGame.getScaledX(20),
+						ZombieGame.getScaledY(50)).setEnabled(enabled[i]));
 			}
 		}
 	}

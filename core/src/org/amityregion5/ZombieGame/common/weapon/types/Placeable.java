@@ -85,15 +85,13 @@ public class Placeable implements IWeapon {
 			stack.setWarmup(stack.getWarmup() - delta);
 			if (stack.getWarmup() <= 0) {
 				stack.setWarmingUp(false);
-				fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(),
-						stack.getWarmupMaxFireDegrees(), stack);
+				fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(), stack.getWarmupMaxFireDegrees(), stack);
 			}
 		}
 	}
 
 	@Override
-	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack,
-			boolean isMouseJustDown) {
+	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
 		if (stack.getAmmo() <= 0) {
 			reload(stack, game, firing);
 			return;
@@ -125,8 +123,7 @@ public class Placeable implements IWeapon {
 		if (registeredObjects.containsKey(data.get(stack.getLevel()).getPlacingObject())) {
 			stack.setAmmo(stack.getAmmo() - 1);
 
-			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end),
-					end.x, end.y);
+			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end), end.x, end.y);
 
 			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 				if (sound.getTrigger().equals("fire")) {
@@ -194,8 +191,7 @@ public class Placeable implements IWeapon {
 
 			return true;
 		}
-		ZombieGame
-				.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 

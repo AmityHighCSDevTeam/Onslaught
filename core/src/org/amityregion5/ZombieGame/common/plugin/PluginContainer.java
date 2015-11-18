@@ -103,10 +103,9 @@ public class PluginContainer {
 	}
 
 	public List<IPurchaseable> getPurchaseables() {
-		return Stream.concat(weapons.stream().map((w) -> new GunPurchaseable(w)),
-				buffApplicators.stream().map((b) -> new BuffPurchaseable(b))).map((o) -> {
-					return o;
-				}).collect(Collectors.toList());
+		return Stream.concat(weapons.stream().map((w) -> new GunPurchaseable(w)), buffApplicators.stream().map((b) -> new BuffPurchaseable(b))).map((o) -> {
+			return o;
+		}).collect(Collectors.toList());
 	}
 
 	public List<IPlugin> getPlugins() {

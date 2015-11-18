@@ -11,8 +11,7 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
-	private double			price, ammoPrice, damage, knockback, accuracy, warmup, preFireDelay, postFireDelay,
-			reloadTime, gameScale, gameOffX, gameOffY;
+	private double			price, ammoPrice, damage, knockback, accuracy, warmup, preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
 	private int				maxAmmo, gameOrgX, gameOrgY;
 	private float			bulletThickness;
 	private Color			bulletColor;

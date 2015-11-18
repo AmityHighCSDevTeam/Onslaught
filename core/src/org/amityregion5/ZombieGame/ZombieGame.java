@@ -42,39 +42,40 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 public class ZombieGame extends Game {
 
 	public static ZombieGame	instance;	// The current game
-	public static String		workingDir;
+	public static String		workingDir;	// The directory the game works out of
 
 	public FreeTypeFontGenerator	fontGenerator;
-	public BitmapFont				mainFont, bigFont;							// Font that buttons use
-	public Texture					buttonTexture;								// Texture that buttons use
-	public Texture					missingTexture;								// The texture for when texture is
-																				// missing
-	public boolean					isServer;									// Is the current instance a
+	public BitmapFont				mainFont, bigFont;					// Font that buttons use
+	public Texture					buttonTexture;						// Texture that buttons use
+	public Texture					missingTexture;						// The texture for when texture is
+																		// missing
+	public boolean					isServer;							// Is the current instance a
 	// server
-	public WeaponRegistry			weaponRegistry;								// The registry for the weapons
-	public int						width, height;								// The width and height of the
+	public WeaponRegistry			weaponRegistry;						// The registry for the weapons
+	public int						width, height;						// The width and height of the
 	// screen
-	public Random					random;
-	public FileHandle				gameData;
-	public FileHandle				settingsFile;
-	public Settings					settings;
-	public PluginManager			pluginManager;
-	public boolean					isCheatModeAllowed;
-	public String					version			= "Error: Version Not Set";
-	public String					newestVersion	= null;
+	public Random					random;								// The game's Random Number Generator
+	public FileHandle				gameData;							// The gamedata file
+	public FileHandle				settingsFile;						// The settings file
+	public Settings					settings;							// The settings object
+	public PluginManager			pluginManager;						// The plugin manager
+	public boolean					isCheatModeAllowed;					// Has cheat mode been enabled
+	public String					version	= "Error: Version Not Set";	// The game version
+	public String					newestVersion;						// The newest version
 
 	/**
 	 * @param isServer
 	 *            is the game a server
-	 * @param cheatMode
-	 * @param config
-	 * @throws FileNotFoundException
+	 * @param cheatMode is cheat mode enabled
+	 * @throws FileNotFoundException when it is not able to make the output stream
 	 */
 	public ZombieGame(boolean isServer, boolean cheatMode) throws FileNotFoundException {
 		instance = this; // Set the instances
-		isCheatModeAllowed = cheatMode;
+		isCheatModeAllowed = cheatMode; //Set the cheat mode
 		this.isServer = isServer; // Set if it is a server
-		random = new Random();
+		random = new Random(); //Create the random
+		
+		//Determine the working directory
 		try {
 			String temp = ZombieGame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
@@ -84,23 +85,30 @@ public class ZombieGame extends Game {
 			workingDir = Gdx.files.getLocalStoragePath(); // Hopefully this will work on your computer if that doesn't
 		}
 
+		//Log file output stream
 		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
 
+		//Output stream
 		System.setOut(new PrintStream(new MultiOutputStream(System.out, fos)));
+		//Error stream
 		System.setErr(new PrintStream(new MultiOutputStream(System.err, fos)));
 	}
 
 	@Override
 	public void create() {
+		//Read the version File
 		FileHandle versionFile = Gdx.files.absolute(workingDir + "/ZombieGameData/version.txt");
 		version = versionFile.readString();
 
+		//Start a thread ot determine the most recent verison that has been uploaded
 		Thread newerVersionThread = new Thread(() -> {
 			try {
-				URL url = new URL(
-						"https://raw.githubusercontent.com/AmityHighCSDevTeam/ZombieGame/master/core/ZombieGameData/version.txt");
+				//Get URL
+				URL url = new URL("https://raw.githubusercontent.com/AmityHighCSDevTeam/ZombieGame/master/core/ZombieGameData/version.txt");
+				//Scanner for the URL
 				Scanner s = new Scanner(url.openStream());
 
+				//Time out after 10 seconds
 				Thread timeOutThread = new Thread(() -> {
 					try {
 						Thread.sleep(10000);
@@ -110,11 +118,14 @@ public class ZombieGame extends Game {
 					s.close();
 				} , "Time Out Thread");
 
+				//Start the time out thread
 				timeOutThread.setDaemon(true);
 				timeOutThread.start();
 
+				//Read the newest version
 				newestVersion = s.nextLine();
 
+				//Close the scanner
 				s.close();
 
 				debug("Found most up to date version to be = " + newestVersion);
@@ -124,15 +135,17 @@ public class ZombieGame extends Game {
 			}
 		} , "Newer Version Thread");
 
+		//Start the internets thread
 		newerVersionThread.setDaemon(true);
-
 		newerVersionThread.start();
 
+		//Log the current time and version
 		log("Current Time = " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 		log("Version = " + version);
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Set the log level
 
+		//Set width and height
 		width = 1200;
 		height = 900;
 
@@ -148,7 +161,9 @@ public class ZombieGame extends Game {
 			gameData = Gdx.files.absolute(workingDir + "/ZombieGameData/GameData");
 
 			if (!isServer) {
+				//Get settings file
 				settingsFile = Gdx.files.absolute(workingDir + "/ZombieGameData/settings.json");
+				//Create and load the settings
 				settings = new Settings();
 				settings.load();
 			}

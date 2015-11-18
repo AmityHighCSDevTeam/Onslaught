@@ -130,9 +130,8 @@ public class ControlsMenu extends GuiScreen {
 					y -= (h + blankSpace);
 					right = true;
 				}
-				if (Gdx.input.isTouched() && Gdx.input.justTouched() && Gdx.input.getX() >= x
-						&& Gdx.input.getX() <= x + w && getHeight() - Gdx.input.getY() >= y
-						&& getHeight() - Gdx.input.getY() <= y + h && selected != entry.getKey()) {
+				if (Gdx.input.isTouched() && Gdx.input.justTouched() && Gdx.input.getX() >= x && Gdx.input.getX() <= x + w
+						&& getHeight() - Gdx.input.getY() >= y && getHeight() - Gdx.input.getY() <= y + h && selected != entry.getKey()) {
 					selected = entry.getKey();
 					clickOn = true;
 				}
@@ -142,21 +141,18 @@ public class ControlsMenu extends GuiScreen {
 				// batch.draw(buttText, x, y, w, h);
 				batch.setColor(1, 1, 1, 1);
 
-				Color color = (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.WHITE
-						: Color.RED);
+				Color color = (ZombieGame.instance.settings.getSameValues(entry.getValue()) <= 1 ? Color.WHITE : Color.RED);
 
 				if (color == Color.WHITE) {
-					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y
-							&& Gdx.input.getX() < x + w && ZombieGame.instance.height - Gdx.input.getY() < y + h) {
+					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y && Gdx.input.getX() < x + w
+							&& ZombieGame.instance.height - Gdx.input.getY() < y + h) {
 						color = new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f);
 					}
 				}
 
-				glyph.setText(ZombieGame.instance.mainFont, entry.getKey().replace('_', ' ') + ": ", color, w - 20,
-						Align.left, false);
+				glyph.setText(ZombieGame.instance.mainFont, entry.getKey().replace('_', ' ') + ": ", color, w - 20, Align.left, false);
 				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
-				glyph.setText(ZombieGame.instance.mainFont, entry.getValue().getName(), color, w - 20, Align.right,
-						false);
+				glyph.setText(ZombieGame.instance.mainFont, entry.getValue().getName(), color, w - 20, Align.right, false);
 				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
 			}
 			if (Gdx.input.isTouched() && Gdx.input.justTouched() && !clickOn) {
@@ -171,13 +167,6 @@ public class ControlsMenu extends GuiScreen {
 			float y = 100;
 			float w = 20;
 			float h = getHeight() - 200;
-			/*
-			 * shapeRender.begin(ShapeType.Filled);
-			 * shapeRender.setColor(r, g, b, a);
-			 * shapeRender.end();
-			 * shapeRender.begin(ShapeType.Line);
-			 * shapeRender.end();
-			 */
 
 			shapeRender.begin(ShapeType.Filled);
 			// Main Scroll bar box
@@ -230,8 +219,7 @@ public class ControlsMenu extends GuiScreen {
 
 			batch.begin();
 
-			glyph.setText(ZombieGame.instance.mainFont, "Press a Button to set", Color.BLACK, w - 20, Align.center,
-					false);
+			glyph.setText(ZombieGame.instance.mainFont, "Press a Button to set", Color.BLACK, w - 20, Align.center, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
 
 			batch.end();
@@ -251,11 +239,8 @@ public class ControlsMenu extends GuiScreen {
 
 		// Register buttons
 		/*
-		 * addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0,
-		 * "Controls", 10, getHeight() - 150, getWidth() - 20, 50));
-		 * addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1,
-		 * "Master Volume", 10, getHeight() - 210, getWidth() - 20, 50)
-		 * .setEnabled(false));
+		 * addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150, getWidth() - 20, 50)); addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Master Volume", 10, getHeight() - 210,
+		 * getWidth() - 20, 50) .setEnabled(false));
 		 */
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
 	}

@@ -31,8 +31,7 @@ public class TextParticleDrawingLayer implements IDrawingLayer {
 		batch.begin();
 
 		GlyphLayout glyph = new GlyphLayout(ZombieGame.instance.mainFont, model.getText());
-		ZombieGame.instance.mainFont.draw(batch, glyph, model.getX() * downScale - glyph.width / 2,
-				model.getY() * downScale - glyph.height / 2);
+		ZombieGame.instance.mainFont.draw(batch, glyph, model.getX() * downScale - glyph.width / 2, model.getY() * downScale - glyph.height / 2);
 
 		batch.end();
 

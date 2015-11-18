@@ -43,16 +43,14 @@ public class CorePlugin implements IPlugin {
 	@Override
 	public void load() {
 		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(),
-					"Core/Entity/Lantern/0.png", "Lantern_0");
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
 			lantern.setLight(new PointLight(g.getLighting(), 300, lantern.getColor(), 10, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;
 		});
 		Placeable.registeredObjects.put("Lantern_1", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1, 0, 0, 1),
-					"Core/Entity/Lantern/1.png", "Lantern_1");
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1, 0, 0, 1), "Core/Entity/Lantern/1.png", "Lantern_1");
 			lantern.setLight(new PointLight(g.getLighting(), 300, lantern.getColor(), 10, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
@@ -73,24 +71,22 @@ public class CorePlugin implements IPlugin {
 			ZombieModel model = new ZombieModel(zom, g, sizeModifier);
 
 			model.setSpeed(0.03f * speedModifier);
-			model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(g.getMobsSpawned())) + 4)
-					* (g.getDifficulty().getZombieHealthModifier() + 1) * sizeModifier * sizeModifier);
-			model.setPrizeMoney((5 + model.getHealth() / 2) * (g.getDifficulty().getMoneyMultiplier()) * sizeModifier
+			model.setAllHealth((float) (Math.pow(1.1, Math.sqrt(g.getMobsSpawned())) + 4) * (g.getDifficulty().getZombieHealthModifier() + 1) * sizeModifier
 					* sizeModifier);
-			model.setDamage((5 + model.getHealth() / 2) * (g.getDifficulty().getDamageMultiplier()) * sizeModifier
-					* sizeModifier);
+			model.setPrizeMoney((5 + model.getHealth() / 2) * (g.getDifficulty().getMoneyMultiplier()) * sizeModifier * sizeModifier);
+			model.setDamage((5 + model.getHealth() / 2) * (g.getDifficulty().getDamageMultiplier()) * sizeModifier * sizeModifier);
 			model.setRange(zom.getShape().getRadius() * 1.1f);
 
 			return model;
 		});
 
+		if (ZombieGame.instance.isCheatModeAllowed) {
+			GameRegistry.difficulties.add(new BasicDifficulty("DEBUG", "Debug", 0f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
+		}
 		GameRegistry.difficulties.add(new BasicDifficulty("EASY", "Easy", 0.5f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
-		GameRegistry.difficulties
-				.add(new BasicDifficulty("MEDIUM", "Medium", 1f, 1f, 0.5f, 1.5f, 1.5f, 0.0075f, 750, 100));
-		GameRegistry.difficulties
-				.add(new BasicDifficulty("HARD", "Hard", 1.5f, 1.5f, 0.75f, 1.0f, 1.0f, 0.005f, 500, 150));
-		GameRegistry.difficulties
-				.add(new BasicDifficulty("INSANE", "Insane", 2f, 2f, 1f, 0.5f, 0.5f, 0.0025f, 250, 200));
+		GameRegistry.difficulties.add(new BasicDifficulty("MEDIUM", "Medium", 1f, 1f, 0.5f, 1.5f, 1.5f, 0.0075f, 750, 100));
+		GameRegistry.difficulties.add(new BasicDifficulty("HARD", "Hard", 1.5f, 1.5f, 0.75f, 1.0f, 1.0f, 0.005f, 500, 150));
+		GameRegistry.difficulties.add(new BasicDifficulty("INSANE", "Insane", 2f, 2f, 1f, 0.5f, 0.5f, 0.0025f, 250, 200));
 	}
 
 	@Override

@@ -60,8 +60,7 @@ public class NewGameMenu extends GuiScreen {
 		{
 			int i = 0;
 			for (Difficulty d : diffs) {
-				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i, d.getHumanName(), 10,
-						getHeight() - 150 - 60 * i, getWidth() - 20, 50));
+				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i, d.getHumanName(), 10, getHeight() - 150 - 60 * i, getWidth() - 20, 50));
 				i++;
 			}
 		}
@@ -95,8 +94,8 @@ public class NewGameMenu extends GuiScreen {
 				break;
 			default:
 				ZombieGame.instance.setScreen(new InGameScreen(this,
-						new Game(diffs.get(id), true, ZombieGame.instance.isCheatModeAllowed
-								&& Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
+						new Game(diffs.get(id), true,
+								ZombieGame.instance.isCheatModeAllowed && Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
 						true));
 		}
 	}

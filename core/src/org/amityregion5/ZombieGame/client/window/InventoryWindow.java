@@ -217,14 +217,13 @@ public class InventoryWindow implements Screen {
 			float boxWidth = 0;
 			float boxHeight = 0;
 
-			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getName(), 0,
-					weapon.getWeapon().getName().length(), Color.BLACK, 300, Align.left, false, "...");
+			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getName(), 0, weapon.getWeapon().getName().length(),
+					Color.BLACK, 300, Align.left, false, "...");
 
 			boxWidth = Math.max(boxWidth, nameGlyph.width + 8);
 			boxHeight += nameGlyph.height + 4 + 4;
 
-			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getDescription(),
-					Color.BLACK, 300, Align.left, true);
+			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getDescription(), Color.BLACK, 300, Align.left, true);
 
 			boxWidth = Math.max(boxWidth, descGlyph.width + 8);
 			boxHeight += descGlyph.height + 4;
@@ -269,8 +268,7 @@ public class InventoryWindow implements Screen {
 	}
 
 	private double getMaxScrollAmount() {
-		return (weaponBoxSize
-				/ ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2)
+		return (weaponBoxSize / ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2)
 				* ZombieGame.instance.pluginManager.getActivatedWeapons().size();
 	}
 

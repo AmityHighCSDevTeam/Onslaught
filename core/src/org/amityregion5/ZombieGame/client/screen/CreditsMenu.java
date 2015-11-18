@@ -48,8 +48,7 @@ public class CreditsMenu extends GuiScreen {
 		float w = getWidth() - 100;
 		float extraH = 20;
 
-		for (String s : new String[] {"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian",
-				"Voice Actor: Ray Tian"}) {
+		for (String s : new String[] {"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian", "Voice Actor: Ray Tian"}) {
 			glyph.setText(smallFont, s, new Color(1, 1, 1, 1), w, Align.left, false);
 			smallFont.draw(batch, glyph, x, y + glyph.height / 2);
 			y -= glyph.height;

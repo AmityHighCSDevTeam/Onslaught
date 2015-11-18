@@ -37,8 +37,7 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 		IEntity e = em.getEntity();
 		batch.begin();
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
-		sprite.setBounds(
-				e.getBody().getWorldCenter().x - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
+		sprite.setBounds(e.getBody().getWorldCenter().x - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				e.getBody().getWorldCenter().y - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2,
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2);

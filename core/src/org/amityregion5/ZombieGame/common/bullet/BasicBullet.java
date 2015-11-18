@@ -33,13 +33,12 @@ public class BasicBullet implements IBullet {
 	private float			bulletThickness;
 	private List<HitData>	hits;
 
-	public BasicBullet(Game g, Vector2 start, float speed, float damage, Vector2 bullVector, PlayerModel source,
-			Color color, float bulletThickness, float range) {
+	public BasicBullet(Game g, Vector2 start, float speed, float damage, Vector2 bullVector, PlayerModel source, Color color, float bulletThickness,
+			float range) {
 		this.g = g;
 		this.start = start;
 		knockback = speed;
-		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("bulletDamage"))
-				* source.getTotalBuffs().getMult("bulletDamage"));
+		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("bulletDamage")) * source.getTotalBuffs().getMult("bulletDamage"));
 		this.source = source;
 		this.color = color;
 		this.range = range;

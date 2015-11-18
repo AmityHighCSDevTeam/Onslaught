@@ -65,7 +65,7 @@ public class InGameScreen extends GuiScreen {
 	private GlyphLayout			glyph			= new GlyphLayout();
 	private Screen				currentWindow;
 	private List<Screen>		overlays;
-	private boolean				renderHitboxes	= false;
+	private boolean				doDebugRender	= false;
 
 	// Font
 	private BitmapFont font1, font2;
@@ -92,8 +92,7 @@ public class InGameScreen extends GuiScreen {
 			playerEntity.setFriction(0.99f);
 			playerEntity.setMass(100);
 
-			player = new PlayerModel(playerEntity, game, this, game.getDifficulty().getStartingMoney(),
-					"*/Players/**.png");
+			player = new PlayerModel(playerEntity, game, this, game.getDifficulty().getStartingMoney(), "*/Players/**.png");
 		} else {
 			player = game.getSingleplayerPlayer();
 			player.setScreen(this);
@@ -122,8 +121,7 @@ public class InGameScreen extends GuiScreen {
 		camera.translate(player.getEntity().getBody().getWorldCenter().x - camera.position.x,
 				player.getEntity().getBody().getWorldCenter().y - camera.position.y);
 
-		camera.translate(
-				(float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2),
+		camera.translate((float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2),
 				(float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2));
 
 		camera.update();
@@ -218,7 +216,7 @@ public class InGameScreen extends GuiScreen {
 		Gdx.gl.glLineWidth(1);
 
 		if (game.isCheatMode()) {
-			if (renderHitboxes) {
+			if (doDebugRender) {
 				debugRenderer.render(game.getWorld(), camera.combined);
 			}
 		}
@@ -245,9 +243,7 @@ public class InGameScreen extends GuiScreen {
 
 			Sound sound = SoundRegistry.getSoundsFor(soundData.getSound()).get(0);
 
-			sound.play(
-					(float) MathHelper.clamp(0, 1,
-							soundData.getVolume() * ZombieGame.instance.settings.getMasterVolume()),
+			sound.play((float) MathHelper.clamp(0, 1, soundData.getVolume() * ZombieGame.instance.settings.getMasterVolume()),
 					(float) MathHelper.clamp(0.5, 2, soundData.getPitch()), 0);
 
 			iterator.remove();
@@ -271,7 +267,12 @@ public class InGameScreen extends GuiScreen {
 		float y = glyph.height + 5;
 
 		glyph.setText(font1, "Version " + ZombieGame.instance.version);
-		font1.draw(batch, glyph, 0, y + glyph.height);
+		font1.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
+
+		if (doDebugRender) {
+			glyph.setText(font1, "Hostile Mobs: " + game.getHostiles());
+			font1.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
+		}
 
 		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
@@ -280,8 +281,7 @@ public class InGameScreen extends GuiScreen {
 
 		if (game.isCheatMode()) {
 			if (Gdx.input.isKeyJustPressed(Keys.L)) {
-				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(),
-						"Core/Entity/Lantern/0.png", "Lantern_0");
+				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
 				lantern.setLight(new PointLight(rayHandler, 300, lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
 				lantern.getEntity().setFriction(0.99f);
 				lantern.getEntity().setMass(10);
@@ -289,7 +289,7 @@ public class InGameScreen extends GuiScreen {
 				game.addEntityToWorld(lantern, mouseCoord.x, mouseCoord.y);
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.F3)) {
-				renderHitboxes = !renderHitboxes;
+				doDebugRender = !doDebugRender;
 			}
 			if (Gdx.input.isKeyPressed(Keys.G)) {
 				camera.zoom += 0.02;
@@ -321,7 +321,7 @@ public class InGameScreen extends GuiScreen {
 
 				ZombieModel model = new ZombieModel(zom, game, 1);
 
-				model.setAllHealth(100);
+				model.setAllHealth(5);
 				model.setSpeed(0.03f);
 				model.setRange((float) (zom.getShape().getRadius() * 1.1));
 				model.setDamage(5);

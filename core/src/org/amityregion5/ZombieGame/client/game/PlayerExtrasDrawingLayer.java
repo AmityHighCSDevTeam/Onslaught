@@ -36,17 +36,15 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 
 		Sprite sprite = new Sprite(texture);
 
-		sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(),
-				weapon.getWeaponDataBase().getGameTextureOriginY());
+		sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(), weapon.getWeaponDataBase().getGameTextureOriginY());
 
 		Vector2 playerPos = player.getEntity().getBody().getWorldCenter();
 
 		double rotation = player.getEntity().getBody().getAngle();
 
-		playerPos = playerPos.add(VectorFactory
-				.createVector(0.15f + (float) weapon.getWeaponDataBase().getGameTextureOffsetY(), (float) (rotation)));
-		playerPos = playerPos.add(VectorFactory.createVector((float) weapon.getWeaponDataBase().getGameTextureOffsetX(),
-				(float) (rotation - Math.toRadians(90))));
+		playerPos = playerPos.add(VectorFactory.createVector(0.15f + (float) weapon.getWeaponDataBase().getGameTextureOffsetY(), (float) (rotation)));
+		playerPos = playerPos
+				.add(VectorFactory.createVector((float) weapon.getWeaponDataBase().getGameTextureOffsetX(), (float) (rotation - Math.toRadians(90))));
 
 		sprite.setRotation((float) (Math.toDegrees(rotation) - 90));
 

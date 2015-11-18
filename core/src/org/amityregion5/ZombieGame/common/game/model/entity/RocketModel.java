@@ -55,21 +55,19 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 			timeUntilExplosion -= timeStep;
 			timeUntilSmoke -= timeStep;
 			explosionPos = entity.getBody().getWorldCenter().cpy();
-			entity.getBody().applyForceToCenter(VectorFactory.createVector(acceleration, entity.getBody().getAngle()),
-					true);
+			entity.getBody().applyForceToCenter(VectorFactory.createVector(acceleration, entity.getBody().getAngle()), true);
 			if (timeUntilSmoke < 0) {
 				timeUntilSmoke += timeStepPerSmoke;
 
-				Vector2 pos2 = VectorFactory.createVector(size * 2 + Math.min(0.05f, size * 0.1f),
-						entity.getBody().getAngle() + (float) Math.PI);
+				Vector2 pos2 = VectorFactory.createVector(size * 2 + Math.min(0.05f, size * 0.1f), entity.getBody().getAngle() + (float) Math.PI);
 
 				pos2 = pos2.add(entity.getBody().getWorldCenter());
 
 				ExplosionParticleModel smoke = new ExplosionParticleModel(pos2.x, pos2.y, new Color(1f, 1f, 0f, 1f), g,
-						(float) (2 * Math.PI * g.getRandom().nextDouble()), 100 * (g.getRandom().nextFloat() - 0.5f),
-						0.05f, entity.getBody().getAngle() + (float) Math.PI);
+						(float) (2 * Math.PI * g.getRandom().nextDouble()), 100 * (g.getRandom().nextFloat() - 0.5f), 0.05f,
+						entity.getBody().getAngle() + (float) Math.PI);
 
-				smoke.setLight(new PointLight(g.getLighting(), 50, smoke.getColor(), 2, pos2.x, pos2.y));
+				smoke.setLight(new PointLight(g.getLighting(), 10, smoke.getColor(), 2, pos2.x, pos2.y));
 				smoke.getLight().setXray(true);
 
 				g.addParticleToWorld(smoke);

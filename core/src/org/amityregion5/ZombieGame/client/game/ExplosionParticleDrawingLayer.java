@@ -42,8 +42,7 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 		sprite.setOriginCenter();
 		sprite.setRotation((float) (Math.toDegrees(model.getRotation()) - 90));
 		sprite.setAlpha(val * (float) Math.sqrt(val) * 1.5f);
-		sprite.setBounds(model.getX() - (maxSize / val), model.getY() - (maxSize / val), maxSize / val * 2,
-				maxSize / val * 2);
+		sprite.setBounds(model.getX() - (maxSize / val), model.getY() - (maxSize / val), maxSize / val * 2, maxSize / val * 2);
 
 		sprite.draw(batch);
 		batch.end();

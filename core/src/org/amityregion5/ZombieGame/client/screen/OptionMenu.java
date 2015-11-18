@@ -54,8 +54,7 @@ public class OptionMenu extends GuiScreen {
 
 		Color c = batch.getColor();
 		batch.setColor(1, 1, 1, 1);
-		glyph.setText(ZombieGame.instance.mainFont,
-				"Master Volume: " + ((int) (ZombieGame.instance.settings.getMasterVolume() * 10000)) / 100f + "%",
+		glyph.setText(ZombieGame.instance.mainFont, "Master Volume: " + ((int) (ZombieGame.instance.settings.getMasterVolume() * 10000)) / 100f + "%",
 				Color.WHITE, w, Align.left, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
 		batch.setColor(c);
@@ -90,8 +89,7 @@ public class OptionMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150,
-				getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150, getWidth() - 20, 50));
 		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
 	}
 

@@ -116,15 +116,11 @@ public class BuffPurchaseable implements IPurchaseable {
 			if (getDescription().toLowerCase().contains(s.toLowerCase())) {
 				num++;
 			}
-			num += getCurrentDescriptors(player).keySet().parallelStream()
-					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
-			num += getCurrentDescriptors(player).values().parallelStream()
-					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).keySet().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).values().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			if (hasNextLevel(player) && getNextDescriptors(player) != null) {
-				num += getNextDescriptors(player).keySet().parallelStream()
-						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
-				num += getNextDescriptors(player).values().parallelStream()
-						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).keySet().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).values().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			}
 		}
 

@@ -85,15 +85,13 @@ public class Grenade implements IWeapon {
 			stack.setWarmup(stack.getWarmup() - delta);
 			if (stack.getWarmup() <= 0) {
 				stack.setWarmingUp(false);
-				fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(),
-						stack.getWarmupMaxFireDegrees(), stack);
+				fireWeapon(stack.getWarmupEnd(), stack.getWarmupGame(), stack.getWarmupFiring(), stack.getWarmupMaxFireDegrees(), stack);
 			}
 		}
 	}
 
 	@Override
-	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack,
-			boolean isMouseJustDown) {
+	public void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown) {
 		if (stack.getAmmo() <= 0) {
 			reload(stack, game, firing);
 			return;
@@ -127,8 +125,7 @@ public class Grenade implements IWeapon {
 		stack.setAmmo(stack.getAmmo() - 1);
 
 		double dir = MathHelper.clampAngleAroundCenter(firing.getEntity().getBody().getAngle(),
-				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end),
-				Math.toRadians(maxFireDegrees));
+				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end), Math.toRadians(maxFireDegrees));
 
 		dir -= Math.toRadians(data.get(stack.getLevel()).getAccuracy() / 2);
 
@@ -136,8 +133,7 @@ public class Grenade implements IWeapon {
 
 		dir = MathHelper.fixAngle(dir);
 
-		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade((float) gData.getSize()), game, firing,
-				gData.getFieldTextureString());
+		GrenadeModel grenadeModel = new GrenadeModel(new EntityGrenade((float) gData.getSize()), game, firing, gData.getFieldTextureString());
 
 		grenadeModel.setStrength(gData.getStrength());
 		grenadeModel.setTimeUntilExplosion((float) gData.getFuseTime());
@@ -148,8 +144,7 @@ public class Grenade implements IWeapon {
 
 		game.addEntityToWorld(grenadeModel, pos.x + playerPos.x, pos.y + playerPos.y);
 
-		grenadeModel.getEntity().getBody()
-				.applyForceToCenter(VectorFactory.createVector((float) gData.getThrowSpeed(), (float) dir), true);
+		grenadeModel.getEntity().getBody().applyForceToCenter(VectorFactory.createVector((float) gData.getThrowSpeed(), (float) dir), true);
 		stack.setCooldown(stack.getCooldown() + gData.getPostFireDelay());
 
 		for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
@@ -221,8 +216,7 @@ public class Grenade implements IWeapon {
 
 			return true;
 		}
-		ZombieGame
-				.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
+		ZombieGame.debug(getClass().getSimpleName() + " Loading: Error: Class Name is not " + getClass().getSimpleName());
 		return false;
 	}
 

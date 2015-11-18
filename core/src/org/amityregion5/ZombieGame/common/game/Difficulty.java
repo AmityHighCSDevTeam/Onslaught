@@ -25,4 +25,6 @@ public interface Difficulty {
 	double getStartingMoney();
 
 	int getMaxHostiles();
+
+	boolean doSpawnZombies();
 }

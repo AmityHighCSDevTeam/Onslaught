@@ -19,8 +19,8 @@ public class BasicDifficulty implements Difficulty {
 	 * @param startMoney
 	 * @param maxHostiles
 	 */
-	public BasicDifficulty(String id, String name, float overallMult, float waveMod, float healthMod, float moneyMod,
-			float damageMod, double healthChance, double startMoney, int maxHostiles) {
+	public BasicDifficulty(String id, String name, float overallMult, float waveMod, float healthMod, float moneyMod, float damageMod, double healthChance,
+			double startMoney, int maxHostiles) {
 		this.id = id;
 		this.name = name;
 		this.overallMult = overallMult;
@@ -81,5 +81,10 @@ public class BasicDifficulty implements Difficulty {
 	@Override
 	public int getMaxHostiles() {
 		return maxHostiles;
+	}
+
+	@Override
+	public boolean doSpawnZombies() {
+		return !id.equals("DEBUG");
 	}
 }

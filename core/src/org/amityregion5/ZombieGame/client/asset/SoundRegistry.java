@@ -19,8 +19,7 @@ public class SoundRegistry {
 	public static boolean tryRegister(String path) {
 		if (sounds.containsKey(path)) { return true; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
-		if (handle.exists() && handle.extension().equals("wav") || handle.extension().equals("mp3")
-				|| handle.extension().equals("ogg")) {
+		if (handle.exists() && handle.extension().equals("wav") || handle.extension().equals("mp3") || handle.extension().equals("ogg")) {
 			ZombieGame.log("Sound Registry: registering: " + path);
 			register(path, handle);
 			return true;
@@ -34,14 +33,12 @@ public class SoundRegistry {
 	}
 
 	public static List<Sound> getSoundsFor(String str) {
-		List<Sound> t = sounds.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
-				.map((k) -> sounds.get(k)).collect(Collectors.toList());
+		List<Sound> t = sounds.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).map((k) -> sounds.get(k)).collect(Collectors.toList());
 		return t;
 	}
 
 	public static List<String> getSoundNamesFor(String str) {
-		List<String> t = sounds.keySet().stream().sequential().filter((s) -> s.matches(regexify(str)))
-				.collect(Collectors.toList());
+		List<String> t = sounds.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).collect(Collectors.toList());
 		return t;
 	}
 

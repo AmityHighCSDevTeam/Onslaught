@@ -123,8 +123,8 @@ public class ShopWindow implements Screen {
 			cache.sort((p1, p2) -> (int) (p1.getPrice(player) - p2.getPrice(player)));
 		} else {
 			String[] sections = searchQuery.split(" ");
-			cache = ZombieGame.instance.pluginManager.getPurchaseables().parallelStream()
-					.filter((p) -> p.numContained(sections, player) > 0).sorted((p1, p2) -> {
+			cache = ZombieGame.instance.pluginManager.getPurchaseables().parallelStream().filter((p) -> p.numContained(sections, player) > 0)
+					.sorted((p1, p2) -> {
 						int countDiff = p2.numContained(sections, player) - p1.numContained(sections, player);
 						if (countDiff != 0) { return countDiff; }
 						double priceDiff = p1.getPrice(player) - p2.getPrice(player);
@@ -224,16 +224,14 @@ public class ShopWindow implements Screen {
 			shapeRender.end();
 
 			batch.begin();
-			glyph.setText(ZombieGame.instance.mainFont, searchQuery + (showCursor && isSearchSelected ? "|" : ""),
-					Color.WHITE, w - 24, Align.left, false);
+			glyph.setText(ZombieGame.instance.mainFont, searchQuery + (showCursor && isSearchSelected ? "|" : ""), Color.WHITE, w - 24, Align.left, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x + 10, y + 50 / 2 + glyph.height / 2);
 			batch.end();
 		}
 		ScissorStack.popScissors();
 
 		if (Gdx.input.isTouched() && Gdx.input.justTouched()) {
-			if (Gdx.input.getX() >= x && Gdx.input.getX() <= x + w
-					&& screen.getHeight() - clickY >= screen.getHeight() - 201 + 50
+			if (Gdx.input.getX() >= x && Gdx.input.getX() <= x + w && screen.getHeight() - clickY >= screen.getHeight() - 201 + 50
 					&& screen.getHeight() - clickY <= screen.getHeight() - 201 + 100) {
 				isSearchSelected = !isSearchSelected;
 			} else {
@@ -250,8 +248,8 @@ public class ShopWindow implements Screen {
 			}
 		}
 
-		if (Gdx.input.isTouched() && clickOnPurchaseable == false && clickX < x && clickX > screen.getWidth() - 232
-				&& clickY < 100 && clickY > screen.getHeight() - 100) {
+		if (Gdx.input.isTouched() && clickOnPurchaseable == false && clickX < x && clickX > screen.getWidth() - 232 && clickY < 100
+				&& clickY > screen.getHeight() - 100) {
 			selected = -1;
 		}
 
@@ -307,8 +305,7 @@ public class ShopWindow implements Screen {
 
 			if (purchaseable.canPurchase(player) && player.getMoney() >= purchaseable.getPrice(player)) {
 				batch.begin();
-				batch.draw(upgradeArrow, boxX + purchaseableHeight * 3 / 4, boxY, purchaseableHeight / 4,
-						purchaseableHeight / 4);
+				batch.draw(upgradeArrow, boxX + purchaseableHeight * 3 / 4, boxY, purchaseableHeight / 4, purchaseableHeight / 4);
 				batch.end();
 			}
 
@@ -339,14 +336,13 @@ public class ShopWindow implements Screen {
 
 			// Box Size Calculation
 
-			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getName(), 0,
-					purchaseable.getName().length(), Color.BLACK, 300, Align.left, false, "...");
+			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getName(), 0, purchaseable.getName().length(), Color.BLACK, 300,
+					Align.left, false, "...");
 
 			boxWidth = Math.max(boxWidth, nameGlyph.width + 8);
 			boxHeight += nameGlyph.height + 4 + 4;
 
-			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getDescription(),
-					Color.BLACK, 300, Align.left, true);
+			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, purchaseable.getDescription(), Color.BLACK, 300, Align.left, true);
 
 			boxWidth = Math.max(boxWidth, descGlyph.width + 8);
 			boxHeight += descGlyph.height + 4;
@@ -365,8 +361,8 @@ public class ShopWindow implements Screen {
 
 			GlyphLayout canPurchase = null;
 			if (purchaseable.canPurchase(player) && purchaseable.getPrice(player) <= player.getMoney()) {
-				canPurchase = new GlyphLayout(ZombieGame.instance.mainFont, "Purchase Available",
-						new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f), 300, Align.left, true);
+				canPurchase = new GlyphLayout(ZombieGame.instance.mainFont, "Purchase Available", new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f), 300,
+						Align.left, true);
 
 				boxWidth = Math.max(boxWidth, canPurchase.width + 8);
 				boxHeight += descGlyph.height + 4;
@@ -433,21 +429,19 @@ public class ShopWindow implements Screen {
 		float wMult = (float) Gdx.graphics.getWidth() / screen.getWidth();
 		float hMult = (float) Gdx.graphics.getHeight() / screen.getHeight();
 
-		Rectangle clipBounds = new Rectangle(x * wMult, 100 * hMult, infoWidth * wMult,
-				(screen.getHeight() - 200) * hMult);
+		Rectangle clipBounds = new Rectangle(x * wMult, 100 * hMult, infoWidth * wMult, (screen.getHeight() - 200) * hMult);
 		ScissorStack.pushScissors(clipBounds);
 
 		IPurchaseable selectedItem = cache.get(selected);
 		batch.begin();
 
-		glyph.setText(ZombieGame.instance.mainFont, selectedItem.getName(), 0, selectedItem.getName().length(),
-				new Color(1, 1, 1, 1), infoWidth - 20, Align.left, false, "...");
+		glyph.setText(ZombieGame.instance.mainFont, selectedItem.getName(), 0, selectedItem.getName().length(), new Color(1, 1, 1, 1), infoWidth - 20,
+				Align.left, false, "...");
 		ZombieGame.instance.mainFont.draw(batch, glyph, x, y);
 		y -= glyph.height + 20;
 
 		if (selectedItem.getDescription() != null) {
-			glyph.setText(ZombieGame.instance.mainFont, selectedItem.getDescription(), new Color(1, 1, 1, 1),
-					infoWidth - 20, Align.left, true);
+			glyph.setText(ZombieGame.instance.mainFont, selectedItem.getDescription(), new Color(1, 1, 1, 1), infoWidth - 20, Align.left, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y);
 			y -= glyph.height + 20;
 		}
@@ -464,14 +458,12 @@ public class ShopWindow implements Screen {
 
 				float maxH = 0;
 
-				glyph.setText(ZombieGame.instance.mainFont, key + ": ", new Color(1, 1, 1, 1), infoWidth - 20,
-						Align.left, true);
+				glyph.setText(ZombieGame.instance.mainFont, key + ": ", new Color(1, 1, 1, 1), infoWidth - 20, Align.left, true);
 				maxH = Math.max(maxH, glyph.height);
 				ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y);
 				thisX += glyph.width;
 
-				glyph.setText(ZombieGame.instance.mainFont, curr + (next == null ? "" : " -> "), new Color(1, 1, 1, 1),
-						infoWidth - 20, Align.left, true);
+				glyph.setText(ZombieGame.instance.mainFont, curr + (next == null ? "" : " -> "), new Color(1, 1, 1, 1), infoWidth - 20, Align.left, true);
 				maxH = Math.max(maxH, glyph.height);
 				ZombieGame.instance.mainFont.draw(batch, glyph, thisX, y);
 				thisX += glyph.width;
@@ -505,9 +497,8 @@ public class ShopWindow implements Screen {
 
 			glyph.setText(ZombieGame.instance.mainFont, (selectedItem.getCurrentLevel(player) > -1 ? "Upgrade" : "Buy"),
 					(!hasEnoughMoney ? Color.DARK_GRAY
-							: (clickX >= x && clickX <= x + w && screen.getHeight() - clickY >= y
-									&& screen.getHeight() - clickY <= y + h
-											? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE)),
+							: (clickX >= x && clickX <= x + w && screen.getHeight() - clickY >= y && screen.getHeight() - clickY <= y + h
+									? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE)),
 					w, Align.center, true);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + h / 2 + glyph.height / 2);
 
@@ -552,8 +543,8 @@ public class ShopWindow implements Screen {
 	}
 
 	private double getMaxScrollAmount() {
-		return (purchaseableHeight / ((int) ((screen.getWidth() - 232 - infoWidth - 22)
-				/ (purchaseableHeight + purchaseableBorder + purchaseableBorder))) + 2) * cache.size();
+		return (purchaseableHeight / ((int) ((screen.getWidth() - 232 - infoWidth - 22) / (purchaseableHeight + purchaseableBorder + purchaseableBorder))) + 2)
+				* cache.size();
 		// return (purchaseableHeight + 2) * ZombieGame.instance.pluginManager.getPurchaseables().size();
 	}
 
@@ -574,8 +565,7 @@ public class ShopWindow implements Screen {
 
 	private float getSecScrollBarPos() {
 		double screenHeight = screen.getHeight() - 200;
-		double pos = (screenHeight - getSecScrollBarHeight()) * (secScrollPos)
-				/ (getSecMaxScrollAmount() - screenHeight);
+		double pos = (screenHeight - getSecScrollBarHeight()) * (secScrollPos) / (getSecMaxScrollAmount() - screenHeight);
 		pos = (screen.getHeight() - 100) - pos - getSecScrollBarHeight();
 		return (float) pos;
 	}

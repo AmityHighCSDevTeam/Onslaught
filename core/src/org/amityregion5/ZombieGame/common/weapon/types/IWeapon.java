@@ -38,8 +38,7 @@ public interface IWeapon {
 	 */
 	public String getAmmoString(WeaponStack stack);
 
-	public void onUse(Vector2 end, Game game, PlayerModel playerModel, double maxFireDegrees, WeaponStack stack,
-			boolean isMouseJustDown);
+	public void onUse(Vector2 end, Game game, PlayerModel playerModel, double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown);
 
 	public void purchaseAmmo(PlayerModel playerModel, WeaponStack stack);
 

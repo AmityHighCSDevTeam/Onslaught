@@ -23,8 +23,8 @@ public class EntityRocket implements IEntity, Disposable {
 	public EntityRocket(float size) {
 		massData = new MassData();
 		friction = 0.975f;
-		shapeDef = new Vector2[] {new Vector2(size * 2, 0f), new Vector2(0f, size / 2),
-				new Vector2(-size * 2, size / 2), new Vector2(-size * 2, -size / 2), new Vector2(0f, -size / 2)};
+		shapeDef = new Vector2[] {new Vector2(size * 2, 0f), new Vector2(0f, size / 2), new Vector2(-size * 2, size / 2), new Vector2(-size * 2, -size / 2),
+				new Vector2(0f, -size / 2)};
 	}
 
 	@Override

@@ -111,8 +111,7 @@ public class HUDOverlay implements Screen {
 		}
 		screen.getFont1().draw(batch, player.getCurrentWeapon().getAmmoString(), screen.getWidth() - 390, 170);
 		screen.getFont1().setColor(new Color(1, 1, 1, 1));
-		screen.getFont1().draw(batch, "$" + NumberFormat.getInstance().format(player.getMoney()),
-				screen.getWidth() - 390, 150);
+		screen.getFont1().draw(batch, "$" + NumberFormat.getInstance().format(player.getMoney()), screen.getWidth() - 390, 150);
 		batch.end();
 
 		shapeRender.begin(ShapeType.Filled);
@@ -126,9 +125,8 @@ public class HUDOverlay implements Screen {
 		shapeRender.end();
 
 		batch.begin();
-		glyph.setText(screen.getFont2(),
-				((int) (player.getHealth() / player.getMaxHealth() * 100 * 10 + 0.5)) / 10f + "%",
-				new Color(1, 1, 1, 1), 90, Align.center, false);
+		glyph.setText(screen.getFont2(), ((int) (player.getHealth() / player.getMaxHealth() * 100 * 10 + 0.5)) / 10f + "%", new Color(1, 1, 1, 1), 90,
+				Align.center, false);
 		screen.getFont2().draw(batch, glyph, screen.getWidth() - 395/* + glyph.width/2 */, 113 + glyph.height);
 		batch.end();
 	}

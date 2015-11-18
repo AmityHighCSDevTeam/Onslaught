@@ -35,8 +35,7 @@ public class HealthPackDrawingLayer implements IDrawingLayer {
 
 		sprite.setOriginCenter();
 		// sprite.setRotation((float) (-90));
-		sprite.setBounds(model.getX() - model.getSize(), model.getY() - model.getSize(), model.getSize() * 2,
-				model.getSize() * 2);
+		sprite.setBounds(model.getX() - model.getSize(), model.getY() - model.getSize(), model.getSize() * 2, model.getSize() * 2);
 
 		sprite.draw(batch);
 		batch.end();

@@ -48,7 +48,7 @@ public class Game implements Disposable {
 	private static final float	smallSpnRad			= 12.5f;
 	private static final float	explosionMinVal		= 0.05f;
 	private static final int	explosionRaycasts	= 720;
-	private static final float	areaPerParticle		= 0.1f;
+	private static final float	areaPerParticle		= 1f;
 
 	// Unsaved variables
 	protected GameContactListener			contactListener;
@@ -182,11 +182,10 @@ public class Game implements Disposable {
 				}
 
 				// Spawning of mobs
-				if (hostiles < maxHostiles) {
+				if (hostiles < maxHostiles && diff.doSpawnZombies()) {
 					while (timeUntilNextSpawn <= 0 && hostiles < maxHostiles) {
 						spawnNext();
-						timeUntilNextSpawn += Math
-								.min(Math.pow((Math.pow(mobsSpawned, 0.7)) % (moduloConstant), 6) / 10000, 25);
+						timeUntilNextSpawn += Math.min(Math.pow((Math.pow(mobsSpawned, 0.7)) % (moduloConstant), 6) / 10000, 25);
 						mobsSpawned++;
 						// timeBetWaves -= Math.pow(2, (1.4 * timeBetWaves * diff.getDifficultyMultiplier())/60) - 1;
 						// wavesSpawned++;
@@ -206,15 +205,11 @@ public class Game implements Disposable {
 				final Vector2 v = new Vector2(pos.x - bigSpawnRad / 2 + rand.nextFloat() * bigSpawnRad,
 						pos.y - bigSpawnRad / 2 + rand.nextFloat() * bigSpawnRad);
 				spawnPos = v;
-				whilePara = players.parallelStream()
-						.anyMatch((p) -> p.getEntity().getBody().getPosition().dst2(v) < smallSpnRad * smallSpnRad);
+				whilePara = players.parallelStream().anyMatch((p) -> p.getEntity().getBody().getPosition().dst2(v) < smallSpnRad * smallSpnRad);
 			} while (whilePara);
 
 			IEntityModel<?> eModel = getSpawningEntity();
 			addEntityToWorld(eModel, spawnPos.x, spawnPos.y);
-			if (eModel.isHostile()) {
-				hostiles++;
-			}
 		}
 	}
 
@@ -235,6 +230,11 @@ public class Game implements Disposable {
 	}
 
 	public void addEntityToWorld(IEntityModel<?> entity, float x, float y, short maskBits, short categoryBits) {
+		
+		if (entity.isHostile()) {
+			hostiles++;
+		}
+		
 		Body body = entity.getEntity().getBody();
 
 		if (body == null) {
@@ -357,8 +357,7 @@ public class Game implements Disposable {
 
 			Vector2 bullVector = VectorFactory.createVector((float) dist, (float) dir);
 
-			ExplosionRaycastBullet bull = new ExplosionRaycastBullet(this, pos, (float) (strength / explosionRaycasts),
-					bullVector, source);
+			ExplosionRaycastBullet bull = new ExplosionRaycastBullet(this, pos, (float) (strength / explosionRaycasts), bullVector, source);
 			bull.setDir((float) dir);
 
 			getActiveBullets().add(bull);
@@ -373,14 +372,13 @@ public class Game implements Disposable {
 		dist /= 2;
 
 		for (int i = 0; i < particles; i++) {
-			Vector2 pos2 = VectorFactory.createVector((float) (rand.nextDouble() * rand.nextDouble() * dist),
-					(float) (rand.nextDouble() * Math.PI * 2)).add(pos);
+			Vector2 pos2 = VectorFactory.createVector((float) (rand.nextDouble() * rand.nextDouble() * dist), (float) (rand.nextDouble() * Math.PI * 2))
+					.add(pos);
 
-			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(pos2.x, pos2.y,
-					new Color(1f, 1f, 0f, 1f), this, (float) (2 * Math.PI * rand.nextDouble()),
-					100 * (rand.nextFloat() - 0.5f), 0.05f * pos2.dst2(pos), pos2.sub(pos).angleRad());
+			ExplosionParticleModel explosionParticle = new ExplosionParticleModel(pos2.x, pos2.y, new Color(1f, 1f, 0f, 1f), this,
+					(float) (2 * Math.PI * rand.nextDouble()), 100 * (rand.nextFloat() - 0.5f), 0.05f * pos2.dst2(pos), pos2.sub(pos).angleRad());
 
-			explosionParticle.setLight(new PointLight(lighting, 50, explosionParticle.getColor(), 2, pos2.x, pos2.y));
+			explosionParticle.setLight(new PointLight(lighting, 10, explosionParticle.getColor(), 2, pos2.x, pos2.y));
 			explosionParticle.getLight().setXray(true);
 
 			addParticleToWorld(explosionParticle);
@@ -405,8 +403,7 @@ public class Game implements Disposable {
 		// ZombieGame.debug("Game: Playing Sound: " + sound.getAssetName());
 		for (PlayerModel player : players) {
 			SoundPlayingData playing = new SoundPlayingData(sound.getAssetName(),
-					Math.min(sound.getMaxVolume() / player.getEntity().getBody().getWorldCenter().dst2(position), 1),
-					sound.getPitch());
+					Math.min(sound.getMaxVolume() / player.getEntity().getBody().getWorldCenter().dst2(position), 1), sound.getPitch());
 			player.playSound(playing);
 		}
 	}
@@ -522,8 +519,8 @@ public class Game implements Disposable {
 
 					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
 					method.invoke(clazz.newInstance(), e, game);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
-						| IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
+				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -538,8 +535,8 @@ public class Game implements Disposable {
 
 					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
 					method.invoke(clazz.newInstance(), e, game);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
-						| IllegalArgumentException | InvocationTargetException | InstantiationException e1) {
+				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -575,5 +572,9 @@ public class Game implements Disposable {
 
 	public boolean isLightingEnabled() {
 		return true;
+	}
+	
+	public int getHostiles() {
+		return hostiles;
 	}
 }

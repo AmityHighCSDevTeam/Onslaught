@@ -34,8 +34,7 @@ public class ExplosionRaycastBullet implements IBullet {
 	public ExplosionRaycastBullet(Game g, Vector2 start, float damage, Vector2 bullVector, PlayerModel source) {
 		this.g = g;
 		this.start = start;
-		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("explodeDamage"))
-				* source.getTotalBuffs().getMult("explodeDamage"));
+		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("explodeDamage")) * source.getTotalBuffs().getMult("explodeDamage"));
 		this.source = source;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
@@ -106,11 +105,11 @@ public class ExplosionRaycastBullet implements IBullet {
 		Collections.sort(hits);
 
 		for (HitData hd : hits) {
-			hd.hit.applyLinearImpulse(VectorFactory.createVector(damage / (start.dst(hd.hitPoint) * 100f), dir),
-					hd.hitPoint, true);
+			hd.hit.applyLinearImpulse(VectorFactory.createVector(damage / (start.dst(hd.hitPoint) * 100f), dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 
 			float damageToDeal = damage / start.dst(hd.hitPoint);
+			damageToDeal = Math.min(damageToDeal, damage);
 
 			if (entity.isPresent() && damageToDeal > 0) {
 				damage -= entity.get().damage(damageToDeal, source, DamageTypes.EXPLOSION);

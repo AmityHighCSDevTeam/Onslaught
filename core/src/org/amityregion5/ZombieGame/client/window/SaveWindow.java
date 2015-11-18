@@ -134,20 +134,16 @@ public class SaveWindow implements Screen {
 		batch.begin();
 
 		glyph.setText(ZombieGame.instance.mainFont, "Save", Color.WHITE, 600, Align.center, false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 300,
-				screen.getHeight() / 2 + 150 - glyph.height - 10);
+		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 300, screen.getHeight() / 2 + 150 - glyph.height - 10);
 
-		glyph.setText(ZombieGame.instance.mainFont, "Name: " + saveName + (showCursor ? "|" : ""), Color.WHITE, 500,
-				Align.left, false);
+		glyph.setText(ZombieGame.instance.mainFont, "Name: " + saveName + (showCursor ? "|" : ""), Color.WHITE, 500, Align.left, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 250, screen.getHeight() / 2);
 
-		boolean mouseOverBack = Gdx.input.getX() > screen.getWidth() / 2 - 300
-				&& Gdx.input.getX() < screen.getWidth() / 2
+		boolean mouseOverBack = Gdx.input.getX() > screen.getWidth() / 2 - 300 && Gdx.input.getX() < screen.getWidth() / 2
 				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 150
 				&& screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 150 + 50;
 
-		glyph.setText(ZombieGame.instance.mainFont, "Back",
-				(mouseOverBack ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 280, Align.center,
+		glyph.setText(ZombieGame.instance.mainFont, "Back", (mouseOverBack ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 280, Align.center,
 				false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 290, screen.getHeight() / 2 - 150 + 25);
 
@@ -157,14 +153,12 @@ public class SaveWindow implements Screen {
 			return;
 		}
 
-		boolean mouseOverSave = Gdx.input.getX() > screen.getWidth() / 2
-				&& Gdx.input.getX() < screen.getWidth() / 2 + 300
+		boolean mouseOverSave = Gdx.input.getX() > screen.getWidth() / 2 && Gdx.input.getX() < screen.getWidth() / 2 + 300
 				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 150
 				&& screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 150 + 50;
 
-		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit",
-				(mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 280, Align.center,
-				false);
+		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit", (mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 280,
+				Align.center, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10, screen.getHeight() / 2 - 150 + 25);
 
 		if (mouseOverSave && Gdx.input.isTouched()) {

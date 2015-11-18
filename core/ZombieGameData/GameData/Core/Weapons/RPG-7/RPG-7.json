@@ -1,0 +1,64 @@
+{
+  "name": "RPG-7",
+  "desc": "The quickest way to explode things without actually walking there.",
+  "className": "Rocket",
+  "weapon": [
+    {
+      "price": 2000,
+      "ammoPrice": 15,
+      "strength": 100,
+      "accuracy": 5,
+      "fuseTime": 4,
+      "accel": 0.3,
+      "size": 0.08,
+      "throwSpeed": 1,
+      "maxAmmo": 1,
+      "reloadTime": 2.5,
+      "warmup": 0,
+      "preFireDelay": 0.2,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Weapons/RPG-7/RPG-7.png",
+      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_GAME.png",
+      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_FIELD.png",
+      "isAuto": false,
+      "gameScale": 0.1,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "buff": {
+        "mult": {
+          "speed": 0.75
+        }
+      }
+    },
+    {
+      "price": 10,
+      "ammoPrice": 10,
+      "strength": 100,
+      "accuracy": 0,
+      "fuseTime": 2,
+      "accel": 0.5,
+      "size": 0.16,
+      "throwSpeed": 0.5,
+      "maxAmmo": 10,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "iconTxtr": "Core/Weapons/Rocket_Test/1I.png",
+      "gameTxtr": "Core/Weapons/Rocket_Test/1G.png",
+      "fieldTxtr": "Core/Weapons/Rocket_Test/1F.png",
+      "isAuto": false,
+      "gameScale": 0.1,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "buff": {
+        "mult": {
+          "speed": 1.5
+        }
+      }
+    }
+  ]
+}

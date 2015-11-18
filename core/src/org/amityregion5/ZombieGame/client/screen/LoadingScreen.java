@@ -32,8 +32,7 @@ public class LoadingScreen implements Screen {
 
 		batch.begin();
 
-		calibri30.draw(batch, "Loading" + (dots > 0 ? "." : "") + (dots > 1 ? "." : "") + (dots > 2 ? "." : ""), 10,
-				400, 1180, Align.center, false);
+		calibri30.draw(batch, "Loading" + (dots > 0 ? "." : "") + (dots > 1 ? "." : "") + (dots > 2 ? "." : ""), 10, 400, 1180, Align.center, false);
 
 		if (dCount > 0.5) {
 			dots++;

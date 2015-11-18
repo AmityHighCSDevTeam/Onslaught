@@ -97,8 +97,7 @@ public class GuiButton extends Sprite implements Disposable {
 	 * @param height
 	 *            of the button
 	 */
-	public GuiButton(TextureRegion region, int srcX, int srcY, int srcWidth, int srcHeight, int id, String text,
-			float x, float y, float width, float height) {
+	public GuiButton(TextureRegion region, int srcX, int srcY, int srcWidth, int srcHeight, int id, String text, float x, float y, float width, float height) {
 		super(region, srcX, srcY, srcWidth, srcHeight);
 		this.id = id;
 		setX(x);

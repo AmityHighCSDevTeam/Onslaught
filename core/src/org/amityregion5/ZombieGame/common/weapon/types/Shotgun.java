@@ -25,8 +25,7 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 	protected void fireWeapon(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack) {
 		stack.setAmmo(stack.getAmmo() - 1);
 		double dir = MathHelper.clampAngleAroundCenter(firing.getEntity().getBody().getAngle(),
-				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end),
-				Math.toRadians(maxFireDegrees));
+				MathHelper.getDirBetweenPoints(firing.getEntity().getBody().getPosition(), end), Math.toRadians(maxFireDegrees));
 
 		for (int i = 0; i < data.get(stack.getLevel()).getShots(); i++) {
 			double dirDel = i - data.get(stack.getLevel()).getShots() / 2;
@@ -41,14 +40,14 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 			newDir = MathHelper.fixAngle(newDir);
 
 			Vector2 firingPos = firing.getEntity().getBody().getWorldCenter();
-			Vector2 firingPosVisual = MathHelper.getEndOfLine(firing.getEntity().getBody().getWorldCenter(),
-					firing.getEntity().getShape().getRadius() - 0.01, dir);
+			Vector2 firingPosVisual = MathHelper.getEndOfLine(firing.getEntity().getBody().getWorldCenter(), firing.getEntity().getShape().getRadius() - 0.01,
+					dir);
 
 			Vector2 bullVector = VectorFactory.createVector(1000f, (float) newDir);
 
 			BasicBullet bull = new BasicBullet(game, firingPosVisual, (float) data.get(stack.getLevel()).getKnockback(),
-					(float) data.get(stack.getLevel()).getDamage(), bullVector, firing,
-					data.get(stack.getLevel()).getBulletColor(), data.get(stack.getLevel()).getBulletThickness(), 200f);
+					(float) data.get(stack.getLevel()).getDamage(), bullVector, firing, data.get(stack.getLevel()).getBulletColor(),
+					data.get(stack.getLevel()).getBulletThickness(), 200f);
 			bull.setDir((float) newDir);
 
 			game.getActiveBullets().add(bull);

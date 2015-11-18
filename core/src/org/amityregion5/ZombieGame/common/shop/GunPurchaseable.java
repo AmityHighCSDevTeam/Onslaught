@@ -44,8 +44,7 @@ public class GunPurchaseable implements IPurchaseable {
 			}
 
 			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
-				currLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "")
-						+ gun.getWeaponData(level).getBuff().getAdd(aBuff));
+				currLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
 			}
 		}
 
@@ -72,8 +71,7 @@ public class GunPurchaseable implements IPurchaseable {
 			}
 
 			for (String aBuff : gun.getWeaponData(level).getBuff().getAdditive().keySet()) {
-				nextLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "")
-						+ gun.getWeaponData(level).getBuff().getAdd(aBuff));
+				nextLev.put(aBuff, (gun.getWeaponData(level).getBuff().getAdd(aBuff) > 0 ? "+" : "") + gun.getWeaponData(level).getBuff().getAdd(aBuff));
 			}
 		}
 
@@ -164,15 +162,11 @@ public class GunPurchaseable implements IPurchaseable {
 				num += 50;
 			}
 			num += gun.getTags().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
-			num += getCurrentDescriptors(player).keySet().parallelStream()
-					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
-			num += getCurrentDescriptors(player).values().parallelStream()
-					.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).keySet().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+			num += getCurrentDescriptors(player).values().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			if (hasNextLevel(player) && getNextDescriptors(player) != null) {
-				num += getNextDescriptors(player).keySet().parallelStream()
-						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
-				num += getNextDescriptors(player).values().parallelStream()
-						.filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).keySet().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
+				num += getNextDescriptors(player).values().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			}
 		}
 
