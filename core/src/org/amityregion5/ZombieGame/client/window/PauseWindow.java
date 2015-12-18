@@ -25,6 +25,7 @@ public class PauseWindow implements Screen {
 	private GlyphLayout		glyph; //The glyph layout
 	private SpriteBatch		batch		= new SpriteBatch(); //The sprite batch
 	private PlayerModel		player; //The player
+	private boolean mouseWasUp = false;
 
 	public PauseWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen; //Set variables
@@ -42,6 +43,8 @@ public class PauseWindow implements Screen {
 
 		//Disable blending
 		Gdx.gl.glDisable(GL20.GL_BLEND);
+		
+		mouseWasUp = Gdx.input.isTouched();
 	}
 
 	private void drawPrepare(float delta) {
@@ -91,7 +94,7 @@ public class PauseWindow implements Screen {
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 190*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 75*ZombieGame.getYScalar());
 
 		//If quit pressed
-		if (mouseOverQuit && Gdx.input.isTouched()) {
+		if (mouseOverQuit && !Gdx.input.isTouched() && mouseWasUp) {
 			//Kill the player
 			player.damage(Float.POSITIVE_INFINITY, null, "QUIT BUTTON SMITES YOU");
 		}
@@ -106,7 +109,7 @@ public class PauseWindow implements Screen {
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 75*ZombieGame.getYScalar());
 
 		//If save button pressed
-		if (mouseOverSave && Gdx.input.isTouched()) {
+		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp) {
 			//Open save window
 			screen.setCurrentWindow(new SaveWindow(screen, player, this));
 		}

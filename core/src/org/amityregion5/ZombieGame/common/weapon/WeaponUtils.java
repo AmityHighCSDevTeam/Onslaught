@@ -157,10 +157,12 @@ public class WeaponUtils {
 					//If you have ammo and no prefire delay
 					//Fire
 					fireWeaponMethod.run(end, game, firing, maxFireDegrees, stack);
-				} else {
+				} else if (!stack.isPreFiring()){
 					//If you have no ammo left
 					//Reload
 					reload.run(stack, game, firing);
+					break;
+				} else {
 					break;
 				}
 			}

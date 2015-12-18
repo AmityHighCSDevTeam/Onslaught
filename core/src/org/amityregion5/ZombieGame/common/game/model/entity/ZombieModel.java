@@ -253,6 +253,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 				PlayerModel pModel = (PlayerModel) source;
 				//Give the player money
 				pModel.setMoney(pModel.getMoney() + prizeMoney);
+				pModel.addScore(prizeMoney * 0.05 + 1);
 			}
 			
 			//If the random says it is time for a health pack

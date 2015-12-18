@@ -1,0 +1,116 @@
+{
+  "name": ".44 Magnum Revolver",
+  "desc": "Why be a badass when you can be a badass gunslinger?",
+  "id": "Core_Magnum",
+  "className": "BasicGun",
+  "tags": [
+    "Pistol"
+  ],
+  "weapon": [
+    {
+      "price": 1500,
+      "ammoPrice": 1,
+      "damage": 23,
+      "knockback": 0.015,
+      "accuracy": 2,
+      "maxAmmo": 6,
+      "reloadTime": 2,
+      "preFireDelay": 0.1,
+      "postFireDelay": 0.5,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/.44 Magnum Revolver/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/.44 Magnum Revolver/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 4500,
+      "ammoPrice": 1.5,
+      "damage": 30,
+      "knockback": 0.02,
+      "accuracy": 2,
+      "maxAmmo": 6,
+      "reloadTime": 1.5,
+      "preFireDelay": 0.05,
+      "postFireDelay": 0.4,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/.44 Magnum Revolver/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/.44 Magnum Revolver/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 7000,
+      "ammoPrice": 3,
+      "damage": 50,
+      "knockback": 0.05,
+      "accuracy": 1.5,
+      "maxAmmo": 6,
+      "reloadTime": 1.25,
+      "preFireDelay": 0.025,
+      "postFireDelay": 0.3,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "iconTxtr": "Core/Weapons/.44 Magnum Revolver/Desert Eagle.png",
+      "gameTxtr": "Core/Weapons/.44 Magnum Revolver/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "isAuto": false,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    }
+  ]
+}

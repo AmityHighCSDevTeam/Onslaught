@@ -34,6 +34,7 @@ public class SaveWindow implements Screen {
 	private String			saveName			= ""; //The game's current save name
 	private boolean			showCursor			= false; //Should the cursor be shown
 	private float			timeUntilShowCursor	= 0; //The time until the cursor is shown
+	private boolean mouseWasUp = false;
 
 	public SaveWindow(InGameScreen screen, PlayerModel player, PauseWindow pauseWindow) {
 		this.screen = screen; //Set values
@@ -82,6 +83,7 @@ public class SaveWindow implements Screen {
 		drawMain(delta);
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
+		mouseWasUp = Gdx.input.isTouched();
 	}
 
 	private void drawPrepare(float delta) {
@@ -136,7 +138,7 @@ public class SaveWindow implements Screen {
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 290*ZombieGame.getXScalar(), screen.getHeight() / 2 - 150*ZombieGame.getYScalar() + 25*ZombieGame.getYScalar());
 
 		//If the back button is pressed
-		if (mouseOverBack && Gdx.input.isTouched()) {
+		if (mouseOverBack && !Gdx.input.isTouched() && mouseWasUp) {
 			//Return to the previous window
 			screen.setCurrentWindow(window);
 			//Dispose self
@@ -155,7 +157,7 @@ public class SaveWindow implements Screen {
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10*ZombieGame.getXScalar(), screen.getHeight() / 2 - 150*ZombieGame.getYScalar() + 25*ZombieGame.getYScalar());
 
 		//If the save button is pressed
-		if (mouseOverSave && Gdx.input.isTouched()) {
+		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp) {
 			//Save the game
 			screen.getGame().saveToFile(saveName);
 			//Kill the player (with fun message)

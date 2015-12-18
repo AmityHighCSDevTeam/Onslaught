@@ -3,11 +3,15 @@ package org.amityregion5.ZombieGame.client.settings;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -27,6 +31,7 @@ public class Settings {
 	private static JSONParser					parser	= new JSONParser();
 	//A hashmap for input settings values
 	private LinkedHashMap<String, InputData>	inputSettings;
+	private HashMap<String, ArrayList<Double>> top10scores;
 	//The master volume
 	private double								masterVolume;
 	//The master volume
@@ -35,6 +40,7 @@ public class Settings {
 	public Settings() {
 		//Create hashmap
 		inputSettings = new LinkedHashMap<String, InputData>();
+		top10scores = new HashMap<String, ArrayList<Double>>();
 		masterVolume = 1;
 		uiScale = 1;
 	}
@@ -100,6 +106,32 @@ public class Settings {
 					}
 				}
 			}
+			//Get score mappings
+			if (settingsFile.containsKey("scores")) {
+				JSONArray scores = (JSONArray) settingsFile.get("scores");
+
+				for (Object o : scores) {
+					JSONObject score = (JSONObject) o;
+
+					if (score.containsKey("type")) {
+						//Get the key
+						String type = (String) score.get("type");
+
+						double val = 0;
+						boolean valid = false;
+						//Get the type
+						if (score.containsKey("val")) {
+							val = ((Number)score.get("val")).doubleValue();
+							valid = true;
+						}
+
+						//Add it if it is valid
+						if (valid) {
+							addScore(type, val);
+						}
+					}
+				}
+			}
 
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
@@ -148,6 +180,23 @@ public class Settings {
 		}
 
 		settingsData.put("inputSettings", inputSettData);
+
+		//Put key data in there
+		JSONArray scores = new JSONArray();
+		for (Entry<String, ArrayList<Double>> e : top10scores.entrySet()) {
+			String type = e.getKey();
+			
+			for (Double val : e.getValue()) {
+				JSONObject jsonObj = new JSONObject();
+				
+				jsonObj.put("type", type);
+				jsonObj.put("val", val);
+				
+				scores.add(jsonObj);
+			}
+		}
+
+		settingsData.put("scores", scores);
 
 		//Write it to file
 		Writer writer = settings.writer(false);
@@ -260,5 +309,39 @@ public class Settings {
 	 */
 	public void setUiScale(double uiScale) {
 		this.uiScale = uiScale;
+	}
+	
+	public void addScore(Difficulty diff, double score) {
+		if (!top10scores.containsKey(diff.getUniqueID())) {
+			top10scores.put(diff.getUniqueID(), new ArrayList<Double>());
+		}
+		ArrayList<Double> arr = top10scores.get(diff.getUniqueID());
+		
+		arr.add(score);
+		
+		arr.sort((d1, d2)->(int)(d2*10-d1*10));
+		
+		for (int i = arr.size()-1; i>10; i--) {
+			arr.remove(i);
+		}
+	}
+	
+	private void addScore(String uid, double val) {
+		if (!top10scores.containsKey(uid)) {
+			top10scores.put(uid, new ArrayList<Double>());
+		}
+		ArrayList<Double> arr = top10scores.get(uid);
+		
+		arr.add(val);
+		
+		arr.sort((d1, d2)->(int)(d2*10-d1*10));
+		
+		for (int i = arr.size()-1; i>10; i--) {
+			arr.remove(i);
+		}
+	}
+	
+	public List<Double> getTop10ScoresForDiff(Difficulty diff) {
+		return top10scores.getOrDefault(diff.getUniqueID(), new ArrayList<Double>());
 	}
 }

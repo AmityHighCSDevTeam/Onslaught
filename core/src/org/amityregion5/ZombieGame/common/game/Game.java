@@ -73,6 +73,7 @@ public class Game implements Disposable {
 	protected boolean		isPaused; //Is the game paused
 	protected double		timeUntilNextSpawn; //The time in seconds until the next spawn is done
 	protected int			mobsSpawned	= 0; // The number of mobs that have been spawned
+	protected boolean isLightingEnabled = true;
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
 		this.diff = diff; //Set difficulty
@@ -691,10 +692,14 @@ public class Game implements Disposable {
 	}
 
 	public boolean isLightingEnabled() {
-		return true;
+		return isLightingEnabled;
 	}
 
 	public int getHostiles() {
 		return hostiles;
+	}
+
+	public void setLightingEnabled(boolean b) {
+		isLightingEnabled = b;
 	}
 }

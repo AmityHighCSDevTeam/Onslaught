@@ -47,6 +47,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private List<SoundPlayingData>		soundsToPlay; //The sounds to play
 	private Buff						totalBuffs; //The total sum of all buffs on it
 	private List<Buff>					buffs, temporaryBuffs; //The buffs and temporary buffs
+	private double score = 0;
 
 	public PlayerModel() {}
 
@@ -484,6 +485,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		obj.put("m", entity.getMassData().mass);
 		obj.put("f", entity.getFriction());
 		obj.put("health", health);
+		obj.put("score", score);
 
 		JSONArray weaps = new JSONArray();
 		JSONObject hotba = new JSONObject();
@@ -528,6 +530,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		float y = ((Number) obj.get("y")).floatValue(); // √
 		float r = ((Number) obj.get("r")).floatValue(); // √
 		double money = ((Number) obj.get("money")).doubleValue(); // √
+		double score = ((Number) obj.get("score")).doubleValue(); // √
 		double screenJitter = ((Number) obj.get("screenJitter")).doubleValue();
 		String txtr = (String) obj.get("txtr"); // √
 		float m = ((Number) obj.get("m")).floatValue(); // √
@@ -541,6 +544,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		model.getEntity().setFriction(f);
 		model.getEntity().setMass(m);
 		model.setScreenVibrate(screenJitter);
+		model.addScore(score);
 		for (Object o : buffs) {
 			model.applyBuff(Buff.getFromJSON((JSONObject) o));
 		}
@@ -578,5 +582,16 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	 */
 	public InGameScreen getScreen() {
 		return screen;
+	}
+	
+	/**
+	 * Increase the score by a specific number
+	 * @param amount
+	 */
+	public void addScore(double amount) {
+		score += amount;
+	}
+	public double getScore() {
+		return score;
 	}
 }

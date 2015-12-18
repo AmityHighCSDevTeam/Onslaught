@@ -283,7 +283,7 @@ public class InGameScreen extends GuiScreen {
 		if (!game.isGameRunning()) {
 			dispose();
 			//Dispose and return to previous screen
-			ZombieGame.instance.setScreen(prevScreen);
+			ZombieGame.instance.setScreen(new ScoreMenu(prevScreen, game.getDifficulty(), player.getScore()));
 		}
 	}
 
@@ -324,6 +324,9 @@ public class InGameScreen extends GuiScreen {
 			}
 			if (Gdx.input.isKeyJustPressed(Keys.F3)) {
 				doDebugRender = !doDebugRender;
+			}
+			if (Gdx.input.isKeyJustPressed(Keys.F4)) {
+				game.setLightingEnabled(!game.isLightingEnabled());
 			}
 			if (Gdx.input.isKeyPressed(Keys.G)) {
 				camera.zoom += 0.02;

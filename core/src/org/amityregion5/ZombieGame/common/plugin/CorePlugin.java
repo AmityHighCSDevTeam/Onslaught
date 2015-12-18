@@ -74,8 +74,14 @@ public class CorePlugin implements IPlugin {
 		//Add the spawnable for the main zombie
 		GameRegistry.addSpawnable(0, 1, (g) -> {
 			float maxModifier = 0.8f;
+			
+			float gaussRand = -1;
+			
+			while (gaussRand < 0 || gaussRand > 1) {
+				gaussRand = (float) (g.getRandom().nextGaussian()/2.8 + 0.5);
+			}
 
-			float speedModifier = g.getRandom().nextFloat() * maxModifier + 1f - maxModifier / 1.5f;
+			float speedModifier = gaussRand * maxModifier + 1f - maxModifier / 1.5f;
 			float sizeModifier = ((maxModifier + 1f) - speedModifier);
 
 			EntityZombie zom = new EntityZombie(0.15f * sizeModifier);
