@@ -11,17 +11,24 @@ import org.amityregion5.ZombieGame.common.shop.GunPurchaseable;
 import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 
+/**
+ * A container for a plugin
+ * @author sergeys
+ *
+ */
 public class PluginContainer {
+	//The arraylist of weapons
 	private ArrayList<IWeapon>					weapons			= new ArrayList<IWeapon>();
+	//The arraylist of weapon classes
 	private ArrayList<Class<? extends IWeapon>>	weaponClasses	= new ArrayList<Class<? extends IWeapon>>();
 
+	//The array list of buff applicators
 	private ArrayList<BuffApplicator> buffApplicators = new ArrayList<BuffApplicator>();
 
-	private String			name;
-	private String			desc;
-	private String			jarLoc;
-	private String			pluginFolderLoc;
-	private List<IPlugin>	plugins;
+	private String			name; //The name of the plugin
+	private String			desc; //The description of the plugin
+	private String			pluginFolderLoc; //The plugin's folder location
+	private List<IPlugin>	plugins; //All Plugin classes
 
 	public PluginContainer() {}
 
@@ -42,21 +49,6 @@ public class PluginContainer {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * @return the jarLoc
-	 */
-	public String getJarLoc() {
-		return jarLoc;
-	}
-
-	/**
-	 * @param jarLoc
-	 *            the jarLoc to set
-	 */
-	public void setJarLoc(String jarLoc) {
-		this.jarLoc = jarLoc;
 	}
 
 	/**
@@ -103,6 +95,7 @@ public class PluginContainer {
 	}
 
 	public List<IPurchaseable> getPurchaseables() {
+		//Combine weapons and buffs into a single stream of purchaseables before turning it into a list
 		return Stream.concat(weapons.stream().map((w) -> new GunPurchaseable(w)), buffApplicators.stream().map((b) -> new BuffPurchaseable(b))).map((o) -> {
 			return o;
 		}).collect(Collectors.toList());

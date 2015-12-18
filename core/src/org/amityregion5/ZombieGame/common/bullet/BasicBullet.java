@@ -24,20 +24,22 @@ import com.badlogic.gdx.physics.box2d.Fixture;
  */
 public class BasicBullet implements IBullet {
 
-	private float			knockback, dir, damage, range;
-	private Game			g;
-	private Vector2			endPoint;
-	private Vector2			start;
-	private PlayerModel		source;
-	private Color			color;
-	private float			bulletThickness;
-	private List<HitData>	hits;
+	private float			knockback, dir, damage, range; //Knockback, Direction, Damage, Max distance
+	private Game			g; //The game
+	private Vector2			endPoint; //The end point
+	private Vector2			start; //The start point
+	private PlayerModel		source; //The source player
+	private Color			color; //The color of the bullet
+	private float			bulletThickness; //The thickness
+	private List<HitData>	hits; //The list of hits
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage, Vector2 bullVector, PlayerModel source, Color color, float bulletThickness,
 			float range) {
+		//Set all values
 		this.g = g;
 		this.start = start;
 		knockback = speed;
+		//Get damage with buffs
 		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("bulletDamage")) * source.getTotalBuffs().getMult("bulletDamage"));
 		this.source = source;
 		this.color = color;
@@ -101,29 +103,36 @@ public class BasicBullet implements IBullet {
 	public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 
 		HitData hitData = new HitData();
-		hitData.hit = fixture.getBody();
+		hitData.hit = fixture.getBody(); //Create hit data
 		hitData.hitPoint = point.cpy();
 		hitData.dist = start.dst2(point);
 
+		//If it is within max range
 		if (start.dst2(point) <= range * range) {
-			hits.add(hitData);
+			hits.add(hitData); //Add it to data
 		}
 
+		//Continue the raycast
 		return 1;
 	}
 
 	@Override
 	public void finishRaycast() {
+		//Sort hits
 		Collections.sort(hits);
 
+		//Loop through the hits
 		for (HitData hd : hits) {
+			//Apply knockback to hit
 			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 
+			//Damage entity
 			if (entity.isPresent()) {
 				damage -= entity.get().damage(damage, source, DamageTypes.BULLET);
 			}
 
+			//Stop doing stuff if there is no more damage left
 			if (damage <= 0) {
 				endPoint = hd.hitPoint;
 				break;

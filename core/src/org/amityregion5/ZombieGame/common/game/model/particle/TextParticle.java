@@ -7,24 +7,21 @@ import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
 public class TextParticle implements IParticle {
-	private float	x, y, size;
-	private String	text;
+	private float	x, y, size; //X, Y, Size
+	private String	text; //Text
 
 	public TextParticle() {}
 
 	/**
-	 * @param x
-	 * @param y
-	 * @param c
-	 * @param g
-	 * @param rotation
-	 * @param rotationSpeed
-	 * @param vel
-	 * @param velDir
+	 * 
+	 * @param x x position
+	 * @param y y position
+	 * @param g Game
+	 * @param text text to display
 	 */
 	public TextParticle(float x, float y, Game g, String text) {
 		this.x = x;
-		this.y = y;
+		this.y = y; //Set variables
 		size = 0.004f;
 		this.text = text;
 	}
@@ -76,9 +73,7 @@ public class TextParticle implements IParticle {
 
 	@Override
 	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		return obj;
+		return null;
 	}
 
 	@Override

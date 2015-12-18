@@ -7,25 +7,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Align;
 
 /**
+ * The class representing the options menu
+ * 
  * @author sergeys
  */
 public class OptionMenu extends GuiScreen {
 
 	private GlyphLayout glyph = new GlyphLayout();
+	
+	private boolean wasUIMouseDown = false;
 
 	public OptionMenu(GuiScreen prevScreen) {
 		super(prevScreen);
 	}
-
-	// Font
-	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -39,43 +37,110 @@ public class OptionMenu extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 
-		int mX = Gdx.input.getX();
-		int mY = getHeight() - Gdx.input.getY();
+		//Mouse positions
+		float mX = Gdx.input.getX();
+		float mY = getHeight() - Gdx.input.getY();
 
 		// Draw name of screen
-		calibri30.draw(batch, "Options", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		ZombieGame.instance.bigFont.draw(batch, "Options", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 
-		float x = 10;
-		float y = getHeight() - 210;
-		float w = getWidth() - 20;
-		float h = 50;
+		//Rectangle for options menu
+		float x = 10*ZombieGame.getXScalar();
+		float y = getHeight() - 210*ZombieGame.getYScalar();
+		float w = getWidth() - 20*ZombieGame.getXScalar();
+		float h = 50*ZombieGame.getYScalar();
 
+		//Button texture
 		Texture buttText = ZombieGame.instance.buttonTexture;
 
-		Color c = batch.getColor();
-		batch.setColor(1, 1, 1, 1);
-		glyph.setText(ZombieGame.instance.mainFont, "Master Volume: " + ((int) (ZombieGame.instance.settings.getMasterVolume() * 10000)) / 100f + "%",
-				Color.WHITE, w, Align.left, false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
-		batch.setColor(c);
+		{
+			Color c = batch.getColor();
+			batch.setColor(1, 1, 1, 1);
+			//Draw volume text
+			glyph.setText(ZombieGame.instance.mainFont, "Master Volume: " + ((int) (ZombieGame.instance.settings.getMasterVolume() * 10000)) / 100f + "%",
+					Color.WHITE, w, Align.left, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
+			batch.setColor(c);
 
-		x += 300 + 10;
-		w = getWidth() - x - 50;
+			//Displace x position
+			x += 310*ZombieGame.getXScalar();
+			w = getWidth() - x - 50*ZombieGame.getXScalar();
 
-		batch.setColor(1, 1, 1, 1);
-		if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
-			batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
-		}
-		batch.draw(buttText, x, y + h / 2 - 1, w, 2);
-		batch.draw(buttText, x + (float) (w * ZombieGame.instance.settings.getMasterVolume()) - 1, y, 2, h);
-		batch.setColor(c);
-
-		if (Gdx.input.isTouched()) {
+			batch.setColor(1, 1, 1, 1);
+			//Change color if moused over
 			if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
-				mX -= x;
-				double maxVolume = mX / w;
-				ZombieGame.instance.settings.setMasterVolume(maxVolume);
+				batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
 			}
+			//Draw the Slider using two buttons because i'm lazy to make a shape renderer
+			batch.draw(buttText, x, y + h / 2 - 1, w, 2);
+			batch.draw(buttText, x + (float) (w * ZombieGame.instance.settings.getMasterVolume()) - 1, y, 2, h);
+			batch.setColor(c);
+
+			//If the mouse is down set the master volume
+			if (Gdx.input.isTouched()) {
+				if (mY >= y && mY <= y + h) {
+					mX -= x;
+					if (mX > w) {
+						mX = w;
+					} else if (mX < 0) {
+						mX = 0;
+					}
+					double maxVolume = mX / w;
+					mX = Gdx.input.getX();
+					ZombieGame.instance.settings.setMasterVolume(maxVolume);
+				}
+			}
+			
+			y -= h + 10*ZombieGame.getYScalar();
+		}	x = 10*ZombieGame.getXScalar();
+		{
+			Color c = batch.getColor();
+			batch.setColor(1, 1, 1, 1);
+			//Draw volume text
+			glyph.setText(ZombieGame.instance.mainFont, "UI Scale: " + ((int) (ZombieGame.instance.settings.getUiScale() * 100)) / 100f,
+					Color.WHITE, w, Align.left, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
+			batch.setColor(c);
+
+			//Displace x position
+			x += 310*ZombieGame.getXScalar();
+			w = getWidth() - x - 50*ZombieGame.getXScalar();
+
+			batch.setColor(1, 1, 1, 1);
+			//Change color if moused over
+			if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
+				batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
+			}
+			
+			double deviation = 0.5;
+			
+			//Draw the Slider using two buttons because i'm lazy to make a shape renderer
+			batch.draw(buttText, x, y + h / 2 - 1, w, 2);
+			batch.draw(buttText, x + (float) (w * (ZombieGame.instance.settings.getUiScale()-1+deviation)/deviation/2) - 1, y, 2, h);
+			batch.setColor(c);
+
+			//If the mouse is down set the master volume
+			if (Gdx.input.isTouched()) {
+				wasUIMouseDown = true;
+				if (mY >= y && mY <= y + h) {
+					mX -= x;
+					if (mX > w) {
+						mX = w;
+					} else if (mX < 0) {
+						mX = 0;
+					}
+					double uiScale = (mX / w) * deviation*2 + 1 - deviation;
+					mX = Gdx.input.getX();
+					ZombieGame.instance.settings.setUiScale(uiScale);
+				}
+			} else {
+				if (wasUIMouseDown) {
+					ZombieGame.instance.resize(getWidth(), getHeight());
+				}
+				wasUIMouseDown = false;
+			}
+			
+			y -= h + 10*ZombieGame.getYScalar();
 		}
 	}
 
@@ -89,24 +154,13 @@ public class OptionMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150, getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-
-		// Create the font
-		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
-
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 36;
-
-		calibri30 = generator.generateFont(parameter);
-
-		calibri30.setColor(1, 1, 1, 1);
-
 	}
 
 	@Override
@@ -145,6 +199,5 @@ public class OptionMenu extends GuiScreen {
 	public void dispose() {
 		super.dispose();
 		batch.dispose(); // Clear memory
-		calibri30.dispose();
 	}
 }

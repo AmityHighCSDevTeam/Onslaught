@@ -4,19 +4,31 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
+/**
+ * A class representing any and all buffs
+ * 
+ * @author sergeys
+ *
+ */
 public class Buff {
-	/*
-	 * Done: health, speed, bulletDamage, explodeDamage, allArmor, zombieArmor, explosionArmor, weaponTime
+	private HashMap<String, Double>	multiplicative; //Buffs that add together through multiplication
+	private HashMap<String, Double>	additive; //Buffs that add together through addition
+
+	/**
+	 * Add two buffs together
+	 * 
+	 * @param b1 the first buff
+	 * @param b2 the second buff
+	 * @return a sum of the two buffs
 	 */
-	private HashMap<String, Double>	multiplicative;
-	private HashMap<String, Double>	additive;
-
 	public static Buff sum(Buff b1, Buff b2) {
-		Buff newBuff = new Buff();
+		Buff newBuff = new Buff(); //Create the new buff
 
+		//Make the hashmaps for the new buff
 		HashMap<String, Double> mult = new HashMap<String, Double>();
 		HashMap<String, Double> add = new HashMap<String, Double>();
 
+		//Loop through the first buff's multiplicative buffs and add them to the new one
 		for (String b1s : b1.getMultiplicative().keySet()) {
 			if (mult.containsKey(b1s)) {
 				mult.put(b1s, mult.get(b1s) * b1.getMultiplicative().get(b1s));
@@ -25,6 +37,7 @@ public class Buff {
 			}
 		}
 
+		//Loop through the second buff's multiplicative buffs and add them to the new one
 		for (String b2s : b2.getMultiplicative().keySet()) {
 			if (mult.containsKey(b2s)) {
 				mult.put(b2s, mult.get(b2s) * b2.getMultiplicative().get(b2s));
@@ -33,6 +46,7 @@ public class Buff {
 			}
 		}
 
+		//Loop through the first buff's additive buffs and add them to the new one
 		for (String b1a : b1.getAdditive().keySet()) {
 			if (add.containsKey(b1a)) {
 				add.put(b1a, add.get(b1a) + b1.getAdditive().get(b1a));
@@ -41,6 +55,7 @@ public class Buff {
 			}
 		}
 
+		//Loop through the second buff's additive buffs and add them to the new one
 		for (String b2a : b2.getAdditive().keySet()) {
 			if (add.containsKey(b2a)) {
 				add.put(b2a, add.get(b2a) + b2.getAdditive().get(b2a));
@@ -49,9 +64,11 @@ public class Buff {
 			}
 		}
 
+		//Set them as the values for the new buff
 		newBuff.setAdditive(add);
 		newBuff.setMultiplicative(mult);
 
+		//Return the buff
 		return newBuff;
 	}
 
@@ -60,6 +77,12 @@ public class Buff {
 		additive = new HashMap<String, Double>();
 	}
 
+	/**
+	 * Get a buff from a JSON representation
+	 * 
+	 * @param json the json
+	 * @return a buff
+	 */
 	public static Buff getFromJSON(JSONObject json) {
 		Buff buff = new Buff();
 
@@ -102,6 +125,12 @@ public class Buff {
 		return jo;
 	}
 
+	/**
+	 * Add this buff to another one (does not change contents of current buff)
+	 * 
+	 * @param b the other buff
+	 * @return the sum of this buff and the other buff
+	 */
 	public Buff add(Buff b) {
 		return sum(this, b);
 	}

@@ -3,11 +3,14 @@ package org.amityregion5.ZombieGame.common.weapon.data;
 import org.json.simple.JSONObject;
 
 public class ShotgunWeaponData extends WeaponData {
+	//The number of shots to shoot
 	private int		shots;
+	//The spread of the shots
 	private double	spread;
 
 	public ShotgunWeaponData(JSONObject o) {
 		super(o);
+		//Load these variables
 		if (o.containsKey("shots")) {
 			shots = ((Number) o.get("shots")).intValue();
 		}

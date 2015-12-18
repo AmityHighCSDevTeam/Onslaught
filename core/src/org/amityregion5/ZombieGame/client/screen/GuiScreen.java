@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 /**
+ * An base implementation of the screen
  * @author sergeys
  */
 public abstract class GuiScreen implements Screen {
@@ -28,7 +29,7 @@ public abstract class GuiScreen implements Screen {
 	// The camera
 	protected OrthographicCamera		camera;
 
-	private boolean disposed = false;
+	private boolean disposed = false; //Has this been disposed
 
 	/**
 	 * @param prevScreen
@@ -40,7 +41,7 @@ public abstract class GuiScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-
+		//Set camera stuffs
 		camera.setToOrtho(false);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);

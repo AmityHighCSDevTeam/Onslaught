@@ -1,23 +1,30 @@
-package org.amityregion5.ZombieGame.common.game;
+package org.amityregion5.ZombieGame.common.game.difficulty;
 
+/**
+ * A basic difficulty implementation
+ * 
+ * @author sergeys
+ */
 public class BasicDifficulty implements Difficulty {
 
-	private String	id, name;
+	private String	id, name; //All the variables
 	private float	overallMult, waveMod, healthMod, moneyMod, damageMod;
 	private double	healthChance, startMoney;
 	private int		maxHostiles;
 
 	/**
-	 * @param id
-	 * @param name
-	 * @param overallMult
-	 * @param waveMod
-	 * @param healthMod
-	 * @param moneyMod
-	 * @param damageMod
-	 * @param healthChance
-	 * @param startMoney
-	 * @param maxHostiles
+	 * Create a basic difficulty
+	 * 
+	 * @param id the difficulty's ID
+	 * @param name the difficulty's Name
+	 * @param overallMult the difficulty's overall multiplier
+	 * @param waveMod the wave modifier
+	 * @param healthMod the health modifier
+	 * @param moneyMod the money modifier
+	 * @param damageMod the damage modifier
+	 * @param healthChance the health pack chance
+	 * @param startMoney the starting money
+	 * @param maxHostiles the maximum number of hostiles
 	 */
 	public BasicDifficulty(String id, String name, float overallMult, float waveMod, float healthMod, float moneyMod, float damageMod, double healthChance,
 			double startMoney, int maxHostiles) {

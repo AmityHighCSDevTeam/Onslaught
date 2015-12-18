@@ -6,12 +6,10 @@ import org.amityregion5.ZombieGame.common.game.tutorial.TutorialGame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Align;
 
 /**
+ * The screen representing the play game menu
  * @author sergeys
  */
 public class PlayGameMenu extends GuiScreen {
@@ -19,9 +17,6 @@ public class PlayGameMenu extends GuiScreen {
 	public PlayGameMenu(GuiScreen prevScreen) {
 		super(prevScreen);
 	}
-
-	// Font
-	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -36,7 +31,7 @@ public class PlayGameMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		calibri30.draw(batch, "Play Game", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		ZombieGame.instance.bigFont.draw(batch, "Play Game", 10, getHeight() - 45*ZombieGame.getYScalar(), getWidth() - 20, Align.center, false);
 	}
 
 	@Override
@@ -49,25 +44,14 @@ public class PlayGameMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Singleplayer", 10, getHeight() - 150, getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Tutorial", 10, getHeight() - 210, getWidth() - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back", 10, 10, getWidth() - 20, 50));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Singleplayer", 10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Tutorial", 10, getHeight() - 210*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back", 10, 10*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-
-		// Create the font
-		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
-
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 36;
-
-		calibri30 = generator.generateFont(parameter);
-
-		calibri30.setColor(1, 1, 1, 1);
-
 	}
 
 	@Override
@@ -107,6 +91,5 @@ public class PlayGameMenu extends GuiScreen {
 	public void dispose() {
 		super.dispose();
 		batch.dispose(); // Clear memory
-		calibri30.dispose();
 	}
 }

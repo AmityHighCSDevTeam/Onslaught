@@ -14,14 +14,15 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
+ * A class helping make a button
  * @author sergeys
  */
 public class GuiButton extends Sprite implements Disposable {
 
-	private int			id;
+	private int			id; //BUtton ID number
 	private String		text;							// Text to draw on button
-	private boolean		isEnabled	= true;
-	private GlyphLayout	glyph		= new GlyphLayout();
+	private boolean		isEnabled	= true; //Is this button enabled
+	private GlyphLayout	glyph		= new GlyphLayout(); //Glyph layout
 
 	/**
 	 * @param sprite

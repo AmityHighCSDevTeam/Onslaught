@@ -14,32 +14,42 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
 
+/**
+ * The pause window
+ * @author sergeys
+ *
+ */
 public class PauseWindow implements Screen {
-	private ShapeRenderer	shapeRender	= new ShapeRenderer();
-	private InGameScreen	screen;
-	private GlyphLayout		glyph;
-	private SpriteBatch		batch		= new SpriteBatch();
-	private PlayerModel		player;
+	private ShapeRenderer	shapeRender	= new ShapeRenderer(); //The shape renderer
+	private InGameScreen	screen; //The screen
+	private GlyphLayout		glyph; //The glyph layout
+	private SpriteBatch		batch		= new SpriteBatch(); //The sprite batch
+	private PlayerModel		player; //The player
 
 	public PauseWindow(InGameScreen screen, PlayerModel player) {
-		this.screen = screen;
+		this.screen = screen; //Set variables
 		glyph = new GlyphLayout();
 		this.player = player;
 	}
 
 	@Override
 	public void drawScreen(float delta, Camera camera) {
+		//Prepare to draw
 		drawPrepare(delta);
 
+		//Draw
 		drawMain(delta);
 
+		//Disable blending
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private void drawPrepare(float delta) {
+		//Update projection matricies
 		shapeRender.setProjectionMatrix(screen.getScreenProjectionMatrix());
 		batch.setProjectionMatrix(screen.getScreenProjectionMatrix());
 
+		//Enable blending
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -51,7 +61,7 @@ public class PauseWindow implements Screen {
 
 		// Main box in the center
 		shapeRender.setColor(0.3f, 0.3f, 0.3f, 0.6f);
-		shapeRender.rect(screen.getWidth() / 2 - 200, screen.getHeight() / 2 - 100, 400, 200);
+		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 100*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 200*ZombieGame.getYScalar());
 
 		shapeRender.end();
 
@@ -59,7 +69,7 @@ public class PauseWindow implements Screen {
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 		// Main box border
-		shapeRender.rect(screen.getWidth() / 2 - 200, screen.getHeight() / 2 - 100, 400, 200);
+		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 100*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 200*ZombieGame.getYScalar());
 
 		shapeRender.end();
 	}
@@ -67,28 +77,37 @@ public class PauseWindow implements Screen {
 	private void drawMain(float delta) {
 		batch.begin();
 
-		glyph.setText(ZombieGame.instance.mainFont, "Paused", Color.WHITE, 400, Align.center, false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 200, screen.getHeight() / 2 + glyph.height / 2 + 75);
+		//Draw paused text
+		glyph.setText(ZombieGame.instance.mainFont, "Paused", Color.WHITE, 400*ZombieGame.getXScalar(), Align.center, false);
+		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 + 75*ZombieGame.getYScalar());
 
-		boolean mouseOverQuit = Gdx.input.getX() > screen.getWidth() / 2 - 200 && Gdx.input.getX() < screen.getWidth() / 2
-				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 100 && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 50;
+		//Is the quit button moused over
+		boolean mouseOverQuit = Gdx.input.getX() > screen.getWidth() / 2 - 200*ZombieGame.getXScalar() && Gdx.input.getX() < screen.getWidth() / 2
+				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 100*ZombieGame.getYScalar() && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 50*ZombieGame.getYScalar();
 
-		glyph.setText(ZombieGame.instance.mainFont, "Quit", (mouseOverQuit ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 180, Align.center,
+		//Draw the quit button
+		glyph.setText(ZombieGame.instance.mainFont, "Quit", (mouseOverQuit ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 180*ZombieGame.getXScalar(), Align.center,
 				false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 190, screen.getHeight() / 2 + glyph.height / 2 - 75);
+		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 190*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 75*ZombieGame.getYScalar());
 
+		//If quit pressed
 		if (mouseOverQuit && Gdx.input.isTouched()) {
+			//Kill the player
 			player.damage(Float.POSITIVE_INFINITY, null, "QUIT BUTTON SMITES YOU");
 		}
 
-		boolean mouseOverSave = Gdx.input.getX() > screen.getWidth() / 2 && Gdx.input.getX() < screen.getWidth() / 2 + 200
-				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 100 && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 50;
+		//Is the save button moused over
+		boolean mouseOverSave = Gdx.input.getX() > screen.getWidth() / 2 && Gdx.input.getX() < screen.getWidth() / 2 + 200*ZombieGame.getXScalar()
+				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 100*ZombieGame.getYScalar() && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 50*ZombieGame.getYScalar();
 
-		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit", (mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 180,
+		//Draw save button
+		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit", (mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 180*ZombieGame.getXScalar(),
 				Align.center, false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10, screen.getHeight() / 2 + glyph.height / 2 - 75);
+		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 75*ZombieGame.getYScalar());
 
+		//If save button pressed
 		if (mouseOverSave && Gdx.input.isTouched()) {
+			//Open save window
 			screen.setCurrentWindow(new SaveWindow(screen, player, this));
 		}
 
@@ -97,6 +116,7 @@ public class PauseWindow implements Screen {
 
 	@Override
 	public void dispose() {
+		//Unpause when disposed
 		screen.getGame().setPaused(false);
 		batch.dispose();
 	}

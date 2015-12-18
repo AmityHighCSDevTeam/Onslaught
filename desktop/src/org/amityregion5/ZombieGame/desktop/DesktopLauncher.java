@@ -13,9 +13,10 @@ public class DesktopLauncher {
 	public static void main (String[] arg) throws FileNotFoundException {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
-		config.width = 1200;
+		config.width = 1600;
 		config.height = 900;
-		config.useHDPI = false;
+		config.useHDPI = true;
+		config.vSyncEnabled = true;
 		//config.addIcon("images/iconTestBMP.bmp", FileType.Internal);
 		//config.addIcon("images/iconTestBMP1.bmp", FileType.Internal);
 		//config.addIcon("images/iconTest.png", FileType.Internal);

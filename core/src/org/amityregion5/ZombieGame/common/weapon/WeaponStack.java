@@ -7,17 +7,26 @@ import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * A container for the weapon that a player has
+ * @author sergeys
+ *
+ */
 public class WeaponStack {
-	private int		level, ammo, totalAmmo;
-	private double	cooldown, warmup;
-	private boolean	warmingUp;
-	private IWeapon	weapon;
+	
+	private int		level; //The gun's level
+	private int ammo; //The gun's ammo
+	private int totalAmmo; //The gun's total ammo
+	private double	postFire; //The cooldown value
+	private double	preFire; //The warmup value
+	private boolean	prefiring; //Is the gun currently warming up
+	private IWeapon	weapon; //The gun
 
-	// warmup stuffs
-	private Vector2		warmupEnd;
-	private Game		warmupGame;
-	private PlayerModel	warmupFiring;
-	private double		warmupMaxFireDegrees;
+	//Warmup Information
+	private Vector2		preFireEnd; // Target for the warmup
+	private Game		preFireGame; //Game for the warmup
+	private PlayerModel	preFireFiring; //The player for the warmup
+	private double		preFireMaxFireDegrees; //The fire degrees for the warmup
 
 	public WeaponStack(IWeapon weapon) {
 		this.weapon = weapon;
@@ -84,48 +93,48 @@ public class WeaponStack {
 	}
 
 	/**
-	 * @return the cooldown
+	 * @return the post fire cooldown
 	 */
-	public double getCooldown() {
-		return cooldown;
+	public double getPostFire() {
+		return postFire;
 	}
 
 	/**
-	 * @param cooldown
-	 *            the cooldown to set
+	 * @param postFire
+	 *            the post fire cooldown to set
 	 */
-	public void setCooldown(double cooldown) {
-		this.cooldown = cooldown;
+	public void setPostFire(double postFire) {
+		this.postFire = postFire;
 	}
 
 	/**
-	 * @return the warmup
+	 * @return the pre fire delay
 	 */
-	public double getWarmup() {
-		return warmup;
+	public double getPreFire() {
+		return preFire;
 	}
 
 	/**
-	 * @param warmup
-	 *            the warmup to set
+	 * @param preFire
+	 *            the pre fire delay to set
 	 */
-	public void setWarmup(double warmup) {
-		this.warmup = warmup;
+	public void setPreFire(double preFire) {
+		this.preFire = preFire;
 	}
 
 	/**
-	 * @return the warmingUp
+	 * @return the is it prefiring
 	 */
-	public boolean isWarmingUp() {
-		return warmingUp;
+	public boolean isPreFiring() {
+		return prefiring;
 	}
 
 	/**
-	 * @param warmingUp
-	 *            the warmingUp to set
+	 * @param prefiring
+	 *            the prefiring to set
 	 */
-	public void setWarmingUp(boolean warmingUp) {
-		this.warmingUp = warmingUp;
+	public void setPreFiring(boolean prefiring) {
+		this.prefiring = prefiring;
 	}
 
 	/**
@@ -171,60 +180,60 @@ public class WeaponStack {
 	 * @return the warmupEnd
 	 */
 	public Vector2 getWarmupEnd() {
-		return warmupEnd;
+		return preFireEnd;
 	}
 
 	/**
 	 * @param warmupEnd
 	 *            the warmupEnd to set
 	 */
-	public void setWarmupEnd(Vector2 warmupEnd) {
-		this.warmupEnd = warmupEnd;
+	public void setPreFireEnd(Vector2 warmupEnd) {
+		this.preFireEnd = warmupEnd;
 	}
 
 	/**
 	 * @return the warmupGame
 	 */
 	public Game getWarmupGame() {
-		return warmupGame;
+		return preFireGame;
 	}
 
 	/**
 	 * @param warmupGame
 	 *            the warmupGame to set
 	 */
-	public void setWarmupGame(Game warmupGame) {
-		this.warmupGame = warmupGame;
+	public void setPreFireGame(Game warmupGame) {
+		this.preFireGame = warmupGame;
 	}
 
 	/**
 	 * @return the warmupFiring
 	 */
 	public PlayerModel getWarmupFiring() {
-		return warmupFiring;
+		return preFireFiring;
 	}
 
 	/**
 	 * @param warmupFiring
 	 *            the warmupFiring to set
 	 */
-	public void setWarmupFiring(PlayerModel warmupFiring) {
-		this.warmupFiring = warmupFiring;
+	public void setPreFireFiring(PlayerModel warmupFiring) {
+		this.preFireFiring = warmupFiring;
 	}
 
 	/**
 	 * @return the warmupMaxFireDegrees
 	 */
 	public double getWarmupMaxFireDegrees() {
-		return warmupMaxFireDegrees;
+		return preFireMaxFireDegrees;
 	}
 
 	/**
 	 * @param warmupMaxFireDegrees
 	 *            the warmupMaxFireDegrees to set
 	 */
-	public void setWarmupMaxFireDegrees(double warmupMaxFireDegrees) {
-		this.warmupMaxFireDegrees = warmupMaxFireDegrees;
+	public void setPreFireMaxFireDegrees(double warmupMaxFireDegrees) {
+		this.preFireMaxFireDegrees = warmupMaxFireDegrees;
 	}
 
 	public IWeaponDataBase getWeaponDataBase() {

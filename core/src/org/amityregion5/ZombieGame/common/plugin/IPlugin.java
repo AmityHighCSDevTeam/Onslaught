@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.common.plugin;
 
+import org.amityregion5.ZombieGame.common.game.Game;
+
 /**
  * Must have a constructor with no arguments. Do not do anything in the constructor.
  *
@@ -29,6 +31,13 @@ public interface IPlugin {
 	 * finished loading
 	 */
 	public void postLoad();
+	
+	/**
+	 * Do stuff that you need to do when the game is started
+	 * 
+	 * @param game the game that is started
+	 */
+	public void onGameStart(Game game);
 
 	/**
 	 * Dispose of any plugin files in here No other plugin methods will be called after this

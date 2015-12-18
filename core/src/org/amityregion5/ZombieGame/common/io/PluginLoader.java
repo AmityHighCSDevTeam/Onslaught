@@ -1,7 +1,9 @@
 package org.amityregion5.ZombieGame.common.io;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
@@ -19,11 +21,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 /**
+ * A class to load plugins
  * @author sergeys
  */
 public class PluginLoader {
 
+	//The JSONParser
 	private static JSONParser	parser	= new JSONParser();
+	//The plugin manager
 	private PluginManager		manager;
 
 	public PluginLoader(PluginManager pluginManager) {
@@ -41,28 +46,40 @@ public class PluginLoader {
 			if (p.isDirectory()) {// If it is a directory
 				ZombieGame.log("Plugin Loader: Checking: " + p.name());
 
+				//Get metadata json file
 				FileHandle meta = p.child("plugin.json");
+				//If it exists
 				if (meta.exists()) {
-					try {
+					try { 
+						//Create a plugin container
 						PluginContainer plugin = new PluginContainer();
 
+						//Load the plugin metadata
 						JSONObject pluginMeta = (JSONObject) parser.parse(meta.reader());
+						//Get plugin name
 						plugin.setName((String) pluginMeta.get("name"));
+						//Get plugin description
 						plugin.setDesc((String) pluginMeta.get("desc"));
+						//If it has a jar location
 						if (pluginMeta.containsKey("jarLoc")) {
+							//Get the jar location
 							String s = (String) pluginMeta.get("jarLoc");
+							//If the jar exists
 							if (!s.isEmpty() && p.child(s + ".jar").exists()) {
-								plugin.setJarLoc(s);
-
+								//Load the Jar
 								JarLoader loader = new JarLoader(p.child(s + ".jar").file());
 
+								//Set all of the plugins found and created as the list of plugins in the container
 								plugin.setPlugins(loader.getIPlugins());
 							}
 						}
 
+						//Set the plugin folder location path
 						plugin.setPluginFolderLoc(p.path());
 
+						//Log that it was found
 						ZombieGame.log("Plugin Loader: Plugin Found: " + p.name());
+						//Add it to the manager
 						manager.addPlugin(plugin);
 					} catch (IOException | ParseException e) {
 						e.printStackTrace();
@@ -87,31 +104,37 @@ public class PluginLoader {
 		ZombieGame.log("Plugin Loader: Loading completed");
 	}
 
-	public void loadPlugin(FileHandle handle, String prevPath, PluginContainer plugin) {
+	private void loadPlugin(FileHandle handle, String prevPath, PluginContainer plugin) {
+		//Get path
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
 
+		//If it is a directory
 		if (handle.isDirectory()) {
 			ZombieGame.debug("Plugin Loader: Checking Directory: " + loc);
+			//Load all children that exist and are not hidden
 			for (FileHandle subFile : handle.list()) {
 				if (subFile.exists() && !subFile.file().isHidden()) {
 					loadPlugin(subFile, loc, plugin);
 				}
 			}
 		} else {
+			//Load it as a file if it is a file
 			loadFile(handle, prevPath, plugin);
 		}
 	}
 
 	private void loadFile(FileHandle handle, String prevPath, PluginContainer plugin) {
+		//Get path
 		String loc = (prevPath.length() > 0 ? prevPath + "/" + handle.name() : handle.name());
+		//Get the sections in its path
 		String[] sections = prevPath.split(Pattern.quote("/"));
-		// if (handle.extension().equals("png")) {
-		// Gdx.app.debug("[Debug]", "Plugin Loader: Image Found: " + loc);
-		// Gdx.app.postRunnable(()->TextureRegistry.register(loc, handle));
-		// }
+
+		//If there are at least two sections
 		if (sections.length >= 2) {
 			switch (sections[1]) {
 				case "Weapons":
+					//If the second section is 'Weapons'
+					//Load it as a weapon
 					if (handle.extension().equals("json")) {
 						ZombieGame.debug("Plugin Loader: Loading Weapon: " + loc);
 						try {
@@ -122,6 +145,8 @@ public class PluginLoader {
 					}
 					break;
 				case "Buffs":
+					//If the second section is 'Buffs'
+					//Load it as a buff
 					if (handle.extension().equals("json")) {
 						ZombieGame.debug("Plugin Loader: Loading Buff: " + loc);
 						try {
@@ -132,12 +157,16 @@ public class PluginLoader {
 					}
 					break;
 				case "Players":
+					//If the second section is 'Players'
+					//Load the texture
 					if (handle.extension().equals("png")) {
 						ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
 						Gdx.app.postRunnable(() -> TextureRegistry.register(loc, handle));
 					}
 					break;
 				case "Zombies":
+					//If the second section is 'Zombies'
+					//Load the texture
 					if (handle.extension().equals("png")) {
 						ZombieGame.debug("Plugin Loader: Image Loading: " + loc);
 						Gdx.app.postRunnable(() -> TextureRegistry.register(loc, handle));
@@ -148,63 +177,103 @@ public class PluginLoader {
 	}
 
 	private void loadBuff(JSONObject o, PluginContainer plugin, String pathName) {
+		//Create the buff
 		Buff buff = new Buff();
 
+		//Get JSON Array
 		JSONArray arr = (JSONArray) o.get("buffs");
 
+		//Get name
 		String name = (String) o.get("name");
 
+		//Get icon path
 		String icon = (String) o.get("icon");
 
+		//Get price
 		double price = ((Number) o.get("price")).doubleValue();
 
+		//Loop through array
 		for (Object obj : arr) {
 			JSONObject aO = (JSONObject) obj;
 
+			//Get type of buff data
 			String type = (String) aO.get("type");
+			//Get buff data key
 			String key = (String) aO.get("key");
+			//Get buff data value
 			double value = ((Number) aO.get("val")).doubleValue();
 
+			//If the type is multiplicative
 			if (type.equals("mult")) {
+				//Add it as a muliplicative buff
 				buff.addMult(key, value);
 			} else if (type.equals("add")) {
+				//If it is additive
+				//Add it as an additive buff
 				buff.addAdd(key, value);
 			}
 		}
 
+		//Create the buff applicator
 		BuffApplicator applicator = new BuffApplicator(buff, name, price, icon);
 
+		//Add it to the plugin
 		plugin.addBuffApplicator(applicator);
 	}
 
 	private void loadWeapon(JSONObject o, PluginContainer plugin, String pathName) {
+		//Get the class name of the weapon
 		String className = (String) o.get("className");
+		//If it doesn't exist register this as an error
 		if (className == null) {
 			ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: No class name");
 			return;
 		}
-		for (Class<? extends IWeapon> c : ZombieGame.instance.weaponRegistry.getWeaponClasses()) {
-			if (c.getSimpleName().equals(className)) {
-				try {
-					IWeapon weapon = c.newInstance();
 
-					if (weapon.loadWeapon(o)) {
-						ZombieGame.debug("Plugin Loader: Succefully loaded weapon: " + weapon.getName());
-						plugin.addWeapon(weapon);
-						return;
-					} else {
-						ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
-					}
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
+		//The matched class
+		Class<? extends IWeapon> matchedClass = null;
+
+		//Get all full name matching classes
+		List<Class<? extends IWeapon>> fullName = ZombieGame.instance.pluginManager.getActivatedWeaponClasses().parallelStream().filter((c)->c.getName().equals(className)).collect(Collectors.toList());
+		//If full name not used
+		if (fullName == null || fullName.isEmpty() || fullName.size() > 1) {
+			List<Class<? extends IWeapon>> matched = ZombieGame.instance.pluginManager.getActivatedWeaponClasses().parallelStream().filter((c)->c.getSimpleName().equals(className)).collect(Collectors.toList());
+			//if simple name didnt help return
+			if (matched == null || matched.isEmpty() || matched.size() > 1) {
+				return;
+			} else {
+				//if it did help
+				matchedClass = matched.get(0);
+			}
+		} else {
+			//If full name found it
+			matchedClass = fullName.get(0);
+		}
+
+		//If the class is still null
+		if (matchedClass == null) {
+			return;
+		} else {
+			//If found load the class
+			try {
+				//Instantiate weapon
+				IWeapon weapon = matchedClass.newInstance();
+
+				//Load it from JSON
+				if (weapon.loadWeapon(o)) {
+					//If successful
+					ZombieGame.debug("Plugin Loader: Succefully loaded weapon: " + weapon.getName());
+					//Add it to list of weapons in plugin
+					plugin.addWeapon(weapon);
+					return;
+				} else {
+					//If not successful log the error
+					ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: Weapon Loading Failed");
 				}
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
 			}
 		}
 		ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: Class not found");
 	}
-
-	/*
-	 * { "name": "NAME", "desc": "DESCRIPTION", "className": "CLASS_NAME", "weapon": [ { "price": 0, "ammoPrice": 0, "damage": 0, "knockback": 0, "accuracy": 0, "maxAmmo": 0, "reloadTime": 0, "preFireDelay": 0, "postFireDelay": 0 }, {
-	 * "price": 0, "ammoPrice": 0, "damage": 0, "knockback": 0, "accuracy": 0, "maxAmmo": 0, "reloadTime": 0, "preFireDelay": 0, "postFireDelay": 0 } ] }
-	 */
 }

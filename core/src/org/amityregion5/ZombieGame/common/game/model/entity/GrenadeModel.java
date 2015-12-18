@@ -9,20 +9,26 @@ import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * A model representing a grenade
+ * 
+ * @author sergeys
+ *
+ */
 public class GrenadeModel implements IEntityModel<EntityGrenade> {
-	private EntityGrenade		entity;
-	private Game				g;
-	private float				timeUntilExplosion;
-	private double				strength;
-	private PlayerModel			parent;
-	private SpriteDrawingLayer	sprite;
-	private Vector2				explosionPos;
+	private EntityGrenade		entity; //The entity
+	private Game				g; //The game
+	private float				timeUntilExplosion; //Time until it explodes
+	private double				strength; //The strength of the explosion
+	private PlayerModel			parent; //The grenade's thrower
+	private SpriteDrawingLayer	sprite; //The sprite
+	private Vector2				explosionPos; //The explosion position
 
 	public GrenadeModel() {}
 
 	public GrenadeModel(EntityGrenade e, Game game, PlayerModel parent, String txtr) {
 		entity = e;
-		g = game;
+		g = game; //Set values
 		this.parent = parent;
 		sprite = new SpriteDrawingLayer(txtr);
 	}
@@ -34,26 +40,27 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 
 	@Override
 	public void tick(float timeStep) {
+		//If time until explosion remains
 		if (timeUntilExplosion > 0) {
-			timeUntilExplosion -= timeStep;
+			timeUntilExplosion -= timeStep; //Tick down time until explosion
 			explosionPos = entity.getBody().getWorldCenter().cpy();
 		} else {
-			g.removeEntity(this);
+			g.removeEntity(this); //Explode
 			g.makeExplosion(explosionPos, strength, parent);
 		}
-		// light.setPosition(entity.getBody().getWorldCenter());
+		//Move sprite to the right place
 		sprite.getSprite().setOriginCenter();
 	}
 
 	@Override
 	public void dispose() {
 		parent = null;
-		entity.dispose();
+		entity.dispose();//clean up
 	}
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
-		timeUntilExplosion = 0;
+		timeUntilExplosion = 0; //explode if damaged
 		explosionPos = entity.getBody().getWorldCenter().cpy();
 		return 0;
 	}

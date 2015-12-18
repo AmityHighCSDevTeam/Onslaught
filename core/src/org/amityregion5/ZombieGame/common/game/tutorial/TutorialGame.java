@@ -19,11 +19,16 @@ import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * The tutorial game
+ * @author sergeys
+ *
+ */
 public class TutorialGame extends Game {
 
-	private int				tutorialPart	= -1;
-	private TextParticle	particle		= null;
-	private float			yOffset			= 1;
+	private int				tutorialPart	= -1; //Current part of tutorial
+	private TextParticle	particle		= null; //Current text particle
+	private float			yOffset			= 1; //Particle y offset
 
 	public TutorialGame() {
 		super(GameRegistry.getDifficultyFromID("EASY"), true, false);
@@ -33,6 +38,7 @@ public class TutorialGame extends Game {
 	public void tick(float deltaTime) {
 		float frameTime = Math.min(deltaTime, 0.25f);
 
+		//Do tutorial parts
 		if (tutorialPart == -1) {
 			lighting.setAmbientLight(new Color(.35f, .35f, .35f, 1f));
 
@@ -54,6 +60,7 @@ public class TutorialGame extends Game {
 					.filter((w) -> w.getName().equalsIgnoreCase("M9")).findFirst().get().getWeaponData(0).getPrice());
 
 			particle = new TextParticle(0, 1, this, "Buy the M9");
+			yOffset = -3;
 			addParticleToWorld(particle);
 			tutorialPart = 2;
 		} else if (tutorialPart == 2 && getSingleplayerPlayer().getWeapons().parallelStream().anyMatch((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))) {
@@ -71,6 +78,7 @@ public class TutorialGame extends Game {
 			getSingleplayerPlayer().setMoney(m9Data.getAmmoPrice() * m9Data.getMaxAmmo());
 
 			particle = new TextParticle(0, 1, this, "Press " + ZombieGame.instance.settings.getInput("Buy_Ammo").getName() + " to buy ammo.");
+			yOffset = 1;
 			addParticleToWorld(particle);
 			tutorialPart = 4;
 		} else if (tutorialPart == 4 && getSingleplayerPlayer().getWeapons().parallelStream().filter((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))
@@ -100,7 +108,6 @@ public class TutorialGame extends Game {
 			model.setDamage(0);
 			model.setRange(zom.getShape().getRadius() * 1.1f);
 
-			hostiles++;
 			addEntityToWorld(model, getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x + 5,
 					getSingleplayerPlayer().getEntity().getBody().getWorldCenter().y);
 
@@ -126,6 +133,7 @@ public class TutorialGame extends Game {
 					ZombieGame.instance.pluginManager.getActivatedWeapons().parallelStream().filter((w) -> w.getName().equals("AK47")).findFirst().get()));
 
 			particle = new TextParticle(0, 1, this, "Put the AK47 in your current slot by clicking on it.");
+			yOffset = -3;
 			addParticleToWorld(particle);
 			tutorialPart = 9;
 		} else if (tutorialPart == 9 && getSingleplayerPlayer().getCurrentWeapon().getWeapon().getName().equals("AK47")) {
@@ -139,6 +147,7 @@ public class TutorialGame extends Game {
 
 			particle = new TextParticle(0, 1, this,
 					"Press " + ZombieGame.instance.settings.getInput("Toggle_Flashlight").getName() + " to toggle your flashlight.");
+			yOffset = 1;
 			addParticleToWorld(particle);
 			tutorialPart = 11;
 		} else if (tutorialPart == 11 && !getSingleplayerPlayer().getLight().isActive()) {
@@ -164,21 +173,30 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 14;
 		}
+		
+		if (tutorialPart == 6 && getSingleplayerPlayer().getMoney() <= 0.1) {
+			WeaponData m9Data = ((WeaponData) ZombieGame.instance.pluginManager.getActivatedWeapons().parallelStream()
+					.filter((w) -> w.getName().equalsIgnoreCase("M9")).findFirst().get().getWeaponData(0));
+
+			getSingleplayerPlayer().setMoney(m9Data.getAmmoPrice() * m9Data.getMaxAmmo());
+		}
 
 		if (particle != null) {
 			particle.setX(getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x);
 			particle.setY(getSingleplayerPlayer().getEntity().getBody().getWorldCenter().y + yOffset);
 		}
 
+		//Normal tick method
 		accumulator += frameTime;
 		while (accumulator >= Constants.TIME_STEP) {
 
 			if (!isPaused) {
 				entities.forEach((e) -> e.tick(Constants.TIME_STEP));
 				particles.forEach((p) -> p.tick(Constants.TIME_STEP));
+				
+				world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 			}
 
-			world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 			accumulator -= Constants.TIME_STEP;
 
 			{ // Deletion of Entities

@@ -48,7 +48,7 @@ public class ZombieGame extends Game {
 	public BitmapFont				mainFont, bigFont;					// Font that buttons use
 	public Texture					buttonTexture;						// Texture that buttons use
 	public Texture					missingTexture;						// The texture for when texture is
-																		// missing
+	// missing
 	public boolean					isServer;							// Is the current instance a
 	// server
 	public WeaponRegistry			weaponRegistry;						// The registry for the weapons
@@ -63,6 +63,8 @@ public class ZombieGame extends Game {
 	public String					version	= "Error: Version Not Set";	// The game version
 	public String					newestVersion;						// The newest version
 
+	private static float uiscale = 1;
+
 	/**
 	 * @param isServer
 	 *            is the game a server
@@ -74,7 +76,7 @@ public class ZombieGame extends Game {
 		isCheatModeAllowed = cheatMode; //Set the cheat mode
 		this.isServer = isServer; // Set if it is a server
 		random = new Random(); //Create the random
-		
+
 		//Determine the working directory
 		try {
 			String temp = ZombieGame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -181,22 +183,29 @@ public class ZombieGame extends Game {
 			// Load the plugins
 			ZombieGame.log("Loading: Plugins will be loaded from " + gameData.file().getAbsolutePath());
 
+			//Load the base plugin data
 			loader.loadPluginMeta(plugins);
 
+			//Set the core plugin (Prevents overriding of Core)
 			pluginManager.getCorePlugin().setPlugins(Arrays.asList(new IPlugin[] {new CorePlugin()}));
 
+			//Initialize the plugins
 			log("Loading: Initializing Plugins");
 			pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.init(p)));
 
+			//Preload the plugins
 			log("Loading: Beginning Plugin Preloading");
 			pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.preLoad()));
 
+			//Load guns and stuff
 			log("Loading: Loading Plugin Data");
 			loader.loadPlugins(plugins);
 
+			//Load the plugin
 			log("Loading: Beginning Plugin Loading");
 			pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.load()));
 
+			//Post load the plugin
 			log("Loading: Beginning Plugin Postloading");
 			pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.postLoad()));
 
@@ -250,6 +259,7 @@ public class ZombieGame extends Game {
 			}
 		} , "Main Loading Thread");
 
+		//Start the loading thread
 		loadingThread.setDaemon(true);
 		loadingThread.start();
 	}
@@ -280,7 +290,54 @@ public class ZombieGame extends Game {
 		this.width = width; // Save screen size
 		this.height = height;
 
+		if (settings != null) {
+			uiscale = (float) settings.getUiScale();
+		}
+
 		super.resize(width, height);
+
+		// Generate the font
+		Gdx.app.postRunnable(() -> {			
+			if (mainFont != null) {
+				mainFont.dispose();
+
+				// Size 24 font
+				FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+				parameter.size = (int) (24 * getYScalar());
+				parameter.borderWidth = 0.025f;
+				parameter.borderColor = Color.WHITE;
+
+				if (parameter.size < 2) {
+					parameter.size = 2;
+				}
+
+				mainFont = fontGenerator.generateFont(parameter);
+				// Make the font black
+				mainFont.setColor(1, 1, 1, 1);
+			}
+		});
+
+		// Generate the font
+		Gdx.app.postRunnable(() -> {
+			if (bigFont != null) {
+				bigFont.dispose();
+
+				// Size 36 font
+				FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+				parameter.size = (int) (30 * getYScalar());
+				parameter.borderWidth = 0.025f;
+				parameter.borderColor = Color.WHITE;
+
+				if (parameter.size < 2) {
+					parameter.size = 2;
+				}
+
+				bigFont = fontGenerator.generateFont(parameter);
+				// Make the font black
+				bigFont.setColor(1, 1, 1, 1);
+			}
+		});
+
 	}
 
 	@Override
@@ -301,11 +358,14 @@ public class ZombieGame extends Game {
 	}
 
 	public static float getYScalar() {
-		return Gdx.graphics.getHeight() / 900f;
+		return Gdx.graphics.getHeight() / 900f * uiscale;
 	}
 
 	public static float getXScalar() {
-		return Gdx.graphics.getWidth() / 1200f;
+		return Gdx.graphics.getWidth() / 1600f * uiscale;
+	}
+	public static float getAScalar() {
+		return (getXScalar()+getYScalar())/2;
 	}
 
 	public static float getScaledY(float y) {

@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
+import org.amityregion5.ZombieGame.client.InputAccessor;
 import org.amityregion5.ZombieGame.client.gui.GuiButton;
-import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
@@ -16,74 +16,31 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
 
 /**
+ * The continue menu
  * @author sergeys
  */
 public class ContinueMenu extends GuiScreen {
 
-	private GlyphLayout		glyph		= new GlyphLayout();
-	private ShapeRenderer	shapeRender	= new ShapeRenderer();
-	private double			scrollPos;
-	private String			selected;
-	private InputProcessor	processor;
-	private List<String>	stuff;
+	private GlyphLayout		glyph		= new GlyphLayout(); //The glyph layout
+	private ShapeRenderer	shapeRender	= new ShapeRenderer(); //The shape renderer
+	private double			scrollPos; //The scroll position
+	private String			selected; //Selected game name
+	private InputProcessor	processor; //Input processor
+	private List<String>	fileNames; //All game names cached
 
 	public ContinueMenu(GuiScreen prevScreen) {
 		super(prevScreen);
 
-		processor = new InputProcessor() {
-			@Override
-			public boolean keyDown(int keycode) {
-				if (selected != null) {
-					ZombieGame.instance.settings.setInput(selected, new InputData(true, keycode));
-					selected = null;
-				}
-				return false;
-			}
-
-			@Override
-			public boolean keyUp(int keycode) {
-				return false;
-			}
-
-			@Override
-			public boolean keyTyped(char character) {
-				return false;
-			}
-
-			@Override
-			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				if (selected != null) {
-					ZombieGame.instance.settings.setInput(selected, new InputData(false, button));
-				}
-				return false;
-			}
-
-			@Override
-			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				return false;
-			}
-
-			@Override
-			public boolean touchDragged(int screenX, int screenY, int pointer) {
-				return false;
-			}
-
-			@Override
-			public boolean mouseMoved(int screenX, int screenY) {
-				return false;
-			}
-
+		processor = new InputAccessor() {
 			@Override
 			public boolean scrolled(int amount) {
 				double maxAmt = getMaxScrollAmount() - getHeight() + 200;
@@ -96,11 +53,9 @@ public class ContinueMenu extends GuiScreen {
 
 		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves");
 
-		stuff = Arrays.stream(file.list()).map((f) -> f.nameWithoutExtension()).collect(Collectors.toList());
+		//Get all things in saves folder
+		fileNames = Arrays.stream(file.list()).map((f) -> f.nameWithoutExtension()).collect(Collectors.toList());
 	}
-
-	// Font
-	private BitmapFont calibri30;
 
 	@Override
 	public void render(float delta) {
@@ -114,29 +69,32 @@ public class ContinueMenu extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 
-		Rectangle clipBounds = new Rectangle(10, 100, getWidth() - 20, getHeight() - 201);
+		//Clip screen
+		Rectangle clipBounds = new Rectangle(10*ZombieGame.getXScalar(), 100*ZombieGame.getYScalar(), getWidth() - 20*ZombieGame.getXScalar(), getHeight() - 201*ZombieGame.getYScalar());
 		ScissorStack.pushScissors(clipBounds);
 
 		{
-			float x = 10;
-			float h = 50;
-			float blankSpace = 10;
-			float y = (float) ((getHeight() - 50) - h - blankSpace + scrollPos);
-			float w = getWidth() - 40;
+			//Calculate positions and sizes
+			float x = 10*ZombieGame.getXScalar();
+			float h = 50*ZombieGame.getYScalar();
+			float blankSpace = 10*ZombieGame.getYScalar();
+			float y = (float) ((getHeight() - 50*ZombieGame.getYScalar()) - h - blankSpace + scrollPos);
+			float w = getWidth() - 40*ZombieGame.getXScalar();
 
-			for (String file : stuff) {
+			//Go through each file name
+			for (String file : fileNames) {
+				//Select if clicked on
 				if (Gdx.input.isTouched() && Gdx.input.justTouched() && Gdx.input.getX() >= x && Gdx.input.getX() <= x + w
 						&& getHeight() - Gdx.input.getY() >= y && getHeight() - Gdx.input.getY() <= y + h && selected != file) {
 					selected = file;
 				}
-				if (selected == file) {
-					batch.setColor(0.75f, 0.75f, 0.75f, 1);
-				}
-				// batch.draw(buttText, x, y, w, h);
+
 				batch.setColor(1, 1, 1, 1);
 
+				//Get color to draw text with
 				Color color = (selected != file ? Color.WHITE : new Color(27 / 255f, 255 / 255f, 55 / 255f, 1f));
 
+				//If moused over make color different
 				if (color == Color.WHITE) {
 					if (Gdx.input.getX() > x && ZombieGame.instance.height - Gdx.input.getY() > y && Gdx.input.getX() < x + w
 							&& ZombieGame.instance.height - Gdx.input.getY() < y + h) {
@@ -144,22 +102,25 @@ public class ContinueMenu extends GuiScreen {
 					}
 				}
 
-				glyph.setText(ZombieGame.instance.mainFont, file, color, w - 20, Align.left, false);
+				//Write text
+				glyph.setText(ZombieGame.instance.mainFont, file, color, w - 20*ZombieGame.getXScalar(), Align.left, false);
 				ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
 
+				//Move drawing point
 				y -= (h + blankSpace);
 			}
 		}
 		ScissorStack.popScissors();
 		batch.end();
 		{
-			float x = getWidth() - 30;
-			float y = 100;
-			float w = 20;
-			float h = getHeight() - 200;
-			/*
-			 * shapeRender.begin(ShapeType.Filled); shapeRender.setColor(r, g, b, a); shapeRender.end(); shapeRender.begin(ShapeType.Line); shapeRender.end();
-			 */
+			float x = getWidth() - 30*ZombieGame.getXScalar();
+			float y = 100*ZombieGame.getYScalar();
+			float w = 20*ZombieGame.getXScalar();
+			float h = getHeight() - 200*ZombieGame.getYScalar();
+			
+			Matrix4 projM = shapeRender.getProjectionMatrix().cpy();
+			
+			shapeRender.setProjectionMatrix(camera.combined);
 
 			shapeRender.begin(ShapeType.Filled);
 			// Main Scroll bar box
@@ -179,12 +140,13 @@ public class ContinueMenu extends GuiScreen {
 
 			shapeRender.end();
 
+			shapeRender.setProjectionMatrix(projM);
 		}
 
 		batch.begin();
 
 		// Draw name of screen
-		calibri30.draw(batch, "Continue", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		ZombieGame.instance.bigFont.draw(batch, "Continue", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 	}
 
 	@Override
@@ -203,17 +165,6 @@ public class ContinueMenu extends GuiScreen {
 	@Override
 	public void show() {
 		super.show();
-
-		// Create the font
-		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
-
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 36;
-
-		calibri30 = generator.generateFont(parameter);
-
-		calibri30.setColor(1, 1, 1, 1);
-
 	}
 
 	@Override
@@ -256,18 +207,17 @@ public class ContinueMenu extends GuiScreen {
 		super.dispose();
 		batch.dispose(); // Clear memory
 		shapeRender.dispose();
-		calibri30.dispose();
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
 
 	private double getMaxScrollAmount() {
-		return 60 * (stuff.size()) + 20;
+		return 60*ZombieGame.getYScalar() * (fileNames.size()) + 20*ZombieGame.getYScalar();
 	}
 
 	private float getScrollBarPos() {
-		double screenHeight = getHeight() - 200;
+		double screenHeight = getHeight() - 200*ZombieGame.getYScalar();
 		double pos = (screenHeight - getScrollBarHeight()) * (scrollPos) / (getMaxScrollAmount() - screenHeight);
-		pos = (getHeight() - 100) - pos - getScrollBarHeight();
+		pos = (getHeight() - 100*ZombieGame.getYScalar()) - pos - getScrollBarHeight();
 		// double pos = (getMaxScrollAmount() - screenHeight - scrollPos + 47);
 		// if (pos < 100) {
 		// pos = 100;
@@ -276,7 +226,7 @@ public class ContinueMenu extends GuiScreen {
 	}
 
 	private float getScrollBarHeight() {
-		double screenHeight = getHeight() - 200;
+		double screenHeight = getHeight() - 200*ZombieGame.getYScalar();
 		double height = (screenHeight * screenHeight) / getMaxScrollAmount();
 		return (float) (height > screenHeight ? screenHeight : height);
 	}

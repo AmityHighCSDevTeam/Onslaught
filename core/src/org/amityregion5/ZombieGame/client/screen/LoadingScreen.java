@@ -11,11 +11,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Align;
 
-/*
- * Might be getting rid of this as it does not seem to work
- */
-
 /**
+ * The file representing the loading screen
  * @author sergeys
  */
 public class LoadingScreen implements Screen {
@@ -32,6 +29,7 @@ public class LoadingScreen implements Screen {
 
 		batch.begin();
 
+		//Draw loading then dots
 		calibri30.draw(batch, "Loading" + (dots > 0 ? "." : "") + (dots > 1 ? "." : "") + (dots > 2 ? "." : ""), 10, 400, 1180, Align.center, false);
 
 		if (dCount > 0.5) {
@@ -53,6 +51,7 @@ public class LoadingScreen implements Screen {
 
 	@Override
 	public void show() {
+		//Create the font
 		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
 		boolean disposeGenerator = false;
 

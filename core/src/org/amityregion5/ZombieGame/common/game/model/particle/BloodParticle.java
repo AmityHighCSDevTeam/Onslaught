@@ -10,36 +10,37 @@ import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
 public class BloodParticle implements IParticle {
-	private Game	g;
-	private float	x, y, size, r;
-	private String	textureName;
-	private float	timeAlive;
+	private Game	g; //Game
+	private float	x, y, size, r; //X position, Y position, Size, and rotation
+	private String	textureName; //Texture name
+	private float	timeAlive; //Time spent alive
 
 	public BloodParticle() {}
 
 	/**
-	 * @param x
-	 * @param y
-	 * @param c
-	 * @param g
-	 * @param rotation
-	 * @param rotationSpeed
-	 * @param vel
-	 * @param velDir
+	 * 
+	 * @param x x position
+	 * @param y y position
+	 * @param g game
 	 */
 	public BloodParticle(float x, float y, Game g) {
-		this.x = x;
-		this.y = y;
-		this.g = g;
-		size = 0.004f;
-		r = (float) (g.getRandom().nextFloat() * 2 * Math.PI);
+		this.x = x; //Set x
+		this.y = y; //Set y
+		this.g = g; //Set game
+		size = 0.004f; //Set size
+		r = (float) (g.getRandom().nextFloat() * 2 * Math.PI); //Random rotation
+		
+		//Random texture name
 		List<String> textureNames = TextureRegistry.getTextureNamesFor("blood/**");
 		textureName = textureNames.get(g.getRandom().nextInt(textureNames.size()));
 	}
 
 	@Override
 	public void tick(float timeStep) {
+		//Increase time alive
 		timeAlive += timeStep;
+		
+		//If greater than 4 remove this
 		if (timeAlive > 4) {
 			g.removeParticle(this);
 		}

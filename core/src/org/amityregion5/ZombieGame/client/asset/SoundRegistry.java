@@ -14,8 +14,6 @@ import com.badlogic.gdx.files.FileHandle;
 public class SoundRegistry {
 	private static HashMap<String, Sound> sounds = new HashMap<String, Sound>();
 
-	// public static Array<Texture> zombieTextures = new Array<Texture>();
-
 	public static boolean tryRegister(String path) {
 		if (sounds.containsKey(path)) { return true; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);

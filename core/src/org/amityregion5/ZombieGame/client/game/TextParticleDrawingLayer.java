@@ -10,8 +10,16 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+/**
+ * A particle drawing layer for a text particle
+ * @author sergeys
+ *
+ */
 public class TextParticleDrawingLayer implements IDrawingLayer {
 
+	/**
+	 * An instance of a text particle drawing layer to cut down on objects created
+	 */
 	public static final TextParticleDrawingLayer instance = new TextParticleDrawingLayer();
 
 	public TextParticleDrawingLayer() {}
@@ -20,21 +28,29 @@ public class TextParticleDrawingLayer implements IDrawingLayer {
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) 
+	{
+		//Get the text particle
 		TextParticle model = (TextParticle) p;
+		//Get the batch color
 		Color c = batch.getColor();
 
+		//Get the downscale value
 		float downScale = 100;
 
+		//Downscale the matrix
 		batch.setProjectionMatrix(batch.getProjectionMatrix().cpy().scl(1 / downScale));
 
 		batch.begin();
 
+		//Create a glyph layout
 		GlyphLayout glyph = new GlyphLayout(ZombieGame.instance.mainFont, model.getText());
+		//Draw the text
 		ZombieGame.instance.mainFont.draw(batch, glyph, model.getX() * downScale - glyph.width / 2, model.getY() * downScale - glyph.height / 2);
 
 		batch.end();
 
+		//Reset the projection matrix
 		batch.setProjectionMatrix(shapeRenderer.getProjectionMatrix());
 
 		batch.setColor(c);

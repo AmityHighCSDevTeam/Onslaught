@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.graphics.Color;
 
 public class WeaponData implements IWeaponDataBase {
+	//Various Variables
 	private double			price, ammoPrice, damage, knockback, accuracy, warmup, preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX, gameOffY;
 	private int				maxAmmo, gameOrgX, gameOrgY;
 	private float			bulletThickness;
@@ -21,6 +22,7 @@ public class WeaponData implements IWeaponDataBase {
 	private Buff			buff;
 
 	public WeaponData(JSONObject o) {
+		//If exists set value of it
 		if (o.containsKey("price")) {
 			price = ((Number) o.get("price")).doubleValue();
 		}
@@ -51,6 +53,7 @@ public class WeaponData implements IWeaponDataBase {
 		if (o.containsKey("postFireDelay")) {
 			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
 		}
+		//If doesn't exist set to 1
 		if (o.containsKey("gameScale")) {
 			gameScale = ((Number) o.get("gameScale")).doubleValue();
 		} else {
@@ -68,12 +71,14 @@ public class WeaponData implements IWeaponDataBase {
 		if (o.containsKey("gameOriginY")) {
 			gameOrgY = ((Number) o.get("gameOriginY")).intValue();
 		}
+		//If doesn't exist set to empty string
 		if (o.containsKey("iconTxtr")) {
 			iconTextureString = ((String) o.get("iconTxtr"));
 			TextureRegistry.tryRegister(iconTextureString);
 		} else {
 			iconTextureString = "";
 		}
+		//If doesn't exist set to empty string
 		if (o.containsKey("gameTxtr")) {
 			gameTextureString = ((String) o.get("gameTxtr"));
 			TextureRegistry.tryRegister(gameTextureString);
@@ -95,10 +100,13 @@ public class WeaponData implements IWeaponDataBase {
 		if (o.containsKey("isAuto")) {
 			isAuto = (Boolean) o.get("isAuto");
 		}
+		
+		//Create list of sounds
 		sounds = new ArrayList<SoundData>();
 		if (o.containsKey("sounds")) {
 			JSONArray arr = (JSONArray) o.get("sounds");
 
+			//Add all sounds to the list
 			for (Object obj : arr) {
 				JSONObject soundJSON = (JSONObject) obj;
 				SoundData sound = SoundData.getSoundData(soundJSON);
@@ -107,6 +115,7 @@ public class WeaponData implements IWeaponDataBase {
 				}
 			}
 		}
+		//Load buff
 		if (o.containsKey("buff")) {
 			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
 		}

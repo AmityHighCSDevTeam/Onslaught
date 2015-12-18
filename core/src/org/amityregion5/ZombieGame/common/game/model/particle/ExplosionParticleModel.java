@@ -14,36 +14,51 @@ import box2dLight.Light;
 import box2dLight.PointLight;
 
 public class ExplosionParticleModel implements IParticle {
-	private Light	light;
-	private Game	g;
-	private Color	c;
+	private Light	light; //Light
+	private Game	g; //Game
+	private Color	c; //Color
+	//X, Y, x velocity, y velocity, rotation, rotation speed
 	private float	x, y, xVel, yVel, rotation, rotationSpeed;
 
 	public ExplosionParticleModel() {}
 
 	/**
-	 * @param x
-	 * @param y
-	 * @param c
-	 * @param g
-	 * @param rotation
-	 * @param rotationSpeed
-	 * @param vel
-	 * @param velDir
+	 * 
+	 * @param x x position
+	 * @param y y position
+	 * @param c color
+	 * @param g game
+	 * @param rotation rotation
+	 * @param rotationSpeed rotation speed
+	 * @param vel velocity magnitude
+	 * @param velDir velocity direction
 	 */
 	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float vel, float velDir) {
-		this.x = x;
-		this.y = y;
-		this.c = c;
-		this.g = g;
-		this.rotation = rotation;
-		this.rotationSpeed = rotationSpeed;
+		this.x = x; //Set x
+ 		this.y = y; //Set y
+		this.c = c; //Set color
+		this.g = g; //Set game
+		this.rotation = rotation; //Set rotation
+		this.rotationSpeed = rotationSpeed; //Set rotation speed
 
+		//Calculate x and y components of velocity
 		Vector2 vec = VectorFactory.createVector(vel, velDir);
 		xVel = vec.x;
 		yVel = vec.y;
 	}
 
+	/**
+	 * 
+	 * @param x x position
+	 * @param y y position
+	 * @param c color
+	 * @param g game
+	 * @param rotation rotation
+	 * @param rotationSpeed rotation speed
+	 * @param xV x velocity
+	 * @param yV y velocity
+	 * @param secondThing unused
+	 */
 	public ExplosionParticleModel(float x, float y, Color c, Game g, float rotation, float rotationSpeed, float xV, float yV, boolean secondThing) {
 		this.x = x;
 		this.y = y;
@@ -58,18 +73,22 @@ public class ExplosionParticleModel implements IParticle {
 
 	@Override
 	public void tick(float timeStep) {
-		rotation += rotationSpeed;
-		rotationSpeed *= 0.95;
-		x += xVel;
-		y += yVel;
+		rotation += rotationSpeed; //Rotate
+		rotationSpeed *= 0.95; //Slow rotation speed
+		x += xVel; //Move x
+		y += yVel; //Move y
+		
+		//DO light stuffs
 		if (light != null) {
+			//Set active
 			light.setActive(true);
-			// if (light.getColor().g > 0.1) {
-			// light.setColor(light.getColor().mul(r, g, b, a));
-			// }
+
+			//Set color
 			light.setColor(light.getColor().mul(0.9f, 0.75f, 0.0f, 0.95f));
+			//Set position
 			light.setPosition(x, y);
-			// light.attachToBody(entity.getBody());
+
+			//If color dim remove particle
 			if (light.getColor().r < 0.05) {
 				g.removeParticle(this);
 				if (light != null) {
@@ -78,8 +97,6 @@ public class ExplosionParticleModel implements IParticle {
 				}
 			}
 		}
-		// light.setPosition(entity.getBody().getWorldCenter());
-		// sprite.getSprite().setOriginCenter();
 	}
 
 	@Override

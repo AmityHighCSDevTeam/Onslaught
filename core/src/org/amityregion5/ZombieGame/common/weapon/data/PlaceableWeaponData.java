@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
+	//Variables
 	private double			price, ammoPrice, preFireDelay, postFireDelay, reloadTime, maxRange, gameScale, gameOffX, gameOffY, warmup;
 	private int				maxAmmo, gameOrgX, gameOrgY;
 	private String			iconTextureString, gameTextureString, placingObject;

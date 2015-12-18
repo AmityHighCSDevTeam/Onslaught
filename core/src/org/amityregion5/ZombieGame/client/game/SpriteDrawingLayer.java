@@ -11,10 +11,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+/**
+ * A drawing layer for a sprite
+ * @author sergeys
+ *
+ */
 public class SpriteDrawingLayer implements IDrawingLayer {
 
-	private Sprite	sprite;
-	private String	name;
+	private Sprite	sprite; //The sprite
+	private String	name; //The name of the texture
 
 	private Supplier<Float> sizeSupplier;
 
@@ -23,7 +28,7 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 	}
 
 	public SpriteDrawingLayer(String name, Supplier<Float> sizeSupplier) {
-		this.name = name;
+		this.name = name; //Set values
 		sprite = new Sprite(TextureRegistry.getTexturesFor(name).get(0));
 		this.sizeSupplier = sizeSupplier;
 	}
@@ -36,7 +41,9 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {
 		IEntity e = em.getEntity();
 		batch.begin();
+		//Set rotation
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
+		//Set postitioning of sprite
 		sprite.setBounds(e.getBody().getWorldCenter().x - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				e.getBody().getWorldCenter().y - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2,

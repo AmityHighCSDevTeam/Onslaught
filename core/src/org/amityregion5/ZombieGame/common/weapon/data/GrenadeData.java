@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class GrenadeData implements IWeaponDataBase {
+	//All the variables!
 	private double			price, ammoPrice, strength, accuracy, fuseTime, throwSpeed, warmup, preFireDelay, postFireDelay, reloadTime, gameScale, gameOffX,
 			gameOffY, size;
 	private int				maxAmmo, gameOrgX, gameOrgY;

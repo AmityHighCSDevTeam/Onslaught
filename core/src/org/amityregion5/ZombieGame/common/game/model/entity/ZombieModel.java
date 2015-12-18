@@ -27,32 +27,36 @@ import com.badlogic.gdx.math.Vector2;
 
 public class ZombieModel implements IEntityModel<EntityZombie> {
 
-	private static final float	baseAtkCooldown		= 1;
-	private static final float	minSecUntilGrowl	= 10;
-	private static final float	maxSecUntilGrowl	= 20;
-	private static final float	minGrowlVolume		= 0.8f;
-	private static final float	maxGrowlVolume		= 1.0f;
+	private static final float	baseAtkCooldown		= 1; //Attack cooldown
+	private static final float	minSecUntilGrowl	= 10; //Minimum time between growls
+	private static final float	maxSecUntilGrowl	= 20; //Maximum time between growls
+	private static final float	minGrowlVolume		= 0.8f; //Minimum growl volume
+	private static final float	maxGrowlVolume		= 1.0f; //Maximum growl volume
 
-	private EntityZombie		entity;
-	private IEntity				target;
-	private float				health, maxHealth, speed, damage, range;
-	private Game				g;
-	private SpriteDrawingLayer	zSprite;
-	private double				prizeMoney;
-	private AIMode				ai;
-	private float				attackCooldown;
-	private float				secUntilGrowl	= -1;
-	private float				growlVolume		= -1;
-	private float				growlPitch		= -1;
-	private float				sizeMultiplier;
+	private EntityZombie		entity; //Entity
+	private IEntity				target; //Target
+	private float				health, maxHealth, speed, damage, range; //Health, Speed, Damage, Range
+	private Game				g; //Game
+	private SpriteDrawingLayer	zSprite; //Sprite
+	private double				prizeMoney; //Prize money
+	private AIMode				ai; //AI Mode
+	private float				attackCooldown; //attack cooldown
+	private float				secUntilGrowl	= -1; //seconds until growl
+	private float				growlVolume		= -1; //Growl volume
+	private float				growlPitch		= -1; //Growl pitch
+	private float				sizeMultiplier; //Size multiplier
+
+	private float timeUntilIdleCheck = 0;
 
 	public ZombieModel() {}
-
+	
 	public ZombieModel(EntityZombie zom, Game g, float sizeMultiplier) {
 		entity = zom;
 		this.g = g;
-		ai = AIMode.IDLE;
+		ai = AIMode.IDLE; //Set variables
 		this.sizeMultiplier = sizeMultiplier;
+
+		//Get random zombie sprite
 		int textureIndex = ZombieGame.instance.random.nextInt(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").size());
 		zSprite = new SpriteDrawingLayer(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").get(textureIndex));
 	}
@@ -64,111 +68,200 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 
 	@Override
 	public void tick(float delta) {
+		//If growl now
 		if (secUntilGrowl <= 0) {
+			// Set volume and pitch
 			growlVolume = g.getRandom().nextFloat() * (maxGrowlVolume - minGrowlVolume) + minGrowlVolume;
 			growlPitch = Math.min(Math.max(sizeMultiplier, 0.5f), 2f);
+			//Get sound
 			List<String> soundNames = SoundRegistry.getSoundNamesFor("*/Audio/Zombie/*");
+			//Play sound
 			g.playSound(new SoundData(soundNames.get(g.getRandom().nextInt(soundNames.size())), growlPitch, growlVolume), entity.getBody().getWorldCenter());
+			//New time until growl
 			secUntilGrowl = g.getRandom().nextFloat() * (maxSecUntilGrowl - minSecUntilGrowl) + minSecUntilGrowl;
 		}
+		//Decrement time until growl
 		secUntilGrowl -= delta;
+
+		//Depending on the AI Mode
 		switch (ai) {
-			case IDLE:
-				IEntity closest = null;
-				float dist2 = Float.MAX_VALUE;
-				for (IEntityModel<?> m : g.getEntities()) {
-					IEntity e = m.getEntity();
-					if (e instanceof EntityPlayer) {
-						float d = entity.getBody().getLocalCenter().dst2(e.getBody().getLocalCenter());
-						if (d < dist2) {
-							closest = e;
-							dist2 = d;
+			case IDLE: //If Idle mode
+				//If it is time to check for a target
+				if (timeUntilIdleCheck <= 0) {
+					IEntity closest = null; //Storage for closest Entity found
+					float dist2 = Float.MAX_VALUE; //Distance to entity
+
+					//Loop through all entity models
+					for (IEntityModel<?> m : g.getEntities()) {
+						//Get the entity
+						IEntity e = m.getEntity();
+						//If it is a player
+						if (e instanceof EntityPlayer) {
+							//Get the distance to it
+							float d = entity.getBody().getLocalCenter().dst2(e.getBody().getLocalCenter());
+							//If it is closer
+							if (d < dist2) {
+								//Store it in closest
+								closest = e;
+								dist2 = d;
+							}
 						}
 					}
-				}
-				target = closest;
-				if (target != null) {
-					ai = AIMode.FOLLOWING;
+					//Closest is now the target
+					target = closest;
+
+					//If the target exists
+					if (target != null) {
+						//Follow it
+						ai = AIMode.FOLLOWING;
+					}
+
+					//1 second until next check
+					timeUntilIdleCheck = 1;
+				} else {
+					//Tick down time until next check
+					timeUntilIdleCheck -= delta;
 				}
 				break;
-			case FOLLOWING:
+			case FOLLOWING: //If following mode
+
+				//If target exists
 				if (target != null) {
+					//Get the target model
 					Optional<IEntityModel<?>> targetModel = g.getEntityModelFromEntity(target);
-					if (targetModel.isPresent()) {
-						if (targetModel.get().getHealth() > 0) {
-							entity.getBody().applyForceToCenter(VectorFactory.createVector(getSpeed(),
-									(float) MathHelper.getDirBetweenPoints(entity.getBody().getPosition(), target.getBody().getPosition())), true);
-							BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
 
-							float fixedRange = (range + targetModel.get().getEntity().getShape().getRadius());
-							if (entity.getBody().getWorldCenter().dst2(target.getBody().getWorldCenter()) <= fixedRange * fixedRange) {
-								ai = AIMode.ATTACKING;
-								attackCooldown = 0;
-							}
+					//If it exists and has health
+					if (targetModel.isPresent() && targetModel.get().getHealth() > 0) {
+						//Apply a force towards the target
+						entity.getBody().applyForceToCenter(VectorFactory.createVector(getSpeed(),
+								(float) MathHelper.getDirBetweenPoints(entity.getBody().getPosition(), target.getBody().getPosition())), true);
 
-							break;
+						//Rotate to point towards the target
+						BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
+
+						//Corrected range of zombie
+						float fixedRange = (range + targetModel.get().getEntity().getShape().getRadius());
+
+						//If we are within range
+						if (entity.getBody().getWorldCenter().dst2(target.getBody().getWorldCenter()) <= fixedRange * fixedRange) {
+							//Set AI to attacking
+							ai = AIMode.ATTACKING;
+							//Set cooldown
+							attackCooldown = 0;
 						}
+
+						break;
+					} else {
+						//If fails then return to IDLE
+						ai = AIMode.IDLE;
 					}
+				} else {
+					//If fails then return to IDLE
+					ai = AIMode.IDLE;
 				}
-				ai = AIMode.IDLE;
 				break;
-			case ATTACKING:
+			case ATTACKING: //If currently Attacking mode
+				//If target exists
 				if (target != null) {
+					//Get target
 					Optional<IEntityModel<?>> targetModel = g.getEntityModelFromEntity(target);
-					if (targetModel.isPresent()) {
-						if (targetModel.get().getHealth() > 0) {
-							BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
-							if (attackCooldown == 0) {
-								targetModel.get().damage(damage, this, DamageTypes.ZOMBIE);
-							} else if (attackCooldown >= baseAtkCooldown) {
-								ai = AIMode.FOLLOWING;
-							}
-							attackCooldown += delta;
-							break;
+					//If it exists and has health
+					if (targetModel.isPresent() && targetModel.get().getHealth() > 0) {
+						//Point at it
+						BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
+
+						//If no cooldown yet
+						if (attackCooldown == 0) {
+							//Damage it
+							targetModel.get().damage(damage, this, DamageTypes.ZOMBIE);
+						} else if (attackCooldown >= baseAtkCooldown) {
+							//If cooldown completed
+							//Back to following mode
+							ai = AIMode.FOLLOWING;
 						}
+						//Increase cooldown
+						attackCooldown += delta;
+						break;
+					} else {
+						//If fails then return to IDLE
+						ai = AIMode.IDLE;
 					}
 				}
+				//If fails then return to IDLE
 				ai = AIMode.IDLE;
 				break;
 		}
+		
+		//Set sprite's center
 		zSprite.getSprite().setOriginCenter();
 	}
 
 	@Override
 	public void dispose() {
-		target = null;
-		entity.dispose();
-
+		target = null; //Clear target
+		entity.dispose(); //Dispose entity
 	}
 
+	/**
+	 * Set the money to be given for killing this zombie
+	 * 
+	 * @param prizeMoney the money to be given
+	 */
 	public void setPrizeMoney(double prizeMoney) {
-		this.prizeMoney = prizeMoney;
+		this.prizeMoney = prizeMoney; //Set prize money
 	}
 
+	/**
+	 * Get the amount of money to be given for killing this zombie
+	 * 
+	 * @return the money to be given
+	 */
 	public double getPrizeMoney() {
-		return prizeMoney;
+		return prizeMoney; //Get prize money
 	}
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
+		//Get the damage that is taken from the source
 		float damageTaken = Math.min(damage, health);
+		
+		//If less than zero
 		if (damageTaken < 0) {
+			//Set it to zero
 			damageTaken = 0;
 		}
+		
+		//For every 5 units of damage taken
 		for (int i = 0; i < damageTaken; i += 5) {
+			//Add a splatter of blood
 			g.addParticleToWorld(
 					new BloodParticle(entity.getBody().getWorldCenter().x - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
 							entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f, g));
 		}
+		
+		//Decrease health by damage
 		health -= damageTaken;
+		//Set AI to follow the thing that hurt it
+		ai = AIMode.FOLLOWING;
+		//Set the thing that hurt it as the target
+		target = source.getEntity();
+		
+		//If this was the killing blow
 		if (health <= 0 && damageTaken > 0) {
+			//If the source is a player
 			if (source != null && source instanceof PlayerModel) {
 				PlayerModel pModel = (PlayerModel) source;
+				//Give the player money
 				pModel.setMoney(pModel.getMoney() + prizeMoney);
 			}
+			
+			//If the random says it is time for a health pack
 			if (g.getDifficulty().getHealthPackChance() > g.getRandom().nextDouble()) {
+				//Add a health pack
 				g.addParticleToWorld(new HealthPackParticle(entity.getBody().getWorldCenter().x, entity.getBody().getWorldCenter().y, g));
 			}
+			
+			//Remove this entity
 			g.removeEntity(this);
 		}
 		return damageTaken;
@@ -179,11 +272,21 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		return new IDrawingLayer[] {zSprite, HealthBarDrawingLayer.instance};
 	}
 
+	/**
+	 * Set the health and max health
+	 * 
+	 * @param health the health to set
+	 */
 	public void setAllHealth(float health) {
 		setHealth(health);
 		setMaxHealth(health);
 	}
 
+	/**
+	 * Set the max health
+	 * 
+	 * @param maxHealth the new max health
+	 */
 	public void setMaxHealth(float maxHealth) {
 		this.maxHealth = maxHealth;
 	}
@@ -198,14 +301,29 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		return health;
 	}
 
+	/**
+	 * Set the health
+	 * 
+	 * @param health the new health
+	 */
 	public void setHealth(float health) {
 		this.health = health;
 	}
 
+	/**
+	 * Set the speed
+	 * 
+	 * @param speed the new speed
+	 */
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
 
+	/**
+	 * Get the speed
+	 * 
+	 * @return the speed
+	 */
 	public float getSpeed() {
 		return speed;
 	}
@@ -215,18 +333,38 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		return true;
 	}
 
+	/**
+	 * Set the damage
+	 * 
+	 * @param damage the damage
+	 */
 	public void setDamage(float damage) {
 		this.damage = damage;
 	}
 
+	/**
+	 * Set the range
+	 * 
+	 * @param range the range
+	 */
 	public void setRange(float range) {
 		this.range = range;
 	}
 
+	/**
+	 * An Enum for the AI modes
+	 * @author sergeys
+	 *
+	 */
 	private enum AIMode {
 		IDLE, FOLLOWING, ATTACKING;
 	}
 
+	/**
+	 * Set the texture name
+	 * 
+	 * @param txtr the texture name
+	 */
 	public void setTexture(String txtr) {
 		zSprite.getSprite().setTexture(TextureRegistry.getTexturesFor(txtr).get(0));
 	}

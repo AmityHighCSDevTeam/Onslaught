@@ -1,14 +1,19 @@
 package org.amityregion5.ZombieGame.common.plugin;
 
+import java.util.Optional;
+
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
-import org.amityregion5.ZombieGame.common.game.BasicDifficulty;
+import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.GameRegistry;
+import org.amityregion5.ZombieGame.common.game.difficulty.BasicDifficulty;
+import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
+import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
 import org.amityregion5.ZombieGame.common.weapon.types.BasicGun;
 import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
@@ -22,17 +27,25 @@ import com.badlogic.gdx.graphics.Color;
 
 import box2dLight.PointLight;
 
+/**
+ * The plugin for the core game
+ * @author sergeys
+ *
+ */
 public class CorePlugin implements IPlugin {
 
+	//The container
 	private PluginContainer container;
 
 	@Override
 	public void init(PluginContainer container) {
+		//Set container
 		this.container = container;
 	}
 
 	@Override
 	public void preLoad() {
+		//Add all weapon classes to the container
 		container.addWeaponClass(BasicGun.class);
 		container.addWeaponClass(Shotgun.class);
 		container.addWeaponClass(Placeable.class);
@@ -42,6 +55,7 @@ public class CorePlugin implements IPlugin {
 
 	@Override
 	public void load() {
+		//Register the lanterns
 		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
 			LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
 			lantern.setLight(new PointLight(g.getLighting(), 300, lantern.getColor(), 10, vector.x, vector.y));
@@ -57,6 +71,7 @@ public class CorePlugin implements IPlugin {
 			return lantern;
 		});
 
+		//Add the spawnable for the main zombie
 		GameRegistry.addSpawnable(0, 1, (g) -> {
 			float maxModifier = 0.8f;
 
@@ -80,6 +95,7 @@ public class CorePlugin implements IPlugin {
 			return model;
 		});
 
+		//Add difficulty levels to the game
 		if (ZombieGame.instance.isCheatModeAllowed) {
 			GameRegistry.difficulties.add(new BasicDifficulty("DEBUG", "Debug", 0f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
 		}
@@ -91,13 +107,19 @@ public class CorePlugin implements IPlugin {
 
 	@Override
 	public void postLoad() {
+		//Load explosion texture
 		TextureRegistry.tryRegisterAs("Core/explosion.png", "explosion");
+		//Load background tile texture
 		TextureRegistry.tryRegisterAs("Core/backgroundTile2.png", "backgroundTile");
+		//Load health pack texture
 		TextureRegistry.tryRegisterAs("Core/HealthBox.png", "healthPack");
+		//Load upgrade arrow texture
 		TextureRegistry.tryRegisterAs("Core/UpgradeArrow.png", "upgradeArrow");
 
+		//Load all blood textures
 		TextureRegistry.tryRegisterAs("Core/Blood/blood1.png", "blood/core/blood1");
 
+		//Load all zombie growls
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl1.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl2.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl3.wav");
@@ -105,8 +127,10 @@ public class CorePlugin implements IPlugin {
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl5.wav");
 		SoundRegistry.tryRegister("Core/Audio/Zombie/ZombieGrowl6.wav");
 
+		//Load explode sound
 		SoundRegistry.tryRegister("Core/Audio/explode.wav");
 
+		//Register inputs
 		ZombieGame.instance.settings.registerInput("Shoot", new InputData(false, Buttons.LEFT));
 		ZombieGame.instance.settings.registerInput("Move_Up", new InputData(true, Keys.W));
 		ZombieGame.instance.settings.registerInput("Move_Down", new InputData(true, Keys.S));
@@ -118,10 +142,35 @@ public class CorePlugin implements IPlugin {
 		ZombieGame.instance.settings.registerInput("Hotbar_1", new InputData(true, Keys.NUM_1));
 		ZombieGame.instance.settings.registerInput("Hotbar_2", new InputData(true, Keys.NUM_2));
 		ZombieGame.instance.settings.registerInput("Hotbar_3", new InputData(true, Keys.NUM_3));
-
 		ZombieGame.instance.settings.registerInput("Shop_Window", new InputData(true, Keys.P));
 		ZombieGame.instance.settings.registerInput("Inventory_Window", new InputData(true, Keys.I));
 		ZombieGame.instance.settings.registerInput("Close_Window", new InputData(true, Keys.ESCAPE));
+	}
+
+	@Override
+	public void onGameStart(Game game) {
+		//Add a listener for rocket collisions
+		game.getContactListener().addBeginContactListener((c) -> {
+			//When a rocket collides with anything trigger its onHit method
+			if (c.getFixtureA().getBody() != null) {
+				Optional<IEntityModel<?>> model = game.getEntityFromBody(c.getFixtureA().getBody());
+
+				model.ifPresent((en) -> {
+					if (en instanceof RocketModel) {
+						((RocketModel) en).onHit();
+					}
+				});
+			}
+			if (c.getFixtureB().getBody() != null) {
+				Optional<IEntityModel<?>> model = game.getEntityFromBody(c.getFixtureB().getBody());
+
+				model.ifPresent((en) -> {
+					if (en instanceof RocketModel) {
+						((RocketModel) en).onHit();
+					}
+				});
+			}
+		});
 	}
 
 	@Override

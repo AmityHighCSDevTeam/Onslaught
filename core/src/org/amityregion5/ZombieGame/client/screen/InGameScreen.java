@@ -52,97 +52,112 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 /**
+ * The class representing the in game screen
  * @author sergeys
  */
 public class InGameScreen extends GuiScreen {
 
-	private Game				game;
-	private Box2DDebugRenderer	debugRenderer;
-	private OrthographicCamera	camera;
-	private PlayerModel			player;
-	private ShapeRenderer		shapeRenderer;
-	private RayHandler			rayHandler;
-	private GlyphLayout			glyph			= new GlyphLayout();
-	private Screen				currentWindow;
-	private List<Screen>		overlays;
-	private boolean				doDebugRender	= false;
+	private Game				game; //The game
+	private Box2DDebugRenderer	debugRenderer; //The debug renderer
+	private PlayerModel			player; //The player
+	private ShapeRenderer		shapeRenderer; //The shape renderer
+	private RayHandler			rayHandler; //The lighting
+	private GlyphLayout			glyph			= new GlyphLayout(); //The glyph
+	private Screen				currentWindow; //The current window
+	private List<Screen>		overlays; //A list of all overlays
+	private boolean				doDebugRender	= false; //Should it debug render
+	private OrthographicCamera		camera; //The camera
 
 	// Font
-	private BitmapFont font1, font2;
+	private BitmapFont smallOutlineFont;
 
 	public InGameScreen(GuiScreen prevScreen, Game game, boolean isNewGame) {
 		super(prevScreen);
 
-		this.game = game;
+		this.game = game; //Save the game
 
+		//Set lighting stuffs
 		Light.setGlobalContactFilter((short) 1, (short) 0, (short) 1);
-
 		rayHandler = new RayHandler(game.getWorld());
 		RayHandler.useDiffuseLight(true);
-
 		game.setLighting(rayHandler);
 
+		//Create shape renderer
 		shapeRenderer = new ShapeRenderer();
-
+		//Create array of overlays
 		overlays = new ArrayList<Screen>();
 
+		//Create a light for the player
 		ConeLight light = new ConeLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), 15, 0, 0, 0, 30);
 		if (isNewGame) {
+			//If it is a new game make a new player
 			EntityPlayer playerEntity = new EntityPlayer();
 			playerEntity.setFriction(0.99f);
 			playerEntity.setMass(100);
 
 			player = new PlayerModel(playerEntity, game, this, game.getDifficulty().getStartingMoney(), "*/Players/**.png");
 		} else {
+			//If it is an old game get a player
 			player = game.getSingleplayerPlayer();
 			player.setScreen(this);
 		}
 
+		//Give the player a light
 		player.setLight(light);
 		player.setCircleLight(new PointLight(rayHandler, 250, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), 3, 0, 0));
 		player.setSpeed(0.05f);
 
+		//If it is a new game add the player to the game
 		if (isNewGame) {
 			game.addEntityToWorld(player, 0, 0);
 		}
+		
+		//Add an HUD to the overlays
 		overlays.add(new HUDOverlay(this, player));
 	}
 
 	@Override
 	public void render(float delta) {
-		// Gdx.gl.glClearColor(0.5f, 1f, 0.5f, 1);
 		Gdx.gl.glClearColor(1f, 1f, 1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
-		// Gdx.gl.glClearColor(0f, 1f, 0f, 0.1f);
-		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
+		//Tick the game
 		game.tick(delta);
 
+		//Center the camera on the palyer
 		camera.translate(player.getEntity().getBody().getWorldCenter().x - camera.position.x,
 				player.getEntity().getBody().getWorldCenter().y - camera.position.y);
 
+		//Apply screen vibration
 		camera.translate((float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2),
 				(float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2));
 
+		//Update the camer
 		camera.update();
 
+		//Get the old batch matrix
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 
+		//Get the background tile texture
 		Texture tex = TextureRegistry.getTexturesFor("backgroundTile").get(0);
-		float wM = 10.24f;
+		float wM = 10.24f; //The size of the texture in meters
 		float hM = 10.24f;
 
+		//Update projection matricies
 		batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
+		//Tile x and y
 		float tileX = wM;
 		float tileY = hM;
 
+		//Camera start and end positions
 		Vector2 posStart = new Vector2(camera.position.x - camera.viewportWidth * camera.zoom,
 				camera.position.y - camera.viewportHeight * camera.zoom * camera.zoom);
 		Vector2 posEnd = new Vector2(camera.position.x + camera.viewportWidth * camera.zoom,
 				camera.position.y + camera.viewportHeight * camera.zoom * camera.zoom);
 
+		//Calculate start tiles
 		int startTileX = (int) ((posStart.x) / tileX);
 		if (posStart.x < 0) {
 			startTileX--;
@@ -151,16 +166,16 @@ public class InGameScreen extends GuiScreen {
 		if (posStart.y < 0) {
 			startTileY--;
 		}
-
 		startTileX--;
 		startTileY--;
 
+		//Calculate end tiles
 		int endTileX = (int) ((posEnd.x) / tileX);
 		int endTileY = (int) ((posEnd.y) / tileY);
-
 		endTileX++;
 		endTileY++;
 
+		//Draw all of the tiles
 		batch.begin();
 		Color c = batch.getColor();
 		batch.setColor(1, 1, 1, 1);
@@ -172,8 +187,10 @@ public class InGameScreen extends GuiScreen {
 		batch.end();
 		batch.setColor(c);
 
+		//Update projection matrix
 		batch.setProjectionMatrix(camera.combined);
 
+		//Draw particles and entities
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getBackDrawingLayers()) {
 				s.draw(p, batch, shapeRenderer);
@@ -189,15 +206,20 @@ public class InGameScreen extends GuiScreen {
 				s.draw(p, batch, shapeRenderer);
 			}
 		}
+		//Reset projection matrix
 		batch.setProjectionMatrix(oldBatchMatrix);
 
+		//If lighting is enabled
 		if (game.isLightingEnabled()) {
+			//Apply lighting
 			rayHandler.setCombinedMatrix(camera);
 			rayHandler.updateAndRender();
 		}
 
+		//Call super render
 		super.render(delta);
 
+		//Draw bullets
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
@@ -215,28 +237,36 @@ public class InGameScreen extends GuiScreen {
 		shapeRenderer.end();
 		Gdx.gl.glLineWidth(1);
 
+		//If cheat mode and debug render are enabled
 		if (game.isCheatMode()) {
 			if (doDebugRender) {
+				//Apply the debug renderer
 				debugRenderer.render(game.getWorld(), camera.combined);
 			}
 		}
 
+		//Apply overlays
 		for (Screen overlay : overlays) {
 			overlay.drawScreen(delta, camera);
 		}
 
+		//Draw the current window
 		if (currentWindow != null) {
 			currentWindow.drawScreen(delta, camera);
 		}
 
+		//Update projection matrix
 		batch.setProjectionMatrix(camera.combined);
+		//Draw the particle max layers
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getMaxDrawingLayers()) {
 				s.draw(p, batch, shapeRenderer);
 			}
 		}
+		//Reset the projection matrix
 		batch.setProjectionMatrix(oldBatchMatrix);
 
+		//Play sounds
 		Iterator<SoundPlayingData> iterator = player.getSoundsToPlay().listIterator();
 		while (iterator.hasNext()) {
 			SoundPlayingData soundData = iterator.next();
@@ -249,8 +279,10 @@ public class InGameScreen extends GuiScreen {
 			iterator.remove();
 		}
 
+		//If the game isnt runnign
 		if (!game.isGameRunning()) {
 			dispose();
+			//Dispose and return to previous screen
 			ZombieGame.instance.setScreen(prevScreen);
 		}
 	}
@@ -259,26 +291,28 @@ public class InGameScreen extends GuiScreen {
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
 
-		// font2.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 0,
-		// font1.getBounds("FPS: " + Gdx.graphics.getFramesPerSecond()).height);
-		glyph.setText(font1, "FPS: " + Gdx.graphics.getFramesPerSecond());
-		font1.draw(batch, glyph, 0, glyph.height);
+		//Draw FPS
+		glyph.setText(smallOutlineFont, "FPS: " + Gdx.graphics.getFramesPerSecond());
+		smallOutlineFont.draw(batch, glyph, 0, glyph.height);
 
 		float y = glyph.height + 5;
 
-		glyph.setText(font1, "Version " + ZombieGame.instance.version);
-		font1.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
+		//Draw version
+		glyph.setText(smallOutlineFont, "Version " + ZombieGame.instance.version);
+		smallOutlineFont.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
 
 		if (doDebugRender) {
-			glyph.setText(font1, "Hostile Mobs: " + game.getHostiles());
-			font1.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
+			//If debug renderer is enabled draw hostile mob count
+			glyph.setText(smallOutlineFont, "Hostile Mobs: " + game.getHostiles());
+			smallOutlineFont.draw(batch, glyph, 0, y + glyph.height); y+=glyph.height+5;
 		}
 
+		//Mouse world position
 		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+		//Update player's mouse position
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
 
-		// player.tick(delta);
-
+		//If cheat mode is enabled
 		if (game.isCheatMode()) {
 			if (Gdx.input.isKeyJustPressed(Keys.L)) {
 				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
@@ -330,12 +364,14 @@ public class InGameScreen extends GuiScreen {
 			}
 		}
 
+		//If shop window pressed open shop window
 		if (currentWindow == null && ZombieGame.instance.settings.getInput("Shop_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
 			}
 			currentWindow = new ShopWindow(this, player);
 		}
+		//If inventory window pressed open inventory window
 		if (currentWindow == null && ZombieGame.instance.settings.getInput("Inventory_Window").isJustDown()) {
 			if (currentWindow != null) {
 				currentWindow.dispose();
@@ -343,6 +379,7 @@ public class InGameScreen extends GuiScreen {
 			currentWindow = new InventoryWindow(this, player);
 		}
 
+		//If close window pressed close a window or open the pause window
 		if (ZombieGame.instance.settings.getInput("Close_Window").isJustDown()) {
 			if (currentWindow != null) {
 				game.setPaused(false);
@@ -360,6 +397,36 @@ public class InGameScreen extends GuiScreen {
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
+		
+		//Resize the font
+		Gdx.app.postRunnable(() -> {			
+			if (smallOutlineFont != null) {
+				smallOutlineFont.dispose();
+
+				// Size 20 font
+				FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+				parameter.size = (int) (20 * ZombieGame.getYScalar());
+				parameter.borderWidth = 1;
+				parameter.borderStraight = true;
+				parameter.borderColor = new Color(0, 0, 0, 1);
+				
+				if (parameter.size < 2) {
+					parameter.size = 2;
+				}
+
+				smallOutlineFont = ZombieGame.instance.fontGenerator.generateFont(parameter);
+				// Make the font black
+				smallOutlineFont.setColor(1, 1, 1, 1);
+			}
+		});
+		
+		//Calculate correct camera size
+		float hUp = height/9;
+		float wUp = width/16;
+		
+		float avgUp = (wUp + hUp)/2;
+		
+		camera.setToOrtho(false, width/avgUp, height/avgUp);
 	}
 
 	@Override
@@ -375,18 +442,14 @@ public class InGameScreen extends GuiScreen {
 		FreeTypeFontGenerator generator = ZombieGame.instance.fontGenerator;
 
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		parameter.size = 16;
-
-		font1 = generator.generateFont(parameter);
 
 		parameter.size = 20;
 		parameter.borderWidth = 1;
 		parameter.borderStraight = true;
 		parameter.borderColor = new Color(0, 0, 0, 1);
-		font2 = generator.generateFont(parameter);
+		smallOutlineFont = generator.generateFont(parameter);
 
-		font1.setColor(1, 1, 1, 1);
-		font2.setColor(1, 1, 1, 1);
+		smallOutlineFont.setColor(1, 1, 1, 1);
 
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
 
@@ -420,8 +483,7 @@ public class InGameScreen extends GuiScreen {
 			currentWindow.dispose();
 		}
 		batch.dispose(); // Clear memory
-		font1.dispose();
-		font2.dispose();
+		smallOutlineFont.dispose();
 		debugRenderer.dispose();
 		game.dispose();
 		shapeRenderer.dispose();
@@ -436,12 +498,8 @@ public class InGameScreen extends GuiScreen {
 		return batch.getProjectionMatrix();
 	}
 
-	public BitmapFont getFont1() {
-		return font1;
-	}
-
-	public BitmapFont getFont2() {
-		return font2;
+	public BitmapFont getSmallOutlineFont() {
+		return smallOutlineFont;
 	}
 
 	public Game getGame() {

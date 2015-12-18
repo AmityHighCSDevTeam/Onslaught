@@ -4,32 +4,47 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.json.simple.JSONObject;
 
+/**
+ * Data to describe a sound
+ * 
+ * @author sergeys
+ *
+ */
 public class SoundData {
-	private String	assetName, trigger;
-	private double	pitch;
-	private double	maxVolume;
+	private String	assetName; //Path to sound file 
+	private String trigger; //Trigger that will cause it to play
+	private double	pitch; //Pitch to play at
+	private double	maxVolume; //The maximum volume to play at
 
 	public static SoundData getSoundData(JSONObject jsonData) {
+		//If both path and string are missing dont make a sound object
 		if (!jsonData.containsKey("path") && !jsonData.containsKey("trigger")) { return null; }
 
+		//Get assetname and trigger from json
 		String assetName = (String) jsonData.get("path");
 		String trigger = (String) jsonData.get("trigger");
+		//Default pitch and volume are 1
 		double pitch = 1;
 		double maxVolume = 1;
 
+		//Set pitch if found
 		if (jsonData.containsKey("pitch")) {
 			pitch = ((Number) jsonData.get("pitch")).doubleValue();
 		}
+		//Set max volume if found
 		if (jsonData.containsKey("maxVolume")) {
 			maxVolume = ((Number) jsonData.get("maxVolume")).doubleValue();
 		}
-
+		//If the sound has not been loaded previously
 		if (SoundRegistry.getSoundsFor(assetName) == null || SoundRegistry.getSoundsFor(null).isEmpty()) {
+			//Load the sound
 			if (!SoundRegistry.tryRegister(assetName)) {
+				//If failed ouput error
 				ZombieGame.error("SoundData: failed to load sound: " + assetName);
 			}
 		}
 
+		//return the object
 		return new SoundData(assetName, trigger, pitch, maxVolume);
 	}
 

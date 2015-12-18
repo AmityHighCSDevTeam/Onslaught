@@ -13,22 +13,38 @@ import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
 
+/**
+ * A model representing a lantern
+ * @author sergeys
+ *
+ */
 public class LanternModel implements IEntityModel<EntityLantern> {
+	
+	//The color of the light
 	public static final Color LIGHT_COLOR = new Color(1, 1, 1, 130f / 255);
 
-	private Light				light;
-	private EntityLantern		entity;
-	private Game				g;
-	private Color				c;
-	private SpriteDrawingLayer	sprite;
-	private String				creation;
+	private Light				light; //The light created by this object
+	private EntityLantern		entity; //The entity
+	private Game				g; //The game
+	private Color				c; //The color of the light
+	private SpriteDrawingLayer	sprite; //The sprite drawing layer
+	private String				creation; //The creation string
 
 	public LanternModel() {}
 
+	/**
+	 * Create a lantern model
+	 * 
+	 * @param e the lantern entity
+	 * @param game The game object
+	 * @param color the color of the lantern
+	 * @param spriteTexture the lantern's texture
+	 * @param creationString the creation string to call when loading this object (Placeable)
+	 */
 	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString) {
 		entity = e;
 		g = game;
-		creation = creationString;
+		creation = creationString; //Set values
 		c = color;
 		sprite = new SpriteDrawingLayer(spriteTexture);
 	}
@@ -41,18 +57,17 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	@Override
 	public void tick(float timeStep) {
 		if (light != null) {
-			light.setActive(true);
+			light.setActive(true); //Update Light
 			light.attachToBody(entity.getBody());
 		}
-		// light.setPosition(entity.getBody().getWorldCenter());
-		sprite.getSprite().setOriginCenter();
+		sprite.getSprite().setOriginCenter(); //Update sprite
 	}
 
 	@Override
 	public void dispose() {
 		if (light != null) {
-			light.dispose();
-			light = null;
+			light.remove();
+			light = null; //Dispose of everything
 		}
 		entity.dispose();
 	}
@@ -61,7 +76,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		g.removeEntity(this);
 		if (light != null) {
-			light.remove();
+			light.remove(); //Dispose of the light immediately
 			light = null;
 		}
 		return damage;
@@ -82,6 +97,11 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		return 0;
 	}
 
+	/**
+	 * Set the light used by this lantern
+	 * 
+	 * @param light the light
+	 */
 	public void setLight(Light light) {
 		this.light = light;
 	}
@@ -97,10 +117,20 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 							// 1);
 	}
 
+	/**
+	 * Get this lantern's color
+	 * 
+	 * @return the color
+	 */
 	public Color getColor() {
 		return c;
 	}
 
+	/**
+	 * Get this lantern's light
+	 * 
+	 * @return the light
+	 */
 	public Light getLight() {
 		return light;
 	}

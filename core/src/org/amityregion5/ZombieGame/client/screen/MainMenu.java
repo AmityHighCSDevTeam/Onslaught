@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
 
 /**
+ * The file representing the Main Menu
  * @author sergeys
  */
 public class MainMenu extends GuiScreen {
@@ -28,7 +29,7 @@ public class MainMenu extends GuiScreen {
 	// Title image
 	private Texture	titleTexture;
 	// Title position
-	private float	titleHeight;
+	private float	titleHeight, titleWidth;
 
 	@Override
 	public void render(float delta) {
@@ -44,47 +45,53 @@ public class MainMenu extends GuiScreen {
 
 		// Draw picture
 		batch.setColor(1, 1, 1, 1);
-		batch.draw(titleTexture, 10, camera.viewportHeight - titleHeight - 10, camera.viewportWidth - 20, titleHeight);
+		
+		batch.draw(titleTexture, camera.viewportWidth/2 - titleWidth/2, camera.viewportHeight - titleHeight - 10, titleWidth, titleHeight);
 
 		float y = 15;
+		//Draw version
 		glyph.setText(ZombieGame.instance.mainFont, "Version " + ZombieGame.instance.version, Color.WHITE, getWidth(), Align.left, false);
-		ZombieGame.instance.mainFont.draw(batch, glyph, 10, y + glyph.height / 2);
+		ZombieGame.instance.mainFont.draw(batch, glyph, 10, 10*ZombieGame.getYScalar() + y + glyph.height / 2);
 		y += glyph.height + 15;
 
+		//If a newer version available set mode to 1
 		if (newerVersionMode == 0 && ZombieGame.instance.newestVersion != null && !ZombieGame.instance.newestVersion.equals(ZombieGame.instance.version)) {
 			newerVersionMode = 1;
 		}
 
+		//If mode is 1
 		if (newerVersionMode == 1) {
 			batch.end();
 
-			float w = 400;
-			float h = 300;
+			float w = 400*ZombieGame.getXScalar();
+			float h = 300*ZombieGame.getYScalar();
 			float x = getWidth() / 2 - w / 2;
 			float y1 = getHeight() / 2 - h / 2;
 
 			shapeRender.begin(ShapeType.Filled);
 
+			//Fill red box
 			shapeRender.setColor(200f / 255f, 0, 0, 1);
-
 			shapeRender.rect(x, y1, w, h);
 
 			shapeRender.end();
 
 			shapeRender.begin(ShapeType.Line);
 
+			//Draw whiteish border
 			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
-
 			shapeRender.rect(x, y1, w, h);
 
 			shapeRender.end();
 
 			batch.begin();
 
+			//Write that new version is available
 			glyph.setText(ZombieGame.instance.mainFont, "A new version is available: " + ZombieGame.instance.newestVersion + "\nClick to close", Color.WHITE,
 					w - 20, Align.center, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y1 + (h + glyph.height) / 2);
 
+			//If clicked disable the window
 			if (Gdx.input.isTouched() && Gdx.input.getX() > x && Gdx.input.getX() < x + w && Gdx.graphics.getHeight() - Gdx.input.getY() > y1
 					&& Gdx.graphics.getHeight() - Gdx.input.getY() < y1 + h) {
 				newerVersionMode = 2;
@@ -95,9 +102,14 @@ public class MainMenu extends GuiScreen {
 	@Override
 	public void resize(int width, int height) {
 		// Compute title position
-		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());// (float) ((double) titleTexture.getHeight() /
-																		// (double) titleTexture.getWidth() *
-																		// (getWidth() - 20));
+		
+		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
+		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());
+		
+		if (titleWidth > getWidth()) {
+			titleWidth = getWidth();
+			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
+		}
 
 		super.resize(width, height);
 	}
@@ -107,6 +119,14 @@ public class MainMenu extends GuiScreen {
 		super.show();
 		// Initialize the title texture
 		titleTexture = new Texture(Gdx.files.internal("images/ZombieGameTitle.png"));
+		
+		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
+		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());
+		
+		if (titleWidth > getWidth()) {
+			titleWidth = getWidth();
+			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
+		}
 
 	}
 

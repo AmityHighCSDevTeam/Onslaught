@@ -13,13 +13,18 @@ public class BasicGun extends AbstractWeapon<WeaponData> {
 
 	@Override
 	protected boolean loadWeaponData(JSONArray arr) {
+		//Create array
 		data = new Array<WeaponData>();
 
+		//Loop through each object
 		for (Object obj : arr) {
 			JSONObject o = (JSONObject) obj;
+			//Load the weapon data
 			WeaponData d = new WeaponData(o);
+			//Add it to the list
 			data.add(d);
 		}
+		//Succeeded
 		return true;
 	}
 }

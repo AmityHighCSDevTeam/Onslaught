@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.client.window;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
+import org.amityregion5.ZombieGame.client.InputAccessor;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -24,60 +25,31 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
 
+/**
+ * The inventory window
+ * @author sergeys
+ *
+ */
 public class InventoryWindow implements Screen {
-	private ShapeRenderer	shapeRender		= new ShapeRenderer();
-	private InGameScreen	screen;
-	private PlayerModel		player;
-	private double			scrollPos;
-	private SpriteBatch		batch			= new SpriteBatch();
-	private float			weaponBoxSize	= 128;
-	private float			weaponBoxBorder	= 8;
-	private int				mouseX, mouseY;
-	private InputProcessor	processor;
+	private ShapeRenderer	shapeRender		= new ShapeRenderer(); //The shape renderer
+	private InGameScreen	screen; //The screen
+	private PlayerModel		player; //The player
+	private double			scrollPos; //The scroll position
+	private SpriteBatch		batch			= new SpriteBatch(); //The sprite batch
+	private float			weaponBoxSize	= 128; //The size of a weapon box
+	private float			weaponBoxBorder	= 8; //The border between weapon boxes
+	private int				mouseX, mouseY; //The mouse position
+	private InputProcessor	processor; //The input processor
 
 	public InventoryWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen;
 		this.player = player;
 
-		processor = new InputProcessor() {
-			@Override
-			public boolean keyDown(int keycode) {
-				return false;
-			}
-
-			@Override
-			public boolean keyUp(int keycode) {
-				return false;
-			}
-
-			@Override
-			public boolean keyTyped(char character) {
-				return false;
-			}
-
-			@Override
-			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				return false;
-			}
-
-			@Override
-			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				return false;
-			}
-
-			@Override
-			public boolean touchDragged(int screenX, int screenY, int pointer) {
-				return false;
-			}
-
-			@Override
-			public boolean mouseMoved(int screenX, int screenY) {
-				return false;
-			}
-
+		processor = new InputAccessor() {
 			@Override
 			public boolean scrolled(int amount) {
-				double maxAmt = getMaxScrollAmount() - screen.getHeight() + 200;
+				//Scroll when scrolled
+				double maxAmt = getMaxScrollAmount() - screen.getHeight() + 200*ZombieGame.getYScalar();
 				scrollPos = MathHelper.clamp(0, (maxAmt > 0 ? maxAmt : 0), scrollPos + amount * 5);
 				return true;
 			}
@@ -88,20 +60,26 @@ public class InventoryWindow implements Screen {
 
 	@Override
 	public void drawScreen(float delta, Camera camera) {
+		//Prepare to draw
 		drawPrepare(delta);
 
+		//Set mouse position
 		mouseX = Gdx.input.getX();
 		mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
+		//Draw
 		drawMain(delta);
 
+		//Disable blending
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private void drawPrepare(float delta) {
+		//Update matricies
 		shapeRender.setProjectionMatrix(screen.getScreenProjectionMatrix());
 		batch.setProjectionMatrix(screen.getScreenProjectionMatrix());
 
+		//Enable blending/
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -113,7 +91,7 @@ public class InventoryWindow implements Screen {
 
 		// Main box in the center
 		shapeRender.setColor(0.3f, 0.3f, 0.3f, 0.6f);
-		shapeRender.rect(100, 100, screen.getWidth() - 200, screen.getHeight() - 200);
+		shapeRender.rect(100*ZombieGame.getXScalar(), 100*ZombieGame.getYScalar(), screen.getWidth() - 200*ZombieGame.getXScalar(), screen.getHeight() - 200*ZombieGame.getYScalar());
 
 		shapeRender.end();
 
@@ -121,90 +99,103 @@ public class InventoryWindow implements Screen {
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 		// Main box border
-		shapeRender.rect(100, 100, screen.getWidth() - 200, screen.getHeight() - 200);
+		shapeRender.rect(100*ZombieGame.getXScalar(), 100*ZombieGame.getYScalar(), screen.getWidth() - 200*ZombieGame.getXScalar(), screen.getHeight() - 200*ZombieGame.getYScalar());
 
 		shapeRender.end();
 	}
 
 	private void drawMain(float delta) {
-		float x = 101;
-		float y = (float) (screen.getHeight() - 101 + scrollPos);
-		float w = screen.getWidth() - 221;
+		//Calculate drawing size and points
+		float x = 101*ZombieGame.getXScalar();
+		float y = (float) (screen.getHeight() - 101*ZombieGame.getYScalar() + scrollPos);
+		float w = screen.getWidth() - 221*ZombieGame.getXScalar();
 
 		shapeRender.begin(ShapeType.Filled);
 		// Main Scroll bar box
 		shapeRender.setColor(0.4f, 0.4f, 0.4f, 1f);
-		shapeRender.rect(x + w, 100, 20, screen.getHeight() - 200);
+		shapeRender.rect(x + w, 100*ZombieGame.getYScalar(), 20*ZombieGame.getXScalar(), screen.getHeight() - 200*ZombieGame.getYScalar());
 
 		// Main Scroll Bar
 		shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
-		shapeRender.rect(x + w, getScrollBarPos(), 20, getScrollBarHeight());
+		shapeRender.rect(x + w, getScrollBarPos(), 20*ZombieGame.getXScalar(), getScrollBarHeight());
 		shapeRender.end();
 
 		shapeRender.begin(ShapeType.Line);
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 		// Scroll bar box border left line
-		shapeRender.line(x + w, 100, x + w, screen.getHeight() - 100);
+		shapeRender.line(x + w, 100*ZombieGame.getYScalar(), x + w, screen.getHeight() - 100*ZombieGame.getYScalar());
 
 		shapeRender.end();
 
-		int cols = ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder)));
-
-		float trueWeaponBoxSize = weaponBoxSize + weaponBoxBorder + weaponBoxBorder;
-
-		float wMult = (float) Gdx.graphics.getWidth() / screen.getWidth();
-		float hMult = (float) Gdx.graphics.getHeight() / screen.getHeight();
+		//Get The weapon box size
+		float trueWeaponBoxSize = (weaponBoxSize + weaponBoxBorder + weaponBoxBorder)*ZombieGame.getXScalar();
+		//Column numbers
+		int cols = ((int) ((w) / (trueWeaponBoxSize)));
 
 		int mouseOverIndex = -1;
 
-		Rectangle clipBounds = new Rectangle(x * wMult, 100 * hMult, w * wMult, (screen.getHeight() - 201) * hMult);
+		//Clip the screen
+		Rectangle clipBounds = new Rectangle(x, 100 * ZombieGame.getYScalar(), w, screen.getHeight() - 201 * ZombieGame.getYScalar());
 		ScissorStack.pushScissors(clipBounds);
 		for (int i = 0; i < player.getWeapons().size(); i++) {
+			//Enable blending
 			Gdx.gl.glEnable(GL20.GL_BLEND);
 
+			//Get row and column
 			int row = i / cols;
 			int col = i % cols;
-
+			
+			//Get coordinates of the box
 			float boxX = trueWeaponBoxSize * col + weaponBoxBorder + x;
 			float boxY = y - (trueWeaponBoxSize * (row + 1));
 
 			shapeRender.begin(ShapeType.Filled);
 
+			//Draw the inside box
 			shapeRender.setColor(new Color(191 / 255f, 191 / 255f, 191 / 255f, 100 / 255f));
-			shapeRender.rect(boxX, boxY, weaponBoxSize, weaponBoxSize);
+			shapeRender.rect(boxX, boxY, weaponBoxSize*ZombieGame.getXScalar(), weaponBoxSize*ZombieGame.getXScalar());
 
 			shapeRender.end();
 
+			//Get the weapon
 			WeaponStack weapon = player.getWeapons().get(i);
 
 			batch.begin();
 			Texture icon = TextureRegistry.getTexturesFor(weapon.getIconTextureName()).get(0);
 
+			//Draw the icon
 			batch.setColor(new Color(1, 1, 1, 1));
-			batch.draw(icon, boxX, boxY, weaponBoxSize, weaponBoxSize);
+			batch.draw(icon, boxX, boxY, weaponBoxSize*ZombieGame.getXScalar(), weaponBoxSize*ZombieGame.getXScalar());
 
 			batch.end();
 
 			Gdx.gl.glLineWidth(2);
 			shapeRender.begin(ShapeType.Line);
 
+			//Draw the outline
 			shapeRender.setColor(Color.DARK_GRAY);
-			shapeRender.rect(boxX, boxY, weaponBoxSize, weaponBoxSize);
+			shapeRender.rect(boxX, boxY, weaponBoxSize*ZombieGame.getXScalar(), weaponBoxSize*ZombieGame.getXScalar());
 
 			shapeRender.end();
 			Gdx.gl.glLineWidth(1);
 
-			if (mouseX > boxX && mouseY > boxY && mouseX < boxX + weaponBoxSize && mouseY < boxY + weaponBoxSize) {
+			//If moused over set mouseover
+			if (mouseX > boxX && mouseY > boxY && mouseX < boxX + weaponBoxSize*ZombieGame.getXScalar() && mouseY < boxY + weaponBoxSize*ZombieGame.getXScalar()) {
 				mouseOverIndex = i;
 			}
 		}
+		//Unclip the screen
 		ScissorStack.popScissors();
 
+		//If a weapon is moused over
 		if (mouseOverIndex != -1) {
+			//Get the weapon
 			WeaponStack weapon = player.getWeapons().get(mouseOverIndex);
 
+			//If the mouse is pressed
 			if (Gdx.input.isTouched()) {
+				//Set the current hotbar slot to the weapon and clear other weapons that appear in the hotbar of the same kind
 				for (int i = 0; i < player.getHotbar().length; i++) {
 					if (i == player.getCurrWeapIndex()) {
 						player.getHotbar()[i] = weapon;
@@ -214,24 +205,30 @@ public class InventoryWindow implements Screen {
 				}
 			}
 
+			//Size of the box
 			float boxWidth = 0;
 			float boxHeight = 0;
 
+			//Calculate name
 			GlyphLayout nameGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getName(), 0, weapon.getWeapon().getName().length(),
-					Color.BLACK, 300, Align.left, false, "...");
+					Color.BLACK, 300*ZombieGame.getXScalar(), Align.left, false, "...");
 
 			boxWidth = Math.max(boxWidth, nameGlyph.width + 8);
-			boxHeight += nameGlyph.height + 4 + 4;
+			boxHeight += nameGlyph.height + 8*ZombieGame.getYScalar();
 
-			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getDescription(), Color.BLACK, 300, Align.left, true);
+			//Calculate description
+			GlyphLayout descGlyph = new GlyphLayout(ZombieGame.instance.mainFont, weapon.getWeapon().getDescription(), Color.BLACK, 300*ZombieGame.getXScalar(), Align.left, true);
 
 			boxWidth = Math.max(boxWidth, descGlyph.width + 8);
-			boxHeight += descGlyph.height + 4;
+			boxHeight += descGlyph.height + 4*ZombieGame.getYScalar();
 
-			boxHeight += 10;
+			boxHeight += 10*ZombieGame.getYScalar();
 
+			
+			
 			shapeRender.begin(ShapeType.Filled);
 
+			//Draw the box
 			shapeRender.setColor(Color.LIGHT_GRAY);
 			shapeRender.rect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 
@@ -239,6 +236,7 @@ public class InventoryWindow implements Screen {
 
 			shapeRender.begin(ShapeType.Line);
 
+			//Draw the outline
 			shapeRender.setColor(Color.DARK_GRAY);
 			shapeRender.rect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 
@@ -246,41 +244,60 @@ public class InventoryWindow implements Screen {
 
 			batch.begin();
 
+			
+			//Draw the text
 			float textDrawing = mouseY - 3;
 
+			//Name
 			ZombieGame.instance.mainFont.draw(batch, nameGlyph, mouseX + 4, textDrawing);
 			textDrawing -= nameGlyph.height + 4;
 
 			textDrawing -= 10;
 
+			//Description
 			ZombieGame.instance.mainFont.draw(batch, descGlyph, mouseX + 4, textDrawing);
 			textDrawing -= descGlyph.height + 4;
 
 			batch.end();
 		} else if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
+			//If right mouse click
+			//Clear current slot
 			player.getHotbar()[player.getCurrWeapIndex()] = new WeaponStack(new NullWeapon());
 		}
 	}
 
 	@Override
 	public void dispose() {
+		batch.dispose(); //Remove input processor
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
 
+	/**
+	 * Calculate the maximum amount you can scroll
+	 * @return the maximum scroll amount
+	 */
 	private double getMaxScrollAmount() {
-		return (weaponBoxSize / ((int) ((screen.getWidth() - 221) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2)
-				* ZombieGame.instance.pluginManager.getActivatedWeapons().size();
+		return (weaponBoxSize / ((int) ((screen.getWidth() - 221*ZombieGame.getXScalar()) / (weaponBoxSize + weaponBoxBorder + weaponBoxBorder))) + 2)
+				* player.getWeapons().size();
 	}
 
+	/**
+	 * Get the scroll bar position
+	 * @return the scroll bar position
+	 */
 	private float getScrollBarPos() {
-		double screenHeight = screen.getHeight() - 200;
+		double screenHeight = screen.getHeight() - 200*ZombieGame.getYScalar();
 		double pos = (screenHeight - getScrollBarHeight()) * (scrollPos) / (getMaxScrollAmount() - screenHeight);
-		pos = (screen.getHeight() - 100) - pos - getScrollBarHeight();
+		pos = (screen.getHeight() - 100*ZombieGame.getYScalar()) - pos - getScrollBarHeight();
 		return (float) pos;
 	}
 
+	/**
+	 * Get the height of the scroll bar
+	 * @return the height of the scroll bar
+	 */
 	private float getScrollBarHeight() {
-		double screenHeight = screen.getHeight() - 200;
+		double screenHeight = screen.getHeight() - 200*ZombieGame.getYScalar();
 		double height = (screenHeight * screenHeight) / getMaxScrollAmount();
 		return (float) (height > screenHeight ? screenHeight : height);
 	}

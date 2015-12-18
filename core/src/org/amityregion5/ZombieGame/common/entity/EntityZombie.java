@@ -14,10 +14,10 @@ import com.badlogic.gdx.utils.Disposable;
  */
 public class EntityZombie implements IEntity, Disposable {
 
-	private Body		body;
-	private float		friction;
-	private MassData	massData;
-	private float		size;
+	private Body		body; //The body
+	private float		friction; //The friction
+	private MassData	massData; //The mass
+	private float		size; //The size
 
 	public EntityZombie(float size) {
 		massData = new MassData();

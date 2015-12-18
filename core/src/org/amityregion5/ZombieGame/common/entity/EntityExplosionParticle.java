@@ -14,9 +14,9 @@ import com.badlogic.gdx.utils.Disposable;
  */
 public class EntityExplosionParticle implements IEntity, Disposable {
 
-	private Body		body;
-	private float		friction;
-	private MassData	massData;
+	private Body		body; //The body
+	private float		friction; //The friction
+	private MassData	massData; //The mass data
 
 	public EntityExplosionParticle() {
 		massData = new MassData();

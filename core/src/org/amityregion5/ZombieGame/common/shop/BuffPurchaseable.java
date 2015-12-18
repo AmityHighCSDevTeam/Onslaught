@@ -7,8 +7,15 @@ import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 
+/**
+ * See Gun Purchaseable for comments (most are identical)
+ * 
+ * @author sergeys
+ *
+ */
 public class BuffPurchaseable implements IPurchaseable {
 
+	//The buff applicator
 	private BuffApplicator buff;
 
 	public BuffPurchaseable(BuffApplicator buff) {
@@ -22,7 +29,7 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public String getDescription() {
-		return "Price: " + buff.getPrice();
+		return "";
 	}
 
 	@Override

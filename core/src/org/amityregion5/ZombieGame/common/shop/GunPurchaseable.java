@@ -10,6 +10,7 @@ import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
 public class GunPurchaseable implements IPurchaseable {
 
+	//The gun to buy
 	private IWeapon gun;
 
 	public GunPurchaseable(IWeapon gun) {
@@ -28,6 +29,7 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public Map<String, String> getCurrentDescriptors(PlayerModel player) {
+		//Get the current level
 		int level = 0;
 
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
@@ -36,8 +38,10 @@ public class GunPurchaseable implements IPurchaseable {
 			level = ws.get().getLevel();
 		}
 
+		//Get base descriptors
 		Map<String, String> currLev = gun.getWeaponDataDescriptors(level);
 
+		//Apply buff descriptors
 		if (gun.getWeaponData(level).getBuff() != null) {
 			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
 				currLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff) * 100 + "%");
@@ -53,6 +57,7 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public Map<String, String> getNextDescriptors(PlayerModel player) {
+		//Get level
 		int level = 0;
 
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
@@ -63,8 +68,10 @@ public class GunPurchaseable implements IPurchaseable {
 
 		if (!hasNextLevel(player) || level == 0) { return null; }
 
+		//Get base descriptors
 		Map<String, String> nextLev = gun.getWeaponDataDescriptors(level);
 
+		//Apply buff desciptors
 		if (gun.getWeaponData(level).getBuff() != null) {
 			for (String mBuff : gun.getWeaponData(level).getBuff().getMultiplicative().keySet()) {
 				nextLev.put(mBuff, gun.getWeaponData(level).getBuff().getMult(mBuff) * 100 + "%");
@@ -80,25 +87,28 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public boolean hasNextLevel(PlayerModel player) {
+		//Get the player's weapon stack of this level
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
+		//If it exists and has a level to progress to return true
 		if (ws.isPresent() && ws.get().getLevel() + 1 < ws.get().getWeapon().getNumLevels()) { return true; }
+		//If it isnt present return false
 		return !ws.isPresent();
 	}
 
 	@Override
 	public int getCurrentLevel(PlayerModel player) {
-		int level = 0;
-
+		//Get weapon stack
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
+		//If it exists
 		if (ws.isPresent()) {
-			level = ws.get().getLevel();
+			//Return weapon stack's level
+			return ws.get().getLevel();
 		} else {
+			//If it doesn't return -1;
 			return -1;
 		}
-
-		return level;
 	}
 
 	@Override
@@ -108,30 +118,44 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public double getPrice(PlayerModel player) {
+		//If there are no levels make the price infinity
 		if (!hasNextLevel(player)) { return Double.POSITIVE_INFINITY; }
+		//Else return the price for the next level
 		return gun.getWeaponData(getCurrentLevel(player) + 1).getPrice();
 	}
 
 	@Override
 	public boolean canPurchase(PlayerModel player) {
+		//Check if the player has any further levels to progress to
 		if (!hasNextLevel(player)) { return false; }
 		return true;
 	}
 
 	@Override
 	public void onPurchase(PlayerModel player) {
+		//Get the weapon stack
 		Optional<WeaponStack> ws = player.getWeapons().parallelStream().filter((wS) -> wS.getWeapon() == gun).findAny();
 
+		//If it exists
 		if (ws.isPresent()) {
+			//Remove player's current weapon buffs (in case player holding the weapon)
 			player.removeTemporaryWeaponBuff();
+			//Increment the level
 			ws.get().setLevel(ws.get().getLevel() + 1);
+			//Add the weapon buffs
 			player.addTemporaryWeaponBuff();
 		} else {
+			//Create a new weapon stack
 			WeaponStack newWeap = new WeaponStack(gun);
+			//Add it to the player's list of weapons
 			player.getWeapons().add(newWeap);
+			//If the player isn't holding a weapon
 			if (player.getCurrentWeapon().getWeapon() instanceof NullWeapon) {
+				//Remove any current buffs (should be none)
 				player.removeTemporaryWeaponBuff();
+				//Set the weapon in the hotbar slot
 				player.getHotbar()[player.getCurrWeapIndex()] = newWeap;
+				//Add buffs
 				player.addTemporaryWeaponBuff();
 			}
 		}
@@ -144,23 +168,33 @@ public class GunPurchaseable implements IPurchaseable {
 
 	@Override
 	public String getIconName(PlayerModel player) {
+		//Return the icons for the next level if it exists; else return for current level
 		return gun.getWeaponData(Math.min(getCurrentLevel(player) + 1, getNumLevels() - 1)).getIconTextureString();
 	}
 
 	@Override
 	public int numContained(String[] sections, PlayerModel player) {
+		//Running count
 		int num = 0;
 
+		//For each section
 		for (String s : sections) {
+			//If it is in the name
 			if (getName().toLowerCase().contains(s.toLowerCase())) {
+				//increment count by 100
 				num += 100;
 			}
+			//If in description
 			if (getDescription().toLowerCase().contains(s.toLowerCase())) {
+				//increment count by 15
 				num += 15;
 			}
+			//If it is in the ID
 			if (gun.getID().toLowerCase().contains(s.toLowerCase())) {
+				//increment count by 50
 				num += 50;
 			}
+			//For each time it appears in tags or descriptors; increment count by 1
 			num += gun.getTags().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			num += getCurrentDescriptors(player).keySet().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
 			num += getCurrentDescriptors(player).values().parallelStream().filter((k) -> k.toLowerCase().contains(s.toLowerCase())).count();
@@ -170,6 +204,7 @@ public class GunPurchaseable implements IPurchaseable {
 			}
 		}
 
+		//Return total
 		return num;
 	}
 
