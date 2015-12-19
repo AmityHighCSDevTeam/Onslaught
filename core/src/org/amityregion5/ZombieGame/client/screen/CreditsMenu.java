@@ -1,7 +1,9 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
+
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -61,29 +63,17 @@ public class CreditsMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
+		addElement(new GuiRectangle(()->
+			new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Back", ()->{
+					ZombieGame.instance.settings.save();
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				ZombieGame.instance.settings.save();
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			case 0:
-				// Controls button
-				ZombieGame.instance.setScreen(new ControlsMenu(this));
-				break;
-		}
 	}
 
 	@Override
@@ -104,6 +94,5 @@ public class CreditsMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
 	}
 }

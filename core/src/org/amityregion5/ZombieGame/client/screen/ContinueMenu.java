@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.InputAccessor;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
@@ -17,7 +18,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
@@ -31,7 +31,6 @@ import com.badlogic.gdx.utils.Align;
 public class ContinueMenu extends GuiScreen {
 
 	private GlyphLayout		glyph		= new GlyphLayout(); //The glyph layout
-	private ShapeRenderer	shapeRender	= new ShapeRenderer(); //The shape renderer
 	private double			scrollPos; //The scroll position
 	private String			selected; //Selected game name
 	private InputProcessor	processor; //Input processor
@@ -118,29 +117,29 @@ public class ContinueMenu extends GuiScreen {
 			float w = 20*ZombieGame.getXScalar();
 			float h = getHeight() - 200*ZombieGame.getYScalar();
 			
-			Matrix4 projM = shapeRender.getProjectionMatrix().cpy();
+			Matrix4 projM = shape.getProjectionMatrix().cpy();
 			
-			shapeRender.setProjectionMatrix(camera.combined);
+			shape.setProjectionMatrix(camera.combined);
 
-			shapeRender.begin(ShapeType.Filled);
+			shape.begin(ShapeType.Filled);
 			// Main Scroll bar box
-			shapeRender.setColor(0.4f, 0.4f, 0.4f, 1f);
-			shapeRender.rect(x, y, w, h);
+			shape.setColor(0.4f, 0.4f, 0.4f, 1f);
+			shape.rect(x, y, w, h);
 
 			// Main Scroll Bar
-			shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
-			shapeRender.rect(x, y, w, h);
-			shapeRender.end();
+			shape.setColor(0.7f, 0.7f, 0.7f, 1f);
+			shape.rect(x, y, w, h);
+			shape.end();
 
-			shapeRender.begin(ShapeType.Line);
+			shape.begin(ShapeType.Line);
 
-			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+			shape.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 			// Scroll bar box border left line
-			shapeRender.rect(x, getScrollBarPos(), w, getScrollBarHeight());
+			shape.rect(x, getScrollBarPos(), w, getScrollBarHeight());
 
-			shapeRender.end();
+			shape.end();
 
-			shapeRender.setProjectionMatrix(projM);
+			shape.setProjectionMatrix(projM);
 		}
 
 		batch.begin();
@@ -158,33 +157,27 @@ public class ContinueMenu extends GuiScreen {
 	protected void setUpScreen() {
 		super.setUpScreen();
 
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() / 2 - 20, 50));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -2, "Load", getWidth() / 2 + 10, 10, getWidth() / 2 - 20, 50));
+		addElement(new GuiRectangle(()->
+		new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth()/2 - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+			"Back", ()->{
+				ZombieGame.instance.settings.save();
+				ZombieGame.instance.setScreenAndDispose(prevScreen);
+			}));
+		addElement(new GuiRectangle(()->
+		new Rectangle2D.Float(getWidth()/2 + 10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth()/2 - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+			"Load", ()->{
+				if (selected == null) {
+					return;
+				}
+				Game game = Game.loadFromFile(selected);
+				ZombieGame.instance.setScreen(new InGameScreen(this, game, false));
+				game.setPaused(false);
+			}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			case -2:
-				if (selected == null) {
-					break;
-				}
-				Game game = Game.loadFromFile(selected);
-				ZombieGame.instance.setScreen(new InGameScreen(this, game, false));
-				game.setPaused(false);
-				break;
-		}
 	}
 
 	@Override
@@ -205,8 +198,6 @@ public class ContinueMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
-		shapeRender.dispose();
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
 

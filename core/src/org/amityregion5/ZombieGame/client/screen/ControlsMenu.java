@@ -1,11 +1,12 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Map.Entry;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.InputAccessor;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
@@ -14,7 +15,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
@@ -28,7 +28,6 @@ import com.badlogic.gdx.utils.Align;
 public class ControlsMenu extends GuiScreen {
 
 	private GlyphLayout		glyph		= new GlyphLayout(); //The glyph layout
-	private ShapeRenderer	shapeRender	= new ShapeRenderer(); //The shape renderer
 	private double			scrollPos; //The scroll position
 	private String			selected; //The selected key
 	private InputProcessor	processor; //The input processor
@@ -145,29 +144,29 @@ public class ControlsMenu extends GuiScreen {
 			float y = 100*ZombieGame.getYScalar();
 			float w = 20*ZombieGame.getXScalar();
 			float h = getHeight() - 200*ZombieGame.getYScalar();
-			
-			Matrix4 projM = shapeRender.getProjectionMatrix().cpy();
-			
-			shapeRender.setProjectionMatrix(camera.combined);
 
-			shapeRender.begin(ShapeType.Filled);
-			shapeRender.setColor(0.4f, 0.4f, 0.4f, 1f);
-			shapeRender.rect(x, y, w, h);
+			Matrix4 projM = shape.getProjectionMatrix().cpy();
+
+			shape.setProjectionMatrix(camera.combined);
+
+			shape.begin(ShapeType.Filled);
+			shape.setColor(0.4f, 0.4f, 0.4f, 1f);
+			shape.rect(x, y, w, h);
 
 			// Secondary Scroll Bar
-			shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
-			shapeRender.rect(x, getScrollBarPos(), w, getScrollBarHeight());
+			shape.setColor(0.7f, 0.7f, 0.7f, 1f);
+			shape.rect(x, getScrollBarPos(), w, getScrollBarHeight());
 
-			shapeRender.end();
-			shapeRender.begin(ShapeType.Line);
+			shape.end();
+			shape.begin(ShapeType.Line);
 
-			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+			shape.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 			// Scroll bar box border left line
-			shapeRender.rect(x, y, w, h);
+			shape.rect(x, y, w, h);
 
-			shapeRender.end();
+			shape.end();
 
-			shapeRender.setProjectionMatrix(projM);
+			shape.setProjectionMatrix(projM);
 		}
 
 		batch.begin();
@@ -183,21 +182,21 @@ public class ControlsMenu extends GuiScreen {
 			float w = 300*ZombieGame.getXScalar();
 			float h = 100*ZombieGame.getYScalar();
 
-			shapeRender.begin(ShapeType.Filled);
+			shape.begin(ShapeType.Filled);
 
-			shapeRender.setColor(0.7f, 0.7f, 0.7f, 1f);
+			shape.setColor(0.7f, 0.7f, 0.7f, 1f);
 
-			shapeRender.rect(x, y, w, h);
+			shape.rect(x, y, w, h);
 
-			shapeRender.end();
+			shape.end();
 
-			shapeRender.begin(ShapeType.Line);
+			shape.begin(ShapeType.Line);
 
-			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+			shape.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 
-			shapeRender.rect(x, y, w, h);
+			shape.rect(x, y, w, h);
 
-			shapeRender.end();
+			shape.end();
 
 			batch.begin();
 
@@ -220,24 +219,15 @@ public class ControlsMenu extends GuiScreen {
 	protected void setUpScreen() {
 		super.setUpScreen();
 
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Back", ()->{
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-		}
 	}
 
 	@Override
@@ -258,8 +248,6 @@ public class ControlsMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
-		shapeRender.dispose();
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
 

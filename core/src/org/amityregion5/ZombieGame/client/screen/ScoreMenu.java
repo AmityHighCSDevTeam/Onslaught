@@ -1,9 +1,11 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.Client;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
 
 import com.badlogic.gdx.Gdx;
@@ -45,7 +47,7 @@ public class ScoreMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		ZombieGame.instance.bigFont.draw(batch, "You lost.", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		ZombieGame.instance.bigFont.draw(batch, "You died.", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
 
 		float x = 50*ZombieGame.getXScalar();
 		float y = getHeight() - 150*ZombieGame.getYScalar();
@@ -60,7 +62,7 @@ public class ScoreMenu extends GuiScreen {
 		for (int i=0; i<scores.size(); i++) {
 			int place = i+1;
 			
-			glyph.setText(ZombieGame.instance.mainFont, place + ": " + ((int)(scores.get(i)*100))/100f, (scores.get(i) == score ? new Color(0.7f, 1f, 0.7f, 1) : new Color(1, 1, 1, 1)), w, Align.left, false);
+			glyph.setText(ZombieGame.instance.mainFont, place + ": " + ((int)(scores.get(i)*100))/100f, (scores.get(i) == score ? Client.greenColor : new Color(1, 1, 1, 1)), w, Align.left, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + glyph.height / 2);
 			y -= glyph.height + extraH;
 		}
@@ -76,24 +78,15 @@ public class ScoreMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Return", 10, 10, getWidth() - 20, 50));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Return", ()->{
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-		}
 	}
 
 	@Override
@@ -114,6 +107,5 @@ public class ScoreMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
 	}
 }

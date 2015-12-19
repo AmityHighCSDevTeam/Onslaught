@@ -1,7 +1,10 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
+
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.Client;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -18,8 +21,6 @@ import com.badlogic.gdx.utils.Align;
 public class OptionMenu extends GuiScreen {
 
 	private GlyphLayout glyph = new GlyphLayout();
-	
-	private boolean wasUIMouseDown = false;
 
 	public OptionMenu(GuiScreen prevScreen) {
 		super(prevScreen);
@@ -121,7 +122,6 @@ public class OptionMenu extends GuiScreen {
 
 			//If the mouse is down set the master volume
 			if (Gdx.input.isTouched()) {
-				wasUIMouseDown = true;
 				if (mY >= y && mY <= y + h) {
 					mX -= x;
 					if (mX > w) {
@@ -134,10 +134,9 @@ public class OptionMenu extends GuiScreen {
 					ZombieGame.instance.settings.setUiScale(uiScale);
 				}
 			} else {
-				if (wasUIMouseDown) {
+				if (Client.mouseJustReleased()) {
 					ZombieGame.instance.resize(getWidth(), getHeight());
 				}
-				wasUIMouseDown = false;
 			}
 			
 			y -= h + 10*ZombieGame.getYScalar();
@@ -154,30 +153,20 @@ public class OptionMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "Controls", 10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
+				"Controls", ()->{
+					ZombieGame.instance.setScreen(new ControlsMenu(this));
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Back", ()->{
+					ZombieGame.instance.settings.save();
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				ZombieGame.instance.settings.save();
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			case 0:
-				// Controls button
-				ZombieGame.instance.setScreen(new ControlsMenu(this));
-				break;
-		}
 	}
 
 	@Override
@@ -198,6 +187,5 @@ public class OptionMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
 	}
 }

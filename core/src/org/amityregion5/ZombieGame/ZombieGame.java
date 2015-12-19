@@ -9,11 +9,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
@@ -29,6 +33,7 @@ import org.amityregion5.ZombieGame.common.weapon.WeaponRegistry;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -62,7 +67,9 @@ public class ZombieGame extends Game {
 	public boolean					isCheatModeAllowed;					// Has cheat mode been enabled
 	public String					version	= "Error: Version Not Set";	// The game version
 	public String					newestVersion;						// The newest version
-
+	
+	private List<Screen> toDispose = new ArrayList<Screen>();
+ 
 	private static float uiscale = 1;
 
 	/**
@@ -253,7 +260,7 @@ public class ZombieGame extends Game {
 
 				// Go to main menu
 				ZombieGame.log("Loading: Loading completed");
-				Gdx.app.postRunnable(() -> setScreen(new MainMenu()));
+				Gdx.app.postRunnable(() -> setScreenAndDispose(new MainMenu()));
 
 				settings.save();
 			}
@@ -266,6 +273,17 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void render() {
+		Iterator<Screen> disposeScreens = toDispose.iterator();
+		
+		while (disposeScreens.hasNext()) {
+			Screen disposeScreen = disposeScreens.next();
+			
+			disposeScreen.dispose();
+			
+			disposeScreens.remove();
+		}
+		
+		Client.update();
 		super.render();
 	}
 
@@ -374,5 +392,10 @@ public class ZombieGame extends Game {
 
 	public static float getScaledX(float x) {
 		return x * getXScalar();
+	}
+	
+	public void setScreenAndDispose(Screen next) {
+		toDispose.add(getScreen());
+		setScreen(next);
 	}
 }

@@ -39,7 +39,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -60,7 +59,6 @@ public class InGameScreen extends GuiScreen {
 	private Game				game; //The game
 	private Box2DDebugRenderer	debugRenderer; //The debug renderer
 	private PlayerModel			player; //The player
-	private ShapeRenderer		shapeRenderer; //The shape renderer
 	private RayHandler			rayHandler; //The lighting
 	private GlyphLayout			glyph			= new GlyphLayout(); //The glyph
 	private Screen				currentWindow; //The current window
@@ -83,7 +81,7 @@ public class InGameScreen extends GuiScreen {
 		game.setLighting(rayHandler);
 
 		//Create shape renderer
-		shapeRenderer = new ShapeRenderer();
+		//shape = new ShapeRenderer();
 		//Create array of overlays
 		overlays = new ArrayList<Screen>();
 
@@ -111,7 +109,7 @@ public class InGameScreen extends GuiScreen {
 		if (isNewGame) {
 			game.addEntityToWorld(player, 0, 0);
 		}
-		
+
 		//Add an HUD to the overlays
 		overlays.add(new HUDOverlay(this, player));
 	}
@@ -145,7 +143,7 @@ public class InGameScreen extends GuiScreen {
 
 		//Update projection matricies
 		batch.setProjectionMatrix(camera.combined);
-		shapeRenderer.setProjectionMatrix(camera.combined);
+		shape.setProjectionMatrix(camera.combined);
 
 		//Tile x and y
 		float tileX = wM;
@@ -193,17 +191,17 @@ public class InGameScreen extends GuiScreen {
 		//Draw particles and entities
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getBackDrawingLayers()) {
-				s.draw(p, batch, shapeRenderer);
+				s.draw(p, batch, shape);
 			}
 		}
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
-				s.draw(e, batch, shapeRenderer);
+				s.draw(e, batch, shape);
 			}
 		}
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getFrontDrawingLayers()) {
-				s.draw(p, batch, shapeRenderer);
+				s.draw(p, batch, shape);
 			}
 		}
 		//Reset projection matrix
@@ -220,21 +218,21 @@ public class InGameScreen extends GuiScreen {
 		super.render(delta);
 
 		//Draw bullets
-		shapeRenderer.setProjectionMatrix(camera.combined);
-		shapeRenderer.begin(ShapeType.Line);
+		shape.setProjectionMatrix(camera.combined);
+		shape.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
 			if (bull.getEnd() != null && bull.doDraw()) {
 				Gdx.gl.glLineWidth(bull.getThickness());
-				shapeRenderer.setColor(bull.getColor());
+				shape.setColor(bull.getColor());
 
 				Vector3 start = new Vector3(bull.getStart().x, bull.getStart().y, 0);
 				Vector3 end = new Vector3(bull.getEnd().x, bull.getEnd().y, 0);
 
-				shapeRenderer.line(start.x, start.y, end.x, end.y);
+				shape.line(start.x, start.y, end.x, end.y);
 			}
 			game.getActiveBullets().remove(bull);
 		}
-		shapeRenderer.end();
+		shape.end();
 		Gdx.gl.glLineWidth(1);
 
 		//If cheat mode and debug render are enabled
@@ -260,7 +258,7 @@ public class InGameScreen extends GuiScreen {
 		//Draw the particle max layers
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getMaxDrawingLayers()) {
-				s.draw(p, batch, shapeRenderer);
+				s.draw(p, batch, shape);
 			}
 		}
 		//Reset the projection matrix
@@ -281,9 +279,12 @@ public class InGameScreen extends GuiScreen {
 
 		//If the game isnt runnign
 		if (!game.isGameRunning()) {
-			dispose();
 			//Dispose and return to previous screen
-			ZombieGame.instance.setScreen(new ScoreMenu(prevScreen, game.getDifficulty(), player.getScore()));
+			if (game.getDifficulty().getUniqueID().equals("TUTORIAL")) {
+				ZombieGame.instance.setScreenAndDispose(prevScreen);
+			} else {
+				ZombieGame.instance.setScreenAndDispose(new ScoreMenu(prevScreen, game.getDifficulty(), player.getScore()));
+			}
 		}
 	}
 
@@ -400,7 +401,7 @@ public class InGameScreen extends GuiScreen {
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-		
+
 		//Resize the font
 		Gdx.app.postRunnable(() -> {			
 			if (smallOutlineFont != null) {
@@ -412,7 +413,7 @@ public class InGameScreen extends GuiScreen {
 				parameter.borderWidth = 1;
 				parameter.borderStraight = true;
 				parameter.borderColor = new Color(0, 0, 0, 1);
-				
+
 				if (parameter.size < 2) {
 					parameter.size = 2;
 				}
@@ -422,13 +423,13 @@ public class InGameScreen extends GuiScreen {
 				smallOutlineFont.setColor(1, 1, 1, 1);
 			}
 		});
-		
+
 		//Calculate correct camera size
 		float hUp = height/9;
 		float wUp = width/16;
-		
+
 		float avgUp = (wUp + hUp)/2;
-		
+
 		camera.setToOrtho(false, width/avgUp, height/avgUp);
 	}
 
@@ -460,11 +461,6 @@ public class InGameScreen extends GuiScreen {
 	}
 
 	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-	}
-
-	@Override
 	public void hide() {
 		super.hide();
 	}
@@ -485,11 +481,9 @@ public class InGameScreen extends GuiScreen {
 		if (currentWindow != null) {
 			currentWindow.dispose();
 		}
-		batch.dispose(); // Clear memory
 		smallOutlineFont.dispose();
 		debugRenderer.dispose();
 		game.dispose();
-		shapeRenderer.dispose();
 		rayHandler.dispose();
 	}
 

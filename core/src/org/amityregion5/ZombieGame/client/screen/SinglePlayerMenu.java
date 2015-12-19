@@ -1,7 +1,9 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
+
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -43,34 +45,23 @@ public class SinglePlayerMenu extends GuiScreen {
 		super.setUpScreen();
 
 		// Register buttons
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 0, "New Game", 10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 1, "Continue", 10, getHeight() - 210*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, 2, "Back", 10, 10*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getYScalar()),
+				"New Game", ()->{
+					ZombieGame.instance.setScreen(new NewGameMenu(this));
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 210*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
+				"Continue", ()->{
+					ZombieGame.instance.setScreen(new ContinueMenu(this));
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Back", ()->{
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case 0:
-				//Go to new game window when new game button pressed
-				ZombieGame.instance.setScreen(new NewGameMenu(this));
-				break;
-			case 1:
-				//Go to new continue window when continue button pressed
-				ZombieGame.instance.setScreen(new ContinueMenu(this));
-				break;
-			case 2:
-				// Back button
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-		}
 	}
 
 	@Override
@@ -91,6 +82,5 @@ public class SinglePlayerMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
 	}
 }

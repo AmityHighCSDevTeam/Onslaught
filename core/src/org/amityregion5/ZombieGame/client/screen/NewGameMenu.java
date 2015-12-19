@@ -1,9 +1,10 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.GameRegistry;
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
@@ -57,33 +58,26 @@ public class NewGameMenu extends GuiScreen {
 		{
 			int i = 0;
 			for (Difficulty d : diffs) {
-				addButton(new GuiButton(ZombieGame.instance.buttonTexture, i, d.getHumanName(), 10, getHeight() - (150 + 60 * i)*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()));
+				final int iVal = i;
+				addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - (150 + 60 * iVal)*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
+						d.getHumanName(), ()->{
+							ZombieGame.instance.setScreen(new InGameScreen(this,
+									new Game(diffs.get(iVal), true,
+											ZombieGame.instance.isCheatModeAllowed && Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
+									true));
+						}));
 				i++;
 			}
 		}
-		addButton(new GuiButton(ZombieGame.instance.buttonTexture, -1, "Back", 10, 10, getWidth() - 20, 50*ZombieGame.getYScalar()));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
+				"Back", ()->{
+					ZombieGame.instance.setScreenAndDispose(prevScreen);
+				}));
 	}
 
 	@Override
 	public void show() {
 		super.show();
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		switch (id) {
-			case -1:
-				// Back button
-				dispose();
-				ZombieGame.instance.setScreen(prevScreen);
-				break;
-			default:
-				ZombieGame.instance.setScreen(new InGameScreen(this,
-						new Game(diffs.get(id), true,
-								ZombieGame.instance.isCheatModeAllowed && Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
-						true));
-		}
 	}
 
 	@Override
@@ -104,6 +98,5 @@ public class NewGameMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear memory
 	}
 }

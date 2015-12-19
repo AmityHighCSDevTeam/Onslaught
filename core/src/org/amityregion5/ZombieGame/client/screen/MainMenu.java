@@ -1,14 +1,15 @@
 package org.amityregion5.ZombieGame.client.screen;
 
+import java.awt.geom.Rectangle2D;
+
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.amityregion5.ZombieGame.client.gui.GuiButton;
+import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
 
@@ -19,7 +20,6 @@ import com.badlogic.gdx.utils.Align;
 public class MainMenu extends GuiScreen {
 
 	private GlyphLayout		glyph				= new GlyphLayout();
-	private ShapeRenderer	shapeRender			= new ShapeRenderer();
 	private int				newerVersionMode	= 0;
 
 	public MainMenu() {
@@ -45,7 +45,7 @@ public class MainMenu extends GuiScreen {
 
 		// Draw picture
 		batch.setColor(1, 1, 1, 1);
-		
+
 		batch.draw(titleTexture, camera.viewportWidth/2 - titleWidth/2, camera.viewportHeight - titleHeight - 10, titleWidth, titleHeight);
 
 		float y = 15;
@@ -68,21 +68,21 @@ public class MainMenu extends GuiScreen {
 			float x = getWidth() / 2 - w / 2;
 			float y1 = getHeight() / 2 - h / 2;
 
-			shapeRender.begin(ShapeType.Filled);
+			shape.begin(ShapeType.Filled);
 
 			//Fill red box
-			shapeRender.setColor(200f / 255f, 0, 0, 1);
-			shapeRender.rect(x, y1, w, h);
+			shape.setColor(200f / 255f, 0, 0, 1);
+			shape.rect(x, y1, w, h);
 
-			shapeRender.end();
+			shape.end();
 
-			shapeRender.begin(ShapeType.Line);
+			shape.begin(ShapeType.Line);
 
 			//Draw whiteish border
-			shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
-			shapeRender.rect(x, y1, w, h);
+			shape.setColor(0.9f, 0.9f, 0.9f, 0.5f);
+			shape.rect(x, y1, w, h);
 
-			shapeRender.end();
+			shape.end();
 
 			batch.begin();
 
@@ -102,10 +102,10 @@ public class MainMenu extends GuiScreen {
 	@Override
 	public void resize(int width, int height) {
 		// Compute title position
-		
+
 		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
 		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());
-		
+
 		if (titleWidth > getWidth()) {
 			titleWidth = getWidth();
 			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
@@ -119,10 +119,10 @@ public class MainMenu extends GuiScreen {
 		super.show();
 		// Initialize the title texture
 		titleTexture = new Texture(Gdx.files.internal("images/ZombieGameTitle.png"));
-		
+
 		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
 		titleHeight = ZombieGame.getScaledY(titleTexture.getHeight());
-		
+
 		if (titleWidth > getWidth()) {
 			titleWidth = getWidth();
 			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
@@ -134,44 +134,26 @@ public class MainMenu extends GuiScreen {
 	protected void setUpScreen() {
 		super.setUpScreen();
 
-		// Get the button texture
-		Texture buttonTexture = ZombieGame.instance.buttonTexture;
-
-		// Add all of the buttons
-		String[] buttons = {"Play Game", "Options", "Credits", null, "Quit"};
-		boolean[] enabled = {true, true, true, false, true};
-		for (int i = 0; i < buttons.length; i++) {
-			if (buttons[i] != null) {
-				addButton(new GuiButton(buttonTexture, i, buttons[i], 10 * ZombieGame.getXScalar(),
-						getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * i), getWidth() - ZombieGame.getScaledX(20),
-						ZombieGame.getScaledY(50)).setEnabled(enabled[i]));
-			}
-		}
-	}
-
-	@Override
-	protected void buttonClicked(int id) {
-		super.buttonClicked(id);
-		if (newerVersionMode != 1) {
-			switch (id) {
-				case 0:
-					// Play Game button
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 0),
+				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
+				"Play Game", ()->{
 					ZombieGame.instance.setScreen(new PlayGameMenu(this));
-					break;
-				case 1:
-					// Play Game button
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 1),
+				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
+				"Options", ()->{
 					ZombieGame.instance.setScreen(new OptionMenu(this));
-					break;
-				case 2:
-					// Play Game button
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 2),
+				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
+				"Credits", ()->{
 					ZombieGame.instance.setScreen(new CreditsMenu(this));
-					break;
-				case 4:
-					// Quit button
+				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 4),
+				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
+				"Quit", ()->{
 					Gdx.app.exit();
-					break;
-			}
-		}
+				}));
 	}
 
 	@Override
@@ -192,8 +174,6 @@ public class MainMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose(); // Clear up memory
 		titleTexture.dispose();
-		shapeRender.dispose();
 	}
 }

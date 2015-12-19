@@ -9,7 +9,7 @@ import org.amityregion5.ZombieGame.client.window.ShopWindow;
 import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.GameRegistry;
+import org.amityregion5.ZombieGame.common.game.difficulty.BasicDifficulty;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
@@ -31,7 +31,7 @@ public class TutorialGame extends Game {
 	private float			yOffset			= 1; //Particle y offset
 
 	public TutorialGame() {
-		super(GameRegistry.getDifficultyFromID("EASY"), true, false);
+		super(new BasicDifficulty("TUTORIAL", "Tutorial", 0, 0, 0, 0, 0, 0, 0, 0), true, false);
 	}
 
 	@Override
