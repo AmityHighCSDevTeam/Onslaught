@@ -75,8 +75,9 @@ public class Placeable implements IWeapon {
 	}
 
 	protected void doPlace(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack) {
-		//If the object is registered
-		if (registeredObjects.containsKey(data.get(stack.getLevel()).getPlacingObject())) {
+		//If the object is registered and within distance
+		if (registeredObjects.containsKey(data.get(stack.getLevel()).getPlacingObject()) && 
+				end.dst2(firing.getEntity().getBody().getWorldCenter()) <= data.get(stack.getLevel()).getMaxRange()*data.get(stack.getLevel()).getMaxRange()) {
 			//Subtract ammo
 			stack.setAmmo(stack.getAmmo() - 1);
 
@@ -142,5 +143,20 @@ public class Placeable implements IWeapon {
 	@Override
 	public String getID() {
 		return id;
+	}
+	
+	@Override
+	public String getStatus(WeaponStack stack) {
+		int wTime = stack.getWeaponTime();
+		if (wTime == 1 && stack.getPostFire() > 0) {
+			return "Reloading";
+		} else if (wTime == 2 && stack.getPostFire() > 0) {
+			return "Warming Up";
+		} else if (wTime == 3 && stack.isPreFiring()) {
+			return "Firing";
+		} else if (wTime == 4 && stack.getPostFire() > 0) {
+			return "Cooling Down";
+		}
+		return "Ready";
 	}
 }

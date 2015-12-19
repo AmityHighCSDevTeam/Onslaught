@@ -50,4 +50,6 @@ public interface IWeapon {
 	 *            amount of time since last tick
 	 */
 	public void tick(float delta, WeaponStack stack);
+	
+	public String getStatus(WeaponStack stack);
 }

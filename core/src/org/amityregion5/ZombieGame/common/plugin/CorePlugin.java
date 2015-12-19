@@ -57,15 +57,15 @@ public class CorePlugin implements IPlugin {
 	public void load() {
 		//Register the lanterns
 		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, LanternModel.getLIGHT_COLOR(), "Core/Entity/Lantern/0.png", "Lantern_0");
-			lantern.setLight(new PointLight(g.getLighting(), 300, lantern.getColor(), 10, vector.x, vector.y));
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/0.png", "Lantern_0");
+			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 3, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;
 		});
 		Placeable.registeredObjects.put("Lantern_1", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, new Color(1, 0, 0, 1), "Core/Entity/Lantern/1.png", "Lantern_1");
-			lantern.setLight(new PointLight(g.getLighting(), 300, lantern.getColor(), 10, vector.x, vector.y));
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/1.png", "Lantern_1");
+			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 6, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;

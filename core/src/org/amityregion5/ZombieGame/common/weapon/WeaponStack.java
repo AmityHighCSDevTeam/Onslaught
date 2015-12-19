@@ -27,6 +27,7 @@ public class WeaponStack {
 	private Game		preFireGame; //Game for the warmup
 	private PlayerModel	preFireFiring; //The player for the warmup
 	private double		preFireMaxFireDegrees; //The fire degrees for the warmup
+	private int weaponTime; //A storage for the place in time that this weapon is in.
 
 	public WeaponStack(IWeapon weapon) {
 		this.weapon = weapon;
@@ -242,5 +243,17 @@ public class WeaponStack {
 
 	public String getID() {
 		return weapon.getID();
+	}
+
+	public String getStatus() {
+		return weapon.getStatus(this);
+	}
+	
+	public void setWeaponTime(int weaponTime) {
+		this.weaponTime = weaponTime;
+	}
+	
+	public int getWeaponTime() {
+		return weaponTime;
 	}
 }

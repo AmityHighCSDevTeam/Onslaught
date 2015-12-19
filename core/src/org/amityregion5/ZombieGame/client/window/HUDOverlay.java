@@ -70,7 +70,7 @@ public class HUDOverlay implements Screen {
 		//Calculate start X
 		float startX = (screen.getWidth() - player.getHotbar().length * eachBoxSize*ZombieGame.getXScalar()) / 2;
 		for (int i = 0; i < player.getHotbar().length; i++) {
-			
+
 			//Draw the inner filling
 			shapeRender.begin(ShapeType.Filled);
 			shapeRender.setColor(Color.GRAY);
@@ -126,7 +126,7 @@ public class HUDOverlay implements Screen {
 		//Draw the weapon name
 		batch.begin();
 		screen.getSmallOutlineFont().draw(batch, player.getCurrentWeapon().getWeapon().getName(), screen.getWidth() - 390*ZombieGame.getXScalar(), 190*ZombieGame.getYScalar());
-		
+
 		//Draw the weapon ammo
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
 			screen.getSmallOutlineFont().setColor(Color.YELLOW);
@@ -136,7 +136,7 @@ public class HUDOverlay implements Screen {
 		}
 		screen.getSmallOutlineFont().draw(batch, player.getCurrentWeapon().getAmmoString(), screen.getWidth() - 390*ZombieGame.getXScalar(), 170*ZombieGame.getYScalar());
 		screen.getSmallOutlineFont().setColor(new Color(1, 1, 1, 1));
-		
+
 		//Draw the money
 		screen.getSmallOutlineFont().draw(batch, "$" + NumberFormat.getInstance().format(player.getMoney()), screen.getWidth() - 390*ZombieGame.getXScalar(), 150*ZombieGame.getYScalar());
 		batch.end();
@@ -158,6 +158,14 @@ public class HUDOverlay implements Screen {
 		glyph.setText(screen.getSmallOutlineFont(), ((int) (player.getHealth() / player.getMaxHealth() * 100 * 10 + 0.5)) / 10f + "%", new Color(1, 1, 1, 1), 90*ZombieGame.getXScalar(),
 				Align.center, false);
 		screen.getSmallOutlineFont().draw(batch, glyph, screen.getWidth() - 395*ZombieGame.getXScalar(), 113*ZombieGame.getYScalar() + glyph.height);
+
+		if (!(player.getCurrentWeapon().getWeapon() instanceof NullWeapon)) {
+			//Draw the gun status
+			screen.getSmallOutlineFont().draw(batch, "Weapon Status: " + player.getCurrentWeapon().getStatus(), screen.getWidth() - 390*ZombieGame.getXScalar(), 90*ZombieGame.getYScalar());
+		}
+
+		//Draw the score
+		screen.getSmallOutlineFont().draw(batch, "Score: " + (int)(player.getScore()*100)/100d, screen.getWidth() - 390*ZombieGame.getXScalar(), 70*ZombieGame.getYScalar());
 		batch.end();
 	}
 

@@ -1,0 +1,31 @@
+{
+  "name": "Lantern",
+  "desc": "A lantern to light the way",
+  "className": "Placeable",
+  "weapon": [
+    {
+      "price": 20,
+      "ammoPrice": 20,
+      "maxAmmo": 1,
+      "reloadTime": 2,
+      "preFireDelay": 0,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Entity/Lantern/0.png",
+      "gameTxtr": "Core/Entity/Lantern/0.png",
+      "maxRange": 0.6,
+      "object": "Lantern_0"
+    },
+    {
+      "price": 1000,
+      "ammoPrice": 100,
+      "maxAmmo": 1,
+      "reloadTime": 2,
+      "preFireDelay": 0,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Entity/Lantern/1.png",
+      "gameTxtr": "Core/Entity/Lantern/1.png",
+      "maxRange": 0.6,
+      "object": "Lantern_1"
+    }
+  ]
+}

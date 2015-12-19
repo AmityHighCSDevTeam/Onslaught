@@ -194,4 +194,19 @@ public class Rocket implements IWeapon {
 	public String getID() {
 		return id;
 	}
+	
+	@Override
+	public String getStatus(WeaponStack stack) {
+		int wTime = stack.getWeaponTime();
+		if (wTime == 1 && stack.getPostFire() > 0) {
+			return "Reloading";
+		} else if (wTime == 2 && stack.getPostFire() > 0) {
+			return "Warming Up";
+		} else if (wTime == 3 && stack.isPreFiring()) {
+			return "Firing";
+		} else if (wTime == 4 && stack.getPostFire() > 0) {
+			return "Cooling Down";
+		}
+		return "Ready";
+	}
 }

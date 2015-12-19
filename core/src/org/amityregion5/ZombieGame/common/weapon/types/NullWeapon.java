@@ -71,4 +71,9 @@ public final class NullWeapon implements IWeapon {
 	public List<String> getTags() {
 		return new ArrayList<String>();
 	}
+
+	@Override
+	public String getStatus(WeaponStack stack) {
+		return "NO WEAPON";
+	}
 }

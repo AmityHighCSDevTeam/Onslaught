@@ -71,6 +71,9 @@ public class WeaponUtils {
 			if (ammoNeeded > 0) {
 				//Do reload time
 				stack.setPostFire(stack.getPostFire() + reloadTime);
+				
+				stack.setWeaponTime(1);
+				
 				//Set the ammo
 				stack.setAmmo(stack.getAmmo() + ammoNeeded);
 				//Set the total ammo
@@ -127,21 +130,24 @@ public class WeaponUtils {
 	 * @param preFire the prefire delay
 	 * @param reload the reload method args: weaponStack, game, firingPlayer
 	 * @param fireWeaponMethod the fireWeapon method args: fireAtPos, game, firingPlayer, maxFireDegrees, weaponStack
+	 * @return the weapon time value (0 = ignore, 1 = reloading, 2 = warming up, 3 = (pre)firing, 4 = just fired (cooling down)
 	 */
 	public static void onUse(Vector2 end, Game game, PlayerModel firing, double maxFireDegrees, WeaponStack stack, boolean isMouseJustDown, double warmupTime, boolean isAuto, double preFire, Consumer3<WeaponStack, Game, PlayerModel> reload, Consumer5<Vector2, Game, PlayerModel, Double, WeaponStack> fireWeaponMethod) {
 		//If there is no ammo
 		if (stack.getAmmo() <= 0) {
 			//Reload
 			reload.run(stack, game, firing);
+			stack.setWeaponTime(1);
 			return;
 		}
 		//If the mouse was just pressed
-		if (isMouseJustDown) {
+		if (isMouseJustDown && warmupTime > 0) {
 			//Do the warmup
 			stack.setPostFire(stack.getPostFire() + warmupTime);
+			stack.setWeaponTime(2);
 		}
 		//If it is either automatic or the mouse was just pressed
-		if (isAuto || (!isAuto && isMouseJustDown)) {
+		if (isAuto || (!isAuto && isMouseJustDown) && stack.getAmmo() > 0) {
 			//Continue firing until the post fire increases above 0
 			while (stack.getPostFire() <= 0) {
 				//If you have ammo and a pre fire delay
@@ -153,14 +159,17 @@ public class WeaponUtils {
 					stack.setPreFireGame(game);
 					stack.setPreFireFiring(firing);
 					stack.setPreFireMaxFireDegrees(maxFireDegrees);
+					stack.setWeaponTime(3);
 				} else if (stack.getAmmo() > 0 && preFire <= 0) {
 					//If you have ammo and no prefire delay
 					//Fire
 					fireWeaponMethod.run(end, game, firing, maxFireDegrees, stack);
+					stack.setWeaponTime(4);
 				} else if (!stack.isPreFiring()){
 					//If you have no ammo left
 					//Reload
 					reload.run(stack, game, firing);
+					stack.setWeaponTime(1);
 					break;
 				} else {
 					break;
