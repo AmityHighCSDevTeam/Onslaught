@@ -20,6 +20,7 @@ import java.util.Scanner;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import org.amityregion5.ZombieGame.client.screen.LoadingScreen;
 import org.amityregion5.ZombieGame.client.screen.MainMenu;
 import org.amityregion5.ZombieGame.client.settings.Settings;
@@ -296,6 +297,7 @@ public class ZombieGame extends Game {
 		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
 		fontGenerator.dispose();
+		MusicHandler.dispose();
 	}
 
 	@Override

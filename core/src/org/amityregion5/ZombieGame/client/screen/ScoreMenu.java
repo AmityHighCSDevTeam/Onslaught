@@ -6,6 +6,7 @@ import java.util.List;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
 
 import com.badlogic.gdx.Gdx;
@@ -87,6 +88,7 @@ public class ScoreMenu extends GuiScreen {
 	@Override
 	public void show() {
 		super.show();
+		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
 	@Override

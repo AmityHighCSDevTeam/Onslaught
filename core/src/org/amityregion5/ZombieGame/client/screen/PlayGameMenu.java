@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import org.amityregion5.ZombieGame.common.game.tutorial.TutorialGame;
 
 import com.badlogic.gdx.Gdx;
@@ -63,6 +64,7 @@ public class PlayGameMenu extends GuiScreen {
 	@Override
 	public void show() {
 		super.show();
+		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
 	@Override

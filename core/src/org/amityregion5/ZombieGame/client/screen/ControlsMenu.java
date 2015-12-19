@@ -7,6 +7,7 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.InputAccessor;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
@@ -228,6 +229,7 @@ public class ControlsMenu extends GuiScreen {
 	@Override
 	public void show() {
 		super.show();
+		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
 	@Override

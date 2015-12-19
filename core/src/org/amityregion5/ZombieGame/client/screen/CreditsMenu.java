@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -36,21 +37,22 @@ public class CreditsMenu extends GuiScreen {
 		super.drawScreen(delta);
 
 		// Draw name of screen
-		ZombieGame.instance.bigFont.draw(batch, "Credits", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		ZombieGame.instance.bigFont.draw(batch, "Credits", 10*ZombieGame.getXScalar(), getHeight() - 45*ZombieGame.getYScalar(), getWidth() - 20*ZombieGame.getXScalar(), Align.center, false);
 
-		float x = 50;
-		float y = getHeight() - 150;
-		float w = getWidth() - 100;
-		float extraH = 20;
+		float x = 50*ZombieGame.getXScalar();
+		float y = getHeight() - 150*ZombieGame.getYScalar();
+		float w = getWidth() - 100*ZombieGame.getXScalar();
+		float extraH = 20*ZombieGame.getYScalar();
 
-		for (String s : new String[] {"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian", "Voice Actor: Ray Tian"}) {
+		for (String s : new String[] {"Lead Programmer: Sergey Savelyev", "Artist: Ray Tian", "Voice Actor: Ray Tian", "\n",
+				"\"Ossuary 6 - Air\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0 License\nhttp://creativecommons.org/licenses/by/3.0/\n",
+				"\"Gloom Horizon\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0 License\nhttp://creativecommons.org/licenses/by/3.0/\n",
+				"\"The Complex\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0 License\nhttp://creativecommons.org/licenses/by/3.0/\n"}) {
 			glyph.setText(ZombieGame.instance.mainFont, s, new Color(1, 1, 1, 1), w, Align.left, false);
 			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + glyph.height / 2);
 			y -= glyph.height;
 			y -= extraH;
 		}
-		// smallFont.draw(batch, "Lead Programmer: Sergey Saveleyev", x, y,
-		// w, Align.right, false);
 	}
 
 	@Override
@@ -66,7 +68,6 @@ public class CreditsMenu extends GuiScreen {
 		addElement(new GuiRectangle(()->
 			new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
 				"Back", ()->{
-					ZombieGame.instance.settings.save();
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}
@@ -74,6 +75,7 @@ public class CreditsMenu extends GuiScreen {
 	@Override
 	public void show() {
 		super.show();
+		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
 	@Override

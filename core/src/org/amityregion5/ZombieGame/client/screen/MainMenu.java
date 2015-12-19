@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -127,7 +128,8 @@ public class MainMenu extends GuiScreen {
 			titleWidth = getWidth();
 			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
 		}
-
+		
+		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
 	@Override

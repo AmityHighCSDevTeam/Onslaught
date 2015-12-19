@@ -9,6 +9,7 @@ import org.amityregion5.ZombieGame.client.asset.SoundPlayingData;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import org.amityregion5.ZombieGame.client.window.HUDOverlay;
 import org.amityregion5.ZombieGame.client.window.InventoryWindow;
 import org.amityregion5.ZombieGame.client.window.PauseWindow;
@@ -458,6 +459,8 @@ public class InGameScreen extends GuiScreen {
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
 
 		camera = new OrthographicCamera(12, 9);
+		
+		MusicHandler.setMusicPlaying(MusicHandler.gameMusic);
 	}
 
 	@Override
