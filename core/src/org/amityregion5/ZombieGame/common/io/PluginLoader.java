@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.io;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
+import org.amityregion5.ZombieGame.common.plugin.IPlugin;
 import org.amityregion5.ZombieGame.common.plugin.PluginContainer;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
@@ -72,6 +74,10 @@ public class PluginLoader {
 								//Set all of the plugins found and created as the list of plugins in the container
 								plugin.setPlugins(loader.getIPlugins());
 							}
+						}
+						
+						if (plugin.getPlugins() == null) {
+							plugin.setPlugins(new ArrayList<IPlugin>());
 						}
 
 						//Set the plugin folder location path

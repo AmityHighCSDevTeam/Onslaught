@@ -6,6 +6,8 @@ package org.amityregion5.ZombieGame.common.game.difficulty;
  * @author sergeys
  */
 public class BasicDifficulty implements Difficulty {
+	
+	public static final Difficulty ERROR_DIFFICULTY = new BasicDifficulty("ERROR", "ERROR DIFFICULTY", -1, -1, -1, -1, -1, -1, -1, -1);
 
 	private String	id, name; //All the variables
 	private float	overallMult, waveMod, healthMod, moneyMod, damageMod;

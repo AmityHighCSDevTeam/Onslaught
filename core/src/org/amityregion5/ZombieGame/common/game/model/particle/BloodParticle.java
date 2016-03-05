@@ -5,6 +5,7 @@ import java.util.List;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.BloodDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
@@ -98,7 +99,7 @@ public class BloodParticle implements IParticle {
 	}
 
 	@Override
-	public IParticle fromJSON(JSONObject obj, Game g) {
+	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();

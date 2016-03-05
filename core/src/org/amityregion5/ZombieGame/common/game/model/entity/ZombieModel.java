@@ -12,6 +12,7 @@ import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
@@ -394,7 +395,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	}
 
 	@Override
-	public ZombieModel fromJSON(JSONObject obj, Game g) {
+	public ZombieModel fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();

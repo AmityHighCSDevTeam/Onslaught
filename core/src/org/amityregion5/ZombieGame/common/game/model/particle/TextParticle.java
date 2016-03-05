@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.common.game.model.particle;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.TextParticleDrawingLayer;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
@@ -77,7 +78,7 @@ public class TextParticle implements IParticle {
 	}
 
 	@Override
-	public IParticle fromJSON(JSONObject obj, Game g) {
+	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		return null;
 	}
 }

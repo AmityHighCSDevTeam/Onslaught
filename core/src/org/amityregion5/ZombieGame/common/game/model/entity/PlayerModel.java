@@ -12,6 +12,7 @@ import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
@@ -525,7 +526,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	}
 
 	@Override
-	public PlayerModel fromJSON(JSONObject obj, Game g) {
+	public PlayerModel fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue(); // √
 		float y = ((Number) obj.get("y")).floatValue(); // √
 		float r = ((Number) obj.get("r")).floatValue(); // √
@@ -553,6 +554,11 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			JSONObject w = (JSONObject) weaps.get(i);
 
 			IWeapon iWea = ZombieGame.instance.weaponRegistry.getWeaponFromID((String) w.get("id"));
+			
+			if (iWea == null) {
+				addErrorConsumer.run("Weapons not found:", (String) w.get("id"), true);
+				continue;
+			}
 
 			WeaponStack weap = new WeaponStack(iWea);
 

@@ -66,6 +66,7 @@ public class InGameScreen extends GuiScreen {
 	private List<Screen>		overlays; //A list of all overlays
 	private boolean				doDebugRender	= false; //Should it debug render
 	private OrthographicCamera		camera; //The camera
+	private boolean saveScore = true;
 
 	// Font
 	private BitmapFont smallOutlineFont;
@@ -281,7 +282,7 @@ public class InGameScreen extends GuiScreen {
 		//If the game isnt runnign
 		if (!game.isGameRunning()) {
 			//Dispose and return to previous screen
-			if (game.getDifficulty().getUniqueID().equals("TUTORIAL")) {
+			if (game.getDifficulty().getUniqueID().equals("TUTORIAL") || !saveScore) {
 				ZombieGame.instance.setScreenAndDispose(prevScreen);
 			} else {
 				ZombieGame.instance.setScreenAndDispose(new ScoreMenu(prevScreen, game.getDifficulty(), player.getScore()));
@@ -508,5 +509,9 @@ public class InGameScreen extends GuiScreen {
 
 	public void setCurrentWindow(Screen currentWindow) {
 		this.currentWindow = currentWindow;
+	}
+	
+	public void setSaveScore(boolean saveScore) {
+		this.saveScore = saveScore;
 	}
 }

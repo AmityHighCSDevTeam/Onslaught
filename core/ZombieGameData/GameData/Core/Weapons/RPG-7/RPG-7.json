@@ -33,21 +33,21 @@
       }
     },
     {
-      "price": 10,
-      "ammoPrice": 10,
-      "strength": 100,
-      "accuracy": 0,
-      "fuseTime": 2,
+      "price": 10000,
+      "ammoPrice": 50,
+      "strength": 200,
+      "accuracy": 3,
+      "fuseTime": 4,
       "accel": 0.5,
-      "size": 0.16,
-      "throwSpeed": 0.5,
-      "maxAmmo": 10,
-      "reloadTime": 1,
-      "preFireDelay": 0,
-      "postFireDelay": 0.2,
-      "iconTxtr": "Core/Weapons/Rocket_Test/1I.png",
-      "gameTxtr": "Core/Weapons/Rocket_Test/1G.png",
-      "fieldTxtr": "Core/Weapons/Rocket_Test/1F.png",
+      "size": 0.12,
+      "throwSpeed": 1.5,
+      "maxAmmo": 1,
+      "reloadTime": 2,
+      "preFireDelay": 0.15,
+      "postFireDelay": 0,
+      "iconTxtr": "Core/Weapons/RPG-7/RPG-7.png",
+      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_GAME.png",
+      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_FIELD.png",
       "isAuto": false,
       "gameScale": 0.1,
       "gameOffX": 0.05,
@@ -56,7 +56,7 @@
       "gameOriginY": 1,
       "buff": {
         "mult": {
-          "speed": 1.5
+          "speed": 0.8
         }
       }
     }

@@ -1,0 +1,41 @@
+I{
+  "name": "M79",
+  "desc": "Bloop Tube",
+  "className": "Grenade",
+  "weapon": [
+    {
+      "price": 750,
+      "ammoPrice": 10,
+      "strength": 25,
+      "accuracy": 8,
+      "fuseTime": 5,
+      "throwSpeed": 0.8,
+      "maxAmmo": 10,
+      "size": 0.05,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "iconTxtr": "Core/Weapons/Grenade_Test/0I.png",
+      "gameTxtr": "Core/Weapons/Grenade_Test/0G.png",
+      "fieldTxtr": "Core/Weapons/Grenade_Test/0F.png",
+      "isAuto": false
+    },
+    {
+      "price": 10,
+      "ammoPrice": 10,
+      "strength": 100,
+      "accuracy": 0,
+      "fuseTime": 2,
+      "throwSpeed": 0.5,
+      "maxAmmo": 10,
+      "size": 0.1,
+      "reloadTime": 1,
+      "preFireDelay": 0,
+      "postFireDelay": 0.2,
+      "iconTxtr": "Core/Weapons/Grenade_Test/1I.png",
+      "gameTxtr": "Core/Weapons/Grenade_Test/1G.png",
+      "fieldTxtr": "Core/Weapons/Grenade_Test/1F.png",
+      "isAuto": false
+    }
+  ]
+}

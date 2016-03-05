@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.game;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
@@ -96,8 +97,8 @@ public class GameRegistry {
 	 * @param id the ID
 	 * @return the difficulty with this ID
 	 */
-	public static Difficulty getDifficultyFromID(String id) {
+	public static Optional<Difficulty> getDifficultyFromID(String id) {
 		//Loop through all difficulties and get the first one that has the correct ID
-		return difficulties.parallelStream().filter((d) -> d.getUniqueID().equals(id)).findFirst().get();
+		return difficulties.parallelStream().filter((d) -> d.getUniqueID().equals(id)).findFirst();
 	}
 }

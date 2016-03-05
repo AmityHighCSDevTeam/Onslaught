@@ -5,7 +5,9 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -15,6 +17,8 @@ import org.amityregion5.ZombieGame.common.Constants;
 import org.amityregion5.ZombieGame.common.bullet.ExplosionRaycastBullet;
 import org.amityregion5.ZombieGame.common.bullet.IBullet;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
+import org.amityregion5.ZombieGame.common.game.difficulty.BasicDifficulty;
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
@@ -594,10 +598,24 @@ public class Game implements Disposable {
 	 * @param saveName the file name
 	 * @return the loaded game
 	 */
-	public static Game loadFromFile(String saveName) {
+	public static GameLoadedContainer loadFromFile(String saveName) {
 		//Get file
 		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/" + saveName + ".save");
 		JSONParser parser = new JSONParser();
+		
+		HashMap<String, List<String>> errors = new HashMap<String, List<String>>();
+		GameLoadedContainer glc = new GameLoadedContainer();
+		glc.canBeLoaded = true;
+		
+		Consumer3<String, String, Boolean> addErrorConsumer = (header, output, allowsLoading) -> {
+			if (!errors.containsKey(header)) {
+				errors.put(header, new ArrayList<String>());
+			}
+			errors.get(header).add(output);
+			if (!allowsLoading) {
+				glc.canBeLoaded = false;
+			}
+		};
 
 		Reader reader = file.reader();
 		try {
@@ -609,7 +627,10 @@ public class Game implements Disposable {
 			JSONArray particles = (JSONArray) obj.get("particles");
 
 			//Get Variables
-			Difficulty diff = GameRegistry.getDifficultyFromID((String) obj.get("difficulty"));
+			Optional<Difficulty> diff = GameRegistry.getDifficultyFromID((String) obj.get("difficulty"));
+			if (!diff.isPresent()) {
+				addErrorConsumer.run("Difficulty not found:", (String) obj.get("difficulty"), false);
+			}
 			boolean cheatMode = (Boolean) obj.get("cheatMode");
 			boolean singlePlayer = (Boolean) obj.get("singlePlayer");
 			boolean paused = (Boolean) obj.get("paused");
@@ -617,7 +638,7 @@ public class Game implements Disposable {
 			int mobsSpawned = ((Number) obj.get("mobsSpawned")).intValue();
 
 			//Create the game
-			Game game = new Game(diff, singlePlayer, cheatMode);
+			Game game = new Game(diff.orElse(BasicDifficulty.ERROR_DIFFICULTY), singlePlayer, cheatMode);
 			//Set variables
 			game.setPaused(paused);
 			game.setTimeUntilNextSpawn(timeUntilSpawn);
@@ -634,11 +655,12 @@ public class Game implements Disposable {
 					JSONObject e = (JSONObject) container.get("data");
 
 					//fromJSON method called
-					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
-					method.invoke(clazz.newInstance(), e, game);
+					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class, Consumer3.class);
+					method.invoke(clazz.newInstance(), e, game, addErrorConsumer);
 				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
+					addErrorConsumer.run("Failed to load entities:", className, true);
 				}
 			}
 			//Add all particles to the world
@@ -652,15 +674,20 @@ public class Game implements Disposable {
 					JSONObject e = (JSONObject) container.get("data");
 
 					//fromJSON method called
-					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class);
-					method.invoke(clazz.newInstance(), e, game);
+					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class, Consumer3.class);
+					method.invoke(clazz.newInstance(), e, game, addErrorConsumer);
 				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | InstantiationException e1) {
 					e1.printStackTrace();
+					addErrorConsumer.run("Failed to load particles:", className, true);
 				}
 			}
+			
+			glc.game = game;
+			glc.errors = errors;
+			
 			//Return the game
-			return game;
+			return glc;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		} finally {

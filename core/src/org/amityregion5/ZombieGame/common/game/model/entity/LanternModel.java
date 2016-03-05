@@ -1,8 +1,11 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
+import java.util.function.BiFunction;
+
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
@@ -149,13 +152,20 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	}
 
 	@Override
-	public IEntityModel<EntityLantern> fromJSON(JSONObject obj, Game g) {
+	public IEntityModel<EntityLantern> fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
 		String creationStr = (String) obj.get("creation");
+		
+		BiFunction<Game, Vector2, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
 
-		LanternModel model = (LanternModel) Placeable.registeredObjects.get(creationStr).apply(g, new Vector2(x, y));
+		if (func == null) {
+			addErrorConsumer.run("Failed to load placebale objects:", creationStr, true);
+			return null;
+		}
+		
+		LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y));
 
 		model.getEntity().getBody().getTransform().setRotation(r);
 

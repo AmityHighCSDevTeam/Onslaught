@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.amityregion5.ZombieGame.client.game.HealthPackDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -91,7 +92,7 @@ public class HealthPackParticle implements IParticle {
 	}
 
 	@Override
-	public IParticle fromJSON(JSONObject obj, Game g) {
+	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 

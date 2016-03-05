@@ -3,6 +3,7 @@ package org.amityregion5.ZombieGame.common.game.model.entity;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
+import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleModel;
@@ -255,7 +256,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	}
 
 	@Override
-	public RocketModel fromJSON(JSONObject obj, Game g) {
+	public RocketModel fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();

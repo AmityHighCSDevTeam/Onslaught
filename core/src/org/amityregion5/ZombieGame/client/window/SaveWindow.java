@@ -157,9 +157,10 @@ public class SaveWindow implements Screen {
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10*ZombieGame.getXScalar(), screen.getHeight() / 2 - 150*ZombieGame.getYScalar() + 25*ZombieGame.getYScalar());
 
 		//If the save button is pressed
-		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp) {
+		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp && screen.getGame().isSinglePlayer()) {
 			//Save the game
 			screen.getGame().saveToFile(saveName);
+			screen.setSaveScore(false);
 			//Kill the player (with fun message)
 			player.damage(Float.POSITIVE_INFINITY, null, "QUIT BUTTON SMITES YOU");
 		}
