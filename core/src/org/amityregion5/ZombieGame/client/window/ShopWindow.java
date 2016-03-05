@@ -39,7 +39,7 @@ public class ShopWindow implements Screen {
 	private double				mainScrollPos, secScrollPos; //Scroll bar positions
 	private GlyphLayout			glyph				= new GlyphLayout(); //The glyph layout
 	private SpriteBatch			batch				= new SpriteBatch(); //The sprite batch
-	private float				purchaseableHeight	= 100; //The size of a purchaseable
+	private float				purchaseableHeight	= 128; //The size of a purchaseable
 	private float				purchaseableBorder	= 2; //The border around a purchaseable
 	private int					selected			= -1; //Which purchaseable is selected
 	private float				defInfoWidth		= 400; //The info area width
