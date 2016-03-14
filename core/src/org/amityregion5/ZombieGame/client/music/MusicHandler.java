@@ -3,11 +3,11 @@ package org.amityregion5.ZombieGame.client.music;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
+import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -15,26 +15,32 @@ import com.badlogic.gdx.audio.Music;
 public class MusicHandler {
 
 	private static String currentMusicPlaying = "";
+	private static String currentMusicRegex = "";
 	private static Music currentMusic;
 
 	public static final String menuMusic = "*/Music/Menu/*";
 	public static final String gameMusic = "*/Music/Game/*";
 	public static final String noMusic = "";
-
+	
 	public static void setMusicPlaying(final String music) {
+		setMusicPlaying(music, true);
+	}
+
+	public static void setMusicPlaying(final String music, boolean keepIfMatches) {
 		Thread startMusicThread = new Thread(()-> {
-			if (!currentMusicPlaying.matches(regexify(music)) && currentMusic != null) {
+			if (!currentMusicPlaying.matches(regexify(music)) && currentMusic != null || !keepIfMatches) {
 				currentMusic.stop();
 				currentMusic.dispose();
 				currentMusic = null;
 			}
-			if (currentMusicPlaying.matches(regexify(music))) {
+			if (currentMusicPlaying.matches(regexify(music)) && keepIfMatches) {
 				return;
 			}
+			currentMusicRegex = music;
 
 			List<String> files = getAllMatchedFiles(regexify(music));
 
-			String file = files.get(new Random().nextInt(files.size()));
+			String file = files.get(MathHelper.rand.nextInt(files.size()));
 
 			currentMusicPlaying = file;
 			
@@ -54,12 +60,16 @@ public class MusicHandler {
 				m.stop();
 				m.dispose();
 				currentMusic = null;
-				setMusicPlaying(music);
+				setMusicPlaying(music, true);
 			});
 		}, "Start Music Thread");
 
 		startMusicThread.setDaemon(true);
 		startMusicThread.start();
+	}
+	
+	public static String getCurrentMusicRegex() {
+		return currentMusicRegex;
 	}
 
 	public static Music getCurrentMusic() {

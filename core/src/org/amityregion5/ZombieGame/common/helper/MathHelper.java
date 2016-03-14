@@ -1,5 +1,7 @@
 package org.amityregion5.ZombieGame.common.helper;
 
+import java.util.Random;
+
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -11,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 public class MathHelper {
 	//The radian value of 180 degrees (also known as PI)
 	public static final double rad180 = Math.toRadians(180);
+	public static final Random rand = new Random();
 
 	/**
 	 * Get the angle between two points
