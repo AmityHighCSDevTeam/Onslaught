@@ -138,12 +138,12 @@ public class FailedToLoadScreen extends GuiScreen {
 		super.setUpScreen();
 
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth()/2 - 10*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Back", ()->{
+				"Back", (r)->{
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 		
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar() + getWidth()/2, 10*ZombieGame.getXScalar(), getWidth()/2 - 10*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Load Anyways", ()->{
+				"Load Anyways", (r)->{
 					ZombieGame.instance.setScreenAndDispose(new InGameScreen(prevScreen, glc.game, false));
 					glc.game.setPaused(false);
 				}).setEnabled(glc.canBeLoaded));

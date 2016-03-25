@@ -81,6 +81,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 			if (weapons.size() > 0) {
 				//Shoot the weapon
 				hotbar[currentWeapon].onUse(mousePos, g, this, 15, shootJustPressed);
+				if (ZombieGame.instance.settings.isAutoBuy() && getCurrentWeapon().getTotalAmmo() == 0 && getCurrentWeapon().getAmmo() == 0) {
+					hotbar[currentWeapon].purchaseAmmo(this);
+					if (getCurrentWeapon().getTotalAmmo() > 0) {
+						hotbar[currentWeapon].reload(g, this);
+					}
+				}
 			}
 			//Shoot was just pressed
 			shootJustPressed = false;

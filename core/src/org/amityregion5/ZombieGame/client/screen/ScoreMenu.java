@@ -80,7 +80,7 @@ public class ScoreMenu extends GuiScreen {
 
 		// Register buttons
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Return", ()->{
+				"Return", (r)->{
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}

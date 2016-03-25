@@ -7,7 +7,6 @@ import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.InputAccessor;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.client.music.MusicHandler;
-import org.amityregion5.ZombieGame.client.settings.InputData;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 
 import com.badlogic.gdx.Gdx;
@@ -141,7 +140,7 @@ public class CreditsMenu extends GuiScreen {
 		// Register buttons
 		addElement(new GuiRectangle(()->
 		new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-		"Back", ()->{
+		"Back", (r)->{
 			ZombieGame.instance.setScreenAndDispose(prevScreen);
 		}));
 	}

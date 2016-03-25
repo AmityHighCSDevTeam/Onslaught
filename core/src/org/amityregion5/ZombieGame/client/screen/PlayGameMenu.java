@@ -48,15 +48,15 @@ public class PlayGameMenu extends GuiScreen {
 
 		// Register buttons
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
-				"Singleplayer", ()->{
+				"Singleplayer", (r)->{
 					ZombieGame.instance.setScreen(new SinglePlayerMenu(this));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 210*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
-				"Tutorial", ()->{
+				"Tutorial", (r)->{
 					ZombieGame.instance.setScreen(new InGameScreen(this, new TutorialGame(), true));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Back", ()->{
+				"Back", (r)->{
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}

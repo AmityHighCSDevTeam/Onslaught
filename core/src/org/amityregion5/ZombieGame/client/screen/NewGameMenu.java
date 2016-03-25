@@ -61,7 +61,7 @@ public class NewGameMenu extends GuiScreen {
 			for (Difficulty d : diffs) {
 				final int iVal = i;
 				addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - (150 + 60 * iVal)*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
-						d.getHumanName(), ()->{
+						d.getHumanName(), (r)->{
 							ZombieGame.instance.setScreen(new InGameScreen(this,
 									new Game(diffs.get(iVal), true,
 											ZombieGame.instance.isCheatModeAllowed && Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Keys.ALT_LEFT)),
@@ -71,7 +71,7 @@ public class NewGameMenu extends GuiScreen {
 			}
 		}
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Back", ()->{
+				"Back", (r)->{
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
 
 /**
@@ -22,6 +23,8 @@ import com.badlogic.gdx.utils.Align;
 public class OptionMenu extends GuiScreen {
 
 	private GlyphLayout glyph = new GlyphLayout();
+	
+	private float xSplit = 400;
 
 	public OptionMenu(GuiScreen prevScreen) {
 		super(prevScreen);
@@ -65,7 +68,7 @@ public class OptionMenu extends GuiScreen {
 			batch.setColor(c);
 
 			//Displace x position
-			x += 310*ZombieGame.getXScalar();
+			x += xSplit*ZombieGame.getXScalar();
 			w = getWidth() - x - 50*ZombieGame.getXScalar();
 
 			batch.setColor(1, 1, 1, 1);
@@ -105,7 +108,7 @@ public class OptionMenu extends GuiScreen {
 			batch.setColor(c);
 
 			//Displace x position
-			x += 310*ZombieGame.getXScalar();
+			x += xSplit*ZombieGame.getXScalar();
 			w = getWidth() - x - 50*ZombieGame.getXScalar();
 
 			batch.setColor(1, 1, 1, 1);
@@ -141,7 +144,103 @@ public class OptionMenu extends GuiScreen {
 			}
 			
 			y -= h + 10*ZombieGame.getYScalar();
-		}
+		}	x = 10*ZombieGame.getXScalar();
+		{
+			Color c = batch.getColor();
+			batch.setColor(1, 1, 1, 1);
+			//Draw volume text
+			glyph.setText(ZombieGame.instance.mainFont, "Ammo Circle Radius: " + ((int)(ZombieGame.instance.settings.getARadius()*100)/100f),
+					Color.WHITE, w, Align.left, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
+			batch.setColor(c);
+
+			//Displace x position
+			x += xSplit*ZombieGame.getXScalar();
+			w = getWidth() - x - 50*ZombieGame.getXScalar();
+
+			batch.setColor(1, 1, 1, 1);
+			//Change color if moused over
+			if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
+				batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
+			}
+			//Draw the Slider using two buttons because i'm lazy to make a shape renderer
+			batch.draw(buttText, x, y + h / 2 - 1, w, 2);
+			batch.draw(buttText, x + (float) (w * ZombieGame.instance.settings.getARadius()/100) - 1, y, 2, h);
+			batch.setColor(c);
+
+			//If the mouse is down set the master volume
+			if (Gdx.input.isTouched()) {
+				if (mY >= y && mY <= y + h) {
+					mX -= x;
+					if (mX > w) {
+						mX = w;
+					} else if (mX < 0) {
+						mX = 0;
+					}
+					double rad = mX / w * 100;
+					mX = Gdx.input.getX();
+					ZombieGame.instance.settings.setARadius(rad);
+					batch.end();
+					Gdx.gl.glEnable(GL20.GL_BLEND);
+					shape.begin(ShapeType.Filled);
+					shape.setColor(1, 0, 0, (float)ZombieGame.instance.settings.getAAlpha());
+					shape.circle(Gdx.input.getX(), getHeight() - Gdx.input.getY(), (float)ZombieGame.instance.settings.getARadius());
+					shape.end();
+					Gdx.gl.glDisable(GL20.GL_BLEND);
+					batch.begin();
+				}
+			}
+			
+			y -= h + 10*ZombieGame.getYScalar();
+		}	x = 10*ZombieGame.getXScalar();
+		{
+			Color c = batch.getColor();
+			batch.setColor(1, 1, 1, 1);
+			//Draw volume text
+			glyph.setText(ZombieGame.instance.mainFont, "Ammo Circle Opacity: " + ((int)(ZombieGame.instance.settings.getAAlpha()*100)/100f),
+					Color.WHITE, w, Align.left, false);
+			ZombieGame.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
+			batch.setColor(c);
+
+			//Displace x position
+			x += xSplit*ZombieGame.getXScalar();
+			w = getWidth() - x - 50*ZombieGame.getXScalar();
+
+			batch.setColor(1, 1, 1, 1);
+			//Change color if moused over
+			if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
+				batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
+			}
+			//Draw the Slider using two buttons because i'm lazy to make a shape renderer
+			batch.draw(buttText, x, y + h / 2 - 1, w, 2);
+			batch.draw(buttText, x + (float) (w * ZombieGame.instance.settings.getAAlpha()) - 1, y, 2, h);
+			batch.setColor(c);
+
+			//If the mouse is down set the master volume
+			if (Gdx.input.isTouched()) {
+				if (mY >= y && mY <= y + h) {
+					mX -= x;
+					if (mX > w) {
+						mX = w;
+					} else if (mX < 0) {
+						mX = 0;
+					}
+					double alpha = mX / w;
+					mX = Gdx.input.getX();
+					ZombieGame.instance.settings.setAAlpha(alpha);
+					batch.end();
+					Gdx.gl.glEnable(GL20.GL_BLEND);
+					shape.begin(ShapeType.Filled);
+					shape.setColor(1, 0, 0, (float)ZombieGame.instance.settings.getAAlpha());
+					shape.circle(Gdx.input.getX(), getHeight() - Gdx.input.getY(), (float)ZombieGame.instance.settings.getARadius());
+					shape.end();
+					Gdx.gl.glDisable(GL20.GL_BLEND);
+					batch.begin();
+				}
+			}
+			
+			y -= h + 10*ZombieGame.getYScalar();
+		}	x = 10*ZombieGame.getXScalar();
 	}
 
 	@Override
@@ -155,11 +254,16 @@ public class OptionMenu extends GuiScreen {
 
 		// Register buttons
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 150*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
-				"Controls", ()->{
+				"Controls", (r)->{
 					ZombieGame.instance.setScreen(new ControlsMenu(this));
 				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
+				(ZombieGame.instance.settings.isAutoBuy() ? "Disable" : "Enable") + " Automatic Ammo Buying", (r)->{
+					ZombieGame.instance.settings.setAutoBuy(!ZombieGame.instance.settings.isAutoBuy());
+					r.setText((ZombieGame.instance.settings.isAutoBuy() ? "Disable" : "Enable") + " Automatic Ammo Buying");
+				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Back", ()->{
+				"Back", (r)->{
 					ZombieGame.instance.settings.save();
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));

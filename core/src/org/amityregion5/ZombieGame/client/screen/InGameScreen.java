@@ -65,7 +65,7 @@ public class InGameScreen extends GuiScreen {
 	private Screen				currentWindow; //The current window
 	private List<Screen>		overlays; //A list of all overlays
 	private boolean				doDebugRender	= false; //Should it debug render
-	private OrthographicCamera		camera; //The camera
+	private OrthographicCamera		inGameCamera; //The camera
 	private boolean saveScore = true;
 
 	// Font
@@ -125,15 +125,15 @@ public class InGameScreen extends GuiScreen {
 		game.tick(delta);
 
 		//Center the camera on the palyer
-		camera.translate(player.getEntity().getBody().getWorldCenter().x - camera.position.x,
-				player.getEntity().getBody().getWorldCenter().y - camera.position.y);
+		inGameCamera.translate(player.getEntity().getBody().getWorldCenter().x - inGameCamera.position.x,
+				player.getEntity().getBody().getWorldCenter().y - inGameCamera.position.y);
 
 		//Apply screen vibration
-		camera.translate((float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2),
+		inGameCamera.translate((float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2),
 				(float) (player.getScreenVibrate() * game.getRandom().nextDouble() - player.getScreenVibrate() / 2));
 
 		//Update the camer
-		camera.update();
+		inGameCamera.update();
 
 		//Get the old batch matrix
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
@@ -144,18 +144,18 @@ public class InGameScreen extends GuiScreen {
 		float hM = 10.24f;
 
 		//Update projection matricies
-		batch.setProjectionMatrix(camera.combined);
-		shape.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(inGameCamera.combined);
+		shape.setProjectionMatrix(inGameCamera.combined);
 
 		//Tile x and y
 		float tileX = wM;
 		float tileY = hM;
 
 		//Camera start and end positions
-		Vector2 posStart = new Vector2(camera.position.x - camera.viewportWidth * camera.zoom,
-				camera.position.y - camera.viewportHeight * camera.zoom * camera.zoom);
-		Vector2 posEnd = new Vector2(camera.position.x + camera.viewportWidth * camera.zoom,
-				camera.position.y + camera.viewportHeight * camera.zoom * camera.zoom);
+		Vector2 posStart = new Vector2(inGameCamera.position.x - inGameCamera.viewportWidth * inGameCamera.zoom,
+				inGameCamera.position.y - inGameCamera.viewportHeight * inGameCamera.zoom * inGameCamera.zoom);
+		Vector2 posEnd = new Vector2(inGameCamera.position.x + inGameCamera.viewportWidth * inGameCamera.zoom,
+				inGameCamera.position.y + inGameCamera.viewportHeight * inGameCamera.zoom * inGameCamera.zoom);
 
 		//Calculate start tiles
 		int startTileX = (int) ((posStart.x) / tileX);
@@ -188,7 +188,7 @@ public class InGameScreen extends GuiScreen {
 		batch.setColor(c);
 
 		//Update projection matrix
-		batch.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(inGameCamera.combined);
 
 		//Draw particles and entities
 		for (IParticle p : game.getParticles()) {
@@ -212,7 +212,7 @@ public class InGameScreen extends GuiScreen {
 		//If lighting is enabled
 		if (game.isLightingEnabled()) {
 			//Apply lighting
-			rayHandler.setCombinedMatrix(camera);
+			rayHandler.setCombinedMatrix(inGameCamera);
 			rayHandler.updateAndRender();
 		}
 
@@ -220,7 +220,7 @@ public class InGameScreen extends GuiScreen {
 		super.render(delta);
 
 		//Draw bullets
-		shape.setProjectionMatrix(camera.combined);
+		shape.setProjectionMatrix(inGameCamera.combined);
 		shape.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
 			if (bull.getEnd() != null && bull.doDraw()) {
@@ -241,22 +241,22 @@ public class InGameScreen extends GuiScreen {
 		if (game.isCheatMode()) {
 			if (doDebugRender) {
 				//Apply the debug renderer
-				debugRenderer.render(game.getWorld(), camera.combined);
+				debugRenderer.render(game.getWorld(), inGameCamera.combined);
 			}
 		}
 
 		//Apply overlays
 		for (Screen overlay : overlays) {
-			overlay.drawScreen(delta, camera);
+			overlay.drawScreen(delta, inGameCamera);
 		}
 
 		//Draw the current window
 		if (currentWindow != null) {
-			currentWindow.drawScreen(delta, camera);
+			currentWindow.drawScreen(delta, inGameCamera);
 		}
 
 		//Update projection matrix
-		batch.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(inGameCamera.combined);
 		//Draw the particle max layers
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getMaxDrawingLayers()) {
@@ -265,6 +265,26 @@ public class InGameScreen extends GuiScreen {
 		}
 		//Reset the projection matrix
 		batch.setProjectionMatrix(oldBatchMatrix);
+		
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
+			shape.setProjectionMatrix(camera.combined);
+			shape.begin(ShapeType.Filled);
+			shape.setColor(1, 1, 0, (float)ZombieGame.instance.settings.getAAlpha());
+			shape.circle(Gdx.input.getX(), getHeight() - Gdx.input.getY(), (float)ZombieGame.instance.settings.getARadius(), 20);
+			shape.end();
+			shape.setProjectionMatrix(inGameCamera.combined);
+		}
+		
+		if (player.getCurrentWeapon().getTotalAmmo() == 0 && player.getCurrentWeapon().getAmmo() == 0) {
+			shape.setProjectionMatrix(camera.combined);
+			shape.begin(ShapeType.Filled);
+			shape.setColor(1, 0, 0, (float)ZombieGame.instance.settings.getAAlpha());
+			shape.circle(Gdx.input.getX(), getHeight() - Gdx.input.getY(), (float)ZombieGame.instance.settings.getARadius(), 20);
+			shape.end();
+			shape.setProjectionMatrix(inGameCamera.combined);
+		}
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		//Play sounds
 		Iterator<SoundPlayingData> iterator = player.getSoundsToPlay().listIterator();
@@ -311,7 +331,7 @@ public class InGameScreen extends GuiScreen {
 		}
 
 		//Mouse world position
-		Vector3 mouseCoord = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+		Vector3 mouseCoord = inGameCamera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 		//Update player's mouse position
 		player.setMousePos(new Vector2(mouseCoord.x, mouseCoord.y));
 
@@ -335,10 +355,10 @@ public class InGameScreen extends GuiScreen {
 				MusicHandler.setMusicPlaying(MusicHandler.getCurrentMusicRegex(), false);
 			}
 			if (Gdx.input.isKeyPressed(Keys.G)) {
-				camera.zoom += 0.02;
+				inGameCamera.zoom += 0.02;
 			}
-			if (Gdx.input.isKeyPressed(Keys.H) && camera.zoom > 0.02) {
-				camera.zoom -= 0.02;
+			if (Gdx.input.isKeyPressed(Keys.H) && inGameCamera.zoom > 0.02) {
+				inGameCamera.zoom -= 0.02;
 			}
 
 			if (Gdx.input.isKeyJustPressed(Keys.E)) {
@@ -435,7 +455,7 @@ public class InGameScreen extends GuiScreen {
 
 		float avgUp = (wUp + hUp)/2;
 
-		camera.setToOrtho(false, width/avgUp, height/avgUp);
+		inGameCamera.setToOrtho(false, width/avgUp, height/avgUp);
 	}
 
 	@Override
@@ -462,7 +482,7 @@ public class InGameScreen extends GuiScreen {
 
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
 
-		camera = new OrthographicCamera(12, 9);
+		inGameCamera = new OrthographicCamera(12, 9);
 		
 		MusicHandler.setMusicPlaying(MusicHandler.gameMusic);
 	}

@@ -221,7 +221,7 @@ public class ControlsMenu extends GuiScreen {
 		super.setUpScreen();
 
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-				"Back", ()->{
+				"Back", (r)->{
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}

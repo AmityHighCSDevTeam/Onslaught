@@ -138,22 +138,22 @@ public class MainMenu extends GuiScreen {
 
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 0),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
-				"Play Game", ()->{
+				"Play Game", (r)->{
 					ZombieGame.instance.setScreen(new PlayGameMenu(this));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 1),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
-				"Options", ()->{
+				"Options", (r)->{
 					ZombieGame.instance.setScreen(new OptionMenu(this));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 2),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
-				"Credits", ()->{
+				"Credits", (r)->{
 					ZombieGame.instance.setScreen(new CreditsMenu(this));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 4),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
-				"Quit", ()->{
+				"Quit", (r)->{
 					Gdx.app.exit();
 				}));
 	}

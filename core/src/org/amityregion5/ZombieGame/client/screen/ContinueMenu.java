@@ -161,13 +161,13 @@ public class ContinueMenu extends GuiScreen {
 
 		addElement(new GuiRectangle(()->
 		new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth()/2 - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-		"Back", ()->{
+		"Back", (r)->{
 			ZombieGame.instance.settings.save();
 			ZombieGame.instance.setScreenAndDispose(prevScreen);
 		}));
 		addElement(new GuiRectangle(()->
 		new Rectangle2D.Float(getWidth()/2 + 10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth()/2 - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
-		"Load", ()->{
+		"Load", (r)->{
 			if (selected == null) {
 				return;
 			}

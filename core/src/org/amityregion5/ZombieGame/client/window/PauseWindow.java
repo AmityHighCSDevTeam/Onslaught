@@ -2,6 +2,7 @@ package org.amityregion5.ZombieGame.client.window;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
+import org.amityregion5.ZombieGame.client.screen.OptionMenu;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 
 import com.badlogic.gdx.Gdx;
@@ -64,7 +65,7 @@ public class PauseWindow implements Screen {
 
 		// Main box in the center
 		shapeRender.setColor(0.3f, 0.3f, 0.3f, 0.6f);
-		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 100*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 200*ZombieGame.getYScalar());
+		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 150*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 250*ZombieGame.getYScalar());
 
 		shapeRender.end();
 
@@ -72,7 +73,7 @@ public class PauseWindow implements Screen {
 
 		shapeRender.setColor(0.9f, 0.9f, 0.9f, 0.5f);
 		// Main box border
-		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 100*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 200*ZombieGame.getYScalar());
+		shapeRender.rect(screen.getWidth() / 2 - 200*ZombieGame.getXScalar(), screen.getHeight() / 2 - 150*ZombieGame.getYScalar(), 400*ZombieGame.getXScalar(), 250*ZombieGame.getYScalar());
 
 		shapeRender.end();
 	}
@@ -112,6 +113,21 @@ public class PauseWindow implements Screen {
 		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp) {
 			//Open save window
 			screen.setCurrentWindow(new SaveWindow(screen, player, this));
+		}
+
+		//Is the save button moused over
+		boolean mouseOverSettings = Gdx.input.getX() > screen.getWidth() / 2 - 200*ZombieGame.getXScalar() && Gdx.input.getX() < screen.getWidth() / 2 + 200*ZombieGame.getXScalar()
+				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 150*ZombieGame.getYScalar() && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 100*ZombieGame.getYScalar();
+
+		//Draw save button
+		glyph.setText(ZombieGame.instance.mainFont, "Options", (mouseOverSettings ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 2*180*ZombieGame.getXScalar(),
+				Align.center, false);
+		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 - 190*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 125*ZombieGame.getYScalar());
+
+		//If save button pressed
+		if (mouseOverSettings && !Gdx.input.isTouched() && mouseWasUp) {
+			//Open save window
+			ZombieGame.instance.setScreen(new OptionMenu(screen));
 		}
 
 		batch.end();

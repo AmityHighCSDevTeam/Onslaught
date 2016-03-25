@@ -36,6 +36,12 @@ public class Settings {
 	private double								masterVolume;
 	//The master volume
 	private double								uiScale;
+	//The ammo circle radius
+	private double								aRadius;
+	//The ammo circle alpha
+	private double								aAlpha;
+	//Should ammo be automaticcally be bough
+	private boolean								autoBuy;
 
 	public Settings() {
 		//Create hashmap
@@ -43,6 +49,9 @@ public class Settings {
 		top10scores = new HashMap<String, ArrayList<Double>>();
 		masterVolume = 1;
 		uiScale = 1;
+		aRadius = 50;
+		aAlpha = 0.2;
+		autoBuy = false;
 	}
 
 	/**
@@ -71,10 +80,25 @@ public class Settings {
 				masterVolume = (Double) settingsFile.get("masterVolume");
 			}
 
-			//Get volume
+			//Get Scale
 			if (settingsFile.containsKey("uiScale")) {
 				uiScale = (Double) settingsFile.get("uiScale");
 				ZombieGame.instance.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			}
+
+			//Get ARadius
+			if (settingsFile.containsKey("aRadius")) {
+				aRadius = (Double) settingsFile.get("aRadius");
+			}
+
+			//Get AAlpha
+			if (settingsFile.containsKey("aAlpha")) {
+				aAlpha = (Double) settingsFile.get("aAlpha");
+			}
+
+			//Get AAlpha
+			if (settingsFile.containsKey("autoBuy")) {
+				autoBuy = (Boolean) settingsFile.get("autoBuy");
 			}
 
 			//Get input mappings
@@ -162,6 +186,15 @@ public class Settings {
 
 		//Put volume in there
 		settingsData.put("uiScale", uiScale);
+
+		//Put volume in there
+		settingsData.put("aRadius", aRadius);
+
+		//Put alpha in there
+		settingsData.put("aAlpha", aAlpha);
+
+		//Put alpha in there
+		settingsData.put("autoBuy", autoBuy);
 
 		//Put key data in there
 		JSONArray inputSettData = new JSONArray();
@@ -343,5 +376,29 @@ public class Settings {
 	
 	public List<Double> getTop10ScoresForDiff(Difficulty diff) {
 		return top10scores.getOrDefault(diff.getUniqueID(), new ArrayList<Double>());
+	}
+
+	public double getARadius() {
+		return aRadius;
+	}
+	
+	public void setARadius(double rad) {
+		aRadius = rad;
+	}
+
+	public double getAAlpha() {
+		return aAlpha;
+	}
+	
+	public void setAAlpha(double a) {
+		aAlpha = a;
+	}
+	
+	public void setAutoBuy(boolean autoBuy) {
+		this.autoBuy = autoBuy;
+	}
+	
+	public boolean isAutoBuy() {
+		return autoBuy;
 	}
 }

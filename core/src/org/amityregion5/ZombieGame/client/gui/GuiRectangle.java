@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.client.gui;
 
 import java.awt.geom.Rectangle2D;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.amityregion5.ZombieGame.ZombieGame;
@@ -23,14 +24,14 @@ public class GuiRectangle extends GuiElement {
 	private String		text;							// Text to draw on button
 	private boolean		isEnabled	= true; //Is this button enabled
 	private GlyphLayout	glyph		= new GlyphLayout(); //Glyph layout
-	private Runnable 	onClick;
+	private Consumer<GuiRectangle> 	onClick;
 
 	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text) {
 		this.text = text;
 		setRectangleSupplier(rect);
 	}
 
-	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text, Runnable onClick) {
+	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text, Consumer<GuiRectangle> onClick) {
 		this.onClick = onClick;
 		this.text = text;
 		setRectangleSupplier(rect);
@@ -84,7 +85,7 @@ public class GuiRectangle extends GuiElement {
 				//If mouse just released
 				if (Client.mouseJustReleased() && onClick != null) {
 					//Run the onClick
-					onClick.run();
+					onClick.accept(this);
 				}
 			}
 		} else {
