@@ -437,7 +437,7 @@ public class ShopWindow implements Screen {
 
 			//Can be purchased
 			GlyphLayout canPurchase = null;
-			if (purchaseable.canPurchase(player) && purchaseable.getPrice(player) <= player.getMoney()) {
+			if (screen.getGame().isPurchaseAllowed(purchaseable) && purchaseable.canPurchase(player) && purchaseable.getPrice(player) <= player.getMoney()) {
 				canPurchase = new GlyphLayout(ZombieGame.instance.mainFont, "Purchase Available", new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f), 300*ZombieGame.getXScalar(),
 						Align.left, true);
 
@@ -586,7 +586,7 @@ public class ShopWindow implements Screen {
 		}
 
 		//If there is a level available to this player
-		if (selectedItem.hasNextLevel(player)) {
+		if (screen.getGame().isPurchaseAllowed(selectedItem) && selectedItem.hasNextLevel(player)) {
 			
 			//Get button positions
 			float w = infoWidth - 40*ZombieGame.getXScalar();

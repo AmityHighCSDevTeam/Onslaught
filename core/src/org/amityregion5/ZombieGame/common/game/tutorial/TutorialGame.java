@@ -14,6 +14,8 @@ import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.TextParticle;
+import org.amityregion5.ZombieGame.common.shop.GunPurchaseable;
+import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 
@@ -251,5 +253,10 @@ public class TutorialGame extends Game {
 	@Override
 	public boolean isLightingEnabled() {
 		return true;
+	}
+	
+	@Override
+	public boolean isPurchaseAllowed(IPurchaseable purchaseable) {
+		return (purchaseable instanceof GunPurchaseable) && ((GunPurchaseable)purchaseable).getGun().getID().equals("Core_M9");
 	}
 }

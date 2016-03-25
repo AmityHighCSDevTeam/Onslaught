@@ -213,4 +213,8 @@ public class GunPurchaseable implements IPurchaseable {
 		if (obj instanceof GunPurchaseable) { return gun == ((GunPurchaseable) obj).gun; }
 		return false;
 	}
+	
+	public IWeapon getGun() {
+		return gun;
+	}
 }

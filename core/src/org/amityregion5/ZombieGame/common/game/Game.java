@@ -25,6 +25,7 @@ import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -728,5 +729,9 @@ public class Game implements Disposable {
 
 	public void setLightingEnabled(boolean b) {
 		isLightingEnabled = b;
+	}
+	
+	public boolean isPurchaseAllowed(IPurchaseable purchaseable) {
+		return true;
 	}
 }
