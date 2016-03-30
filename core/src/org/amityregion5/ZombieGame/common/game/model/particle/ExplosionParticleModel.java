@@ -12,14 +12,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
-import box2dLight.PointLight;
 
 public class ExplosionParticleModel implements IParticle {
-	private Light	light; //Light
+	//private Light	light; //Light
 	private Game	g; //Game
 	private Color	c; //Color
 	//X, Y, x velocity, y velocity, rotation, rotation speed
 	private float	x, y, xVel, yVel, rotation, rotationSpeed;
+	private double size = 1.0;
 
 	public ExplosionParticleModel() {}
 
@@ -64,7 +64,7 @@ public class ExplosionParticleModel implements IParticle {
 		this.x = x;
 		this.y = y;
 		this.c = c;
-		this.g = g;
+		//this.g = g;
 		this.rotation = rotation;
 		this.rotationSpeed = rotationSpeed;
 
@@ -79,51 +79,58 @@ public class ExplosionParticleModel implements IParticle {
 		x += xVel; //Move x
 		y += yVel; //Move y
 		
+		size *= 0.9;
+		
+		if (size < 0.05) {
+			g.removeParticle(this);
+		}
+		
 		//DO light stuffs
-		if (light != null) {
+		//if (light != null) {
+			//light.dispose();
 			//Set active
-			light.setActive(true);
+			//light.setActive(true);
 
 			//Set color
-			light.setColor(light.getColor().mul(0.9f, 0.75f, 0.0f, 0.95f));
+			//light.setColor(light.getColor().mul(0.9f, 0.75f, 0.0f, 0.95f));
 			//Set position
-			light.setPosition(x, y);
+			//light.setPosition(x, y);
 
 			//If color dim remove particle
-			if (light.getColor().r < 0.05) {
-				g.removeParticle(this);
-				if (light != null) {
-					light.remove();
-					light = null;
-				}
-			}
-		}
+		//	if (light.getColor().r < 0.05) {
+		//		g.removeParticle(this);
+		//		if (light != null) {
+		//			light.remove();
+		//			light = null;
+		//		}
+		//	}
+		//}
 	}
 
 	@Override
 	public void dispose() {
-		if (light != null) {
-			light.dispose();
-			light = null;
-		}
+		//if (light != null) {
+		//	light.dispose();
+		//	light = null;
+		//}
 	}
 
 	@Override
-	public IDrawingLayer[] getFrontDrawingLayers() {
+	public IDrawingLayer[] getPostLightingDrawingLayers() {
 		return new IDrawingLayer[] {ExplosionParticleDrawingLayer.instance};// new IDrawingLayer[] {sprite};
 	}
 
 	public void setLight(Light light) {
-		this.light = light;
+		//this.light = light;
 	}
 
 	public Color getColor() {
 		return c;
 	}
 
-	public Light getLight() {
-		return light;
-	}
+	//public Light getLight() {
+		//return light;
+	//}
 
 	public float getRotation() {
 		return rotation;
@@ -149,6 +156,7 @@ public class ExplosionParticleModel implements IParticle {
 		obj.put("yv", yVel);
 		obj.put("r", rotation);
 		obj.put("rv", rotationSpeed);
+		obj.put("size", size);
 
 		return obj;
 	}
@@ -162,19 +170,31 @@ public class ExplosionParticleModel implements IParticle {
 		float yV = ((Number) obj.get("yv")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
 		float rV = ((Number) obj.get("rv")).floatValue();
+		double size = ((Number) obj.get("size")).doubleValue();
 
 		ExplosionParticleModel model = new ExplosionParticleModel(x, y, c, g, r, rV, xV, yV);
+		
+		model.size = size;
 
 		g.addParticleToWorld(model);
 
-		model.setLight(new PointLight(g.getLighting(), 50, c, 2, x, y));
-		model.getLight().setXray(true);
+		//model.setLight(new PointLight(g.getLighting(), 50, c, 2, x, y));
+		//model.getLight().setXray(true);
 
 		return model;
 	}
 
 	@Override
 	public IDrawingLayer[] getBackDrawingLayers() {
+		return new IDrawingLayer[] {};
+	}
+
+	public double getSize() {
+		return size;
+	}
+
+	@Override
+	public IDrawingLayer[] getFrontDrawingLayers() {
 		return new IDrawingLayer[] {};
 	}
 }

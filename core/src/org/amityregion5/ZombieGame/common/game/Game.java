@@ -43,7 +43,6 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
 public class Game implements Disposable {
@@ -52,8 +51,8 @@ public class Game implements Disposable {
 	private static final float	bigSpawnRad			= 25; // Maximum spawn radius
 	private static final float	smallSpnRad			= 12.5f; //Minimum spawn radius
 	private static final float	explosionMinVal		= 0.05f; //Minimum damage value of explosion rays to do 
-	private static final int	explosionRaycasts	= 720; //Raycasts per explosion
-	private static final float	areaPerParticle		= 1f; //The area in square meters per explosion particle
+	private static final int	explosionRaycasts	= 540; //Raycasts per explosion
+	private static final float	areaPerParticle		= 4f; //The area in square meters per explosion particle
 
 	// Unsaved variables
 	protected GameContactListener			contactListener; // The contact listener
@@ -104,10 +103,14 @@ public class Game implements Disposable {
 
 		//5.5^(10/7) = 11.4198654
 		//Constant = 10.9198654 - 2 * waveModifier
-		moduloConstant = Math.pow(5.5, 10.0 / 7) - 0.5 - 2 * diff.getZombieWaveModifier();
+		moduloConstant = Math.pow(5.5, 9.0 / 7) - 0.5 - 2 * diff.getZombieWaveModifier();
 
 		//Set max hostiles
 		maxHostiles = diff.getMaxHostiles();
+		
+		world.setContactListener(contactListener);
+		
+		ZombieGame.instance.pluginManager.getPlugins().forEach((m)->m.getPlugins().forEach((p)->p.onGameStart(this)));
 	}
 
 	/**
@@ -191,7 +194,7 @@ public class Game implements Disposable {
 						spawnNext();
 						//Increase time until next spawn
 						//Next zombie will spawn in either ((((mobsSpawned^0.7) mod (moduloConstant))^6)/10000) or  (25) depending on which is lower
-						timeUntilNextSpawn += Math.min(Math.pow((Math.pow(mobsSpawned, 0.7)) % (moduloConstant), 6) / 10000, 25);
+						timeUntilNextSpawn += Math.min(Math.pow((Math.pow(mobsSpawned, 0.7)) % (moduloConstant), 6) / 10000, 10);
 						//Increase mob spawn count
 						mobsSpawned++;
 					}
@@ -459,8 +462,8 @@ public class Game implements Disposable {
 					(float) (2 * Math.PI * rand.nextDouble()), 100 * (rand.nextFloat() - 0.5f), 0.05f * pos2.dst2(pos), pos2.sub(pos).angleRad());
 
 			//Set its light
-			explosionParticle.setLight(new PointLight(lighting, 10, explosionParticle.getColor(), 2, pos2.x, pos2.y));
-			explosionParticle.getLight().setXray(true);
+			//explosionParticle.setLight(new PointLight(lighting, 10, explosionParticle.getColor(), 2, pos2.x, pos2.y));
+			//explosionParticle.getLight().setXray(true);
 
 			//Add it to the world
 			addParticleToWorld(explosionParticle);

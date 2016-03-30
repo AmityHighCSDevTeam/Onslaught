@@ -35,6 +35,14 @@ public interface IParticle {
 	IDrawingLayer[] getFrontDrawingLayers();
 
 	/**
+	 * Get the front drawing layer (after entities)
+	 * @return the front drawing layers
+	 */
+	default IDrawingLayer[] getPostLightingDrawingLayers() {
+		return new IDrawingLayer[] {};
+	}
+
+	/**
 	 * Get the maximum drawing layers (after gui)
 	 * @return the maximum drawing layers
 	 */

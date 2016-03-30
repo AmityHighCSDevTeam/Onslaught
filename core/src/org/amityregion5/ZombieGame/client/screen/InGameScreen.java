@@ -215,6 +215,14 @@ public class InGameScreen extends GuiScreen {
 			rayHandler.setCombinedMatrix(inGameCamera);
 			rayHandler.updateAndRender();
 		}
+		
+		batch.setProjectionMatrix(inGameCamera.combined);
+		for (IParticle p : game.getParticles()) {
+			for (IDrawingLayer s : p.getPostLightingDrawingLayers()) {
+				s.draw(p, batch, shape);
+			}
+		}
+		batch.setProjectionMatrix(oldBatchMatrix);
 
 		//Call super render
 		super.render(delta);

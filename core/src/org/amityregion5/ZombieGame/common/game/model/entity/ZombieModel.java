@@ -233,12 +233,12 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		}
 		
 		//For every 5 units of damage taken
-		for (int i = 0; i < damageTaken; i += 5) {
+		//for (int i = 0; i < damageTaken; i += 5) {
 			//Add a splatter of blood
 			g.addParticleToWorld(
 					new BloodParticle(entity.getBody().getWorldCenter().x - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
 							entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f, g));
-		}
+		//}
 		
 		//Decrease health by damage
 		health -= damageTaken;

@@ -37,7 +37,7 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 
 		batch.setColor(new Color(model.getColor().r, model.getColor().g, model.getColor().b, 1));
 
-		float val = (float) Math.sqrt(model.getLight().getColor().r);
+		float val = (float) Math.sqrt(model.getSize());
 
 		sprite.setOriginCenter();
 		sprite.setRotation((float) (Math.toDegrees(model.getRotation()) - 90));

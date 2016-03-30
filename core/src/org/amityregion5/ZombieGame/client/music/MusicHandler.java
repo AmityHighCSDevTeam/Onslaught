@@ -57,10 +57,7 @@ public class MusicHandler {
 			ZombieGame.debug("Playing Music: " + file + " at volume " + currentMusic.getVolume());
 
 			currentMusic.setOnCompletionListener((m)->{
-				m.stop();
-				m.dispose();
-				currentMusic = null;
-				setMusicPlaying(music, true);
+				setMusicPlaying(music, false);
 			});
 		}, "Start Music Thread");
 

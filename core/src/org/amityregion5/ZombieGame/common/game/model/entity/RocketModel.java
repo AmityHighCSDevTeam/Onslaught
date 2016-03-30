@@ -14,8 +14,6 @@ import org.json.simple.JSONObject;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
-import box2dLight.PointLight;
-
 /**
  * A Model to represent Rockets
  * 
@@ -97,8 +95,8 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 						entity.getBody().getAngle() + (float) Math.PI);
 
 				//Set light
-				smoke.setLight(new PointLight(g.getLighting(), 10, smoke.getColor(), 2, pos2.x, pos2.y));
-				smoke.getLight().setXray(true); //Turn xray on (makes computations easier)
+				//smoke.setLight(new PointLight(g.getLighting(), 10, smoke.getColor(), 2, pos2.x, pos2.y));
+				//smoke.getLight().setXray(true); //Turn xray on (makes computations easier)
 
 				//Add the particle to the world
 				g.addParticleToWorld(smoke);
