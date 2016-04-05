@@ -80,6 +80,8 @@ public class CorePlugin implements IPlugin {
 			while (gaussRand < 0 || gaussRand > 1) {
 				gaussRand = (float) (g.getRandom().nextGaussian()/2.8 + 0.5);
 			}
+			
+			gaussRand = gaussRand * 0.9f + 0.1f;
 
 			float speedModifier = gaussRand * maxModifier + 1f - maxModifier / 1.5f;
 			float sizeModifier = ((maxModifier + 1f) - speedModifier);
