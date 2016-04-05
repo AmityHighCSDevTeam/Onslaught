@@ -737,4 +737,8 @@ public class Game implements Disposable {
 	public boolean isPurchaseAllowed(IPurchaseable purchaseable) {
 		return true;
 	}
+	
+	public boolean canSaveGame() {
+		return true;
+	}
 }

@@ -45,8 +45,8 @@ public class TutorialGame extends Game {
 			lighting.setAmbientLight(new Color(.35f, .35f, .35f, 1f));
 
 			getSingleplayerPlayer().setMoney(0);
-			String moveDirName = ZombieGame.instance.settings.getInput("Move_Up").getName() + ZombieGame.instance.settings.getInput("Move_Left").getName()
-					+ ZombieGame.instance.settings.getInput("Move_Down").getName() + ZombieGame.instance.settings.getInput("Move_Right").getName();
+			String moveDirName = ZombieGame.instance.settings.getInput("Move_Up").getName() + ", " + ZombieGame.instance.settings.getInput("Move_Left").getName() + ", "
+					+ ZombieGame.instance.settings.getInput("Move_Down").getName() + ", and " + ZombieGame.instance.settings.getInput("Move_Right").getName();
 
 			addParticleToWorld(particle = new TextParticle(0, 1, this, "Use " + moveDirName + " to move."));
 			tutorialPart = 0;
@@ -258,5 +258,10 @@ public class TutorialGame extends Game {
 	@Override
 	public boolean isPurchaseAllowed(IPurchaseable purchaseable) {
 		return (purchaseable instanceof GunPurchaseable) && ((GunPurchaseable)purchaseable).getGun().getID().equals("Core_M9");
+	}
+	
+	@Override
+	public boolean canSaveGame() {
+		return false;
 	}
 }

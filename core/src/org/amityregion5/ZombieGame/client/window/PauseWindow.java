@@ -104,13 +104,15 @@ public class PauseWindow implements Screen {
 		boolean mouseOverSave = Gdx.input.getX() > screen.getWidth() / 2 && Gdx.input.getX() < screen.getWidth() / 2 + 200*ZombieGame.getXScalar()
 				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 100*ZombieGame.getYScalar() && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 50*ZombieGame.getYScalar();
 
+		boolean canSave = screen.getGame().canSaveGame();
+
 		//Draw save button
-		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit", (mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 180*ZombieGame.getXScalar(),
+		glyph.setText(ZombieGame.instance.mainFont, "Save and Quit", canSave ? (mouseOverSave ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE) : Color.DARK_GRAY, 180*ZombieGame.getXScalar(),
 				Align.center, false);
 		ZombieGame.instance.mainFont.draw(batch, glyph, screen.getWidth() / 2 + 10*ZombieGame.getXScalar(), screen.getHeight() / 2 + glyph.height / 2 - 75*ZombieGame.getYScalar());
 
 		//If save button pressed
-		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp) {
+		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp && canSave) {
 			//Open save window
 			screen.setCurrentWindow(new SaveWindow(screen, player, this));
 		}
@@ -118,7 +120,7 @@ public class PauseWindow implements Screen {
 		//Is the save button moused over
 		boolean mouseOverSettings = Gdx.input.getX() > screen.getWidth() / 2 - 200*ZombieGame.getXScalar() && Gdx.input.getX() < screen.getWidth() / 2 + 200*ZombieGame.getXScalar()
 				&& screen.getHeight() - Gdx.input.getY() > screen.getHeight() / 2 - 150*ZombieGame.getYScalar() && screen.getHeight() - Gdx.input.getY() < screen.getHeight() / 2 - 100*ZombieGame.getYScalar();
-
+				
 		//Draw save button
 		glyph.setText(ZombieGame.instance.mainFont, "Options", (mouseOverSettings ? new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f) : Color.WHITE), 2*180*ZombieGame.getXScalar(),
 				Align.center, false);
