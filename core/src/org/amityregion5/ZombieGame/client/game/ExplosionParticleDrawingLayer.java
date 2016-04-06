@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 
@@ -27,13 +28,12 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		ExplosionParticleModel model = (ExplosionParticleModel) p;
 		Color c = batch.getColor();
-		batch.begin();
 
 		batch.setColor(new Color(model.getColor().r, model.getColor().g, model.getColor().b, 1));
 
@@ -45,7 +45,6 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 		sprite.setBounds(model.getX() - (maxSize / val), model.getY() - (maxSize / val), maxSize / val * 2, maxSize / val * 2);
 
 		sprite.draw(batch);
-		batch.end();
 		batch.setColor(c);
 	}
 }

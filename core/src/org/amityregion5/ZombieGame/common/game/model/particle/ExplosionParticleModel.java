@@ -125,7 +125,7 @@ public class ExplosionParticleModel implements IParticle {
 	}
 
 	public Color getColor() {
-		return c;
+		return c.cpy().mul(0.9f, 0.75f, 0.0f, 0.95f).mul((float)size);
 	}
 
 	//public Light getLight() {

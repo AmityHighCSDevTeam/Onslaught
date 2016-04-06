@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * A particle drawing layer for a text particle
@@ -25,10 +26,10 @@ public class TextParticleDrawingLayer implements IDrawingLayer {
 	public TextParticleDrawingLayer() {}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) 
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) 
 	{
 		//Get the text particle
 		TextParticle model = (TextParticle) p;
@@ -41,14 +42,10 @@ public class TextParticleDrawingLayer implements IDrawingLayer {
 		//Downscale the matrix
 		batch.setProjectionMatrix(batch.getProjectionMatrix().cpy().scl(1 / downScale));
 
-		batch.begin();
-
 		//Create a glyph layout
 		GlyphLayout glyph = new GlyphLayout(ZombieGame.instance.mainFont, model.getText());
 		//Draw the text
 		ZombieGame.instance.mainFont.draw(batch, glyph, model.getX() * downScale - glyph.width / 2, model.getY() * downScale - glyph.height / 2);
-
-		batch.end();
 
 		//Reset the projection matrix
 		batch.setProjectionMatrix(shapeRenderer.getProjectionMatrix());

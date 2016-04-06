@@ -42,6 +42,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -176,50 +177,50 @@ public class InGameScreen extends GuiScreen {
 		endTileY++;
 
 		//Draw all of the tiles
-		batch.begin();
 		Color c = batch.getColor();
-		batch.setColor(1, 1, 1, 1);
-		for (int x = startTileX; x < endTileX; x++) {
-			for (int y = startTileY; y < endTileY; y++) {
-				batch.draw(tex, x * tileX, y * tileY, tileX, tileY);
+		batch.begin();{
+			batch.setColor(1, 1, 1, 1);
+			for (int x = startTileX; x < endTileX; x++) {
+				for (int y = startTileY; y < endTileY; y++) {
+					batch.draw(tex, x * tileX, y * tileY, tileX, tileY);
+				}
 			}
 		}
-		batch.end();
 		batch.setColor(c);
-
-		//Update projection matrix
+		
 		batch.setProjectionMatrix(inGameCamera.combined);
+		
+		Rectangle camRect = new Rectangle(inGameCamera.position.x - inGameCamera.viewportWidth/2, inGameCamera.position.y - inGameCamera.viewportHeight/2, inGameCamera.viewportWidth, inGameCamera.viewportHeight);
 
 		//Draw particles and entities
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getBackDrawingLayers()) {
-				s.draw(p, batch, shape);
+				s.draw(p, batch, shape, camRect);
 			}
 		}
 		for (IEntityModel<?> e : game.getEntities()) {
 			for (IDrawingLayer s : e.getDrawingLayers()) {
-				s.draw(e, batch, shape);
+				s.draw(e, batch, shape, camRect);
 			}
 		}
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getFrontDrawingLayers()) {
-				s.draw(p, batch, shape);
+				s.draw(p, batch, shape, camRect);
 			}
 		}
-		//Reset projection matrix
-		batch.setProjectionMatrix(oldBatchMatrix);
 
 		//If lighting is enabled
 		if (game.isLightingEnabled()) {
 			//Apply lighting
+			batch.end();
 			rayHandler.setCombinedMatrix(inGameCamera);
 			rayHandler.updateAndRender();
+			batch.begin();
 		}
-		
-		batch.setProjectionMatrix(inGameCamera.combined);
+
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getPostLightingDrawingLayers()) {
-				s.draw(p, batch, shape);
+				s.draw(p, batch, shape, camRect);
 			}
 		}
 		batch.setProjectionMatrix(oldBatchMatrix);
@@ -228,6 +229,7 @@ public class InGameScreen extends GuiScreen {
 		super.render(delta);
 
 		//Draw bullets
+		batch.end();
 		shape.setProjectionMatrix(inGameCamera.combined);
 		shape.begin(ShapeType.Line);
 		for (IBullet bull : new ArrayList<IBullet>(game.getActiveBullets())) {
@@ -265,15 +267,17 @@ public class InGameScreen extends GuiScreen {
 
 		//Update projection matrix
 		batch.setProjectionMatrix(inGameCamera.combined);
+		batch.begin();
 		//Draw the particle max layers
 		for (IParticle p : game.getParticles()) {
 			for (IDrawingLayer s : p.getMaxDrawingLayers()) {
-				s.draw(p, batch, shape);
+				s.draw(p, batch, shape, camRect);
 			}
 		}
+		batch.end();
 		//Reset the projection matrix
 		batch.setProjectionMatrix(oldBatchMatrix);
-		
+
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
 			shape.setProjectionMatrix(camera.combined);
@@ -283,7 +287,7 @@ public class InGameScreen extends GuiScreen {
 			shape.end();
 			shape.setProjectionMatrix(inGameCamera.combined);
 		}
-		
+
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 && player.getCurrentWeapon().getAmmo() == 0) {
 			shape.setProjectionMatrix(camera.combined);
 			shape.begin(ShapeType.Filled);
@@ -491,7 +495,7 @@ public class InGameScreen extends GuiScreen {
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
 
 		inGameCamera = new OrthographicCamera(12, 9);
-		
+
 		MusicHandler.setMusicPlaying(MusicHandler.gameMusic);
 	}
 
@@ -541,7 +545,7 @@ public class InGameScreen extends GuiScreen {
 	public void setCurrentWindow(Screen currentWindow) {
 		this.currentWindow = currentWindow;
 	}
-	
+
 	public void setSaveScore(boolean saveScore) {
 		this.saveScore = saveScore;
 	}

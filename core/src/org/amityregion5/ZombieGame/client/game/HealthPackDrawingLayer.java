@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 public class HealthPackDrawingLayer implements IDrawingLayer {
 
@@ -25,20 +26,18 @@ public class HealthPackDrawingLayer implements IDrawingLayer {
 	}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		HealthPackParticle model = (HealthPackParticle) p;
 		Color c = batch.getColor();
-		batch.begin();
 
 		sprite.setOriginCenter();
 		// sprite.setRotation((float) (-90));
 		sprite.setBounds(model.getX() - model.getSize(), model.getY() - model.getSize(), model.getSize() * 2, model.getSize() * 2);
 
 		sprite.draw(batch);
-		batch.end();
 		batch.setColor(c);
 	}
 }

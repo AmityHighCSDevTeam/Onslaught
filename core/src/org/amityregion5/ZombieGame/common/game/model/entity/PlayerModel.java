@@ -243,8 +243,8 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		
 		//Spawn a blood particle for each 5 damage taken
 		for (int i = 0; i < damageTaken; i += 5) {
-			g.addParticleToWorld(new BloodParticle(entity.getBody().getWorldCenter().x - 0.18f + g.getRandom().nextFloat() * 0.18f * 2,
-					entity.getBody().getWorldCenter().y - 0.18f + g.getRandom().nextFloat() * 0.18f * 2, g));
+			BloodParticle.addBloodToWorld(entity.getBody().getWorldCenter().x - 0.18f + g.getRandom().nextFloat() * 0.18f * 2,
+					entity.getBody().getWorldCenter().y - 0.18f + g.getRandom().nextFloat() * 0.18f * 2, g);
 		}
 		
 		//Subtract health

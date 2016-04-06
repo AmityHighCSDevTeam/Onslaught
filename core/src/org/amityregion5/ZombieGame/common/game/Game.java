@@ -374,6 +374,10 @@ public class Game implements Disposable {
 	public ArrayList<IParticle> getParticles() {
 		return particles;
 	}
+	
+	public ArrayList<IParticle> getParticlesToAdd() {
+		return particlesToAdd;
+	}
 
 	public void removeParticle(IParticle p) {
 		if (!particlesToDelete.contains(p)) {

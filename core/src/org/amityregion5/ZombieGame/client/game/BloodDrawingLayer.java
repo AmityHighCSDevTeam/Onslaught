@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 public class BloodDrawingLayer implements IDrawingLayer {
 
@@ -17,13 +18,12 @@ public class BloodDrawingLayer implements IDrawingLayer {
 	public BloodDrawingLayer() {}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		BloodParticle model = (BloodParticle) p;
 		Color c = batch.getColor();
-		batch.begin();
 
 		Sprite sprite = new Sprite(TextureRegistry.getTexturesFor(model.getTextureName()).get(0));
 
@@ -32,13 +32,15 @@ public class BloodDrawingLayer implements IDrawingLayer {
 		sprite.setAlpha(model.getOpacity());
 		sprite.setScale(model.getSize());
 		sprite.setCenter(model.getX(), model.getY());
+		
+		if (cullRect.overlaps(sprite.getBoundingRectangle())) {
+			sprite.draw(batch);
+		}
 		// sprite.setBounds(model.getX()
 		// - model.getSize(), model.getY() - model.getSize(),
 		// model.getSize() * 2,
 		// model.getSize() * 2);
 
-		sprite.draw(batch);
-		batch.end();
 		batch.setColor(c);
 	}
 }

@@ -10,6 +10,7 @@ import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * A drawing layer for a sprite
@@ -38,23 +39,22 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 	}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		IEntity e = em.getEntity();
-		batch.begin();
 		//Set rotation
+		sprite.setOriginCenter();
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
 		//Set postitioning of sprite
 		sprite.setBounds(e.getBody().getWorldCenter().x - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				e.getBody().getWorldCenter().y - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2,
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2);
-
+		
 		sprite.draw(batch);
-		batch.end();
 	}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	public String getTxtrName() {
 		return name;

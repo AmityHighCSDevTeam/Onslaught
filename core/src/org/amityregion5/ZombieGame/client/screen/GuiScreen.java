@@ -77,19 +77,25 @@ public abstract class GuiScreen implements Screen {
 				if (!disposed) {
 					mouseUp(lastMouseX, lastMouseY);
 				}
-			}
+			}	
 		}
 
-		// Start drawing
-		batch.begin();
+		boolean disableBatch = false;
+		if (!batch.isDrawing()) {
+			// Start drawing
+			batch.begin();
+			disableBatch = true;
+		}
 
 		// Call other methods to draw
 		if (!disposed) {
 			drawScreen(delta);
 		}
 
-		// Finish drawing
-		batch.end();
+		if (disableBatch) {
+			// Finish drawing
+			batch.end();
+		}
 	}
 
 	@Override
@@ -101,7 +107,7 @@ public abstract class GuiScreen implements Screen {
 		batch = new SpriteBatch(); // Create a new sprite batch
 		shape = new ShapeRenderer();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
+
 		setUpScreen();
 	}
 

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -32,7 +33,7 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 	}
 
 	@Override
-	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		//Get the weapon
 		WeaponStack weapon = player.getCurrentWeapon();
 
@@ -67,11 +68,9 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 		sprite.setCenter(playerPos.x, playerPos.y);
 
 		//Draw the sprite
-		batch.begin();
 		sprite.draw(batch);
-		batch.end();
 	}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer) {}
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 }

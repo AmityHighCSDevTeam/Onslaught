@@ -63,7 +63,6 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 			light.setActive(true); //Update Light
 			light.attachToBody(entity.getBody());
 		}
-		sprite.getSprite().setOriginCenter(); //Update sprite
 	}
 
 	@Override
