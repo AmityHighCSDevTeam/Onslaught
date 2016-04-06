@@ -3,10 +3,8 @@
  */
 package org.amityregion5.ZombieGame.common.bullet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
@@ -31,7 +29,8 @@ public class BasicBullet implements IBullet {
 	private PlayerModel		source; //The source player
 	private Color			color; //The color of the bullet
 	private float			bulletThickness; //The thickness
-	private List<HitData>	hits; //The list of hits
+	private PriorityQueue<HitData> hits; //The hits
+	//private List<HitData>	hits; //The list of hits
 
 	public BasicBullet(Game g, Vector2 start, float speed, float damage, Vector2 bullVector, PlayerModel source, Color color, float bulletThickness,
 			float range) {
@@ -46,7 +45,8 @@ public class BasicBullet implements IBullet {
 		this.range = range;
 		this.bulletThickness = bulletThickness;
 		endPoint = start.cpy().add(bullVector);
-		hits = new ArrayList<HitData>();
+		hits = new PriorityQueue<HitData>();
+		//hits = new ArrayList<HitData>();
 	}
 
 	@Override
@@ -119,11 +119,12 @@ public class BasicBullet implements IBullet {
 	@Override
 	public void finishRaycast() {
 		//Sort hits
-		Collections.sort(hits);
+		//Collections.sort(hits);
 
 		//Loop through the hits
-		for (HitData hd : hits) {
-			//Apply knockback to hit
+		while (damage > 0 && !hits.isEmpty()) {
+			HitData hd = hits.remove();
+			
 			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 
@@ -135,7 +136,6 @@ public class BasicBullet implements IBullet {
 			//Stop doing stuff if there is no more damage left
 			if (damage <= 0) {
 				endPoint = hd.hitPoint;
-				break;
 			}
 		}
 	}
