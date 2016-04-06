@@ -67,9 +67,9 @@ public class PluginLoader {
 							//Get the jar location
 							String s = (String) pluginMeta.get("jarLoc");
 							//If the jar exists
-							if (!s.isEmpty() && p.child(s + ".jar").exists()) {
+							if (!s.isEmpty() && p.child(s).exists()) {
 								//Load the Jar
-								JarLoader loader = new JarLoader(p.child(s + ".jar").file());
+								JarLoader loader = new JarLoader(p.child(s).file());
 
 								//Set all of the plugins found and created as the list of plugins in the container
 								plugin.setPlugins(loader.getIPlugins());
@@ -146,6 +146,7 @@ public class PluginLoader {
 						try {
 							loadWeapon((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
 						} catch (IOException | ParseException e) {
+							ZombieGame.error("Plugin Loader: Failed to load: " + loc);
 							e.printStackTrace();
 						}
 					}
@@ -158,6 +159,7 @@ public class PluginLoader {
 						try {
 							loadBuff((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
 						} catch (IOException | ParseException e) {
+							ZombieGame.error("Plugin Loader: Failed to load: " + loc);
 							e.printStackTrace();
 						}
 					}
