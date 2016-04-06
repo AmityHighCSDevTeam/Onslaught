@@ -84,12 +84,16 @@ public class Placeable implements IWeapon {
 			//Place the object
 			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end), end.x, end.y);
 
+			stack.setPostFire(stack.getPostFire() + data.get(stack.getLevel()).getPostFireDelay());
+
 			//Play sounds
 			for (SoundData sound : data.get(stack.getLevel()).getSounds()) {
 				if (sound.getTrigger().equals("fire")) {
 					game.playSound(sound, firing.getEntity().getBody().getWorldCenter());
 				}
 			}
+		} else {
+			stack.setPostFire(0.1);
 		}
 	}
 
@@ -144,7 +148,7 @@ public class Placeable implements IWeapon {
 	public String getID() {
 		return id;
 	}
-	
+
 	@Override
 	public String getStatus(WeaponStack stack) {
 		int wTime = stack.getWeaponTime();
