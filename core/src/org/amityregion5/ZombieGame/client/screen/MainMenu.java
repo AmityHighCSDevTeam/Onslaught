@@ -128,7 +128,7 @@ public class MainMenu extends GuiScreen {
 			titleWidth = getWidth();
 			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
 		}
-		
+
 		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
 
@@ -139,22 +139,30 @@ public class MainMenu extends GuiScreen {
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 0),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
 				"Play Game", (r)->{
-					ZombieGame.instance.setScreen(new PlayGameMenu(this));
+					if (newerVersionMode != 1) {
+						ZombieGame.instance.setScreen(new PlayGameMenu(this));
+					}
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 1),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
 				"Options", (r)->{
-					ZombieGame.instance.setScreen(new OptionMenu(this));
+					if (newerVersionMode != 1) {
+						ZombieGame.instance.setScreen(new OptionMenu(this));
+					}
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 2),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
 				"Credits", (r)->{
-					ZombieGame.instance.setScreen(new CreditsMenu(this));
+					if (newerVersionMode != 1) {
+						ZombieGame.instance.setScreen(new CreditsMenu(this));
+					}
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * ZombieGame.getXScalar(),getHeight() - titleHeight - 10 - ZombieGame.getScaledY(10 + 50 + 60 * 4),
 				getWidth() - ZombieGame.getScaledX(20),ZombieGame.getScaledY(50)),
 				"Quit", (r)->{
-					Gdx.app.exit();
+					if (newerVersionMode != 1) {
+						Gdx.app.exit();
+					}
 				}));
 	}
 
