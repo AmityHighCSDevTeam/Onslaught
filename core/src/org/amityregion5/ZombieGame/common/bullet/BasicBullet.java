@@ -122,20 +122,21 @@ public class BasicBullet implements IBullet {
 		//Collections.sort(hits);
 
 		//Loop through the hits
-		while (damage > 0 && !hits.isEmpty()) {
+		while (!hits.isEmpty()) {
 			HitData hd = hits.remove();
 			
 			hd.hit.applyLinearImpulse(VectorFactory.createVector(knockback, dir), hd.hitPoint, true);
 			Optional<IEntityModel<?>> entity = g.getEntityFromBody(hd.hit);
 
 			//Damage entity
-			if (entity.isPresent()) {
+			if (entity.isPresent() && damage > 0) {
 				damage -= entity.get().damage(damage, source, DamageTypes.BULLET);
 			}
 
 			//Stop doing stuff if there is no more damage left
 			if (damage <= 0) {
 				endPoint = hd.hitPoint;
+				break;
 			}
 		}
 	}
