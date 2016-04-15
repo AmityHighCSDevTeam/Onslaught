@@ -366,6 +366,11 @@ public class InGameScreen extends GuiScreen {
 			if (Gdx.input.isKeyJustPressed(Keys.F5)) {
 				MusicHandler.setMusicPlaying(MusicHandler.getCurrentMusicRegex(), false);
 			}
+			
+			if (Gdx.input.isKeyJustPressed(Keys.F6)) {
+				game.setAiDisabled(!game.isAIDisabled());
+			}
+
 			if (Gdx.input.isKeyPressed(Keys.G)) {
 				inGameCamera.zoom += 0.02;
 			}

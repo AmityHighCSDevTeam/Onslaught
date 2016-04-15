@@ -83,6 +83,10 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		}
 		//Decrement time until growl
 		secUntilGrowl -= delta;
+		
+		if (g.isAIDisabled()) {
+			ai = AIMode.IDLE;
+		}
 
 		//Depending on the AI Mode
 		switch (ai) {

@@ -78,6 +78,7 @@ public class Game implements Disposable {
 	protected double		timeUntilNextSpawn; //The time in seconds until the next spawn is done
 	protected int			mobsSpawned	= 0; // The number of mobs that have been spawned
 	protected boolean isLightingEnabled = true;
+	private boolean aiDisabled;
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
 		this.diff = diff; //Set difficulty
@@ -744,5 +745,13 @@ public class Game implements Disposable {
 	
 	public boolean canSaveGame() {
 		return true;
+	}
+
+	public boolean isAIDisabled() {
+		return aiDisabled;
+	}
+	
+	public void setAiDisabled(boolean aiDisabled) {
+		this.aiDisabled = aiDisabled;
 	}
 }
