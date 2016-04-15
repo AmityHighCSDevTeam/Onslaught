@@ -104,7 +104,7 @@ public class Game implements Disposable {
 
 		//5.5^(10/7) = 11.4198654
 		//Constant = 10.9198654 - 2 * waveModifier
-		moduloConstant = Math.pow(5.5, 9.0 / 7) - 0.5 - 2 * diff.getZombieWaveModifier();
+		moduloConstant = Math.pow(5.5, 8.7 / 7) - diff.getZombieWaveModifier();
 
 		//Set max hostiles
 		maxHostiles = diff.getMaxHostiles();
