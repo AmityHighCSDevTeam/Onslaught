@@ -17,47 +17,19 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	private Buff			buff;
 
 	public PlaceableWeaponData(JSONObject o) {
-		if (o.containsKey("price")) {
-			price = ((Number) o.get("price")).doubleValue();
-		}
-		if (o.containsKey("ammoPrice")) {
-			ammoPrice = ((Number) o.get("ammoPrice")).doubleValue();
-		}
-		if (o.containsKey("maxAmmo")) {
-			maxAmmo = ((Number) o.get("maxAmmo")).intValue();
-		}
-		if (o.containsKey("reloadTime")) {
-			reloadTime = ((Number) o.get("reloadTime")).doubleValue();
-		}
-		if (o.containsKey("warmup")) {
-			warmup = ((Number) o.get("warmup")).doubleValue();
-		}
-		if (o.containsKey("preFireDelay")) {
-			preFireDelay = ((Number) o.get("preFireDelay")).doubleValue();
-		}
-		if (o.containsKey("postFireDelay")) {
-			postFireDelay = ((Number) o.get("postFireDelay")).doubleValue();
-		}
-		if (o.containsKey("gameScale")) {
-			gameScale = ((Number) o.get("gameScale")).doubleValue();
-		} else {
-			gameScale = 1;
-		}
-		if (o.containsKey("gameOffX")) {
-			gameOffX = ((Number) o.get("gameOffX")).doubleValue();
-		}
-		if (o.containsKey("gameOffY")) {
-			gameOffY = ((Number) o.get("gameOffY")).doubleValue();
-		}
-		if (o.containsKey("gameOriginX")) {
-			gameOrgX = ((Number) o.get("gameOriginX")).intValue();
-		}
-		if (o.containsKey("gameOriginY")) {
-			gameOrgY = ((Number) o.get("gameOriginY")).intValue();
-		}
-		if (o.containsKey("maxRange")) {
-			maxRange = ((Number) o.get("maxRange")).doubleValue();
-		}
+		price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
+		ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
+		maxAmmo = WeaponDataUtils.getClampedInt(o, "maxAmmo", 0, Integer.MAX_VALUE, 0);
+		reloadTime = WeaponDataUtils.getClampedDouble(o, "reloadTime", 0, Double.MAX_VALUE, 0);
+		warmup = WeaponDataUtils.getClampedDouble(o, "warmup", 0, Double.MAX_VALUE, 0);
+		preFireDelay = WeaponDataUtils.getClampedDouble(o, "preFireDelay", 0, Double.MAX_VALUE, 0);
+		postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
+		gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
+		gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", 0, Double.MAX_VALUE, 0);
+		gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", 0, Double.MAX_VALUE, 0);
+		gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
+		gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
+		maxRange = WeaponDataUtils.getClampedDouble(o, "maxRange", 0, Double.MAX_VALUE, 0);
 		if (o.containsKey("object")) {
 			placingObject = ((String) o.get("object"));
 		} else {

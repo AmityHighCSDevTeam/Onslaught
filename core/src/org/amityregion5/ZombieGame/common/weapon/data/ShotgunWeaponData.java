@@ -10,13 +10,8 @@ public class ShotgunWeaponData extends WeaponData {
 
 	public ShotgunWeaponData(JSONObject o) {
 		super(o);
-		//Load these variables
-		if (o.containsKey("shots")) {
-			shots = ((Number) o.get("shots")).intValue();
-		}
-		if (o.containsKey("spread")) {
-			spread = ((Number) o.get("spread")).doubleValue();
-		}
+		shots = WeaponDataUtils.getClampedInt(o, "shots", 1, Integer.MAX_VALUE, 1);
+		spread = WeaponDataUtils.getClampedDouble(o, "spread", 0, Double.MAX_VALUE, 0);
 	}
 
 	/**

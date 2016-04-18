@@ -8,10 +8,7 @@ public class RocketData extends GrenadeData {
 
 	public RocketData(JSONObject o) {
 		super(o);
-		//Load the acceleration
-		if (o.containsKey("accel")) {
-			acceleration = ((Number) o.get("accel")).doubleValue();
-		}
+		acceleration = WeaponDataUtils.getClampedDouble(o, "accel", 0, Double.MAX_VALUE, 0);
 	}
 
 	/**
