@@ -30,19 +30,28 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 
 	public SpriteDrawingLayer(String name, Supplier<Float> sizeSupplier) {
 		this.name = name; //Set values
-		sprite = new Sprite(TextureRegistry.getTexturesFor(name).get(0));
+		sprite = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor(name).get(0));
 		this.sizeSupplier = sizeSupplier;
 	}
 
 	public Sprite getSprite() {
 		return sprite;
 	}
+	
+	/**
+	 * Warning Expensive method do not call every frame
+	 * 
+	 * @param name
+	 */
+	public void setSprite(String name) {
+		sprite = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor(name).get(0));
+	}
 
 	@Override
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
 		IEntity e = em.getEntity();
-		//Set rotation
 		sprite.setOriginCenter();
+		//Set rotation
 		sprite.setRotation((float) (Math.toDegrees(e.getBody().getAngle()) - 90));
 		//Set postitioning of sprite
 		sprite.setBounds(e.getBody().getWorldCenter().x - (sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()),
@@ -50,7 +59,9 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2,
 				(sizeSupplier == null ? e.getShape().getRadius() : sizeSupplier.get()) * 2);
 		
-		sprite.draw(batch);
+		if (cullRect.overlaps(sprite.getBoundingRectangle())) {
+			sprite.draw(batch);
+		}
 	}
 
 	@Override

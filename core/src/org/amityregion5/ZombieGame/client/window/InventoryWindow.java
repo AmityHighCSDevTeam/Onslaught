@@ -16,8 +16,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -162,11 +162,12 @@ public class InventoryWindow implements Screen {
 			WeaponStack weapon = player.getWeapons().get(i);
 
 			batch.begin();
-			Texture icon = TextureRegistry.getTexturesFor(weapon.getIconTextureName()).get(0);
+			Sprite s = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor(weapon.getIconTextureName()).get(0));
 
 			//Draw the icon
 			batch.setColor(new Color(1, 1, 1, 1));
-			batch.draw(icon, boxX, boxY, weaponBoxSize*ZombieGame.getXScalar(), weaponBoxSize*ZombieGame.getXScalar());
+			s.setBounds(boxX, boxY, weaponBoxSize*ZombieGame.getXScalar(), weaponBoxSize*ZombieGame.getXScalar());
+			s.draw(batch);
 
 			batch.end();
 

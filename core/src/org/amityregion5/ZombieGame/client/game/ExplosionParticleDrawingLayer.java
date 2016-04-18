@@ -20,7 +20,8 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 	private float maxSize = 0.15f;
 
 	public ExplosionParticleDrawingLayer() {
-		sprite = new Sprite(TextureRegistry.getTexturesFor("explosion").get(0));
+		sprite = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor("explosion").get(0));
+		//sprite = new Sprite(TextureRegistry.getTexturesFor("explosion").get(0));
 	}
 
 	public Sprite getSprite() {
@@ -44,7 +45,9 @@ public class ExplosionParticleDrawingLayer implements IDrawingLayer {
 		sprite.setAlpha(val * (float) Math.sqrt(val) * 1.5f);
 		sprite.setBounds(model.getX() - (maxSize / val), model.getY() - (maxSize / val), maxSize / val * 2, maxSize / val * 2);
 
-		sprite.draw(batch);
+		if (cullRect.overlaps(sprite.getBoundingRectangle())) {
+			sprite.draw(batch);
+		}
 		batch.setColor(c);
 	}
 }

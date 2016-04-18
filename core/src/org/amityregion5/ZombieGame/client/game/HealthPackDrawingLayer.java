@@ -18,7 +18,8 @@ public class HealthPackDrawingLayer implements IDrawingLayer {
 	private Sprite sprite;
 
 	public HealthPackDrawingLayer() {
-		sprite = new Sprite(TextureRegistry.getTexturesFor("healthPack").get(0));
+		sprite = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor("healthPack").get(0));
+		//sprite = new Sprite(TextureRegistry.getTexturesFor("healthPack").get(0));
 	}
 
 	public Sprite getSprite() {
@@ -37,7 +38,9 @@ public class HealthPackDrawingLayer implements IDrawingLayer {
 		// sprite.setRotation((float) (-90));
 		sprite.setBounds(model.getX() - model.getSize(), model.getY() - model.getSize(), model.getSize() * 2, model.getSize() * 2);
 
-		sprite.draw(batch);
+		if (cullRect.overlaps(sprite.getBoundingRectangle())) {
+			sprite.draw(batch);
+		}
 		batch.setColor(c);
 	}
 }

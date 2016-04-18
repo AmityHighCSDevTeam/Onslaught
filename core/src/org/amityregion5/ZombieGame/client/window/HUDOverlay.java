@@ -13,11 +13,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
 /**
@@ -32,10 +33,15 @@ public class HUDOverlay implements Screen {
 	private GlyphLayout		glyph		= new GlyphLayout(); //The glyph layout 
 	private SpriteBatch		batch		= new SpriteBatch(); //The sprite batch
 	private int				eachBoxSize	= 64; //The size of each hotbar box
+	private Sprite[] sprites;
+	private String[] names;
+	private Vector2 oldSize = new Vector2(0,0);
 
 	public HUDOverlay(InGameScreen screen, PlayerModel player) {
 		this.screen = screen; //Set values
 		this.player = player;
+		sprites = new Sprite[player.getHotbar().length];
+		names = new String[player.getHotbar().length];
 	}
 
 	@Override
@@ -82,12 +88,15 @@ public class HUDOverlay implements Screen {
 			//If it is not a null weapon draw an icon
 			if (!(player.getHotbar()[i].getWeapon() instanceof NullWeapon)) {
 				WeaponStack weapon = player.getHotbar()[i];
+				if (sprites[i] == null || !names[i].equals(TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0)) || !oldSize.equals(new Vector2(screen.getWidth(), screen.getHeight()))) {
+					names[i] = TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0);
+					sprites[i] = TextureRegistry.getAtlas().createSprite(names[i]);
+					sprites[i].setBounds(startX + eachBoxSize * i*ZombieGame.getAScalar(), 0, eachBoxSize*ZombieGame.getAScalar(), eachBoxSize*ZombieGame.getAScalar());
+				}
 
 				batch.begin();
-				Texture icon = TextureRegistry.getTexturesFor(weapon.getIconTextureName()).get(0);
 
-				batch.setColor(new Color(1, 1, 1, 1));
-				batch.draw(icon, startX + eachBoxSize * i*ZombieGame.getAScalar(), 0, eachBoxSize*ZombieGame.getAScalar(), eachBoxSize*ZombieGame.getAScalar());
+				sprites[i].draw(batch);
 
 				batch.end();
 			}
@@ -97,6 +106,9 @@ public class HUDOverlay implements Screen {
 			shapeRender.setColor(Color.DARK_GRAY);
 			shapeRender.rect(startX + eachBoxSize * i*ZombieGame.getAScalar(), 0, eachBoxSize*ZombieGame.getAScalar(), eachBoxSize*ZombieGame.getAScalar());
 			shapeRender.end();
+		}
+		if (!oldSize.equals(new Vector2(screen.getWidth(), screen.getHeight()))) {
+			oldSize = new Vector2(screen.getWidth(), screen.getHeight());
 		}
 
 		//Draw a box around the current selected one

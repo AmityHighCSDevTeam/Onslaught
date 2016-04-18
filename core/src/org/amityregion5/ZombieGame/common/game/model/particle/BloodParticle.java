@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
-import org.amityregion5.ZombieGame.client.game.BloodDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
+import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
@@ -16,6 +16,7 @@ public class BloodParticle implements IParticle {
 	private Game	g; //Game
 	private float	x, y, size, r; //X position, Y position, Size, and rotation
 	private String	textureName; //Texture name
+	private SpriteDrawingLayer sprite;
 
 	public BloodParticle() {}
 
@@ -51,6 +52,8 @@ public class BloodParticle implements IParticle {
 		//Random texture name
 		List<String> textureNames = TextureRegistry.getTextureNamesFor("blood/**");
 		textureName = textureNames.get(g.getRandom().nextInt(textureNames.size()));
+		
+		sprite = new SpriteDrawingLayer(textureName, this::getSize);
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class BloodParticle implements IParticle {
 
 	@Override
 	public IDrawingLayer[] getBackDrawingLayers() {
-		return new IDrawingLayer[] {BloodDrawingLayer.instance};// new IDrawingLayer[] {sprite};
+		return new IDrawingLayer[] {sprite};// new IDrawingLayer[] {sprite};
 	}
 
 	@Override

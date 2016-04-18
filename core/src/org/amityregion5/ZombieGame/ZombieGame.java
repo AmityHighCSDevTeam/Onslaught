@@ -227,7 +227,10 @@ public class ZombieGame extends Game {
 
 				// Load the missing texture
 				ZombieGame.log("Loading: Loading missing texture");
-				Gdx.app.postRunnable(() -> missingTexture = new Texture(Gdx.files.internal("images/missing.png")));
+				Gdx.app.postRunnable(() -> {
+					TextureRegistry.register("--Null Texture--", Gdx.files.internal("images/missing.png"));
+					missingTexture = new Texture(Gdx.files.internal("images/missing.png"));
+				});
 
 				// Create the font generator
 				ZombieGame.log("Loading: Loading main font");
@@ -274,6 +277,7 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void render() {
+		TextureRegistry.update();
 		Iterator<Screen> disposeScreens = toDispose.iterator();
 		
 		while (disposeScreens.hasNext()) {

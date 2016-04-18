@@ -18,8 +18,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -52,10 +52,13 @@ public class ShopWindow implements Screen {
 	private boolean				isSearchSelected	= false; //Is the search selected
 	private boolean				showCursor			= false; //Is the cursor shown
 	private float				timeUntilShowCursor	= 0; //The time until the cursor is shown
+	private Sprite upArr;
 
 	public ShopWindow(InGameScreen screen, PlayerModel player) {
 		this.screen = screen; //The screen
 		this.player = player; //The player
+		
+		upArr = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor("upgradeArrow").get(0));
 
 		//Setup the cache
 		recalculateCache();
@@ -308,9 +311,6 @@ public class ShopWindow implements Screen {
 		//The current mouse over index
 		int mouseOverIndex = -1;
 
-		//Get the arrow texture
-		Texture upgradeArrow = TextureRegistry.getTexturesFor("upgradeArrow").get(0);
-
 		//Clip screen to the area with the drawings
 		ScissorStack.pushScissors(new Rectangle(x, 100*ZombieGame.getYScalar(), w, screen.getHeight() - 251*ZombieGame.getYScalar()));
 		// Draw Weapons
@@ -345,11 +345,12 @@ public class ShopWindow implements Screen {
 			//If it has an icon
 			if (purchaseable.hasIcon()) {
 				batch.begin();
-				Texture icon = TextureRegistry.getTexturesFor(purchaseable.getIconName(player)).get(0);
+				Sprite s = TextureRegistry.getAtlas().createSprite(TextureRegistry.getTextureNamesFor(purchaseable.getIconName(player)).get(0));
 
 				//Draw the icon
 				batch.setColor(new Color(1, 1, 1, 1));
-				batch.draw(icon, boxX, boxY, purchaseableHeight*ZombieGame.getXScalar(), purchaseableHeight*ZombieGame.getXScalar());
+				s.setBounds(boxX, boxY, purchaseableHeight*ZombieGame.getXScalar(), purchaseableHeight*ZombieGame.getXScalar());
+				s.draw(batch);
 
 				batch.end();
 			}
@@ -368,7 +369,9 @@ public class ShopWindow implements Screen {
 			if (purchaseable.canPurchase(player) && player.getMoney() >= purchaseable.getPrice(player)) {
 				batch.begin();
 				//Draw the upgrade arrow
-				batch.draw(upgradeArrow, boxX + purchaseableHeight * 3 / 4*ZombieGame.getXScalar(), boxY, purchaseableHeight / 4*ZombieGame.getXScalar(), purchaseableHeight / 4*ZombieGame.getXScalar());
+				upArr.setBounds(boxX + purchaseableHeight * 3 / 4*ZombieGame.getXScalar(), boxY, purchaseableHeight / 4*ZombieGame.getXScalar(), purchaseableHeight / 4*ZombieGame.getXScalar());
+				upArr.draw(batch);
+				
 				batch.end();
 			}
 

@@ -1,17 +1,19 @@
 package org.amityregion5.ZombieGame.client.asset;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 /**
  * A registry for all textures
@@ -19,7 +21,18 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
  *
  */
 public class TextureRegistry {
-	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
+	
+	private static Set<String> registry = new HashSet<String>();
+	
+	private static PixmapPacker packer;
+	private static TextureAtlas atlas;
+	
+	static {
+		packer = new PixmapPacker(2048, 2048, Pixmap.Format.RGBA8888, 2, true);
+		atlas = packer.generateTextureAtlas(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest, true);
+	}
+	
+	//private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
 
 	/**
 	 * Try to register a texture under something under another path
@@ -29,7 +42,7 @@ public class TextureRegistry {
 	 * @return did it work
 	 */
 	public static boolean tryRegisterAs(String path, String toReplace) {
-		if (textures.containsKey(path)) { return false; }
+		if (registry.contains(path)) { return false; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
 			ZombieGame.log("Texture Registry: registering: " + path + " as: " + toReplace);
@@ -46,7 +59,7 @@ public class TextureRegistry {
 	 * @return did it work
 	 */
 	public static boolean tryRegister(String path) {
-		if (textures.containsKey(path)) { return false; }
+		if (registry.contains(path)) { return false; }
 		FileHandle handle = ZombieGame.instance.gameData.child(path);
 		if (handle.exists() && handle.extension().equals("png")) {
 			ZombieGame.log("Texture Registry: registering: " + path);
@@ -63,12 +76,8 @@ public class TextureRegistry {
 	 * @param file the file to register
 	 */
 	public static void register(String path, FileHandle file) {
-		textures.put(path, null);
-		Gdx.app.postRunnable(() -> {
-			Texture t = new Texture(file, true);
-			t.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
-			textures.put(path, t);
-		});
+		registry.add(path);
+		packer.pack(path, new Pixmap(file));
 	}
 
 	/**
@@ -77,12 +86,12 @@ public class TextureRegistry {
 	 * @param str the texture to search for
 	 * @return a list of textures that matched the string
 	 */
-	public static List<Texture> getTexturesFor(String str) {
-		List<Texture> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).map((k) -> textures.get(k))
+	/*public static List<Texture> getTexturesFor(String str) {
+		List<Texture> t = registry.stream().sequential().filter((s) -> s.matches(regexify(str))).map((k) -> textures.get(k))
 				.collect(Collectors.toList());
 		if (t == null || t.size() == 0) { return Arrays.asList(new Texture[] {ZombieGame.instance.missingTexture}); }
 		return t;
-	}
+	}*/
 
 	/**
 	 * Get the texture names that exist for a certain string
@@ -91,7 +100,7 @@ public class TextureRegistry {
 	 * @return a list of texture names that matched the string
 	 */
 	public static List<String> getTextureNamesFor(String str) {
-		List<String> t = textures.keySet().stream().sequential().filter((s) -> s.matches(regexify(str))).collect(Collectors.toList());
+		List<String> t = registry.stream().sequential().filter((s) -> s.matches(regexify(str))).collect(Collectors.toList());
 		if (t == null || t.size() == 0) { return Arrays.asList(new String[] {"--Null Texture--"}); }
 		return t;
 	}
@@ -126,10 +135,17 @@ public class TextureRegistry {
 	}
 
 	public static void dispose() {
-		for (Texture a : textures.values()) {
-			a.dispose();
-		}
-		textures.clear();
-		textures = null;
+		packer.dispose();
+		atlas.dispose();
+		registry.clear();
+	}
+	
+	public static TextureAtlas getAtlas() {
+		return atlas;
+	}
+
+	public static void update() {
+		packer.updatePageTextures(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest, true);
+		packer.updateTextureAtlas(atlas, TextureFilter.MipMapLinearNearest, TextureFilter.Nearest, true);
 	}
 }

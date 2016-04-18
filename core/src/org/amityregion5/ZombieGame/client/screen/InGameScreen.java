@@ -35,9 +35,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -68,6 +68,7 @@ public class InGameScreen extends GuiScreen {
 	private boolean				doDebugRender	= false; //Should it debug render
 	private OrthographicCamera		inGameCamera; //The camera
 	private boolean saveScore = true;
+	private Sprite background;
 
 	// Font
 	private BitmapFont smallOutlineFont;
@@ -112,6 +113,8 @@ public class InGameScreen extends GuiScreen {
 		if (isNewGame) {
 			game.addEntityToWorld(player, 0, 0);
 		}
+		
+		background = TextureRegistry.getAtlas().createSprite("backgroundTile");
 
 		//Add an HUD to the overlays
 		overlays.add(new HUDOverlay(this, player));
@@ -139,8 +142,6 @@ public class InGameScreen extends GuiScreen {
 		//Get the old batch matrix
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 
-		//Get the background tile texture
-		Texture tex = TextureRegistry.getTexturesFor("backgroundTile").get(0);
 		float wM = 10.24f; //The size of the texture in meters
 		float hM = 10.24f;
 
@@ -182,7 +183,8 @@ public class InGameScreen extends GuiScreen {
 			batch.setColor(1, 1, 1, 1);
 			for (int x = startTileX; x < endTileX; x++) {
 				for (int y = startTileY; y < endTileY; y++) {
-					batch.draw(tex, x * tileX, y * tileY, tileX, tileY);
+					background.setBounds(x * tileX, y * tileY, tileX, tileY);
+					background.draw(batch);
 				}
 			}
 		}

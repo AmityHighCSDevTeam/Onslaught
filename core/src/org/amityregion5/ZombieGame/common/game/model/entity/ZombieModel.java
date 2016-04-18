@@ -368,7 +368,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param txtr the texture name
 	 */
 	public void setTexture(String txtr) {
-		zSprite.getSprite().setTexture(TextureRegistry.getTexturesFor(txtr).get(0));
+		zSprite.setSprite(TextureRegistry.getTextureNamesFor(txtr).get(0));
 	}
 
 	@SuppressWarnings("unchecked")

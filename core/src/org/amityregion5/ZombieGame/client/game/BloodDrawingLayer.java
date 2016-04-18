@@ -1,19 +1,15 @@
 package org.amityregion5.ZombieGame.client.game;
 
-import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
-import org.amityregion5.ZombieGame.common.game.model.particle.BloodParticle;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BloodDrawingLayer implements IDrawingLayer {
 
-	public static final BloodDrawingLayer instance = new BloodDrawingLayer();
+	public static final BloodDrawingLayer instance = null;// = new BloodDrawingLayer();
 
 	public BloodDrawingLayer() {}
 
@@ -21,9 +17,11 @@ public class BloodDrawingLayer implements IDrawingLayer {
 	public void draw(IEntityModel<?> em, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {/*
 		BloodParticle model = (BloodParticle) p;
 		Color c = batch.getColor();
+		
+		String txtr = TextureRegistry.getTextureNamesFor(model.getTextureName()).get(0);
 
 		Sprite sprite = new Sprite(TextureRegistry.getTexturesFor(model.getTextureName()).get(0));
 
@@ -41,6 +39,6 @@ public class BloodDrawingLayer implements IDrawingLayer {
 		// model.getSize() * 2,
 		// model.getSize() * 2);
 
-		batch.setColor(c);
+		batch.setColor(c);*/
 	}
 }

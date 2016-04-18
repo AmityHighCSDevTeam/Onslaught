@@ -8,7 +8,6 @@ import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,6 +22,8 @@ import com.badlogic.gdx.math.Vector2;
 public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 
 	private PlayerModel player;
+	private Sprite sprite;
+	private String textureName = "--null--";
 
 	public PlayerExtrasDrawingLayer(PlayerModel player) {
 		this.player = player;
@@ -38,15 +39,13 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 		WeaponStack weapon = player.getCurrentWeapon();
 
 		if (weapon == null || weapon.getWeapon() instanceof NullWeapon) { return; }
-
-		//Get the texture
-		Texture texture = TextureRegistry.getTexturesFor(weapon.getGameTextureName()).get(0);
-
-		//Get the sprite
-		Sprite sprite = new Sprite(texture);
-
-		//Set the origin
-		sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(), weapon.getWeaponDataBase().getGameTextureOriginY());
+		
+		if (sprite == null || !textureName.equals(TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0))) {
+			textureName = TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0);
+			sprite = TextureRegistry.getAtlas().createSprite(textureName);
+			//Set the origin
+			sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(), weapon.getWeaponDataBase().getGameTextureOriginY());
+		}
 
 		//Player position
 		Vector2 playerPos = player.getEntity().getBody().getWorldCenter();
