@@ -7,6 +7,8 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class TextParticle implements IParticle {
 	private float	x, y, size; //X, Y, Size
 	private String	text; //Text
@@ -80,5 +82,15 @@ public class TextParticle implements IParticle {
 	@Override
 	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		return null;
+	}
+	
+	@Override
+	public Rectangle getRect() {
+		return null;
+	}
+	
+	@Override
+	public float getRotation() {
+		return 0;
 	}
 }

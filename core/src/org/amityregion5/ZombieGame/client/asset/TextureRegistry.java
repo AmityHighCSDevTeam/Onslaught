@@ -28,7 +28,7 @@ public class TextureRegistry {
 	private static TextureAtlas atlas;
 	
 	static {
-		packer = new PixmapPacker(2048, 2048, Pixmap.Format.RGBA8888, 2, true);
+		packer = new PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 0, false);
 		atlas = packer.generateTextureAtlas(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest, true);
 	}
 	

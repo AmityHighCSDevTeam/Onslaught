@@ -5,6 +5,8 @@ import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.json.simple.JSONObject;
 
+import com.badlogic.gdx.math.Rectangle;
+
 /**
  * The interface for the particle
  * 
@@ -64,4 +66,8 @@ public interface IParticle {
 	 * @return the particle
 	 */
 	IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer);
+	
+	Rectangle getRect();
+	
+	float getRotation();
 }

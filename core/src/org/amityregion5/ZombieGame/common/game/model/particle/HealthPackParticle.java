@@ -10,6 +10,8 @@ import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.json.simple.JSONObject;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class HealthPackParticle implements IParticle {
 	private Game				g; //Game
 	//Time between checks if player is close enough
@@ -106,5 +108,15 @@ public class HealthPackParticle implements IParticle {
 	@Override
 	public IDrawingLayer[] getFrontDrawingLayers() {
 		return new IDrawingLayer[] {};
+	}
+	
+	@Override
+	public Rectangle getRect() {
+		return new Rectangle(x,y,size, size);
+	}
+	
+	@Override
+	public float getRotation() {
+		return 0;
 	}
 }

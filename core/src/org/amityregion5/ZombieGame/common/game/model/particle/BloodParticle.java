@@ -12,6 +12,8 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.json.simple.JSONObject;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class BloodParticle implements IParticle {
 	private Game	g; //Game
 	private float	x, y, size, r; //X position, Y position, Size, and rotation
@@ -89,7 +91,7 @@ public class BloodParticle implements IParticle {
 	}
 
 	public float getSize() {
-		return (float) Math.sqrt(size/Math.PI)/100;
+		return (float) Math.sqrt(size/Math.PI)/10;
 	}
 
 	public String getTextureName() {
@@ -135,5 +137,15 @@ public class BloodParticle implements IParticle {
 		g.addParticleToWorld(model);
 
 		return model;
+	}
+	
+	@Override
+	public Rectangle getRect() {
+		return new Rectangle(x, y, size, size);
+	}
+	
+	@Override
+	public float getRotation() {
+		return r;
 	}
 }

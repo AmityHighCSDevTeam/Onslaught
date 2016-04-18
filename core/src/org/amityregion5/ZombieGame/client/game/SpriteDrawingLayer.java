@@ -65,7 +65,20 @@ public class SpriteDrawingLayer implements IDrawingLayer {
 	}
 
 	@Override
-	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {}
+	public void draw(IParticle p, SpriteBatch batch, ShapeRenderer shapeRenderer, Rectangle cullRect) {
+		sprite.setOriginCenter();
+		//Set rotation
+		sprite.setRotation((float) (Math.toDegrees(p.getRotation()) - 90));
+		//Set postitioning of sprite
+		sprite.setBounds(p.getRect().x - (sizeSupplier == null ? p.getRect().width : sizeSupplier.get()),
+				p.getRect().y - (sizeSupplier == null ? p.getRect().height : sizeSupplier.get()),
+				(sizeSupplier == null ? p.getRect().width : sizeSupplier.get()) * 2,
+				(sizeSupplier == null ? p.getRect().height : sizeSupplier.get()) * 2);
+		
+		if (cullRect.overlaps(sprite.getBoundingRectangle())) {
+			sprite.draw(batch);
+		}
+	}
 
 	public String getTxtrName() {
 		return name;

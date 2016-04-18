@@ -9,6 +9,7 @@ import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import box2dLight.Light;
@@ -196,5 +197,10 @@ public class ExplosionParticleModel implements IParticle {
 	@Override
 	public IDrawingLayer[] getFrontDrawingLayers() {
 		return new IDrawingLayer[] {};
+	}
+	
+	@Override
+	public Rectangle getRect() {
+		return new Rectangle((float)(getX() - (0.15 / Math.sqrt(getSize()))), (float)(getY() - (0.15 / Math.sqrt(getSize()))), (float)(0.15 / Math.sqrt(getSize()) * 2), (float)(0.15 / Math.sqrt(getSize()) * 2));
 	}
 }
