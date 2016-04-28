@@ -32,8 +32,8 @@ public class GrenadeData implements IWeaponDataBase {
 		postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
 		size = WeaponDataUtils.getClampedDouble(o, "size", 0, Double.MAX_VALUE, 0);
 		gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
-		gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", 0, Double.MAX_VALUE, 0);
-		gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", 0, Double.MAX_VALUE, 0);
+		gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
+		gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
 		gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
 		gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
 		if (o.containsKey("iconTxtr")) {

@@ -88,7 +88,7 @@ public class HUDOverlay implements Screen {
 			//If it is not a null weapon draw an icon
 			if (!(player.getHotbar()[i].getWeapon() instanceof NullWeapon)) {
 				WeaponStack weapon = player.getHotbar()[i];
-				if (sprites[i] == null || !names[i].equals(TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0)) || !oldSize.equals(new Vector2(screen.getWidth(), screen.getHeight()))) {
+				if (sprites[i] == null || !names[i].equals(TextureRegistry.getTextureNamesFor(weapon.getIconTextureName()).get(0)) || !oldSize.equals(new Vector2(screen.getWidth(), screen.getHeight()))) {
 					names[i] = TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0);
 					sprites[i] = TextureRegistry.getAtlas().createSprite(names[i]);
 					sprites[i].setBounds(startX + eachBoxSize * i*ZombieGame.getAScalar(), 0, eachBoxSize*ZombieGame.getAScalar(), eachBoxSize*ZombieGame.getAScalar());

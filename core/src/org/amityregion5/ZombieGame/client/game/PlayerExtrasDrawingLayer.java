@@ -43,9 +43,10 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 		if (sprite == null || !textureName.equals(TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0))) {
 			textureName = TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0);
 			sprite = TextureRegistry.getAtlas().createSprite(textureName);
-			//Set the origin
-			sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(), weapon.getWeaponDataBase().getGameTextureOriginY());
 		}
+		
+		//Set the origin
+		sprite.setOrigin(weapon.getWeaponDataBase().getGameTextureOriginX(), weapon.getWeaponDataBase().getGameTextureOriginY());
 
 		//Player position
 		Vector2 playerPos = player.getEntity().getBody().getWorldCenter();
@@ -54,17 +55,17 @@ public class PlayerExtrasDrawingLayer implements IDrawingLayer {
 		double rotation = player.getEntity().getBody().getAngle();
 
 		//Move the position to the correctposition
-		playerPos = playerPos.add(VectorFactory.createVector(0.15f + (float) weapon.getWeaponDataBase().getGameTextureOffsetY(), (float) (rotation)));
+		playerPos = playerPos.add(VectorFactory.createVector(0.15f+(float) weapon.getWeaponDataBase().getGameTextureOffsetY(), (float) (rotation)));
 		playerPos = playerPos
 				.add(VectorFactory.createVector((float) weapon.getWeaponDataBase().getGameTextureOffsetX(), (float) (rotation - Math.toRadians(90))));
-
+		
 		//Set the rotation
 		sprite.setRotation((float) (Math.toDegrees(rotation) - 90));
 
 		//Set the scale
 		sprite.setScale((float) weapon.getWeaponDataBase().getGameTextureScale());
-		//Set the center
-		sprite.setCenter(playerPos.x, playerPos.y);
+		
+		sprite.setPosition(playerPos.x - sprite.getOriginX(),playerPos.y - sprite.getOriginY());
 
 		//Draw the sprite
 		sprite.draw(batch);
