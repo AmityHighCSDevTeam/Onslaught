@@ -1,99 +1,99 @@
 {
-  "name": "AR-15",
-  "desc": "A rifle so basic it's bitching about hair styles.",
-  "id": "Core_AR15",
+  "name": "M134",
+  "desc": "Makes lead goop from zombies",
+  "id": "Core_M134",
   "className": "BasicGun",
   "weapon": [
     {
-      "price": 1000,
-      "ammoPrice": 0.75,
-      "damage": 8,
-      "knockback": 0.005,
-      "accuracy": 1.5,
-      "maxAmmo": 20,
-      "reloadTime": 2,
-      "preFireDelay": 0,
-      "postFireDelay": 0.2,
-      "bulletColor": "ffff00ff",
-      "bulletThickness": 1.5,
-      "isAuto": false,
-      "iconTxtr": "Core/Weapons/AR15/AR15.png",
-      "gameTxtr": "Core/Weapons/AR15/0G.png",
-      "gameScale": 0.01,
-      "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "sounds": [
-        {
-          "path": "Core/Audio/reload.wav",
-          "trigger": "reload",
-          "pitch": 1,
-          "maxVolume": 0.05
-        },
-        {
-          "path": "Core/Audio/pistolShot.wav",
-          "trigger": "fire",
-          "pitch": 1,
-          "maxVolume": 0.3
-        }
-      ]
-    },
-    {
-      "price": 2000,
-      "ammoPrice": 1.5,
-      "damage": 14,
-      "knockback": 0.005,
-      "accuracy": 1,
-      "maxAmmo": 40,
-      "reloadTime": 1.5,
-      "preFireDelay": 0,
-      "postFireDelay": 0.15,
-      "bulletColor": "ffff00ff",
-      "bulletThickness": 1.5,
-      "isAuto": false,
-      "iconTxtr": "Core/Weapons/AR15/AR15.png",
-      "gameTxtr": "Core/Weapons/AR15/1G.png",
-      "gameScale": 0.01,
-      "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
-      "sounds": [
-        {
-          "path": "Core/Audio/reload.wav",
-          "trigger": "reload",
-          "pitch": 1,
-          "maxVolume": 0.05
-        },
-        {
-          "path": "Core/Audio/pistolShot.wav",
-          "trigger": "fire",
-          "pitch": 1,
-          "maxVolume": 0.3
-        }
-      ]
-    },
-    {
-      "price": 4000,
-      "ammoPrice": 2,
-      "damage": 18,
-      "knockback": 0.005,
-      "accuracy": 0.8,
+      "price": 35000,
+      "ammoPrice": 0.5,
+      "damage": 3,
+      "knockback": 0.0005,
+      "accuracy": 20,
       "maxAmmo": 100,
-      "reloadTime": 1.5,
+      "reloadTime": 0,
       "preFireDelay": 0,
-      "postFireDelay": 0.15,
+      "postFireDelay": 0.01,
       "bulletColor": "ffff00ff",
-      "bulletThickness": 1.5,
-      "isAuto": false,
-      "iconTxtr": "Core/Weapons/AR15/AR15.png",
-      "gameTxtr": "Core/Weapons/AR15/1G.png",
+      "bulletThickness": 1,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/M134/M134.png",
+      "gameTxtr": "Core/Weapons/M134/0G.png",
       "gameScale": 0.01,
       "gameOffX": 0.05,
       "gameOffY": 0,
-      "gameOriginX": 32,
-      "gameOriginY": 32,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 50000,
+      "ammoPrice": 0.5,
+      "damage": 4.75,
+      "knockback": 0.0025,
+      "accuracy": 15,
+      "maxAmmo": 100,
+      "reloadTime": 0,
+      "preFireDelay": 0,
+      "postFireDelay": 0.005,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/M134/M134.png",
+      "gameTxtr": "Core/Weapons/M134/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/pistolShot.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 60000,
+      "ammoPrice": 0.25,
+      "damage": 6.5,
+      "knockback": 0.005,
+      "accuracy": 12.5,
+      "maxAmmo": 100,
+      "reloadTime": 0,
+      "preFireDelay": 0,
+      "postFireDelay": 0.0025,
+      "bulletColor": "ffff00ff",
+      "bulletThickness": 1,
+      "isAuto": true,
+      "iconTxtr": "Core/Weapons/M134/M134.png",
+      "gameTxtr": "Core/Weapons/M134/0G.png",
+      "gameScale": 0.01,
+      "gameOffX": 0.05,
+      "gameOffY": 0,
+      "gameOriginX": 1,
+      "gameOriginY": 1,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",

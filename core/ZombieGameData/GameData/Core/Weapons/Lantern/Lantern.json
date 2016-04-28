@@ -1,6 +1,6 @@
 {
   "name": "Lantern",
-  "desc": "A lantern to light the way",
+  "desc": "Makes light using all-organic non GMO programming.",
   "className": "Placeable",
   "weapon": [
     {

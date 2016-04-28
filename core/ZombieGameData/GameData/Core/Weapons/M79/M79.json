@@ -1,41 +1,106 @@
 {
   "name": "M79",
   "desc": "Bloop Tube",
+  "id": "Core_M79",
   "className": "Grenade",
+  "tags": [
+    "Launcher"
+    "Gernade"
+    "Grenade"
+  ],
   "weapon": [
     {
       "price": 750,
-      "ammoPrice": 10,
-      "strength": 25,
-      "accuracy": 8,
-      "fuseTime": 5,
+      "ammoPrice": 5,
+      "strength": 75,
+      "accuracy": 10,
+      "fuseTime": 3,
       "throwSpeed": 0.8,
-      "maxAmmo": 10,
+      "maxAmmo": 1,
       "size": 0.05,
-      "reloadTime": 1,
+      "reloadTime": 1.75,
       "preFireDelay": 0,
-      "postFireDelay": 0.2,
-      "iconTxtr": "Core/Weapons/Grenade_Test/0I.png",
-      "gameTxtr": "Core/Weapons/Grenade_Test/0G.png",
-      "fieldTxtr": "Core/Weapons/Grenade_Test/0F.png",
+      "postFireDelay": 1.5,
+      "iconTxtr": "Core/Weapons/M79/0I.png",
+      "gameTxtr": "Core/Weapons/M79/0G.png",
+      "fieldTxtr": "Core/Weapons/M79/0F.png",
       "isAuto": false
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/GrenadeLauncher.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
     },
     {
-      "price": 10,
-      "ammoPrice": 10,
-      "strength": 100,
-      "accuracy": 0,
-      "fuseTime": 2,
-      "throwSpeed": 0.5,
-      "maxAmmo": 10,
+      "price": 1500,
+      "ammoPrice": 7.5,
+      "strength": 120,
+      "accuracy": 6.9,
+      "fuseTime": 3,
+      "throwSpeed": 1,
+      "maxAmmo": 1,
       "size": 0.1,
+      "reloadTime": 1.25,
+      "preFireDelay": 0,
+      "postFireDelay": 1,
+      "iconTxtr": "Core/Weapons/M79/1I.png",
+      "gameTxtr": "Core/Weapons/M79/1G.png",
+      "fieldTxtr": "Core/Weapons/M79/1F.png",
+      "isAuto": false
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/GrenadeLauncher.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
+    {
+      "price": 2500,
+      "ammoPrice": 9,
+      "strength": 200,
+      "accuracy": 5,
+      "fuseTime": 3,
+      "throwSpeed": 1.4,
+      "maxAmmo": 1,
+      "size": 0.2,
       "reloadTime": 1,
       "preFireDelay": 0,
-      "postFireDelay": 0.2,
-      "iconTxtr": "Core/Weapons/Grenade_Test/1I.png",
-      "gameTxtr": "Core/Weapons/Grenade_Test/1G.png",
-      "fieldTxtr": "Core/Weapons/Grenade_Test/1F.png",
+      "postFireDelay": 0.75,
+      "iconTxtr": "Core/Weapons/M79/0I.png",
+      "gameTxtr": "Core/Weapons/M79/0G.png",
+      "fieldTxtr": "Core/Weapons/M79/0F.png",
       "isAuto": false
-    }
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/GrenadeLauncher.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        }
+      ]
+    },
   ]
 }
