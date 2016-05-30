@@ -21,7 +21,7 @@
       "reloadTime": 1.75,
       "preFireDelay": 0,
       "postFireDelay": 1.5,
-      "iconTxtr": "Core/Weapons/M79/0I.png",
+      "iconTxtr": "Core/Weapons/M79/M79.png",
       "gameTxtr": "Core/Weapons/M79/0G.png",
       "fieldTxtr": "Core/Weapons/M79/0F.png",
       "isAuto": false
@@ -52,9 +52,9 @@
       "reloadTime": 1.25,
       "preFireDelay": 0,
       "postFireDelay": 1,
-      "iconTxtr": "Core/Weapons/M79/1I.png",
-      "gameTxtr": "Core/Weapons/M79/1G.png",
-      "fieldTxtr": "Core/Weapons/M79/1F.png",
+      "iconTxtr": "Core/Weapons/M79/M79.png",
+      "gameTxtr": "Core/Weapons/M79/0G.png",
+      "fieldTxtr": "Core/Weapons/M79/0F.png",
       "isAuto": false
       "sounds": [
         {
@@ -83,7 +83,7 @@
       "reloadTime": 1,
       "preFireDelay": 0,
       "postFireDelay": 0.75,
-      "iconTxtr": "Core/Weapons/M79/0I.png",
+      "iconTxtr": "Core/Weapons/M79/M79.png",
       "gameTxtr": "Core/Weapons/M79/0G.png",
       "fieldTxtr": "Core/Weapons/M79/0F.png",
       "isAuto": false
