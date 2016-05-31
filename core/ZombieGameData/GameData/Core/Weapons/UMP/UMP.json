@@ -18,12 +18,12 @@
       "bulletThickness": 1,
       "isAuto": true,
       "iconTxtr": "Core/Weapons/UMP/UMP.png",
-      "gameTxtr": "Core/Weapons/UMP/0G.png",
-      "gameScale": 0.01,
+      "gameTxtr": "Core/Weapons/UMP/UMP_Field.png",
+      "gameScale": 0.0025,
       "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 1,
-      "gameOriginY": 1,
+      "gameOffY": 0.03,
+      "gameOriginX": 64,
+      "gameOriginY": 64,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",

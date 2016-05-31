@@ -18,14 +18,14 @@
       "preFireDelay": 0.2,
       "postFireDelay": 0,
       "iconTxtr": "Core/Weapons/RPG-7/RPG-7.png",
-      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_GAME.png",
-      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_FIELD.png",
+      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_Field.png",
+      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_Proj.png",
       "isAuto": false,
-      "gameScale": 0.1,
+      "gameScale": 0.004,
       "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 1,
-      "gameOriginY": 1,
+      "gameOffY": 0.03,
+      "gameOriginX": 64,
+      "gameOriginY": 64,
       "buff": {
         "mult": {
           "speed": 0.75
@@ -46,14 +46,14 @@
       "preFireDelay": 0.15,
       "postFireDelay": 0,
       "iconTxtr": "Core/Weapons/RPG-7/RPG-7.png",
-      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_GAME.png",
-      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_FIELD.png",
+      "gameTxtr": "Core/Weapons/RPG-7/RPG-7_Field.png",
+      "fieldTxtr": "Core/Weapons/RPG-7/RPG-7_Proj.png",
       "isAuto": false,
-      "gameScale": 0.1,
+      "gameScale": 0.004,
       "gameOffX": 0.05,
-      "gameOffY": 0,
-      "gameOriginX": 1,
-      "gameOriginY": 1,
+      "gameOffY": 0.03,
+      "gameOriginX": 64,
+      "gameOriginY": 64,
       "buff": {
         "mult": {
           "speed": 0.8
