@@ -26,7 +26,7 @@ public final class NullWeapon implements IWeapon {
 	}
 
 	@Override
-	public boolean loadWeapon(JSONObject json) {
+	public boolean loadWeapon(JSONObject json, String pathName) {
 		return false;
 	}
 
@@ -75,5 +75,10 @@ public final class NullWeapon implements IWeapon {
 	@Override
 	public String getStatus(WeaponStack stack) {
 		return "NO WEAPON";
+	}
+
+	@Override
+	public String getPathName() {
+		return "";
 	}
 }

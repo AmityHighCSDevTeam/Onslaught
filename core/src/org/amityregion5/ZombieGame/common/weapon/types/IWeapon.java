@@ -26,7 +26,9 @@ public interface IWeapon {
 
 	public List<String> getTags();
 
-	public boolean loadWeapon(JSONObject json);
+	public boolean loadWeapon(JSONObject json, String pathName);
+	
+	public String getPathName();
 
 	public IWeaponDataBase getWeaponData(int level);
 

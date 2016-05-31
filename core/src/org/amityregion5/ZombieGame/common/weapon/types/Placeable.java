@@ -28,6 +28,7 @@ public class Placeable implements IWeapon {
 	protected String name; //The name of the rocket
 	protected String description; //The description
 	protected String id; //The unique ID
+	protected String pathName;
 	protected List<String>					tags; //The tags it has
 	protected Array<PlaceableWeaponData>	data; //The placeable data
 
@@ -122,10 +123,18 @@ public class Placeable implements IWeapon {
 		return map;
 	}
 
+
 	@Override
-	public boolean loadWeapon(JSONObject json) {
+	public boolean loadWeapon(JSONObject json, String pathName) {
 		//Call Utility Method
+		this.pathName = pathName;
 		return WeaponUtils.loadWeapon(json, getClass(), this::loadWeaponData, (nme, desc, i, tg)->{name = nme; description = desc; id = i; tags = tg;});
+
+	}
+	
+	@Override
+	public String getPathName() {
+		return pathName;
 	}
 
 	protected boolean loadWeaponData(JSONArray arr) {

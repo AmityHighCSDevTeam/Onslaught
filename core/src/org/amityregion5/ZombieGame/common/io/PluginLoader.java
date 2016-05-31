@@ -268,7 +268,7 @@ public class PluginLoader {
 				IWeapon weapon = matchedClass.newInstance();
 
 				//Load it from JSON
-				if (weapon.loadWeapon(o)) {
+				if (weapon.loadWeapon(o, pathName)) {
 					//If successful
 					ZombieGame.debug("Plugin Loader: Succefully loaded weapon: " + weapon.getName());
 					//Add it to list of weapons in plugin

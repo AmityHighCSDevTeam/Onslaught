@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.Array;
 public class Grenade implements IWeapon {
 
 	// All the variables!
-	protected String				name, description, id;
+	protected String				name, description, id, pathName;
 	protected List<String>			tags;
 	protected Array<GrenadeData>	data;
 
@@ -149,10 +149,18 @@ public class Grenade implements IWeapon {
 	}
 
 	@Override
-	public boolean loadWeapon(JSONObject json) {
+	public boolean loadWeapon(JSONObject json, String pathName) {
 		//Call Utility Method
+		this.pathName = pathName;
 		return WeaponUtils.loadWeapon(json, getClass(), this::loadWeaponData, (nme, desc, i, tg)->{name = nme; description = desc; id = i; tags = tg;});
+
 	}
+	
+	@Override
+	public String getPathName() {
+		return pathName;
+	}
+	
 
 	protected boolean loadWeaponData(JSONArray arr) {
 		data = new Array<GrenadeData>();

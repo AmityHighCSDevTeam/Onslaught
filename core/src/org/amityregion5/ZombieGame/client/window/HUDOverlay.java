@@ -89,8 +89,11 @@ public class HUDOverlay implements Screen {
 			if (!(player.getHotbar()[i].getWeapon() instanceof NullWeapon)) {
 				WeaponStack weapon = player.getHotbar()[i];
 				if (sprites[i] == null || !names[i].equals(TextureRegistry.getTextureNamesFor(weapon.getIconTextureName()).get(0)) || !oldSize.equals(new Vector2(screen.getWidth(), screen.getHeight()))) {
-					names[i] = TextureRegistry.getTextureNamesFor(weapon.getGameTextureName()).get(0);
+					names[i] = TextureRegistry.getTextureNamesFor(weapon.getIconTextureName()).get(0);
 					sprites[i] = TextureRegistry.getAtlas().createSprite(names[i]);
+					if (sprites[i] == null) {
+						continue;
+					}
 					sprites[i].setBounds(startX + eachBoxSize * i*ZombieGame.getAScalar(), 0, eachBoxSize*ZombieGame.getAScalar(), eachBoxSize*ZombieGame.getAScalar());
 				}
 
@@ -122,6 +125,7 @@ public class HUDOverlay implements Screen {
 		//Update projection matrix
 		shapeRender.setProjectionMatrix(batch.getProjectionMatrix());
 
+		Gdx.gl.glEnable(GL20.GL_BLEND);
 		shapeRender.begin(ShapeType.Filled);
 
 		//Draw the box
