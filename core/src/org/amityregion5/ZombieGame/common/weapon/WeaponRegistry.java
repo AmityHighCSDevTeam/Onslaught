@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.common.weapon;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import org.json.simple.JSONObject;
@@ -32,6 +33,7 @@ public class WeaponRegistry {
 	}
 	
 	public void refreshWeapons() {
+		ZombieGame.log("Refreshing Weapons");
 		JSONParser parser = new JSONParser();
 		pluginManager.getActivatedWeapons().forEach((w)->{
 			FileHandle fh = Gdx.files.absolute(w.getPathName());
@@ -42,5 +44,6 @@ public class WeaponRegistry {
 				e.printStackTrace();
 			}
 		});
+		ZombieGame.log("Weapons Refreshed");
 	}
 }
