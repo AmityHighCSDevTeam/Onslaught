@@ -107,10 +107,11 @@ public class CorePlugin implements IPlugin {
 		if (ZombieGame.instance.isCheatModeAllowed) {
 			GameRegistry.difficulties.add(new BasicDifficulty("DEBUG", "Debug", 0f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
 		}
-		GameRegistry.difficulties.add(new BasicDifficulty("EASY", "Easy", 0.5f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
-		GameRegistry.difficulties.add(new BasicDifficulty("MEDIUM", "Medium", 1f, 1f, 0.5f, 1.5f, 1.5f, 0.0075f, 750, 100));
-		GameRegistry.difficulties.add(new BasicDifficulty("HARD", "Hard", 1.5f, 1.5f, 0.75f, 1.0f, 1.0f, 0.005f, 500, 150));
-		GameRegistry.difficulties.add(new BasicDifficulty("INSANE", "Insane", 2f, 2f, 1f, 0.5f, 0.5f, 0.0025f, 250, 200));
+		//																		overall, wave, health, money, dmg, hlth, start, hostiles
+		GameRegistry.difficulties.add(new BasicDifficulty("EASY", 	"Easy", 	0.5f, 	0.5f, 	0.25f, 	2f, 	2f, 	0.01, 	1000, 	50));
+		GameRegistry.difficulties.add(new BasicDifficulty("MEDIUM", "Medium",	1f, 	1f, 	0.5f, 	1.5f, 	1.5f, 	75e-4,	750, 	100));
+		GameRegistry.difficulties.add(new BasicDifficulty("HARD", 	"Hard", 	1.5f, 	1.5f, 	0.75f, 	1.0f, 	1.0f, 	0.005, 	500, 	150));
+		GameRegistry.difficulties.add(new BasicDifficulty("INSANE", "Insane", 	2f, 	2f, 	1f, 	0.6f, 	0.5f, 	25e-4,	250, 	200));
 	}
 
 	@Override
