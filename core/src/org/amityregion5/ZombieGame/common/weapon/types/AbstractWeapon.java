@@ -90,10 +90,12 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 				(float) data.get(stack.getLevel()).getDamage(), bullVector, firing, data.get(stack.getLevel()).getBulletColor(),
 				data.get(stack.getLevel()).getBulletThickness(), 200f);
 		bull.setDir((float) dir);
-
-		game.getActiveBullets().add(bull);
-		game.getWorld().rayCast(bull, firingPos, bullVector);
-		bull.finishRaycast();
+		
+		game.runAfterNextTick(()->{
+			game.getActiveBullets().add(bull);
+			game.getWorld().rayCast(bull, firingPos, bullVector);
+			bull.finishRaycast();
+		});
 
 		stack.setPostFire(stack.getPostFire() + data.get(stack.getLevel()).getPostFireDelay());
 

@@ -64,11 +64,11 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 			//Set its direction
 			bull.setDir((float) newDir);
 
-			//Add it to the game
-			game.getActiveBullets().add(bull);
-			//Raycast the bullet
-			game.getWorld().rayCast(bull, firingPos, bullVector);
-			bull.finishRaycast();
+			game.runAfterNextTick(()->{
+				game.getActiveBullets().add(bull);
+				game.getWorld().rayCast(bull, firingPos, bullVector);
+				bull.finishRaycast();
+			});
 		}
 
 		//Increase cooldown

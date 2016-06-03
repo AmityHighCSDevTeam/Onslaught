@@ -79,6 +79,8 @@ public class Game implements Disposable {
 	protected int			mobsSpawned	= 0; // The number of mobs that have been spawned
 	protected boolean isLightingEnabled = true;
 	private boolean aiDisabled;
+	
+	private ArrayList<Runnable> runAfterNextTick = new ArrayList<Runnable>();
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
 		this.diff = diff; //Set difficulty
@@ -181,6 +183,16 @@ public class Game implements Disposable {
 						while (i.hasNext()) {
 							IParticle p = i.next();
 							particles.add(p);
+							i.remove();
+						}
+					}
+				}
+				{ // Given runnables
+					Iterator<Runnable> i = runAfterNextTick.iterator();
+					if (!world.isLocked()) {
+						while (i.hasNext()) {
+							Runnable r = i.next();
+							r.run();
 							i.remove();
 						}
 					}
@@ -753,5 +765,9 @@ public class Game implements Disposable {
 	
 	public void setAiDisabled(boolean aiDisabled) {
 		this.aiDisabled = aiDisabled;
+	}
+	
+	public void runAfterNextTick(Runnable run) {
+		runAfterNextTick.add(run);
 	}
 }
