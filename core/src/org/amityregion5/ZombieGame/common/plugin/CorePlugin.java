@@ -58,14 +58,14 @@ public class CorePlugin implements IPlugin {
 		//Register the lanterns
 		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
 			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_0");
-			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 3, vector.x, vector.y));
+			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 4, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;
 		});
 		Placeable.registeredObjects.put("Lantern_1", (g, vector) -> {
 			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_1");
-			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 6, vector.x, vector.y));
+			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 8, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;
@@ -81,7 +81,7 @@ public class CorePlugin implements IPlugin {
 				gaussRand = (float) (g.getRandom().nextGaussian()/2.8 + 0.5);
 			}
 			
-			gaussRand = gaussRand * 0.9f + 0.1f;
+			gaussRand = gaussRand * 0.9f - 0.1f;
 
 			float speedModifier = gaussRand * maxModifier + 1f - maxModifier / 1.5f;
 			float sizeModifier = ((maxModifier + 1f) - speedModifier);
