@@ -15,6 +15,7 @@ import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.util.RandUtil;
 import org.amityregion5.ZombieGame.common.weapon.types.BasicGun;
 import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
@@ -75,13 +76,7 @@ public class CorePlugin implements IPlugin {
 		GameRegistry.addSpawnable(0, 1, (g) -> {
 			float maxModifier = 0.8f;
 			
-			float gaussRand = -1;
-			
-			while (gaussRand < 0 || gaussRand > 1) {
-				gaussRand = (float) (g.getRandom().nextGaussian()/2.8 + 0.5);
-			}
-			
-			gaussRand = gaussRand * 0.9f - 0.1f;
+			float gaussRand = (float)RandUtil.boundedGaussian(g.getRandom(), -0.05, 0.85, 0.36, 0.4);
 
 			float speedModifier = gaussRand * maxModifier + 1f - maxModifier / 1.5f;
 			float sizeModifier = ((maxModifier + 1f) - speedModifier);
