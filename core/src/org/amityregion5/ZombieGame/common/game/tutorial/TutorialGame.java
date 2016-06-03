@@ -13,6 +13,7 @@ import org.amityregion5.ZombieGame.common.game.difficulty.BasicDifficulty;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.game.model.particle.HealthPackParticle;
 import org.amityregion5.ZombieGame.common.game.model.particle.TextParticle;
 import org.amityregion5.ZombieGame.common.shop.GunPurchaseable;
 import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
@@ -79,7 +80,7 @@ public class TutorialGame extends Game {
 
 			getSingleplayerPlayer().setMoney(m9Data.getAmmoPrice() * m9Data.getMaxAmmo());
 
-			particle = new TextParticle(0, 1, this, "Press " + ZombieGame.instance.settings.getInput("Buy_Ammo").getName() + " to buy ammo.");
+			particle = new TextParticle(0, 1, this, "The red circle around your mouse\nshows that you are out of ammo.\nPress " + ZombieGame.instance.settings.getInput("Buy_Ammo").getName() + " to buy ammo.");
 			yOffset = 1;
 			addParticleToWorld(particle);
 			tutorialPart = 4;
@@ -87,7 +88,7 @@ public class TutorialGame extends Game {
 				.findFirst().get().getTotalAmmo() > 0) {
 			removeParticle(particle);
 
-			particle = new TextParticle(0, 1, this, "Press " + ZombieGame.instance.settings.getInput("Reload").getName() + " to reload.");
+			particle = new TextParticle(0, 1, this, "The yellow circle around your mouse\n shows that you are running low on ammo.\nPress " + ZombieGame.instance.settings.getInput("Reload").getName() + " to reload.");
 			addParticleToWorld(particle);
 			tutorialPart = 5;
 		} else if (tutorialPart == 5 && getSingleplayerPlayer().getWeapons().parallelStream().filter((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))
@@ -110,25 +111,37 @@ public class TutorialGame extends Game {
 			model.setDamage(0);
 			model.setRange(zom.getShape().getRadius() * 1.1f);
 
-			addEntityToWorld(model, getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x + 5,
+			addEntityToWorld(model, getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x + 3.5f,
 					getSingleplayerPlayer().getEntity().getBody().getWorldCenter().y);
 
 			tutorialPart = 6;
 		} else if (tutorialPart == 6 && hostiles == 0) {
 			removeParticle(particle);
+			getSingleplayerPlayer().damage(50, null, "The tutorial smites you!");
+			
+			HealthPackParticle hp = new HealthPackParticle(getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x + 2, 
+					getSingleplayerPlayer().getEntity().getBody().getWorldCenter().y, this);
+			addParticleToWorld(hp);
+			
+			particle = new TextParticle(0, 1, this,
+					"Collect the health pack to your\nright to fill up your health.");
+			addParticleToWorld(particle);
+			tutorialPart = 7;
+		} else if (tutorialPart == 7 && getSingleplayerPlayer().getHealth() > 50.1) {
+			removeParticle(particle);
 
 			particle = new TextParticle(0, 1, this,
 					"Select the second hotbar slot by pressing " + ZombieGame.instance.settings.getInput("Hotbar_2").getName() + ".");
 			addParticleToWorld(particle);
-			tutorialPart = 7;
-		} else if (tutorialPart == 7 && getSingleplayerPlayer().getCurrWeapIndex() == 1) {
+			tutorialPart = 8;
+		} else if (tutorialPart == 8 && getSingleplayerPlayer().getCurrWeapIndex() == 1) {
 			removeParticle(particle);
 
 			particle = new TextParticle(0, 1, this,
 					"Open your inventory by pressing " + ZombieGame.instance.settings.getInput("Inventory_Window").getName() + ".");
 			addParticleToWorld(particle);
-			tutorialPart = 8;
-		} else if (tutorialPart == 8 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof InventoryWindow) {
+			tutorialPart = 9;
+		} else if (tutorialPart == 9 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof InventoryWindow) {
 			removeParticle(particle);
 
 			getSingleplayerPlayer().getWeapons().add(new WeaponStack(
@@ -137,43 +150,43 @@ public class TutorialGame extends Game {
 			particle = new TextParticle(0, 1, this, "Put the AK47 in your current slot by clicking on it.");
 			yOffset = -3;
 			addParticleToWorld(particle);
-			tutorialPart = 9;
-		} else if (tutorialPart == 9 && getSingleplayerPlayer().getCurrentWeapon().getWeapon().getName().equals("AK47")) {
+			tutorialPart = 10;
+		} else if (tutorialPart == 10 && getSingleplayerPlayer().getCurrentWeapon().getWeapon().getName().equals("AK47")) {
 			removeParticle(particle);
 
 			particle = new TextParticle(0, 1, this, "Press " + ZombieGame.instance.settings.getInput("Close_Window").getName() + " to close the window.");
 			addParticleToWorld(particle);
-			tutorialPart = 10;
-		} else if (tutorialPart == 10 && getSingleplayerPlayer().getScreen().getCurrentWindow() == null) {
+			tutorialPart = 11;
+		} else if (tutorialPart == 11 && getSingleplayerPlayer().getScreen().getCurrentWindow() == null) {
 			removeParticle(particle);
 
 			particle = new TextParticle(0, 1, this,
 					"Press " + ZombieGame.instance.settings.getInput("Toggle_Flashlight").getName() + " to toggle your flashlight.");
 			yOffset = 1;
 			addParticleToWorld(particle);
-			tutorialPart = 11;
-		} else if (tutorialPart == 11 && !getSingleplayerPlayer().getLight().isActive()) {
+			tutorialPart = 12;
+		} else if (tutorialPart == 12 && !getSingleplayerPlayer().getLight().isActive()) {
 			removeParticle(particle);
 
 			lighting.setAmbientLight(new Color(0, 0, 0, 1f));
 
 			particle = new TextParticle(0, 1, this, "The actual game will be dark like this. Turn your flashlight back on.");
 			addParticleToWorld(particle);
-			tutorialPart = 12;
-		} else if (tutorialPart == 12 && getSingleplayerPlayer().getLight().isActive()) {
+			tutorialPart = 13;
+		} else if (tutorialPart == 13 && getSingleplayerPlayer().getLight().isActive()) {
 			removeParticle(particle);
 
 			particle = new TextParticle(0, 1, this,
 					"Press " + ZombieGame.instance.settings.getInput("Close_Window").getName() + " to open the pause/quit window.");
 			addParticleToWorld(particle);
-			tutorialPart = 13;
-		} else if (tutorialPart == 13 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof PauseWindow) {
+			tutorialPart = 14;
+		} else if (tutorialPart == 14 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof PauseWindow) {
 			removeParticle(particle);
 
 			yOffset = 0;
 			particle = new TextParticle(0, 0, this, "You have completed the tutorial.");
 			addParticleToWorld(particle);
-			tutorialPart = 14;
+			tutorialPart = 15;
 		}
 		
 		if (tutorialPart == 6 && getSingleplayerPlayer().getMoney() <= 0.1) {
