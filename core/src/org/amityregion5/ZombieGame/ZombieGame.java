@@ -41,6 +41,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
  * @author sergeys
@@ -68,6 +69,7 @@ public class ZombieGame extends Game {
 	public boolean					isCheatModeAllowed;					// Has cheat mode been enabled
 	public String					version	= "Error: Version Not Set";	// The game version
 	public String					newestVersion;						// The newest version
+	public ShaderProgram			backgroundShader;					// The grass shader
 	
 	private List<Screen> toDispose = new ArrayList<Screen>();
  
@@ -247,6 +249,13 @@ public class ZombieGame extends Game {
 					mainFont = fontGenerator.generateFont(parameter);
 					// Make the font black
 					mainFont.setColor(1, 1, 1, 1);
+				});
+				
+				Gdx.app.postRunnable(()->{
+					backgroundShader = new ShaderProgram(Gdx.files.internal("shader/background.vertex.glsl"), Gdx.files.internal("shader/background.fragment.glsl"));
+					if (!backgroundShader.isCompiled()) {
+						ZombieGame.error(backgroundShader.getLog());
+					}
 				});
 
 				// Generate the font

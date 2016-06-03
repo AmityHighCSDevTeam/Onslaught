@@ -34,10 +34,13 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -68,7 +71,9 @@ public class InGameScreen extends GuiScreen {
 	private boolean				doDebugRender	= false; //Should it debug render
 	private OrthographicCamera		inGameCamera; //The camera
 	private boolean saveScore = true;
-	private Sprite background;
+	private TextureRegion backgroundRegion;
+	private int u_trans, u_texLoc, u_texSze, u_scale;
+	private Mesh quad;
 
 	// Font
 	private BitmapFont smallOutlineFont;
@@ -114,7 +119,23 @@ public class InGameScreen extends GuiScreen {
 			game.addEntityToWorld(player, 0, 0);
 		}
 		
-		background = TextureRegistry.getAtlas().createSprite("backgroundTile");
+		quad = new Mesh(true, 4, 0, 
+				new VertexAttribute(Usage.Position, 2, "a_position"), 
+				new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
+		
+		quad.setVertices(new float[] {
+			-1f, -1f, 0f, 0f,
+			-1f,  1f, 0f, 1f,
+			 1f, -1f, 1f, 0f,
+			 1f,  1f, 1f, 1f
+		});
+		
+		backgroundRegion = TextureRegistry.getAtlas().findRegion("backgroundTile");
+		
+		u_trans = ZombieGame.instance.backgroundShader.getUniformLocation("u_trans");
+		u_texLoc = ZombieGame.instance.backgroundShader.getUniformLocation("u_texLoc");
+		u_texSze = ZombieGame.instance.backgroundShader.getUniformLocation("u_texSze");
+		u_scale = ZombieGame.instance.backgroundShader.getUniformLocation("u_scale");
 
 		//Add an HUD to the overlays
 		overlays.add(new HUDOverlay(this, player));
@@ -138,58 +159,21 @@ public class InGameScreen extends GuiScreen {
 
 		//Update the camer
 		inGameCamera.update();
+		
+		backgroundRegion.getTexture().bind();
+		ZombieGame.instance.backgroundShader.begin();
+		ZombieGame.instance.backgroundShader.setUniformf(u_trans, new Vector2(inGameCamera.viewportWidth, inGameCamera.viewportHeight).scl(inGameCamera.zoom));
+		ZombieGame.instance.backgroundShader.setUniformf(u_texLoc, new Vector2(inGameCamera.position.x, inGameCamera.position.y));
+		ZombieGame.instance.backgroundShader.setUniformf(u_texSze, new Vector2(getWidth(), getHeight()));
+		ZombieGame.instance.backgroundShader.setUniformf(u_scale, 10.24f);
+		quad.render(ZombieGame.instance.backgroundShader, GL20.GL_TRIANGLE_STRIP, 0, 4);
+		ZombieGame.instance.backgroundShader.end();
+		batch.begin();
 
 		//Get the old batch matrix
 		Matrix4 oldBatchMatrix = batch.getProjectionMatrix().cpy();
 
-		float wM = 10.24f; //The size of the texture in meters
-		float hM = 10.24f;
-
-		//Update projection matricies
-		batch.setProjectionMatrix(inGameCamera.combined);
 		shape.setProjectionMatrix(inGameCamera.combined);
-
-		//Tile x and y
-		float tileX = wM;
-		float tileY = hM;
-
-		//Camera start and end positions
-		Vector2 posStart = new Vector2(inGameCamera.position.x - inGameCamera.viewportWidth * inGameCamera.zoom,
-				inGameCamera.position.y - inGameCamera.viewportHeight * inGameCamera.zoom * inGameCamera.zoom);
-		Vector2 posEnd = new Vector2(inGameCamera.position.x + inGameCamera.viewportWidth * inGameCamera.zoom,
-				inGameCamera.position.y + inGameCamera.viewportHeight * inGameCamera.zoom * inGameCamera.zoom);
-
-		//Calculate start tiles
-		int startTileX = (int) ((posStart.x) / tileX);
-		if (posStart.x < 0) {
-			startTileX--;
-		}
-		int startTileY = (int) ((posStart.y) / tileY);
-		if (posStart.y < 0) {
-			startTileY--;
-		}
-		startTileX--;
-		startTileY--;
-
-		//Calculate end tiles
-		int endTileX = (int) ((posEnd.x) / tileX);
-		int endTileY = (int) ((posEnd.y) / tileY);
-		endTileX++;
-		endTileY++;
-
-		//Draw all of the tiles
-		Color c = batch.getColor();
-		batch.begin();{
-			batch.setColor(1, 1, 1, 1);
-			for (int x = startTileX; x < endTileX; x++) {
-				for (int y = startTileY; y < endTileY; y++) {
-					background.setBounds(x * tileX, y * tileY, tileX, tileY);
-					background.draw(batch);
-				}
-			}
-		}
-		batch.setColor(c);
-		
 		batch.setProjectionMatrix(inGameCamera.combined);
 		
 		Rectangle camRect = new Rectangle(inGameCamera.position.x - inGameCamera.viewportWidth/2, inGameCamera.position.y - inGameCamera.viewportHeight/2, inGameCamera.viewportWidth, inGameCamera.viewportHeight);
