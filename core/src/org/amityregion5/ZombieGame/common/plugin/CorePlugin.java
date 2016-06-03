@@ -107,7 +107,7 @@ public class CorePlugin implements IPlugin {
 		if (ZombieGame.instance.isCheatModeAllowed) {
 			GameRegistry.difficulties.add(new BasicDifficulty("DEBUG", "Debug", 0f, 0.5f, 0.25f, 2f, 2f, 0.01f, 1000, 50));
 		}
-		//																		overall, wave, health, money, dmg, hlth, start, hostiles
+		//																	   overall, wave,  health,  money,  dmg,    pack,  start,  hostiles
 		GameRegistry.difficulties.add(new BasicDifficulty("EASY", 	"Easy", 	0.5f, 	0.5f, 	0.25f, 	2f, 	2f, 	0.01, 	1000, 	50));
 		GameRegistry.difficulties.add(new BasicDifficulty("MEDIUM", "Medium",	1f, 	1f, 	0.5f, 	1.5f, 	1.5f, 	75e-4,	750, 	100));
 		GameRegistry.difficulties.add(new BasicDifficulty("HARD", 	"Hard", 	1.5f, 	1.5f, 	0.75f, 	1.0f, 	1.0f, 	0.005, 	500, 	150));
