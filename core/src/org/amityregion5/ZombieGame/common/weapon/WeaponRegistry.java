@@ -32,6 +32,9 @@ public class WeaponRegistry {
 		return pluginManager.getActivatedWeapons().parallelStream().filter((w) -> w.getID().equals(id)).findAny().orElse(null);
 	}
 	
+	/**
+	 * Refreshes the weapons from their files
+	 */
 	public void refreshWeapons() {
 		ZombieGame.log("Refreshing Weapons");
 		JSONParser parser = new JSONParser();

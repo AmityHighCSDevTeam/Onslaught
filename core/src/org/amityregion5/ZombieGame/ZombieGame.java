@@ -71,9 +71,9 @@ public class ZombieGame extends Game {
 	public String					newestVersion;						// The newest version
 	public ShaderProgram			backgroundShader;					// The grass shader
 	
-	private List<Screen> toDispose = new ArrayList<Screen>();
+	private List<Screen> toDispose = new ArrayList<Screen>(); //A list of screens that need to be disposed
  
-	private static float uiscale = 1;
+	private static float uiscale = 1; // The UI scale
 
 	/**
 	 * @param isServer
@@ -100,6 +100,7 @@ public class ZombieGame extends Game {
 		//Log file output stream
 		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
 
+		//These make it so that they print both to the console/ide debug window and to the log file
 		//Output stream
 		System.setOut(new PrintStream(new MultiOutputStream(System.out, fos)));
 		//Error stream
@@ -163,7 +164,7 @@ public class ZombieGame extends Game {
 
 		ZombieGame.log("Loading: Starting the loading process");
 		if (!isServer) {
-			setScreen(new LoadingScreen()); // Set the screen to a loading
+			setScreen(new LoadingScreen()); // Set the screen to the loading
 			// screen
 		}
 
@@ -183,6 +184,7 @@ public class ZombieGame extends Game {
 			// "Mod" loading list of mods
 			FileHandle[] plugins = gameData.list();
 
+			//Create the plugin manager
 			pluginManager = new PluginManager();
 
 			// Create the weapon registry
@@ -207,7 +209,7 @@ public class ZombieGame extends Game {
 			log("Loading: Beginning Plugin Preloading");
 			pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.preLoad()));
 
-			//Load guns and stuff
+			//Load guns and stuff from files
 			log("Loading: Loading Plugin Data");
 			loader.loadPlugins(plugins);
 
@@ -222,14 +224,14 @@ public class ZombieGame extends Game {
 			// If it is a client
 			if (!isServer) {
 				// Load the texture for buttons
-				ZombieGame.log("Loading: Loading button texture");
 				Gdx.app.postRunnable(() -> {
+					ZombieGame.log("Loading: Loading button texture");
 					buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
 				});
 
 				// Load the missing texture
-				ZombieGame.log("Loading: Loading missing texture");
 				Gdx.app.postRunnable(() -> {
+					ZombieGame.log("Loading: Loading missing texture");
 					TextureRegistry.register("--Null Texture--", Gdx.files.internal("images/missing.png"));
 					missingTexture = new Texture(Gdx.files.internal("images/missing.png"));
 				});
@@ -252,6 +254,7 @@ public class ZombieGame extends Game {
 				});
 				
 				Gdx.app.postRunnable(()->{
+					ZombieGame.log("Loading: Loading background shader");
 					backgroundShader = new ShaderProgram(Gdx.files.internal("shader/background.vertex.glsl"), Gdx.files.internal("shader/background.fragment.glsl"));
 					if (!backgroundShader.isCompiled()) {
 						ZombieGame.error(backgroundShader.getLog());
@@ -286,30 +289,46 @@ public class ZombieGame extends Game {
 
 	@Override
 	public void render() {
+		//Update the texture atlas for this current frame (should do nothing if nothing has changed)
 		TextureRegistry.update();
-		Iterator<Screen> disposeScreens = toDispose.iterator();
 		
+		//Get an iterator for the screens that need to be disposed
+		Iterator<Screen> disposeScreens = toDispose.iterator();
+		//Loop through every screen that needs to be disposed
 		while (disposeScreens.hasNext()) {
+			//Get the current screen in the iterator
 			Screen disposeScreen = disposeScreens.next();
 			
+			//Dispose of the screen
 			disposeScreen.dispose();
 			
+			//Remove the screen from the list of screens that need to be disposed
 			disposeScreens.remove();
 		}
 		
+		//Update the was mouse pressed varibale in the client 
 		Client.update();
+		//Render everything else
 		super.render();
 	}
 
 	@Override
 	public void dispose() {
+		//Dispose everything else
 		super.dispose();
+		
+		//Dispose every plugin
 		pluginManager.getPlugins().forEach((p) -> p.getPlugins().forEach((ip) -> ip.dispose()));
+		
+		//Dispose the texture registry
 		TextureRegistry.dispose();
+		//Dispose the sound registry
 		SoundRegistry.dispose();
+		//Dispose the fonts and textures
 		mainFont.dispose(); // Get rid of all used memory
 		buttonTexture.dispose();
 		fontGenerator.dispose();
+		//Dispose the music handler
 		MusicHandler.dispose();
 	}
 
@@ -323,10 +342,12 @@ public class ZombieGame extends Game {
 		this.width = width; // Save screen size
 		this.height = height;
 
+		//If the settings exists get the current ui scale from there so that everything is sized correctly
 		if (settings != null) {
 			uiscale = (float) settings.getUiScale();
 		}
 
+		//Resize everything else
 		super.resize(width, height);
 
 		// Generate the font
