@@ -3,8 +3,8 @@ package org.amityregion5.ZombieGame.common.weapon.types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
+import org.amityregion5.ZombieGame.common.func.Function3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
@@ -22,7 +22,7 @@ import com.badlogic.gdx.utils.Array;
 public class Placeable implements IWeapon {
 
 	//Registered placeable objects
-	public static HashMap<String, BiFunction<Game, Vector2, IEntityModel<?>>> registeredObjects = new HashMap<String, BiFunction<Game, Vector2, IEntityModel<?>>>();
+	public static HashMap<String, Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>>> registeredObjects = new HashMap<String, Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>>>();
 
 	// All the variables!
 	protected String name; //The name of the rocket
@@ -83,7 +83,7 @@ public class Placeable implements IWeapon {
 			stack.setAmmo(stack.getAmmo() - 1);
 
 			//Place the object
-			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end), end.x, end.y);
+			game.addEntityToWorld(registeredObjects.get(data.get(stack.getLevel()).getPlacingObject()).apply(game, end, data.get(stack.getLevel()).getExtraData()), end.x, end.y);
 
 			stack.setPostFire(stack.getPostFire() + data.get(stack.getLevel()).getPostFireDelay());
 

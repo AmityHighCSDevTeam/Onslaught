@@ -17,8 +17,12 @@
       "gameOffY": 0.02,
       "gameOriginX": 64,
       "gameOriginY": 64,
-      "maxRange": 0.6,
-      "object": "Lantern_0"
+      "maxRange": 1.2,
+      "object": "BasicLantern",
+      "data": {
+         "fieldTxtr": "Core/Entity/Lantern/Lantern.png",
+         "lightLevel": 4
+      }
     },
     {
       "price": 1000,
@@ -34,8 +38,12 @@
       "gameOffY": 0.02,
       "gameOriginX": 64,
       "gameOriginY": 64,
-      "maxRange": 0.6,
-      "object": "Lantern_1"
+      "maxRange": 1.2,
+      "object": "BasicLantern",
+      "data": {
+         "fieldTxtr": "Core/Entity/Lantern/Lantern.png",
+         "lightLevel": 8
+      }
     }
   ]
 }

@@ -57,16 +57,9 @@ public class CorePlugin implements IPlugin {
 	@Override
 	public void load() {
 		//Register the lanterns
-		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_0");
-			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 4, vector.x, vector.y));
-			lantern.getEntity().setFriction(0.99f);
-			lantern.getEntity().setMass(10);
-			return lantern;
-		});
-		Placeable.registeredObjects.put("Lantern_1", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_1");
-			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 8, vector.x, vector.y));
+		Placeable.registeredObjects.put("BasicLantern", (game, position, data)->{
+			LanternModel lantern = new LanternModel(new EntityLantern(), game, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), (String)data.get("fieldTxtr"), "BasicLantern", data);
+			lantern.setLight(new PointLight(game.getLighting(), 200, lantern.getColor(), ((Number)data.get("lightLevel")).floatValue(), position.x, position.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;

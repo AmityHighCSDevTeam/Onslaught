@@ -1,11 +1,12 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
-import java.util.function.BiFunction;
+import java.util.HashMap;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.func.Consumer3;
+import org.amityregion5.ZombieGame.common.func.Function3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
@@ -32,6 +33,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	private Color				c; //The color of the light
 	private SpriteDrawingLayer	sprite; //The sprite drawing layer
 	private String				creation; //The creation string
+	private HashMap<String, Object> data;
 
 	public LanternModel() {}
 
@@ -44,12 +46,13 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	 * @param spriteTexture the lantern's texture
 	 * @param creationString the creation string to call when loading this object (Placeable)
 	 */
-	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString) {
+	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString, HashMap<String, Object> extraData) {
 		entity = e;
 		g = game;
 		creation = creationString; //Set values
 		c = color;
 		sprite = new SpriteDrawingLayer(spriteTexture);
+		data = extraData;
 	}
 
 	@Override
@@ -146,6 +149,9 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		obj.put("y", entity.getBody().getWorldCenter().y);
 		obj.put("r", entity.getBody().getTransform().getRotation());
 		obj.put("creation", creation);
+		JSONObject o = new JSONObject();
+		o.putAll(data);
+		obj.put("data", o);
 
 		return obj;
 	}
@@ -156,15 +162,17 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
 		String creationStr = (String) obj.get("creation");
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> edata = new HashMap<String, Object>((JSONObject)obj.get("data"));
 		
-		BiFunction<Game, Vector2, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
+		Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
 
 		if (func == null) {
-			addErrorConsumer.run("Failed to load placebale objects:", creationStr, true);
+			addErrorConsumer.run("Failed to load placeable objects:", creationStr, true);
 			return null;
 		}
 		
-		LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y));
+		LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y), edata);
 
 		model.getEntity().getBody().getTransform().setRotation(r);
 

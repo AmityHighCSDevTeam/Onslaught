@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
@@ -14,8 +15,10 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	private int				maxAmmo, gameOrgX, gameOrgY;
 	private String			iconTextureString, gameTextureString, placingObject;
 	private List<SoundData>	sounds;
+	private HashMap<String, Object> extraData;
 	private Buff			buff;
 
+	@SuppressWarnings("unchecked")
 	public PlaceableWeaponData(JSONObject o) {
 		price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
 		ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
@@ -61,6 +64,12 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		}
 		if (o.containsKey("buff")) {
 			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
+		}
+		
+		if (o.containsKey("data")) {
+			extraData = new HashMap<String, Object>((JSONObject)o.get("data"));
+		} else {
+			extraData = new HashMap<String, Object>();
 		}
 	}
 
@@ -272,5 +281,9 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 
 	public double getWarmup() {
 		return warmup;
+	}
+	
+	public HashMap<String, Object> getExtraData() {
+		return extraData;
 	}
 }
