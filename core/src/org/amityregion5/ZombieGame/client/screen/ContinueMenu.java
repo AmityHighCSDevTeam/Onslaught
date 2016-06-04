@@ -171,6 +171,7 @@ public class ContinueMenu extends GuiScreen {
 			if (selected == null) {
 				return;
 			}
+			ZombieGame.log("Loading Game");
 			GameLoadedContainer glc = Game.loadFromFile(selected);
 			if (!glc.errors.isEmpty()) {
 				ZombieGame.instance.setScreen(new FailedToLoadScreen(this, glc));

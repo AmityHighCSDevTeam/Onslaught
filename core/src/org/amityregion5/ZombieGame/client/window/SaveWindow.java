@@ -159,6 +159,7 @@ public class SaveWindow implements Screen {
 		//If the save button is pressed
 		if (mouseOverSave && !Gdx.input.isTouched() && mouseWasUp && screen.getGame().isSinglePlayer()) {
 			//Save the game
+			ZombieGame.log("Game Saving");
 			screen.getGame().saveToFile(saveName);
 			screen.setSaveScore(false);
 			//Kill the player (with fun message)
