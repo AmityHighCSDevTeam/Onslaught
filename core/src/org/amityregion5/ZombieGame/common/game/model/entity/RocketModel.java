@@ -254,7 +254,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	}
 
 	@Override
-	public RocketModel fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
+	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
@@ -275,7 +275,5 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-
-		return model;
 	}
 }

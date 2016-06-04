@@ -395,7 +395,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	}
 
 	@Override
-	public ZombieModel fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
+	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
@@ -425,7 +425,5 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
 		model.getEntity().getBody().getTransform().setRotation(r);
-
-		return null;
 	}
 }
