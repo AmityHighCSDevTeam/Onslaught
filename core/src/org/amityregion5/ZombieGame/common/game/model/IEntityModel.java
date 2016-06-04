@@ -82,5 +82,5 @@ public interface IEntityModel<T extends IEntity> {
 	 * @param g the Game object
 	 * @return the entity model
 	 */
-	IEntityModel<T> fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer);
+	void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer);
 }

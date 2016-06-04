@@ -22,7 +22,7 @@ import box2dLight.Light;
  *
  */
 public class LanternModel implements IEntityModel<EntityLantern> {
-	
+
 	//The color of the light
 	public static final Color LIGHT_COLOR = new Color(1, 1, 1, 130f / 255);
 
@@ -115,8 +115,8 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 
 	public static Color getLIGHT_COLOR() {
 		return LIGHT_COLOR;// new
-							// Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),
-							// 1);
+		// Color(ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),ZombieGame.instance.random.nextFloat(),
+		// 1);
 	}
 
 	/**
@@ -151,23 +151,23 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	}
 
 	@Override
-	public IEntityModel<EntityLantern> fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
+	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
 		String creationStr = (String) obj.get("creation");
-		
+
 		BiFunction<Game, Vector2, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
 
 		if (func == null) {
-			addErrorConsumer.run("Failed to load placebale objects:", creationStr, true);
-			return null;
+			addErrorConsumer.run("Failed to load placable objects:", creationStr, true);
+			return;
 		}
-		
-		LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y));
 
-		model.getEntity().getBody().getTransform().setRotation(r);
-
-		return model;
+		g.runAfterNextTick(()-> {
+			LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y));
+			g.addEntityToWorld(model, x, y);
+			model.getEntity().getBody().getTransform().setRotation(r);
+		});
 	}
 }
