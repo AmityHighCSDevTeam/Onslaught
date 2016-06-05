@@ -20,7 +20,6 @@ import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
@@ -75,6 +74,7 @@ public class InGameScreen extends GuiScreen {
 	private TextureRegion backgroundRegion;
 	private int u_trans, u_texLoc, u_texSze, u_scale;
 	private Mesh quad;
+	private double extraZoom = 0;
 
 	// Font
 	private BitmapFont smallOutlineFont;
@@ -150,7 +150,7 @@ public class InGameScreen extends GuiScreen {
 		//Tick the game
 		game.tick(delta);
 
-		inGameCamera.zoom = (float) (1*player.getTotalBuffs().getMult("zoom") + player.getTotalBuffs().getAdd("zoom"));
+		inGameCamera.zoom = (float) (1*player.getTotalBuffs().getMult("zoom") + player.getTotalBuffs().getAdd("zoom") + extraZoom);
 
 		//Center the camera on the palyer
 		inGameCamera.translate(player.getEntity().getBody().getWorldCenter().x - inGameCamera.position.x,
@@ -365,14 +365,10 @@ public class InGameScreen extends GuiScreen {
 			}
 
 			if (Gdx.input.isKeyPressed(Keys.G)) {
-				Buff b = new Buff();
-				b.addAdd("zoom", 0.02);
-				player.applyBuff(b);
+				extraZoom += 0.02;
 			}
 			if (Gdx.input.isKeyPressed(Keys.H) && inGameCamera.zoom > 0.02) {
-				Buff b = new Buff();
-				b.addAdd("zoom", -0.02);
-				player.applyBuff(b);
+				extraZoom += -0.02;
 			}
 
 			if (Gdx.input.isKeyJustPressed(Keys.E)) {
