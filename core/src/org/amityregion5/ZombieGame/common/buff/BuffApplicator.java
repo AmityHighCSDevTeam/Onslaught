@@ -1,30 +1,23 @@
 package org.amityregion5.ZombieGame.common.buff;
 
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
-
 /**
  * A class representing a buff, name, icon, and price
  * @author sergeys
  *
  */
 public class BuffApplicator {
-	private Buff	buff; //The buff
-	private String	name, iconLoc; //The name and icon path
-	private double	price; //The price
+	private BuyableBuffContainer[]	buffs; //The buffs
+	private String	name, iconLoc, UID; //The name and icon path
 
-	public BuffApplicator(Buff buff, String name, double price, String icon) {
-		this.buff = buff;
+	public BuffApplicator(BuyableBuffContainer[] containers, String name, String icon, String UID) {
+		this.buffs = containers;
 		iconLoc = icon;
 		this.name = name; //Set values
-		this.price = price;
+		this.UID = UID;
 	}
 
-	public Buff getBuff() {
-		return buff;
-	}
-
-	public double getPrice() {
-		return price;
+	public BuyableBuffContainer[] getContainers() {
+		return buffs;
 	}
 
 	public String getName() {
@@ -33,5 +26,9 @@ public class BuffApplicator {
 
 	public String getIconLoc() {
 		return iconLoc;
+	}
+	
+	public String getUID() {
+		return UID;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
+import org.amityregion5.ZombieGame.common.buff.BuyableBuffContainer;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 
@@ -37,12 +38,14 @@ public class BuffPurchaseable implements IPurchaseable {
 		Map<String, String> currMap = getActualCurrDesc(player);
 
 		Buff emptyBuff = new Buff();
+		
+		BuyableBuffContainer cont = buff.getContainers()[Math.min(buff.getContainers().length-1,((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue())];
 
-		for (String mBuff : buff.getBuff().getMultiplicative().keySet()) {
+		for (String mBuff : cont.buff.getMultiplicative().keySet()) {
 			currMap.put(mBuff, emptyBuff.getMult(mBuff) * 100 + "%");
 		}
 
-		for (String aBuff : buff.getBuff().getAdditive().keySet()) {
+		for (String aBuff : cont.buff.getAdditive().keySet()) {
 			currMap.put(aBuff, (emptyBuff.getAdd(aBuff) > 0 ? "+" : "") + emptyBuff.getAdd(aBuff));
 		}
 
@@ -56,13 +59,15 @@ public class BuffPurchaseable implements IPurchaseable {
 	@Override
 	public Map<String, String> getNextDescriptors(PlayerModel player) {
 		Map<String, String> map = new HashMap<String, String>();
+		
+		BuyableBuffContainer cont = buff.getContainers()[Math.min(buff.getContainers().length-1,((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue())];
 
-		for (String mBuff : buff.getBuff().getMultiplicative().keySet()) {
-			map.put(mBuff, buff.getBuff().getMult(mBuff) * 100 + "%");
+		for (String mBuff : cont.buff.getMultiplicative().keySet()) {
+			map.put(mBuff, cont.buff.getMult(mBuff) * 100 + "%");
 		}
 
-		for (String aBuff : buff.getBuff().getAdditive().keySet()) {
-			map.put(aBuff, (buff.getBuff().getAdd(aBuff) > 0 ? "+" : "") + buff.getBuff().getAdd(aBuff));
+		for (String aBuff : cont.buff.getAdditive().keySet()) {
+			map.put(aBuff, (cont.buff.getAdd(aBuff) > 0 ? "+" : "") +cont.buff.getAdd(aBuff));
 		}
 
 		return map;
@@ -70,7 +75,7 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public boolean hasNextLevel(PlayerModel player) {
-		return !player.hasBuff(buff.getBuff());
+		return buff.getContainers().length > ((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue();
 	}
 
 	@Override
@@ -80,13 +85,13 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public int getNumLevels() {
-		return 0;
+		return buff.getContainers().length-1;
 	}
 
 	@Override
 	public double getPrice(PlayerModel player) {
 		if (!hasNextLevel(player)) { return Double.POSITIVE_INFINITY; }
-		return buff.getPrice();
+		return buff.getContainers()[((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue()].price;
 	}
 
 	@Override
@@ -96,7 +101,9 @@ public class BuffPurchaseable implements IPurchaseable {
 
 	@Override
 	public void onPurchase(PlayerModel player) {
-		player.applyBuff(buff.getBuff());
+		BuyableBuffContainer cont = buff.getContainers()[((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue()];
+		player.getExtraData().put(buff.getUID(), ((Number)player.getExtraData().getOrDefault(buff.getUID(), Integer.valueOf(0))).intValue() + 1);
+		player.applyBuff(cont.buff);
 	}
 
 	@Override

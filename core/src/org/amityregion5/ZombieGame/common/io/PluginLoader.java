@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
+import org.amityregion5.ZombieGame.common.buff.BuyableBuffContainer;
 import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.plugin.IPlugin;
 import org.amityregion5.ZombieGame.common.plugin.PluginContainer;
@@ -185,11 +186,8 @@ public class PluginLoader {
 	}
 
 	private void loadBuff(JSONObject o, PluginContainer plugin, String pathName) {
-		//Create the buff
-		Buff buff = new Buff();
-
-		//Get JSON Array
-		JSONArray arr = (JSONArray) o.get("buffs");
+		//List of buffs
+		ArrayList<BuyableBuffContainer> buffs = new ArrayList<BuyableBuffContainer>();
 
 		//Get name
 		String name = (String) o.get("name");
@@ -197,33 +195,51 @@ public class PluginLoader {
 		//Get icon path
 		String icon = (String) o.get("icon");
 
-		//Get price
-		double price = ((Number) o.get("price")).doubleValue();
+		//Get name
+		String uid = (String) o.get("uid");
 
-		//Loop through array
-		for (Object obj : arr) {
-			JSONObject aO = (JSONObject) obj;
+		//Get JSON Array
+		JSONArray levelsArr = (JSONArray) o.get("levels");
+		
+		for (Object levelObj : levelsArr) {
+			JSONObject level = (JSONObject) levelObj;
+			
+			//Get price
+			double price = ((Number) level.get("price")).doubleValue();
 
-			//Get type of buff data
-			String type = (String) aO.get("type");
-			//Get buff data key
-			String key = (String) aO.get("key");
-			//Get buff data value
-			double value = ((Number) aO.get("val")).doubleValue();
+			//Get JSON Array
+			JSONArray arr = (JSONArray) level.get("buffs");
+			
+			//Create the buff
+			Buff buff = new Buff();
+			
+			//Loop through array
+			for (Object obj : arr) {
+				JSONObject aO = (JSONObject) obj;
 
-			//If the type is multiplicative
-			if (type.equals("mult")) {
-				//Add it as a muliplicative buff
-				buff.addMult(key, value);
-			} else if (type.equals("add")) {
-				//If it is additive
-				//Add it as an additive buff
-				buff.addAdd(key, value);
+				//Get type of buff data
+				String type = (String) aO.get("type");
+				//Get buff data key
+				String key = (String) aO.get("key");
+				//Get buff data value
+				double value = ((Number) aO.get("val")).doubleValue();
+
+				//If the type is multiplicative
+				if (type.equals("mult")) {
+					//Add it as a muliplicative buff
+					buff.addMult(key, value);
+				} else if (type.equals("add")) {
+					//If it is additive
+					//Add it as an additive buff
+					buff.addAdd(key, value);
+				}
 			}
+			
+			buffs.add(new BuyableBuffContainer(buff, price));
 		}
 
 		//Create the buff applicator
-		BuffApplicator applicator = new BuffApplicator(buff, name, price, icon);
+		BuffApplicator applicator = new BuffApplicator(buffs.toArray(new BuyableBuffContainer[]{}), name, icon, uid);
 
 		//Add it to the plugin
 		plugin.addBuffApplicator(applicator);

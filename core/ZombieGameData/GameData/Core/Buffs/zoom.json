@@ -1,12 +1,27 @@
 {
   "name": "Increased Visual Range",
   "iconLoc": "Core/Buffs/Zoom/zoom.png",
-  "price": 100,
-  "buffs": [
+  "uid": "Core_Visual_Increase",
+  "levels": [
     {
-      "type": "add",
-      "key": "zoom",
-      "val": 0.5
+      "price": 100,
+      "buffs": [
+        {
+          "type": "add",
+          "key": "zoom",
+          "val": 0.5
+        }
+      ]
+    },
+    {
+      "price": 200,
+      "buffs": [
+        {
+          "type": "add",
+          "key": "zoom",
+          "val": 1.5
+        }
+      ]
     }
   ]
 }
