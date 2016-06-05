@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -49,6 +50,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	private Buff						totalBuffs; //The total sum of all buffs on it
 	private List<Buff>					buffs, temporaryBuffs; //The buffs and temporary buffs
 	private double score = 0;
+	private HashMap<String, Object>		extraData = new HashMap<String, Object>();
 
 	public PlayerModel() {}
 
@@ -527,6 +529,9 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		}
 
 		obj.put("buffs", bufs);
+		JSONObject o = new JSONObject();
+		o.putAll(extraData);
+		obj.put("data", o);
 
 		return obj;
 	}
@@ -580,6 +585,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 				model.hotbar[i2] = weap;
 			}
 		}
+		
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> edata = new HashMap<String, Object>((JSONObject)obj.get("data"));
+		
+		model.extraData = edata;
+		
 		g.addEntityToWorld(model, x, y);
 		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
 		model.getEntity().getBody().getTransform().setRotation(r);
@@ -603,5 +614,9 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	}
 	public double getScore() {
 		return score;
+	}
+	
+	public HashMap<String, Object> getExtraData() {
+		return extraData;
 	}
 }
