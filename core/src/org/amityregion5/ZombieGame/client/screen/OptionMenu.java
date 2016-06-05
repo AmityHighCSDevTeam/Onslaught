@@ -257,10 +257,11 @@ public class OptionMenu extends GuiScreen {
 				"Controls", (r)->{
 					ZombieGame.instance.setScreen(new ControlsMenu(this));
 				}));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*ZombieGame.getYScalar(), getWidth()/2 - 20, 50*ZombieGame.getYScalar()), "Automatic Ammo Buying:", (r)->{}, Align.left, false));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*ZombieGame.getYScalar(), getWidth() - 20, 50*ZombieGame.getYScalar()),
-				(ZombieGame.instance.settings.isAutoBuy() ? "Disable" : "Enable") + " Automatic Ammo Buying", (r)->{
+				(ZombieGame.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"), (r)->{
 					ZombieGame.instance.settings.setAutoBuy(!ZombieGame.instance.settings.isAutoBuy());
-					r.setText((ZombieGame.instance.settings.isAutoBuy() ? "Disable" : "Enable") + " Automatic Ammo Buying");
+					r.setText((ZombieGame.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"));
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
 				"Back", (r)->{

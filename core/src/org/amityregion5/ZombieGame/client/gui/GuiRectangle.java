@@ -25,16 +25,23 @@ public class GuiRectangle extends GuiElement {
 	private boolean		isEnabled	= true; //Is this button enabled
 	private GlyphLayout	glyph		= new GlyphLayout(); //Glyph layout
 	private Consumer<GuiRectangle> 	onClick;
+	private boolean		highlight;
+	private int			alignment;
 
 	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text) {
-		this.text = text;
-		setRectangleSupplier(rect);
+		this(rect, text, null);
 	}
 
 	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text, Consumer<GuiRectangle> onClick) {
+		this(rect, text, onClick, Align.center, true);
+	}
+
+	public GuiRectangle(Supplier<Rectangle2D.Float> rect, String text, Consumer<GuiRectangle> onClick, int halign, boolean highlightOnMouse) {
 		this.onClick = onClick;
 		this.text = text;
 		setRectangleSupplier(rect);
+		this.highlight = highlightOnMouse;
+		this.alignment = halign;
 	}
 
 	/**
@@ -80,8 +87,10 @@ public class GuiRectangle extends GuiElement {
 			// If it is inside of the button
 			if (getRectangle().contains(touchPos.x, ZombieGame.instance.height - touchPos.y)) {
 				// Tint the button
-				c = new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f);
-				
+				if (highlight) {
+					c = new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f);
+				}
+
 				//If mouse just released
 				if (Client.mouseJustReleased() && onClick != null) {
 					//Run the onClick
@@ -97,10 +106,10 @@ public class GuiRectangle extends GuiElement {
 		// If there is text for the button
 		if (text != null) {
 			// Get the size of the text
-			glyph.setText(ZombieGame.instance.mainFont, text, c, getW(), Align.center, true);
+			glyph.setText(ZombieGame.instance.mainFont, text, c, getW(), alignment, true);
 			// Draw the text centered on the button
 			ZombieGame.instance.mainFont.draw(batch, glyph, getX(), getY() + (getH() + glyph.height) / 2);
 		}
-		
+
 	}
 }
