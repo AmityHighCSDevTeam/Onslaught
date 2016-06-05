@@ -1,0 +1,12 @@
+{
+  "name": "Increased Visual Range",
+  "iconLoc": "Core/Buffs/Zoom/zoom.png",
+  "price": 100,
+  "buffs": [
+    {
+      "type": "add",
+      "key": "zoom",
+      "val": 0.5
+    }
+  ]
+}

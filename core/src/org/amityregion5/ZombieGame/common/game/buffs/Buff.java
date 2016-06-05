@@ -7,6 +7,14 @@ import org.json.simple.JSONObject;
 /**
  * A class representing any and all buffs
  * 
+ * Current Buffs:
+ * allArmor
+ * zombieArmor
+ * explosionArmor
+ * health
+ * speed
+ * zoom
+ * 
  * @author sergeys
  *
  */
@@ -156,7 +164,7 @@ public class Buff {
 	}
 
 	public void addAdd(String key, Double val) {
-		additive.put(key, additive.getOrDefault(key, 0d) * val);
+		additive.put(key, additive.getOrDefault(key, 0d) + val);
 	}
 
 	public Double getMult(String key) {
