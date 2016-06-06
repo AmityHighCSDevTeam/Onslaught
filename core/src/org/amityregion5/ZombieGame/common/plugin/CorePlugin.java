@@ -58,7 +58,7 @@ public class CorePlugin implements IPlugin {
 	public void load() {
 		//Register the lanterns
 		Placeable.registeredObjects.put("BasicLantern", (game, position, data)->{
-			LanternModel lantern = new LanternModel(new EntityLantern(), game, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), (String)data.get("fieldTxtr"), "BasicLantern", data);
+			LanternModel lantern = new LanternModel(new EntityLantern(), game, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), (String)data.get("fieldTxtr"), "BasicLantern", data, ((Number)data.get("life")).floatValue());
 			lantern.setLight(new PointLight(game.getLighting(), 200, lantern.getColor(), ((Number)data.get("lightLevel")).floatValue(), position.x, position.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);

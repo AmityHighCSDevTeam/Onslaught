@@ -339,7 +339,7 @@ public class InGameScreen extends GuiScreen {
 		//If cheat mode is enabled
 		if (game.isCheatMode()) {
 			if (Gdx.input.isKeyJustPressed(Keys.L)) {
-				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "", "", null);
+				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "", "", null, 90);
 				lantern.setLight(new PointLight(rayHandler, 300, lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
 				lantern.getEntity().setFriction(0.99f);
 				lantern.getEntity().setMass(10);
