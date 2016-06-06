@@ -187,15 +187,12 @@ public class Game implements Disposable {
 						}
 					}
 				}
-				{ // Given runnables
-					Iterator<Runnable> i = runAfterNextTick.iterator();
-					if (!world.isLocked()) {
-						while (i.hasNext()) {
-							Runnable r = i.next();
-							r.run();
-							i.remove();
-						}
-					}
+				if (!world.isLocked()) { // Given runnables
+					ArrayList<Runnable> runCopy = new ArrayList<Runnable>(runAfterNextTick);
+					runCopy.forEach((r)->{
+						r.run();
+					});
+					runAfterNextTick.removeAll(runCopy);
 				}
 
 				// Spawning of mobs

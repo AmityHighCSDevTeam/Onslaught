@@ -64,7 +64,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		if (light != null) {
 			life-=timeStep;
 			if (life<0) {
-				light.setColor(c.cpy().mul(1, 1 + life/30, 1 + life/30, 1 + life/60));
+				light.setColor(c.cpy().mul(1, 1 + life/30, 1 + life/30, 1 + life/50));
 				if (life < -40) {
 					damage(100, this, "Out of power");
 					return;
@@ -72,6 +72,9 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 			}
 			light.setActive(true); //Update Light
 			light.attachToBody(entity.getBody());
+		} else {
+			g.removeEntity(this);
+			g.makeExplosion(entity.getBody().getWorldCenter(), 10d, null);
 		}
 	}
 
@@ -86,7 +89,9 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
-		g.removeEntity(this);
+		if (source == this) {
+			g.removeEntity(this);
+		}
 		if (light != null) {
 			light.remove(); //Dispose of the light immediately
 			light = null;

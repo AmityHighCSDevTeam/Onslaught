@@ -37,7 +37,11 @@ public class ExplosionRaycastBullet implements IBullet {
 		this.g = g;
 		this.start = start;
 		//Get damage with buffs
-		this.damage = (float) ((damage + source.getTotalBuffs().getAdd("explodeDamage")) * source.getTotalBuffs().getMult("explodeDamage"));
+		if (source != null) {
+			this.damage = (float) ((damage + source.getTotalBuffs().getAdd("explodeDamage")) * source.getTotalBuffs().getMult("explodeDamage"));
+		} else {
+			this.damage = damage;
+		}
 		this.source = source;
 		endPoint = start.cpy().add(bullVector);
 		hits = new ArrayList<HitData>();
