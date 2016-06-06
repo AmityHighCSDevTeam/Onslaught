@@ -58,14 +58,14 @@ public class CorePlugin implements IPlugin {
 	public void load() {
 		//Register the lanterns
 		Placeable.registeredObjects.put("Lantern_0", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_0");
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_0", 90);
 			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 4, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;
 		});
 		Placeable.registeredObjects.put("Lantern_1", (g, vector) -> {
-			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_1");
+			LanternModel lantern = new LanternModel(new EntityLantern(), g, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), "Core/Entity/Lantern/Lantern.png", "Lantern_1", 120);
 			lantern.setLight(new PointLight(g.getLighting(), 200, lantern.getColor(), 8, vector.x, vector.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);

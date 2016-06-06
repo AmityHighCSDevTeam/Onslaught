@@ -32,6 +32,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	private Color				c; //The color of the light
 	private SpriteDrawingLayer	sprite; //The sprite drawing layer
 	private String				creation; //The creation string
+	private float 				life; //The time remaining for this lantern
 
 	public LanternModel() {}
 
@@ -44,8 +45,9 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	 * @param spriteTexture the lantern's texture
 	 * @param creationString the creation string to call when loading this object (Placeable)
 	 */
-	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString) {
+	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString, int life) {
 		entity = e;
+		this.life = life;
 		g = game;
 		creation = creationString; //Set values
 		c = color;
@@ -60,6 +62,14 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	@Override
 	public void tick(float timeStep) {
 		if (light != null) {
+			life-=timeStep;
+			if (life<0) {
+				light.setColor(c.cpy().mul(1, 1 + life/30, 1 + life/30, 1 + life/60));
+				if (life < -40) {
+					damage(100, this, "Out of power");
+					return;
+				}
+			}
 			light.setActive(true); //Update Light
 			light.attachToBody(entity.getBody());
 		}
@@ -145,6 +155,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		obj.put("x", entity.getBody().getWorldCenter().x);
 		obj.put("y", entity.getBody().getWorldCenter().y);
 		obj.put("r", entity.getBody().getTransform().getRotation());
+		obj.put("l", life);
 		obj.put("creation", creation);
 
 		return obj;
@@ -155,6 +166,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		float x = ((Number) obj.get("x")).floatValue();
 		float y = ((Number) obj.get("y")).floatValue();
 		float r = ((Number) obj.get("r")).floatValue();
+		float l = ((Number) obj.get("l")).floatValue();
 		String creationStr = (String) obj.get("creation");
 
 		BiFunction<Game, Vector2, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
@@ -166,6 +178,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 
 		g.runAfterNextTick(()-> {
 			LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y));
+			model.life = l;
 			g.addEntityToWorld(model, x, y);
 			model.getEntity().getBody().getTransform().setRotation(r);
 		});
