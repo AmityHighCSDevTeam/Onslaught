@@ -53,7 +53,6 @@ public class ZombieGame extends Game {
 
 	public FreeTypeFontGenerator	fontGenerator;
 	public BitmapFont				mainFont, bigFont;					// Font that buttons use
-	public Texture					buttonTexture;						// Texture that buttons use
 	public Texture					missingTexture;						// The texture for when texture is
 	// missing
 	public boolean					isServer;							// Is the current instance a
@@ -223,12 +222,6 @@ public class ZombieGame extends Game {
 
 			// If it is a client
 			if (!isServer) {
-				// Load the texture for buttons
-				Gdx.app.postRunnable(() -> {
-					ZombieGame.log("Loading: Loading button texture");
-					buttonTexture = new Texture(Gdx.files.internal("images/button.png"));
-				});
-
 				// Load the missing texture
 				Gdx.app.postRunnable(() -> {
 					ZombieGame.log("Loading: Loading missing texture");
@@ -326,7 +319,6 @@ public class ZombieGame extends Game {
 		SoundRegistry.dispose();
 		//Dispose the fonts and textures
 		mainFont.dispose(); // Get rid of all used memory
-		buttonTexture.dispose();
 		fontGenerator.dispose();
 		//Dispose the music handler
 		MusicHandler.dispose();

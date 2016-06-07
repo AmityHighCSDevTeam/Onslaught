@@ -10,6 +10,8 @@ import org.amityregion5.ZombieGame.client.music.MusicHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -24,10 +26,15 @@ public class OptionMenu extends GuiScreen {
 
 	private GlyphLayout glyph = new GlyphLayout();
 	
+	private Texture dot;
+	
 	private float xSplit = 400;
 
 	public OptionMenu(GuiScreen prevScreen) {
 		super(prevScreen);
+		Pixmap map = new Pixmap(1,1,Format.RGBA8888);
+		map.drawPixel(0, 0, 0xA9A9A9FF);//RGBA
+		dot = new Texture(map);
 	}
 
 	@Override
@@ -56,7 +63,7 @@ public class OptionMenu extends GuiScreen {
 		float h = 50*ZombieGame.getYScalar();
 
 		//Button texture
-		Texture buttText = ZombieGame.instance.buttonTexture;
+		Texture buttText = dot;
 
 		{
 			Color c = batch.getColor();
@@ -294,5 +301,6 @@ public class OptionMenu extends GuiScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
+		dot.dispose();
 	}
 }
