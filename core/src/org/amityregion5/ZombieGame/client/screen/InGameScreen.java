@@ -1,6 +1,7 @@
 package org.amityregion5.ZombieGame.client.screen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,6 +50,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.google.gson.JsonElement;
 
 import box2dLight.ConeLight;
 import box2dLight.Light;
@@ -339,7 +341,7 @@ public class InGameScreen extends GuiScreen {
 		//If cheat mode is enabled
 		if (game.isCheatMode()) {
 			if (Gdx.input.isKeyJustPressed(Keys.L)) {
-				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "", "", null, 90);
+				LanternModel lantern = new LanternModel(new EntityLantern(), game, LanternModel.getLIGHT_COLOR(), "", "", new HashMap<String, JsonElement>(), 90);
 				lantern.setLight(new PointLight(rayHandler, 300, lantern.getColor(), 10, mouseCoord.x, mouseCoord.y));
 				lantern.getEntity().setFriction(0.99f);
 				lantern.getEntity().setMass(10);
@@ -393,6 +395,8 @@ public class InGameScreen extends GuiScreen {
 				zom.setFriction(0.99f);
 
 				ZombieModel model = new ZombieModel(zom, game, 1);
+				
+				model.setPrizeMoney(0);
 
 				model.setAllHealth(5);
 				model.setSpeed(0.03f);

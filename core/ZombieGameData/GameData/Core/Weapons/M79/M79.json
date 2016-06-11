@@ -4,8 +4,8 @@
   "id": "Core_M79",
   "className": "Grenade",
   "tags": [
-    "Launcher"
-    "Gernade"
+    "Launcher",
+    "Gernade",
     "Grenade"
   ],
   "weapon": [
@@ -29,7 +29,7 @@
       "gameOffY": 0.02,
       "gameOriginX": 64,
       "gameOriginY": 64,
-      "isAuto": false
+      "isAuto": false,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -65,7 +65,7 @@
       "gameOffY": 0.02,
       "gameOriginX": 64,
       "gameOriginY": 64,
-      "isAuto": false
+      "isAuto": false,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",
@@ -101,7 +101,7 @@
       "gameOffY": 0.02,
       "gameOriginX": 64,
       "gameOriginY": 64,
-      "isAuto": false
+      "isAuto": false,
       "sounds": [
         {
           "path": "Core/Audio/reload.wav",

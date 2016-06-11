@@ -13,16 +13,15 @@ import org.amityregion5.ZombieGame.common.weapon.WeaponUtils;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.PlaceableWeaponData;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class Placeable implements IWeapon {
 
 	//Registered placeable objects
-	public static HashMap<String, Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>>> registeredObjects = new HashMap<String, Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>>>();
+	public static HashMap<String, Function3<Game, Vector2, HashMap<String, JsonElement>, IEntityModel<?>>> registeredObjects = new HashMap<String, Function3<Game, Vector2, HashMap<String, JsonElement>, IEntityModel<?>>>();
 
 	// All the variables!
 	protected String name; //The name of the rocket
@@ -30,7 +29,7 @@ public class Placeable implements IWeapon {
 	protected String id; //The unique ID
 	protected String pathName;
 	protected List<String>					tags; //The tags it has
-	protected Array<PlaceableWeaponData>	data; //The placeable data
+	protected List<PlaceableWeaponData>	data; //The placeable data
 
 	@Override
 	public String getName() {
@@ -105,7 +104,7 @@ public class Placeable implements IWeapon {
 
 	@Override
 	public int getNumLevels() {
-		return data.size;
+		return data.size();
 	}
 
 	@Override
@@ -125,27 +124,16 @@ public class Placeable implements IWeapon {
 
 
 	@Override
-	public boolean loadWeapon(JSONObject json, String pathName) {
+	public boolean loadWeapon(JsonObject json, String pathName) {
 		//Call Utility Method
 		this.pathName = pathName;
-		return WeaponUtils.loadWeapon(json, getClass(), this::loadWeaponData, (nme, desc, i, tg)->{name = nme; description = desc; id = i; tags = tg;});
+		return WeaponUtils.loadWeapon(json, getClass(), PlaceableWeaponData.class, (nme, desc, i, tg, dt)->{name = nme; description = desc; id = i; tags = tg; data=dt;});
 
 	}
 	
 	@Override
 	public String getPathName() {
 		return pathName;
-	}
-
-	protected boolean loadWeaponData(JSONArray arr) {
-		data = new Array<PlaceableWeaponData>();
-
-		for (Object obj : arr) {
-			JSONObject o = (JSONObject) obj;
-			PlaceableWeaponData d = new PlaceableWeaponData(o);
-			data.add(d);
-		}
-		return true;
 	}
 
 	@Override

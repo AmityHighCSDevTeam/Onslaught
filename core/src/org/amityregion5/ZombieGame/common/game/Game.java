@@ -1,9 +1,8 @@
 package org.amityregion5.ZombieGame.common.game;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,10 +26,6 @@ import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleM
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.shop.IPurchaseable;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -42,6 +37,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.stream.JsonWriter;
 
 import box2dLight.RayHandler;
 
@@ -79,7 +83,7 @@ public class Game implements Disposable {
 	protected int			mobsSpawned	= 0; // The number of mobs that have been spawned
 	protected boolean isLightingEnabled = true;
 	private boolean aiDisabled;
-	
+
 	private ArrayList<Runnable> runAfterNextTick = new ArrayList<Runnable>();
 
 	public Game(Difficulty diff, boolean singlePlayer, boolean cheatMode) {
@@ -110,9 +114,9 @@ public class Game implements Disposable {
 
 		//Set max hostiles
 		maxHostiles = diff.getMaxHostiles();
-		
+
 		world.setContactListener(contactListener);
-		
+
 		ZombieGame.instance.pluginManager.getPlugins().forEach((m)->m.getPlugins().forEach((p)->p.onGameStart(this)));
 	}
 
@@ -222,7 +226,7 @@ public class Game implements Disposable {
 		//Spawning is per player
 		for (PlayerModel player : players) {
 			//For each player
-			
+
 			//Get a position that is within bigSpawnRad and outside of smallSpawnRadius of each player
 			Vector2 pos = player.getEntity().getBody().getPosition();
 			Vector2 spawnPos = null;
@@ -384,7 +388,7 @@ public class Game implements Disposable {
 	public ArrayList<IParticle> getParticles() {
 		return particles;
 	}
-	
+
 	public ArrayList<IParticle> getParticlesToAdd() {
 		return particlesToAdd;
 	}
@@ -434,7 +438,7 @@ public class Game implements Disposable {
 
 		//Radians per raycast
 		double radPerRaycast = 2 * Math.PI / explosionRaycasts;
-		
+
 		//Rotate through each ray
 		for (int i = 0; i < explosionRaycasts; i++) {
 			//Get its direction
@@ -554,60 +558,19 @@ public class Game implements Disposable {
 	 * 
 	 * @param saveName the file to save to
 	 */
-	@SuppressWarnings("unchecked")
 	public void saveToFile(String saveName) {
 		//File reference
 		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/" + saveName + ".save");
+		
+		BufferedWriter writer = new BufferedWriter(file.writer(false));
 
-		JSONObject obj = new JSONObject();
-
-		//Put name
-		obj.put("name", saveName);
-
-		JSONArray entitiesSaving = new JSONArray();
-
-		//Put entity data
-		for (IEntityModel<?> e : entities) {
-			JSONObject o = e.convertToJSONObject();
-			
-			if (o == null) {
-				continue;
-			}
-			JSONObject container = new JSONObject();
-			container.put("type", e.getClass().getName());
-			container.put("data", o);
-			entitiesSaving.add(container);
+		ZombieGame.instance.gson.toJson(this, Game.class, new JsonWriter(writer));
+		
+		try {
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		obj.put("entities", entitiesSaving);
-
-		JSONArray particlesSaving = new JSONArray();
-
-		//Put particle data
-		for (IParticle e : particles) {
-			JSONObject o = e.convertToJSONObject();
-
-			if (o == null) {
-				continue;
-			}
-			JSONObject container = new JSONObject();
-			container.put("type", e.getClass().getName());
-			container.put("data", o);
-			particlesSaving.add(container);
-		}
-
-		obj.put("particles", particlesSaving);
-
-		//Put other data
-		obj.put("difficulty", diff.getUniqueID());
-		obj.put("cheatMode", isCheatMode);
-		obj.put("singlePlayer", isSinglePlayer);
-		obj.put("paused", isPaused);
-		obj.put("timeUntilSpawn", timeUntilNextSpawn);
-		obj.put("mobsSpawned", mobsSpawned);
-
-		//Write to file
-		file.writeString(obj.toJSONString(), false);
 	}
 
 	/**
@@ -619,105 +582,16 @@ public class Game implements Disposable {
 	public static GameLoadedContainer loadFromFile(String saveName) {
 		//Get file
 		FileHandle file = ZombieGame.instance.settingsFile.parent().child("saves/" + saveName + ".save");
-		JSONParser parser = new JSONParser();
-		
-		HashMap<String, List<String>> errors = new HashMap<String, List<String>>();
+
+		Game game = ZombieGame.instance.gson.fromJson(file.reader(), Game.class);
 		GameLoadedContainer glc = new GameLoadedContainer();
-		glc.canBeLoaded = true;
-		
-		Consumer3<String, String, Boolean> addErrorConsumer = (header, output, allowsLoading) -> {
-			if (!errors.containsKey(header)) {
-				errors.put(header, new ArrayList<String>());
-			}
-			errors.get(header).add(output);
-			if (!allowsLoading) {
-				glc.canBeLoaded = false;
-			}
-		};
 
-		Reader reader = file.reader();
-		try {
-			JSONObject obj = (JSONObject) parser.parse(reader);
-
-			//Get entities
-			JSONArray entities = (JSONArray) obj.get("entities");
-			//Get particles
-			JSONArray particles = (JSONArray) obj.get("particles");
-
-			//Get Variables
-			Optional<Difficulty> diff = GameRegistry.getDifficultyFromID((String) obj.get("difficulty"));
-			if (!diff.isPresent()) {
-				addErrorConsumer.run("Difficulty not found:", (String) obj.get("difficulty"), false);
-			}
-			boolean cheatMode = (Boolean) obj.get("cheatMode");
-			boolean singlePlayer = (Boolean) obj.get("singlePlayer");
-			boolean paused = (Boolean) obj.get("paused");
-			double timeUntilSpawn = ((Number) obj.get("timeUntilSpawn")).doubleValue();
-			int mobsSpawned = ((Number) obj.get("mobsSpawned")).intValue();
-
-			//Create the game
-			Game game = new Game(diff.orElse(BasicDifficulty.ERROR_DIFFICULTY), singlePlayer, cheatMode);
-			//Set variables
-			game.setPaused(paused);
-			game.setTimeUntilNextSpawn(timeUntilSpawn);
-			game.setMobsSpawned(mobsSpawned);
-
-			//Add all entites to the world
-			for (Object o : entities) {
-				JSONObject container = (JSONObject) o;
-
-				String className = (String) container.get("type");
-
-				try {
-					Class<?> clazz = Class.forName(className);
-					JSONObject e = (JSONObject) container.get("data");
-
-					//fromJSON method called
-					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class, Consumer3.class);
-					method.invoke(clazz.newInstance(), e, game, addErrorConsumer);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | InstantiationException e1) {
-					e1.printStackTrace();
-					addErrorConsumer.run("Failed to load entities:", className, true);
-				}
-			}
-			//Add all particles to the world
-			for (Object o : particles) {
-				JSONObject container = (JSONObject) o;
-
-				String className = (String) container.get("type");
-
-				try {
-					Class<?> clazz = Class.forName(className);
-					JSONObject e = (JSONObject) container.get("data");
-
-					//fromJSON method called
-					Method method = clazz.getMethod("fromJSON", JSONObject.class, Game.class, Consumer3.class);
-					method.invoke(clazz.newInstance(), e, game, addErrorConsumer);
-				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | InstantiationException e1) {
-					e1.printStackTrace();
-					addErrorConsumer.run("Failed to load particles:", className, true);
-				}
-			}
-			
-			glc.game = game;
-			glc.errors = errors;
-			
-			//Return the game
-			return glc;
-		} catch (IOException | ParseException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		glc.errors = GameSerializor.errors;
+		glc.canBeLoaded = GameSerializor.canLoad;
+		glc.game = game;
 
 		//If failed return nothing
-		return null;
+		return glc;
 	}
 
 	private void setTimeUntilNextSpawn(double timeUntilNextSpawn) {
@@ -747,11 +621,11 @@ public class Game implements Disposable {
 	public void setLightingEnabled(boolean b) {
 		isLightingEnabled = b;
 	}
-	
+
 	public boolean isPurchaseAllowed(IPurchaseable purchaseable) {
 		return true;
 	}
-	
+
 	public boolean canSaveGame() {
 		return true;
 	}
@@ -759,12 +633,137 @@ public class Game implements Disposable {
 	public boolean isAIDisabled() {
 		return aiDisabled;
 	}
-	
+
 	public void setAiDisabled(boolean aiDisabled) {
 		this.aiDisabled = aiDisabled;
 	}
-	
+
 	public void runAfterNextTick(Runnable run) {
 		runAfterNextTick.add(run);
+	}
+
+	public double getTimeUntilNextSpawn() {
+		return timeUntilNextSpawn;
+	}
+
+	public static class GameSerializor implements JsonDeserializer<Game>, JsonSerializer<Game> {
+
+		public static HashMap<String, List<String>> errors = new HashMap<String, List<String>>();
+		public static boolean canLoad;
+
+		@Override
+		public JsonElement serialize(Game src, Type typeOfSrc, JsonSerializationContext context) {
+			JsonObject obj = new JsonObject();
+
+			{
+				JsonArray arr = new JsonArray();
+				for (IEntityModel<?> e : src.getEntities()) {
+					JsonElement ele = context.serialize(e);
+
+					if (ele == null) continue;
+
+					JsonObject container = new JsonObject();
+
+					container.addProperty("type", e.getClass().getName());
+					container.add("data", ele);
+
+					arr.add(container);
+				}
+				obj.add("entities", arr);
+			}
+
+			{
+				JsonArray arr = new JsonArray();
+				for (IParticle e : src.getParticles()) {
+					JsonElement ele = context.serialize(e);
+
+					if (ele == null) continue;
+
+					JsonObject container = new JsonObject();
+
+					container.addProperty("type", e.getClass().getName());
+					container.add("data", ele);
+
+					arr.add(container);
+				}
+				obj.add("particles", arr);
+			}
+
+			obj.addProperty("difficulty", src.diff.getUniqueID());
+			obj.addProperty("cheatMode", src.isCheatMode);
+			obj.addProperty("singlePlayer", src.isSinglePlayer);
+			obj.addProperty("paused", src.isPaused);
+			obj.addProperty("timeUntilSpawn", src.timeUntilNextSpawn);
+			obj.addProperty("mobsSpawned", src.mobsSpawned);
+
+			return obj;
+		}
+
+		@Override
+		public Game deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			JsonObject obj = json.getAsJsonObject();
+
+			Optional<Difficulty> diff = GameRegistry.getDifficultyFromID(obj.get("difficulty").getAsString());
+			boolean singleplayer = obj.get("singlePlayer").getAsBoolean();
+			boolean cheat = obj.get("cheatMode").getAsBoolean();
+
+			canLoad = true;
+
+			Consumer3<String, String, Boolean> addErrorConsumer = (header, output, allowsLoading) -> {
+				if (!errors.containsKey(header)) {
+					errors.put(header, new ArrayList<String>());
+				}
+				errors.get(header).add(output);
+				if (!allowsLoading) {
+					canLoad = false;
+				}
+			};
+
+			if (!diff.isPresent()) {
+				addErrorConsumer.run("Difficulty not found:", obj.get("difficulty").getAsString(), false);
+			}
+
+			Game game = new Game(diff.orElse(BasicDifficulty.ERROR_DIFFICULTY), singleplayer, cheat);
+
+			boolean paused = obj.get("paused").getAsBoolean();
+			double timeUntilSpawn = obj.get("timeUntilSpawn").getAsDouble();
+			int mobsSpawned = obj.get("mobsSpawned").getAsInt();
+
+			game.setPaused(paused);
+			game.setTimeUntilNextSpawn(timeUntilSpawn);
+			game.setMobsSpawned(mobsSpawned);
+
+			{
+				JsonArray arr = obj.getAsJsonArray("entities");
+				for (JsonElement ele : arr) {
+					JsonObject ob = ele.getAsJsonObject();
+					try {
+						Class<?> clazz = Class.forName(ob.get("type").getAsString());
+						IEntityModel<?> model = context.deserialize(ob.get("data"), clazz);
+						model.doPostDeserialize(game);
+					} catch (ClassNotFoundException e) {
+						addErrorConsumer.run("Entity class not found:", ob.get("type").getAsString(), true);
+						e.printStackTrace();
+					}
+				}
+			}
+
+			{
+				JsonArray arr = obj.getAsJsonArray("particles");
+				for (JsonElement ele : arr) {
+					JsonObject ob = ele.getAsJsonObject();
+					try {
+						Class<?> clazz = Class.forName(ob.get("type").getAsString());
+						IParticle part = context.deserialize(ob.get("data"), clazz);
+						part.doPostDeserialize(game);
+					} catch (ClassNotFoundException e) {
+						addErrorConsumer.run("Particle class not found:", ob.get("type").getAsString(), true);
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return game;
+		}
 	}
 }

@@ -1,13 +1,20 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.amityregion5.ZombieGame.common.buff.Buff;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 public class PlaceableWeaponData implements IWeaponDataBase {
 	//Variables
@@ -15,63 +22,8 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 	private int				maxAmmo, gameOrgX, gameOrgY;
 	private String			iconTextureString, gameTextureString, placingObject;
 	private List<SoundData>	sounds;
-	private HashMap<String, Object> extraData;
+	private HashMap<String, JsonElement> extraData;
 	private Buff			buff;
-
-	@SuppressWarnings("unchecked")
-	public PlaceableWeaponData(JSONObject o) {
-		price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
-		ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
-		maxAmmo = WeaponDataUtils.getClampedInt(o, "maxAmmo", 0, Integer.MAX_VALUE, 0);
-		reloadTime = WeaponDataUtils.getClampedDouble(o, "reloadTime", 0, Double.MAX_VALUE, 0);
-		warmup = WeaponDataUtils.getClampedDouble(o, "warmup", 0, Double.MAX_VALUE, 0);
-		preFireDelay = WeaponDataUtils.getClampedDouble(o, "preFireDelay", 0, Double.MAX_VALUE, 0);
-		postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
-		gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
-		gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
-		gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
-		gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
-		gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
-		maxRange = WeaponDataUtils.getClampedDouble(o, "maxRange", 0, Double.MAX_VALUE, 0);
-		if (o.containsKey("object")) {
-			placingObject = ((String) o.get("object"));
-		} else {
-			placingObject = "";
-		}
-		if (o.containsKey("iconTxtr")) {
-			iconTextureString = ((String) o.get("iconTxtr"));
-			TextureRegistry.tryRegister(iconTextureString);
-		} else {
-			iconTextureString = "";
-		}
-		if (o.containsKey("gameTxtr")) {
-			gameTextureString = ((String) o.get("gameTxtr"));
-			TextureRegistry.tryRegister(gameTextureString);
-		} else {
-			gameTextureString = "";
-		}
-		sounds = new ArrayList<SoundData>();
-		if (o.containsKey("sounds")) {
-			JSONArray arr = (JSONArray) o.get("sounds");
-
-			for (Object obj : arr) {
-				JSONObject soundJSON = (JSONObject) obj;
-				SoundData sound = SoundData.getSoundData(soundJSON);
-				if (sound != null) {
-					sounds.add(sound);
-				}
-			}
-		}
-		if (o.containsKey("buff")) {
-			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
-		}
-		
-		if (o.containsKey("data")) {
-			extraData = new HashMap<String, Object>((JSONObject)o.get("data"));
-		} else {
-			extraData = new HashMap<String, Object>();
-		}
-	}
 
 	/**
 	 * @return the price
@@ -283,7 +235,68 @@ public class PlaceableWeaponData implements IWeaponDataBase {
 		return warmup;
 	}
 	
-	public HashMap<String, Object> getExtraData() {
+	public HashMap<String, JsonElement> getExtraData() {
 		return extraData;
+	}
+	
+	public static class Deserializor implements JsonDeserializer<PlaceableWeaponData> {
+		@Override
+		public PlaceableWeaponData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			return deserialize(json, typeOfT, context, new PlaceableWeaponData());
+		}
+		public static PlaceableWeaponData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context, PlaceableWeaponData wd) throws JsonParseException {
+			JsonObject o = json.getAsJsonObject();
+			
+			wd.price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
+			wd.ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
+			wd.maxAmmo = WeaponDataUtils.getClampedInt(o, "maxAmmo", 0, Integer.MAX_VALUE, 0);
+			wd.reloadTime = WeaponDataUtils.getClampedDouble(o, "reloadTime", 0, Double.MAX_VALUE, 0);
+			wd.warmup = WeaponDataUtils.getClampedDouble(o, "warmup", 0, Double.MAX_VALUE, 0);
+			wd.preFireDelay = WeaponDataUtils.getClampedDouble(o, "preFireDelay", 0, Double.MAX_VALUE, 0);
+			wd.postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
+			wd.gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
+			wd.gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
+			wd.gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
+			wd.gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
+			wd.gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
+			wd.maxRange = WeaponDataUtils.getClampedDouble(o, "maxRange", 0, Double.MAX_VALUE, 0);
+			
+			if (o.has("object")) {
+				wd.placingObject = o.get("object").getAsString();
+			} else {
+				wd.placingObject = "";
+			}
+			if (o.has("iconTxtr")) {
+				wd.iconTextureString = o.get("iconTxtr").getAsString();
+				TextureRegistry.tryRegister(wd.iconTextureString);
+			} else {
+				wd.iconTextureString = "";
+			}
+			if (o.has("gameTxtr")) {
+				wd.gameTextureString = o.get("gameTxtr").getAsString();
+				TextureRegistry.tryRegister(wd.gameTextureString);
+			} else {
+				wd.gameTextureString = "";
+			}
+			
+			//Create list of sounds
+			wd.sounds = new ArrayList<SoundData>();
+			if (o.has("sounds")) {
+				wd.sounds = context.deserialize(o.get("sounds"), new TypeToken<ArrayList<SoundData>>(){}.getType());
+			}
+			//Load buff
+			if (o.has("buff")) {
+				wd.buff = context.deserialize(o.get("buff"), Buff.class);
+			}
+			
+			if (o.has("data")) {
+				wd.extraData = MapUtil.convertToHashMap(o.get("data").getAsJsonObject().entrySet());
+			} else {
+				wd.extraData = new HashMap<String, JsonElement>();
+			}
+
+			
+			return wd;
+		}
 	}
 }

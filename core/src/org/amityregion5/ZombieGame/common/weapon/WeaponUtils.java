@@ -2,19 +2,20 @@ package org.amityregion5.ZombieGame.common.weapon;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Optional;
 
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.func.Consumer3;
-import org.amityregion5.ZombieGame.common.func.Consumer4;
 import org.amityregion5.ZombieGame.common.func.Consumer5;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
+import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * Various utility functions and default methods for weapons
@@ -186,39 +187,35 @@ public class WeaponUtils {
 	 * @param valReturn a method to recieve loaded values. args: name, desc, id, tags
 	 * @return did this suceed
 	 */
-	public static boolean loadWeapon(JSONObject json, Class<?> clazz, Function<JSONArray, Boolean> loadWeaponData, Consumer4<String, String, String, ArrayList<String>> valReturn) {
+	public static <T extends IWeaponDataBase> boolean loadWeapon(JsonObject json, Class<?> clazz, Class<T> dataClass, Consumer5<String, String, String, List<String>, List<T>> valReturn) {
 		//Load the weapon from JSON
-		if (((String) json.get("className")).equals(clazz.getSimpleName())) {
+		if ((json.get("className").getAsString()).equals(clazz.getSimpleName())) {
 			//Get the name
-			String name = json.containsKey("name") ? (String) json.get("name") : "NAME NOT SET";
+			String name = Optional.ofNullable(json.get("name").getAsString()).orElse("NAME NOT SET");
 			//Get the description
-			String description = json.containsKey("name") ? (String) json.get("desc") : "DESC NOT SET";
+			String description = Optional.ofNullable(json.get("desc").getAsString()).orElse("DESC NOT SET");
 			//Get the ID
-			String id = json.containsKey("id") ? (String) json.get("id") : name;
+			String id = Optional.ofNullable(json.get("id").getAsString()).orElse(name);
 
 			//Get the tags
 			ArrayList<String> tags = new ArrayList<String>();
-			if (json.containsKey("tags")) {
-				JSONArray tagArr = (JSONArray) json.get("tags");
+			if (json.has("tags")) {
+				JsonArray tagArr = json.getAsJsonArray("tags");
 
-				for (Object o : tagArr) {
-					tags.add((String) o);
+				for (JsonElement e : tagArr) {
+					tags.add(e.getAsString());
 				}
 			}
-			
-			//Return the values to the class
-			valReturn.run(name, description, id, tags);
 
 			//Get the weapon array
-			JSONArray arr = (JSONArray) json.get("weapon");
+			JsonArray arr = json.getAsJsonArray("weapon");
+			ArrayList<T> weaponData = new ArrayList<T>();
 
 			//If it exists
 			if (arr != null) {
 				//Load the data
-				if (!loadWeaponData.apply(arr)) {
-					//If failed log error
-					ZombieGame.debug(clazz.getSimpleName() + " Loading: Error: Error loading weapon data");
-					return false;
+				for (JsonElement e : arr) {
+					weaponData.add(ZombieGame.instance.gson.fromJson(e, dataClass));
 				}
 			} else {
 				//If doesnt exist log error
@@ -226,6 +223,9 @@ public class WeaponUtils {
 
 				return false;
 			}
+			
+			//Return the values to the class
+			valReturn.run(name, description, id, tags, weaponData);
 
 			return true;
 		}

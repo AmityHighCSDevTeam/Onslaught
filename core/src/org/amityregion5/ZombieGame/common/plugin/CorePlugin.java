@@ -6,6 +6,7 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.settings.InputData;
+import org.amityregion5.ZombieGame.common.buff.Buff;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.game.Game;
@@ -15,7 +16,17 @@ import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.LanternModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.RocketModel;
 import org.amityregion5.ZombieGame.common.game.model.entity.ZombieModel;
+import org.amityregion5.ZombieGame.common.json.BuffSerializor;
+import org.amityregion5.ZombieGame.common.json.EntityModelSerializor;
+import org.amityregion5.ZombieGame.common.json.WeaponStackSerializor;
 import org.amityregion5.ZombieGame.common.util.RandUtil;
+import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
+import org.amityregion5.ZombieGame.common.weapon.data.GrenadeData;
+import org.amityregion5.ZombieGame.common.weapon.data.PlaceableWeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.RocketData;
+import org.amityregion5.ZombieGame.common.weapon.data.ShotgunWeaponData;
+import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
+import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
 import org.amityregion5.ZombieGame.common.weapon.types.BasicGun;
 import org.amityregion5.ZombieGame.common.weapon.types.Grenade;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
@@ -52,14 +63,32 @@ public class CorePlugin implements IPlugin {
 		container.addWeaponClass(Placeable.class);
 		container.addWeaponClass(Grenade.class);
 		container.addWeaponClass(Rocket.class);
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(Buff.class, new BuffSerializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeHierarchyAdapter(IEntityModel.class, new EntityModelSerializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(WeaponStack.class, new WeaponStackSerializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(Game.class, new Game.GameSerializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(SoundData.class, new SoundData.Deserializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(WeaponData.class, new WeaponData.Deserializor());
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(ShotgunWeaponData.class, new ShotgunWeaponData.Deserializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(GrenadeData.class, new GrenadeData.Deserializor());
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(RocketData.class, new RocketData.Deserializor());
+		
+		ZombieGame.instance.gsonBuilder.registerTypeAdapter(PlaceableWeaponData.class, new PlaceableWeaponData.Deserializor());
 	}
 
 	@Override
 	public void load() {
 		//Register the lanterns
 		Placeable.registeredObjects.put("BasicLantern", (game, position, data)->{
-			LanternModel lantern = new LanternModel(new EntityLantern(), game, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), (String)data.get("fieldTxtr"), "BasicLantern", data, ((Number)data.get("life")).floatValue());
-			lantern.setLight(new PointLight(game.getLighting(), 200, lantern.getColor(), ((Number)data.get("lightLevel")).floatValue(), position.x, position.y));
+			LanternModel lantern = new LanternModel(new EntityLantern(), game, Color.WHITE.cpy().mul(1, 1, 1, 130f / 255), data.get("fieldTxtr").getAsString(), "BasicLantern", data, data.get("life").getAsFloat());
+			lantern.setLight(new PointLight(game.getLighting(), 200, lantern.getColor(), data.get("lightLevel").getAsFloat(), position.x, position.y));
 			lantern.getEntity().setFriction(0.99f);
 			lantern.getEntity().setMass(10);
 			return lantern;

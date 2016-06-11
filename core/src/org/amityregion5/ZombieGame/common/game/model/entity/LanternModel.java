@@ -2,18 +2,21 @@ package org.amityregion5.ZombieGame.common.game.model.entity;
 
 import java.util.HashMap;
 
+import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityLantern;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.func.Function3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
 import org.amityregion5.ZombieGame.common.weapon.types.Placeable;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import box2dLight.Light;
 
@@ -27,14 +30,13 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	//The color of the light
 	public static final Color LIGHT_COLOR = new Color(1, 1, 1, 130f / 255);
 
-	private Light				light; //The light created by this object
-	private EntityLantern		entity; //The entity
-	private Game				g; //The game
-	private Color				c; //The color of the light
-	private SpriteDrawingLayer	sprite; //The sprite drawing layer
-	private String				creation; //The creation string
-	private HashMap<String, Object> data;
-	private float 				life; //The time remaining for this lantern
+	private HashMap<String, JsonElement> data = new HashMap<String, JsonElement>();
+
+	private transient Game				g; //The game
+	private transient Light				light; //The light created by this object
+	private transient EntityLantern		entity; //The entity
+	private transient SpriteDrawingLayer	sprite; //The sprite drawing layer
+	private transient Color c;
 
 	public LanternModel() {}
 
@@ -47,14 +49,33 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	 * @param spriteTexture the lantern's texture
 	 * @param creationString the creation string to call when loading this object (Placeable)
 	 */
-	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString, HashMap<String, Object> extraData, float life) {
-		entity = e;
-		this.life = life;
-		g = game;
-		creation = creationString; //Set values
-		c = color;
-		sprite = new SpriteDrawingLayer(spriteTexture);
+	public LanternModel(EntityLantern e, Game game, Color color, String spriteTexture, String creationString, HashMap<String, JsonElement> extraData, float life) {
 		data = extraData;
+		entity = e;
+		setLife(life);
+		g = game;
+		data.put("creation", new JsonPrimitive(creationString));
+		data.put("color", new JsonPrimitive(color.toString()));
+		c = color;
+		data.put("txtr", new JsonPrimitive(spriteTexture));
+		sprite = new SpriteDrawingLayer(spriteTexture);
+	}
+	
+	public float setLife(float life) {
+		data.put("life", new JsonPrimitive(life));
+		return life;
+	}
+	
+	public float getLife() {
+		return data.get("life").getAsFloat();
+	}
+	
+	public void setColor(Color c) {
+		data.put("color", new JsonPrimitive(c.toString()));
+	}
+	
+	public Color getColor() {
+		return Color.valueOf(data.get("color").getAsString());
 	}
 
 	@Override
@@ -65,7 +86,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	@Override
 	public void tick(float timeStep) {
 		if (light != null) {
-			life-=timeStep;
+			float life = setLife(getLife()-timeStep);
 			if (life<0) {
 				light.setColor(c.cpy().mul(1, 1 + life/30, 1 + life/30, 1 + life/50));
 				if (life < -40) {
@@ -138,15 +159,6 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	}
 
 	/**
-	 * Get this lantern's color
-	 * 
-	 * @return the color
-	 */
-	public Color getColor() {
-		return c;
-	}
-
-	/**
 	 * Get this lantern's light
 	 * 
 	 * @return the light
@@ -154,47 +166,50 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	public Light getLight() {
 		return light;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", entity.getBody().getWorldCenter().x);
-		obj.put("y", entity.getBody().getWorldCenter().y);
-		obj.put("r", entity.getBody().getTransform().getRotation());
-		obj.put("l", life);
-		obj.put("creation", creation);
-		JSONObject o = new JSONObject();
-		o.putAll(data);
-		obj.put("data", o);
-
-		return obj;
+	public void read(JsonObject obj) {
+		data = MapUtil.convertToHashMap(obj.entrySet());
 	}
-
+	
 	@Override
-	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float l = ((Number) obj.get("l")).floatValue();
-		String creationStr = (String) obj.get("creation");
+	public void doPostDeserialize(Game game) {
+		Function3<Game, Vector2, HashMap<String, JsonElement>, IEntityModel<?>> func = Placeable.registeredObjects.get(data.get("creation").getAsString());
 		
-		@SuppressWarnings("unchecked")
-		HashMap<String, Object> edata = new HashMap<String, Object>((JSONObject)obj.get("data"));
-		
-		Function3<Game, Vector2, HashMap<String, Object>, IEntityModel<?>> func = Placeable.registeredObjects.get(creationStr);
-
 		if (func == null) {
-			addErrorConsumer.run("Failed to load placeable objects:", creationStr, true);
+			ZombieGame.error("Failed to load LanternModel");
 			return;
 		}
-
-		g.runAfterNextTick(()-> {
-			LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y), edata);
-			model.life = l;
+		
+		float x = data.get("x").getAsFloat();
+		float y = data.get("y").getAsFloat();
+		float r = data.get("r").getAsFloat();
+		float vx = data.get("vx").getAsFloat();
+		float vy = data.get("vy").getAsFloat();
+		float l = data.get("life").getAsFloat();
+		
+		data.remove("x");
+		data.remove("y");
+		data.remove("r");
+		data.remove("vx");
+		data.remove("vy");
+		
+		game.runAfterNextTick(()-> {
+			LanternModel model = (LanternModel) func.apply(g, new Vector2(x, y), data);
+			model.setLife(l);
 			g.addEntityToWorld(model, x, y);
 			model.getEntity().getBody().getTransform().setRotation(r);
+			model.getEntity().getBody().setLinearVelocity(vx, vy);
 		});
+	}
+	
+	@Override
+	public void write(JsonObject obj) {
+		MapUtil.addMapToJson(obj, data);
+		obj.addProperty("x", entity.getBody().getWorldCenter().x);
+		obj.addProperty("y", entity.getBody().getWorldCenter().y);
+		obj.addProperty("r", entity.getBody().getTransform().getRotation());
+		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
+		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
 	}
 }

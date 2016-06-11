@@ -17,15 +17,21 @@ public class EntityRocket implements IEntity, Disposable {
 
 	private Body		body; //The body
 	private float		friction; //The friction
+	private float size;
 	private MassData	massData; //The mass data
 	private Vector2[]	shapeDef; //The set of points defining the shape
 
 	public EntityRocket(float size) {
 		massData = new MassData();
+		this.size = size;
 		friction = 0.975f; 
 		//Create the shape definition
 		shapeDef = new Vector2[] {new Vector2(size * 2, 0f), new Vector2(0f, size / 2), new Vector2(-size * 2, size / 2), new Vector2(-size * 2, -size / 2),
 				new Vector2(0f, -size / 2)};
+	}
+	
+	public float getSize() {
+		return size;
 	}
 
 	@Override

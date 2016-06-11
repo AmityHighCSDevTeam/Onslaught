@@ -3,11 +3,10 @@ package org.amityregion5.ZombieGame.common.weapon;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.google.gson.JsonParser;
 
 /**
  * A mostly obsolete class
@@ -37,15 +36,10 @@ public class WeaponRegistry {
 	 */
 	public void refreshWeapons() {
 		ZombieGame.log("Refreshing Weapons");
-		JSONParser parser = new JSONParser();
+		JsonParser parser = new JsonParser();
 		pluginManager.getActivatedWeapons().forEach((w)->{
 			FileHandle fh = Gdx.files.absolute(w.getPathName());
-			try {
-				JSONObject obj = (JSONObject) parser.parse(fh.reader());
-				w.loadWeapon(obj, w.getPathName());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			w.loadWeapon(parser.parse(fh.reader()).getAsJsonObject(), w.getPathName());
 		});
 		ZombieGame.log("Weapons Refreshed");
 	}

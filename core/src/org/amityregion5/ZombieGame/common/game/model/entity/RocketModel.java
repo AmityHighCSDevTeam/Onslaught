@@ -1,18 +1,22 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
+import java.util.HashMap;
+
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityRocket;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.ExplosionParticleModel;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 /**
  * A Model to represent Rockets
@@ -21,18 +25,22 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class RocketModel implements IEntityModel<EntityRocket> {
-	private EntityRocket		entity; //The entity
-	private Game				g; //The game
-	private float				timeUntilExplosion; //Time until it explodes
-	private double				strength; //Strength of the explosion
-	private float				acceleration; //Acceleration of the rocket
-	private PlayerModel			parent; //Player that created the rocket
-	private SpriteDrawingLayer	sprite; //The drawing layer
-	private Vector2				explosionPos; //The explosion position
-	private float				size; //The size of the rocket
-	private final float			timeStepPerSmoke	= 0.05f; //The seconds between smoke particles
+	private static final float			timeStepPerSmoke	= 0.05f; //The seconds between smoke particles
+	
+	private HashMap<String, JsonElement> data = new HashMap<String, JsonElement>();
+	
+	//private float				timeUntilExplosion; //Time until it explodes
+	//private double				strength; //Strength of the explosion
+	//private float				acceleration; //Acceleration of the rocket
+	//private float				size; //The size of the rocket
 	private float				timeUntilSmoke; //Seconds until next smoke
-	private SoundData			flySound; //The fly sound
+	
+	private transient SoundData			flySound; //The fly sound
+	private transient EntityRocket		entity; //The entity
+	private transient Game				g; //The game
+	private transient PlayerModel			parent; //Player that created the rocket
+	private transient SpriteDrawingLayer	sprite; //The drawing layer
+	private transient Vector2				explosionPos; //The explosion position
 
 	public RocketModel() {}
 
@@ -50,7 +58,6 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 		entity = e;
 		g = game;
 		this.parent = parent; //Set variables
-		this.size = size;
 		sprite = new SpriteDrawingLayer(txtr, this::getSizeM2);
 		timeUntilSmoke = timeStepPerSmoke;
 		this.flySound = flySound;
@@ -64,27 +71,27 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	@Override
 	public void tick(float timeStep) {
 		//While there is time until it explodes
-		if (timeUntilExplosion > 0) {
+		if (getTimeUntilExplosion() > 0) {
 			//Play the fly sound if it exists
 			if (flySound != null) {
 				g.playSound(flySound, entity.getBody().getWorldCenter());
 			}
 			
 			//Count down time until explosion and time until smoke
-			timeUntilExplosion -= timeStep;
+			setTimeUntilExplosion(getTimeUntilExplosion() - timeStep);
 			timeUntilSmoke -= timeStep;
 			
 			//Set explosion position to current position
 			explosionPos = entity.getBody().getWorldCenter().cpy();
 			//Apply acceleration force
-			entity.getBody().applyForceToCenter(VectorFactory.createVector(acceleration, entity.getBody().getAngle()), true);
+			entity.getBody().applyForceToCenter(VectorFactory.createVector(getAcceleration(), entity.getBody().getAngle()), true);
 			//If it is time to smoke
 			if (timeUntilSmoke < 0) {
 				//Increase the time until the next smoke
 				timeUntilSmoke += timeStepPerSmoke;
 
 				//Get position for the smoke relative to the rocket
-				Vector2 pos2 = VectorFactory.createVector(size * 2 + Math.min(0.05f, size * 0.1f), entity.getBody().getAngle() + (float) Math.PI);
+				Vector2 pos2 = VectorFactory.createVector(getSize() * 2 + Math.min(0.05f, getSize() * 0.1f), entity.getBody().getAngle() + (float) Math.PI);
 
 				//Get the world position
 				pos2 = pos2.add(entity.getBody().getWorldCenter());
@@ -106,7 +113,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 			//Remove the entity
 			g.removeEntity(this);
 			//Make the explosion
-			g.makeExplosion(explosionPos, strength, parent);
+			g.makeExplosion(explosionPos, getStrength(), parent);
 		}
 		// light.setPosition(entity.getBody().getWorldCenter());
 		sprite.getSprite().setOriginCenter();
@@ -120,7 +127,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
-		timeUntilExplosion = 0; //If it is damage set time to explosion to zero
+		setTimeUntilExplosion(0);
 		explosionPos = entity.getBody().getWorldCenter().cpy(); //Set explosion position
 		//Will now explode next tick
 		return 0;
@@ -145,7 +152,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 * @return the timeUntilExplosion
 	 */
 	public float getTimeUntilExplosion() {
-		return timeUntilExplosion;
+		return data.get("timeUntilExplosion").getAsFloat();
 	}
 
 	/**
@@ -153,14 +160,14 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 *            the timeUntilExplosion to set
 	 */
 	public void setTimeUntilExplosion(float timeUntilExplosion) {
-		this.timeUntilExplosion = timeUntilExplosion;
+		data.put("timeUntilExplosion", new JsonPrimitive(timeUntilExplosion));
 	}
 
 	/**
 	 * @return the strength
 	 */
 	public double getStrength() {
-		return strength;
+		return data.get("strength").getAsDouble();
 	}
 
 	/**
@@ -168,7 +175,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 *            the strength to set
 	 */
 	public void setStrength(double strength) {
-		this.strength = strength;
+		data.put("strength", new JsonPrimitive(strength));
 	}
 
 	/**
@@ -202,7 +209,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 * @param acceleration the acceleration
 	 */
 	public void setAcceleration(float acceleration) {
-		this.acceleration = acceleration;
+		data.put("acceleration", new JsonPrimitive(acceleration));
 	}
 
 	/**
@@ -211,7 +218,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 * @return the acceleration
 	 */
 	public float getAcceleration() {
-		return acceleration;
+		return data.get("acceleration").getAsFloat();
 	}
 
 	/**
@@ -220,7 +227,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 * @return the size
 	 */
 	public float getSize() {
-		return size;
+		return entity.getSize();
 	}
 
 	/**
@@ -229,51 +236,50 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 	 * @return the size times 2
 	 */
 	public float getSizeM2() {
-		return size * 2;
+		return getSize() * 2;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", entity.getBody().getWorldCenter().x);
-		obj.put("y", entity.getBody().getWorldCenter().y);
-		obj.put("r", entity.getBody().getTransform().getRotation());
-		obj.put("t", timeUntilExplosion);
-		obj.put("s", strength);
-		obj.put("size", size);
-		obj.put("txtr", sprite.getTxtrName());
-		obj.put("m", entity.getMassData().mass);
-		obj.put("f", entity.getFriction());
-		obj.put("a", acceleration);
-		obj.put("sound", flySound.toJSON());
-		// TODO: Add player to save list
-
-		return obj;
+	public void read(JsonObject obj) {
+		data = MapUtil.convertToHashMap(obj.entrySet());
 	}
 
 	@Override
-	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float t = ((Number) obj.get("t")).floatValue();
-		double s = ((Number) obj.get("s")).doubleValue();
-		float size = ((Number) obj.get("size")).floatValue();
-		float m = ((Number) obj.get("m")).floatValue();
-		float f = ((Number) obj.get("f")).floatValue();
-		float a = ((Number) obj.get("a")).floatValue();
-		SoundData fS = SoundData.getSoundData((JSONObject) obj.get("sound"));
+	public void doPostDeserialize(Game game) {
+		entity = new EntityRocket(data.get("size").getAsFloat());
+		g = game;
+		parent = g.getSingleplayerPlayer(); //TODO: Save Player
+		sprite = new SpriteDrawingLayer(data.get("txtr").getAsString());
+		entity.setFriction(data.get("friction").getAsFloat());
+		entity.setMass(data.get("mass").getAsFloat());
 
-		RocketModel model = new RocketModel(new EntityRocket(size), g, null, sprite.getTxtrName(), size, fS);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
-		model.setTimeUntilExplosion(t);
-		model.setStrength(s);
-		model.setAcceleration(a);
-		g.addEntityToWorld(model, x, y);
-		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
-		model.getEntity().getBody().getTransform().setRotation(r);
+		game.addEntityToWorld(this, data.get("x").getAsFloat(), data.get("y").getAsFloat());
+		entity.getBody().getTransform().setPosition(new Vector2(data.get("x").getAsFloat(), data.get("y").getAsFloat()));
+		entity.getBody().getTransform().setRotation(data.get("r").getAsFloat());
+		entity.getBody().setLinearVelocity(data.get("vx").getAsFloat(), data.get("vy").getAsFloat());
+
+		data.remove("size");
+		data.remove("friction");
+		data.remove("mass");
+		data.remove("x");
+		data.remove("y");
+		data.remove("r");
+		data.remove("vx");
+		data.remove("vy");
+		data.remove("txtr");
+	}
+	
+	@Override
+	public void write(JsonObject obj) {
+		MapUtil.addMapToJson(obj, data);
+		obj.addProperty("size", entity.getSize());
+		obj.addProperty("friction", entity.getFriction());
+		obj.addProperty("mass", entity.getMassData().mass);
+		obj.addProperty("x", entity.getBody().getWorldCenter().x);
+		obj.addProperty("y", entity.getBody().getWorldCenter().y);
+		obj.addProperty("r", entity.getBody().getTransform().getRotation());
+		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
+		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
+		obj.addProperty("txtr", sprite.getTxtrName());
 	}
 }

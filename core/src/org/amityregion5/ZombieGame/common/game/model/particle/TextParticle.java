@@ -2,16 +2,14 @@ package org.amityregion5.ZombieGame.common.game.model.particle;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.TextParticleDrawingLayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Rectangle;
 
 public class TextParticle implements IParticle {
-	private float	x, y, size; //X, Y, Size
-	private String	text; //Text
+	private transient float	x, y, size; //X, Y, Size
+	private transient String text; //Text
 
 	public TextParticle() {}
 
@@ -73,16 +71,6 @@ public class TextParticle implements IParticle {
 	public void setY(float y) {
 		this.y = y;
 	}
-
-	@Override
-	public JSONObject convertToJSONObject() {
-		return null;
-	}
-
-	@Override
-	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		return null;
-	}
 	
 	@Override
 	public Rectangle getRect() {
@@ -92,5 +80,9 @@ public class TextParticle implements IParticle {
 	@Override
 	public float getRotation() {
 		return 0;
+	}
+
+	@Override
+	public void doPostDeserialize(Game game) {
 	}
 }

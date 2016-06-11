@@ -14,18 +14,16 @@ import org.amityregion5.ZombieGame.common.weapon.WeaponUtils;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
 import org.amityregion5.ZombieGame.common.weapon.data.WeaponData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.google.gson.JsonObject;
 
 public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 	// All the variables!
 	protected String		name, description, id, pathName;
 	protected List<String>	tags;
-	protected Array<T>		data;
+	protected List<T>		data;
 
 	@Override
 	public String getName() {
@@ -113,7 +111,7 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 
 	@Override
 	public int getNumLevels() {
-		return data.size;
+		return data.size();
 	}
 
 	@Override
@@ -134,12 +132,13 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 	}
 
 	@Override
-	public boolean loadWeapon(JSONObject json, String pathName) {
+	public boolean loadWeapon(JsonObject json, String pathName) {
 		//Call Utility Method
 		this.pathName = pathName;
-		return WeaponUtils.loadWeapon(json, getClass(), this::loadWeaponData, (nme, desc, i, tg)->{name = nme; description = desc; id = i; tags = tg;});
-
+		return WeaponUtils.loadWeapon(json, getClass(), getDataClass(), (nme, desc, i, tg, dt)->{name = nme; description = desc; id = i; tags = tg; data = dt;});
 	}
+	
+	protected abstract Class<T> getDataClass();
 	
 	@Override
 	public String getPathName() {
@@ -155,8 +154,6 @@ public abstract class AbstractWeapon<T extends WeaponData> implements IWeapon {
 	public List<String> getTags() {
 		return tags;
 	}
-
-	protected abstract boolean loadWeaponData(JSONArray arr);
 
 	@Override
 	public String getStatus(WeaponStack stack) {

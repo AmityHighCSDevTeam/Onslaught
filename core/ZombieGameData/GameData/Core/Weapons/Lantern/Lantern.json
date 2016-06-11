@@ -2,6 +2,7 @@
   "name": "Lantern",
   "desc": "Makes light using all-organic non GMO programming.",
   "className": "Placeable",
+  "id": "Core_Lantern",
   "weapon": [
     {
       "price": 20,

@@ -2,6 +2,7 @@
   "name": "RPG-7",
   "desc": "The quickest way to explode things without actually walking there.",
   "className": "Rocket",
+  "id": "Core_RPG-7",
   "weapon": [
     {
       "price": 2000,

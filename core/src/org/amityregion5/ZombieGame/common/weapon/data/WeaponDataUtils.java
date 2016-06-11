@@ -1,12 +1,13 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
 import org.amityregion5.ZombieGame.ZombieGame;
-import org.json.simple.JSONObject;
+
+import com.google.gson.JsonObject;
 
 public class WeaponDataUtils {
-	public static double getClampedDouble(JSONObject o, String type, double min, double max, double def) {
-		if (!o.containsKey(type)) return def;
-		double d = ((Number) o.get(type)).doubleValue();
+	public static double getClampedDouble(JsonObject o, String type, double min, double max, double def) {
+		if (!o.has(type)) return def;
+		double d = o.get(type).getAsDouble();
 		if (d < min) {
 			d = min;
 			ZombieGame.error("Weapon data error: " + type + " < " + min + "; set to " + min);
@@ -16,9 +17,9 @@ public class WeaponDataUtils {
 		}
 		return d;
 	}
-	public static float getClampedFloat(JSONObject o, String type, float min, float max, float def) {
-		if (!o.containsKey(type)) return def;
-		float d = ((Number) o.get(type)).floatValue();
+	public static float getClampedFloat(JsonObject o, String type, float min, float max, float def) {
+		if (!o.has(type)) return def;
+		float d = o.get(type).getAsFloat();
 		if (d < min) {
 			d = min;
 			ZombieGame.error("Weapon data error: " + type + " < " + min + "; set to " + min);
@@ -28,9 +29,9 @@ public class WeaponDataUtils {
 		}
 		return d;
 	}
-	public static int getClampedInt(JSONObject o, String type, int min, int max, int def) {
-		if (!o.containsKey(type)) return def;
-		int i = ((Number) o.get(type)).intValue();
+	public static int getClampedInt(JsonObject o, String type, int min, int max, int def) {
+		if (!o.has(type)) return def;
+		int i = o.get(type).getAsInt();
 		if (i < min) {
 			i = min;
 			ZombieGame.error("Weapon data error: " + type + " < " + min + "; set to " + min);

@@ -7,6 +7,7 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.client.music.MusicHandler;
+import org.amityregion5.ZombieGame.client.settings.Settings;
 import org.amityregion5.ZombieGame.common.game.difficulty.Difficulty;
 
 import com.badlogic.gdx.Gdx;
@@ -32,7 +33,7 @@ public class ScoreMenu extends GuiScreen {
 		this.score = score;
 		
 		ZombieGame.instance.settings.addScore(diff, score);
-		ZombieGame.instance.settings.save();
+		Settings.save(ZombieGame.instance.settings);
 	}
 
 	@Override

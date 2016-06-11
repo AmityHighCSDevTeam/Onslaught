@@ -1,14 +1,18 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
+import java.util.HashMap;
+
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityGrenade;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
-import org.json.simple.JSONObject;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 /**
  * A model representing a grenade
@@ -17,13 +21,13 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class GrenadeModel implements IEntityModel<EntityGrenade> {
-	private EntityGrenade		entity; //The entity
-	private Game				g; //The game
-	private float				timeUntilExplosion; //Time until it explodes
-	private double				strength; //The strength of the explosion
-	private PlayerModel			parent; //The grenade's thrower
-	private SpriteDrawingLayer	sprite; //The sprite
-	private Vector2				explosionPos; //The explosion position
+	private HashMap<String, JsonElement> data = new HashMap<String, JsonElement>();
+
+	private transient EntityGrenade		entity; //The entity
+	private transient Game				g; //The game
+	private transient PlayerModel			parent; //The grenade's thrower
+	private transient SpriteDrawingLayer	sprite; //The sprite
+	private transient Vector2				explosionPos; //The explosion position
 
 	public GrenadeModel() {}
 
@@ -42,12 +46,12 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 	@Override
 	public void tick(float timeStep) {
 		//If time until explosion remains
-		if (timeUntilExplosion > 0) {
-			timeUntilExplosion -= timeStep; //Tick down time until explosion
+		if (getTimeUntilExplosion() > 0) {
+			setTimeUntilExplosion(getTimeUntilExplosion()-timeStep); //Tick down time until explosion
 			explosionPos = entity.getBody().getWorldCenter().cpy();
 		} else {
 			g.removeEntity(this); //Explode
-			g.makeExplosion(explosionPos, strength, parent);
+			g.makeExplosion(explosionPos, getStrength(), parent);
 		}
 		//Move sprite to the right place
 		sprite.getSprite().setOriginCenter();
@@ -61,7 +65,7 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
-		timeUntilExplosion = 0; //explode if damaged
+		setTimeUntilExplosion(0);
 		explosionPos = entity.getBody().getWorldCenter().cpy();
 		return 0;
 	}
@@ -85,7 +89,7 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 	 * @return the timeUntilExplosion
 	 */
 	public float getTimeUntilExplosion() {
-		return timeUntilExplosion;
+		return data.get("timeUntilExplosion").getAsFloat();
 	}
 
 	/**
@@ -93,14 +97,14 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 	 *            the timeUntilExplosion to set
 	 */
 	public void setTimeUntilExplosion(float timeUntilExplosion) {
-		this.timeUntilExplosion = timeUntilExplosion;
+		data.put("timeUntilExplosion", new JsonPrimitive(timeUntilExplosion));
 	}
 
 	/**
 	 * @return the strength
 	 */
 	public double getStrength() {
-		return strength;
+		return data.get("strength").getAsDouble();
 	}
 
 	/**
@@ -108,7 +112,7 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 	 *            the strength to set
 	 */
 	public void setStrength(double strength) {
-		this.strength = strength;
+		data.put("strength", new JsonPrimitive(strength));
 	}
 
 	/**
@@ -130,44 +134,46 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 	public boolean isHostile() {
 		return false;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", entity.getBody().getWorldCenter().x);
-		obj.put("y", entity.getBody().getWorldCenter().y);
-		obj.put("r", entity.getBody().getTransform().getRotation());
-		obj.put("t", timeUntilExplosion);
-		obj.put("s", strength);
-		obj.put("size", entity.getSize());
-		obj.put("txtr", sprite.getTxtrName());
-		obj.put("m", entity.getMassData().mass);
-		obj.put("f", entity.getFriction());
-		// TODO: Add player to save list
-
-		return obj;
+	public void read(JsonObject obj) {
+		data = MapUtil.convertToHashMap(obj.entrySet());
 	}
 
 	@Override
-	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float t = ((Number) obj.get("t")).floatValue();
-		double s = ((Number) obj.get("s")).doubleValue();
-		float size = ((Number) obj.get("size")).floatValue();
-		float m = ((Number) obj.get("m")).floatValue();
-		float f = ((Number) obj.get("f")).floatValue();
+	public void doPostDeserialize(Game game) {
+		entity = new EntityGrenade(data.get("size").getAsFloat());
+		g = game;
+		parent = g.getSingleplayerPlayer(); //TODO: Save Player
+		sprite = new SpriteDrawingLayer(data.get("txtr").getAsString());
+		entity.setFriction(data.get("friction").getAsFloat());
+		entity.setMass(data.get("mass").getAsFloat());
 
-		GrenadeModel model = new GrenadeModel(new EntityGrenade(size), g, null, sprite.getTxtrName());
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
-		model.setTimeUntilExplosion(t);
-		model.setStrength(s);
-		g.addEntityToWorld(model, x, y);
-		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
-		model.getEntity().getBody().getTransform().setRotation(r);
+		game.addEntityToWorld(this, data.get("x").getAsFloat(), data.get("y").getAsFloat());
+		entity.getBody().getTransform().setPosition(new Vector2(data.get("x").getAsFloat(), data.get("y").getAsFloat()));
+		entity.getBody().getTransform().setRotation(data.get("r").getAsFloat());
+		entity.getBody().setLinearVelocity(data.get("vx").getAsFloat(), data.get("vy").getAsFloat());
+
+		data.remove("size");
+		data.remove("friction");
+		data.remove("mass");
+		data.remove("x");
+		data.remove("y");
+		data.remove("r");
+		data.remove("vx");
+		data.remove("vy");
+	}
+	
+	@Override
+	public void write(JsonObject obj) {
+		MapUtil.addMapToJson(obj, data);
+		obj.addProperty("size", entity.getSize());
+		obj.addProperty("friction", entity.getFriction());
+		obj.addProperty("mass", entity.getMassData().mass);
+		obj.addProperty("x", entity.getBody().getWorldCenter().x);
+		obj.addProperty("y", entity.getBody().getWorldCenter().y);
+		obj.addProperty("r", entity.getBody().getTransform().getRotation());
+		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
+		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
 	}
 }

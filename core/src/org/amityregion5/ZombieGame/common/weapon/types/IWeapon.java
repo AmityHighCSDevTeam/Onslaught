@@ -7,9 +7,9 @@ import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonObject;
 
 /**
  * @author sergeys
@@ -26,7 +26,7 @@ public interface IWeapon {
 
 	public List<String> getTags();
 
-	public boolean loadWeapon(JSONObject json, String pathName);
+	public boolean loadWeapon(JsonObject json, String pathName);
 	
 	public String getPathName();
 

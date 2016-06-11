@@ -10,11 +10,8 @@ import org.amityregion5.ZombieGame.common.helper.VectorFactory;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
 import org.amityregion5.ZombieGame.common.weapon.data.ShotgunWeaponData;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 /**
  * A class for a shotgun type weapon
@@ -81,18 +78,10 @@ public class Shotgun extends AbstractWeapon<ShotgunWeaponData> {
 			}
 		}
 	}
-
+	
 	@Override
-	protected boolean loadWeaponData(JSONArray arr) {
-		//Load the gun's data as ShotgunWeaponData
-		data = new Array<ShotgunWeaponData>();
-
-		for (Object obj : arr) {
-			JSONObject o = (JSONObject) obj;
-			ShotgunWeaponData d = new ShotgunWeaponData(o);
-			data.add(d);
-		}
-		return true;
+	protected Class<ShotgunWeaponData> getDataClass() {
+		return ShotgunWeaponData.class;
 	}
 
 	@Override

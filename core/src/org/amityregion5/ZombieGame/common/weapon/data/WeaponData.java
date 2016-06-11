@@ -1,14 +1,19 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.amityregion5.ZombieGame.common.buff.Buff;
 
 import com.badlogic.gdx.graphics.Color;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 public class WeaponData implements IWeaponDataBase {
 	//Various Variables
@@ -20,71 +25,6 @@ public class WeaponData implements IWeaponDataBase {
 	private boolean			isAuto;
 	private List<SoundData>	sounds;
 	private Buff			buff;
-
-	public WeaponData(JSONObject o) {
-		price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
-		ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
-		damage = WeaponDataUtils.getClampedDouble(o, "damage", 0, Double.MAX_VALUE, 0);
-		knockback = WeaponDataUtils.getClampedDouble(o, "knockback", 0, Double.MAX_VALUE, 0);
-		ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
-		accuracy = WeaponDataUtils.getClampedDouble(o, "accuracy", 0, 360, 0);
-		maxAmmo = WeaponDataUtils.getClampedInt(o, "maxAmmo", 0, Integer.MAX_VALUE, 0);
-		reloadTime = WeaponDataUtils.getClampedDouble(o, "reloadTime", 0, Double.MAX_VALUE, 0);
-		warmup = WeaponDataUtils.getClampedDouble(o, "warmup", 0, Double.MAX_VALUE, 0);
-		preFireDelay = WeaponDataUtils.getClampedDouble(o, "preFireDelay", 0, Double.MAX_VALUE, 0);
-		postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
-		gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
-		gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
-		gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
-		gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
-		gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
-		bulletThickness = WeaponDataUtils.getClampedFloat(o, "bulletThickness", 0, Float.MAX_VALUE, 0);
-		//If doesn't exist set to empty string
-		if (o.containsKey("iconTxtr")) {
-			iconTextureString = ((String) o.get("iconTxtr"));
-			TextureRegistry.tryRegister(iconTextureString);
-		} else {
-			iconTextureString = "";
-		}
-		//If doesn't exist set to empty string
-		if (o.containsKey("gameTxtr")) {
-			gameTextureString = ((String) o.get("gameTxtr"));
-			TextureRegistry.tryRegister(gameTextureString);
-		} else {
-			gameTextureString = "";
-		}
-		if (o.containsKey("bulletColor")) {
-			String color = ((String) o.get("bulletColor"));
-
-			if (color == null) {
-				color = "00000000";
-			}
-
-			bulletColor = Color.valueOf(color);
-		}
-		if (o.containsKey("isAuto")) {
-			isAuto = (Boolean) o.get("isAuto");
-		}
-		
-		//Create list of sounds
-		sounds = new ArrayList<SoundData>();
-		if (o.containsKey("sounds")) {
-			JSONArray arr = (JSONArray) o.get("sounds");
-
-			//Add all sounds to the list
-			for (Object obj : arr) {
-				JSONObject soundJSON = (JSONObject) obj;
-				SoundData sound = SoundData.getSoundData(soundJSON);
-				if (sound != null) {
-					sounds.add(sound);
-				}
-			}
-		}
-		//Load buff
-		if (o.containsKey("buff")) {
-			buff = Buff.getFromJSON((JSONObject) o.get("buff"));
-		}
-	}
 
 	/**
 	 * @return the isAuto
@@ -133,18 +73,18 @@ public class WeaponData implements IWeaponDataBase {
 	}
 
 	/**
-	 * @return the damage
-	 */
-	public double getDamage() {
-		return damage;
-	}
-
-	/**
 	 * @param damage
 	 *            the damage to set
 	 */
 	public void setDamage(double damage) {
 		this.damage = damage;
+	}
+
+	/**
+	 * @return the damage
+	 */
+	public double getDamage() {
+		return damage;
 	}
 
 	/**
@@ -357,5 +297,71 @@ public class WeaponData implements IWeaponDataBase {
 	 */
 	public void setWarmup(double warmup) {
 		this.warmup = warmup;
+	}
+	
+	public static class Deserializor implements JsonDeserializer<WeaponData> {
+		@Override
+		public WeaponData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			return deserialize(json, typeOfT, context, new WeaponData());
+		}
+		public static WeaponData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context, WeaponData wd) throws JsonParseException {
+			JsonObject o = json.getAsJsonObject();
+			wd.price = WeaponDataUtils.getClampedDouble(o, "price", 0, Double.MAX_VALUE, 0);
+			wd.ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
+			wd.damage = WeaponDataUtils.getClampedDouble(o, "damage", 0, Double.MAX_VALUE, 0);
+			wd.knockback = WeaponDataUtils.getClampedDouble(o, "knockback", 0, Double.MAX_VALUE, 0);
+			wd.ammoPrice = WeaponDataUtils.getClampedDouble(o, "ammoPrice", 0, Double.MAX_VALUE, 0);
+			wd.accuracy = WeaponDataUtils.getClampedDouble(o, "accuracy", 0, 360, 0);
+			wd.maxAmmo = WeaponDataUtils.getClampedInt(o, "maxAmmo", 0, Integer.MAX_VALUE, 0);
+			wd.reloadTime = WeaponDataUtils.getClampedDouble(o, "reloadTime", 0, Double.MAX_VALUE, 0);
+			wd.warmup = WeaponDataUtils.getClampedDouble(o, "warmup", 0, Double.MAX_VALUE, 0);
+			wd.preFireDelay = WeaponDataUtils.getClampedDouble(o, "preFireDelay", 0, Double.MAX_VALUE, 0);
+			wd.postFireDelay = WeaponDataUtils.getClampedDouble(o, "postFireDelay", 0, Double.MAX_VALUE, 0);
+			wd.gameScale = WeaponDataUtils.getClampedDouble(o, "gameScale", 0, Double.MAX_VALUE, 1);
+			wd.gameOffX = WeaponDataUtils.getClampedDouble(o, "gameOffX", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
+			wd.gameOffY = WeaponDataUtils.getClampedDouble(o, "gameOffY", -Double.MAX_VALUE, Double.MAX_VALUE, 0);
+			wd.gameOrgX = WeaponDataUtils.getClampedInt(o, "gameOriginX", 0, Integer.MAX_VALUE, 0);
+			wd.gameOrgY = WeaponDataUtils.getClampedInt(o, "gameOriginY", 0, Integer.MAX_VALUE, 0);
+			wd.bulletThickness = WeaponDataUtils.getClampedFloat(o, "bulletThickness", 0, Float.MAX_VALUE, 0);
+			
+			//If doesn't exist set to empty string
+			if (o.has("iconTxtr")) {
+				wd.iconTextureString = o.get("iconTxtr").getAsString();
+				TextureRegistry.tryRegister(wd.iconTextureString);
+			} else {
+				wd.iconTextureString = "";
+			}
+			//If doesn't exist set to empty string
+			if (o.has("gameTxtr")) {
+				wd.gameTextureString = o.get("gameTxtr").getAsString();
+				TextureRegistry.tryRegister(wd.gameTextureString);
+			} else {
+				wd.gameTextureString = "";
+			}
+			if (o.has("bulletColor")) {
+				String color = o.get("bulletColor").getAsString();
+
+				if (color == null) {
+					color = "00000000";
+				}
+
+				wd.bulletColor = Color.valueOf(color);
+			}
+			if (o.has("isAuto")) {
+				wd.isAuto = o.get("isAuto").getAsBoolean();
+			}
+			
+			//Create list of sounds
+			wd.sounds = new ArrayList<SoundData>();
+			if (o.has("sounds")) {
+				wd.sounds = context.deserialize(o.get("sounds"), new TypeToken<ArrayList<SoundData>>(){}.getType());
+			}
+			//Load buff
+			if (o.has("buff")) {
+				wd.buff = context.deserialize(o.get("buff"), Buff.class);
+			}
+			
+			return wd;
+		}
 	}
 }

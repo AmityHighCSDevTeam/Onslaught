@@ -5,23 +5,19 @@
   "levels": [
     {
       "price": 100,
-      "buffs": [
-        {
-          "type": "add",
-          "key": "zoom",
-          "val": 0.5
+      "buff": {
+        "add": {
+          "zoom": 0.5
         }
-      ]
+      }
     },
     {
       "price": 200,
-      "buffs": [
-        {
-          "type": "add",
-          "key": "zoom",
-          "val": 1.5
+      "buff": {
+        "mult": {
+          "zoom": 1.5
         }
-      ]
+      }
     }
   ]
 }

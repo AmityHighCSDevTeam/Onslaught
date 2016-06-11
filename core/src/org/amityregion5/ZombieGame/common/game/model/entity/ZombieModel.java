@@ -1,5 +1,6 @@
 package org.amityregion5.ZombieGame.common.game.model.entity;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +13,6 @@ import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
 import org.amityregion5.ZombieGame.common.entity.EntityZombie;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
@@ -21,10 +21,13 @@ import org.amityregion5.ZombieGame.common.game.model.particle.HealthPackParticle
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
 import org.amityregion5.ZombieGame.common.helper.MathHelper;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 public class ZombieModel implements IEntityModel<EntityZombie> {
 
@@ -33,21 +36,20 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	private static final float	maxSecUntilGrowl	= 20; //Maximum time between growls
 	private static final float	minGrowlVolume		= 0.8f; //Minimum growl volume
 	private static final float	maxGrowlVolume		= 1.0f; //Maximum growl volume
+	
+	private HashMap<String, JsonElement> data = new HashMap<String, JsonElement>();
 
-	private EntityZombie		entity; //Entity
-	private IEntity				target; //Target
-	private float				health, maxHealth, speed, damage, range; //Health, Speed, Damage, Range
-	private Game				g; //Game
-	private SpriteDrawingLayer	zSprite; //Sprite
-	private double				prizeMoney; //Prize money
-	private AIMode				ai; //AI Mode
-	private float				attackCooldown; //attack cooldown
-	private float				secUntilGrowl	= -1; //seconds until growl
-	private float				growlVolume		= -1; //Growl volume
-	private float				growlPitch		= -1; //Growl pitch
-	private float				sizeMultiplier; //Size multiplier
+	//private float				health, maxHealth, speed, damage, range; //Health, Speed, Damage, Range
 
-	private float timeUntilIdleCheck = 0;
+	private transient EntityZombie		entity; //Entity
+	private transient IEntity				target; //Target
+	private transient Game				g; //Game
+	private transient SpriteDrawingLayer	zSprite; //Sprite
+	private transient AIMode				ai; //AI Mode
+	private transient float				secUntilGrowl	= -1; //seconds until growl
+	private transient float				growlVolume		= -1; //Growl volume
+	private transient float				growlPitch		= -1; //Growl pitch
+	private transient float timeUntilIdleCheck = 0;
 
 	public ZombieModel() {}
 	
@@ -55,7 +57,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		entity = zom;
 		this.g = g;
 		ai = AIMode.IDLE; //Set variables
-		this.sizeMultiplier = sizeMultiplier;
+		data.put("sizeMultiplier", new JsonPrimitive(sizeMultiplier));
 
 		//Get random zombie sprite
 		int textureIndex = ZombieGame.instance.random.nextInt(TextureRegistry.getTextureNamesFor("*/Zombies/**.png").size());
@@ -73,7 +75,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		if (secUntilGrowl <= 0) {
 			// Set volume and pitch
 			growlVolume = g.getRandom().nextFloat() * (maxGrowlVolume - minGrowlVolume) + minGrowlVolume;
-			growlPitch = Math.min(Math.max(sizeMultiplier, 0.5f), 2f);
+			growlPitch = Math.min(Math.max(data.get("sizeMultiplier").getAsFloat(), 0.5f), 2f);
 			//Get sound
 			List<String> soundNames = SoundRegistry.getSoundNamesFor("*/Audio/Zombie/*");
 			//Play sound
@@ -145,14 +147,14 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 						BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
 
 						//Corrected range of zombie
-						float fixedRange = (range + targetModel.get().getEntity().getShape().getRadius());
+						float fixedRange = (data.get("range").getAsFloat() + targetModel.get().getEntity().getShape().getRadius());
 
 						//If we are within range
 						if (entity.getBody().getWorldCenter().dst2(target.getBody().getWorldCenter()) <= fixedRange * fixedRange) {
 							//Set AI to attacking
 							ai = AIMode.ATTACKING;
 							//Set cooldown
-							attackCooldown = 0;
+							data.put("attackCooldown", new JsonPrimitive(0));
 						}
 
 						break;
@@ -176,16 +178,16 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 						BodyHelper.setPointing(entity.getBody(), target.getBody().getWorldCenter(), delta, 10);
 
 						//If no cooldown yet
-						if (attackCooldown == 0) {
+						if (data.get("attackCooldown").getAsFloat() == 0) {
 							//Damage it
-							targetModel.get().damage(damage, this, DamageTypes.ZOMBIE);
-						} else if (attackCooldown >= baseAtkCooldown) {
+							targetModel.get().damage(data.get("damage").getAsFloat(), this, DamageTypes.ZOMBIE);
+						} else if (data.get("attackCooldown").getAsFloat() >= baseAtkCooldown) {
 							//If cooldown completed
 							//Back to following mode
 							ai = AIMode.FOLLOWING;
 						}
 						//Increase cooldown
-						attackCooldown += delta;
+						data.put("attackCooldown", new JsonPrimitive(data.get("attackCooldown").getAsFloat() + delta));
 						break;
 					} else {
 						//If fails then return to IDLE
@@ -210,7 +212,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param prizeMoney the money to be given
 	 */
 	public void setPrizeMoney(double prizeMoney) {
-		this.prizeMoney = prizeMoney; //Set prize money
+		data.put("prizeMoney", new JsonPrimitive(prizeMoney));
 	}
 
 	/**
@@ -219,13 +221,13 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @return the money to be given
 	 */
 	public double getPrizeMoney() {
-		return prizeMoney; //Get prize money
+		return data.get("prizeMoney").getAsDouble();
 	}
 
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		//Get the damage that is taken from the source
-		float damageTaken = Math.min(damage, health);
+		float damageTaken = Math.min(damage, data.get("health").getAsFloat());
 		
 		//If less than zero
 		if (damageTaken < 0) {
@@ -241,20 +243,20 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		//}
 		
 		//Decrease health by damage
-		health -= damageTaken;
+		setHealth(getHealth() - damageTaken);
 		//Set AI to follow the thing that hurt it
 		ai = AIMode.FOLLOWING;
 		//Set the thing that hurt it as the target
 		target = source.getEntity();
 		
 		//If this was the killing blow
-		if (health <= 0 && damageTaken > 0) {
+		if (getHealth() <= 0 && damageTaken > 0) {
 			//If the source is a player
 			if (source != null && source instanceof PlayerModel) {
 				PlayerModel pModel = (PlayerModel) source;
 				//Give the player money
-				pModel.setMoney(pModel.getMoney() + prizeMoney);
-				pModel.addScore(prizeMoney * 0.05 + 1);
+				pModel.setMoney(pModel.getMoney() + getPrizeMoney());
+				pModel.addScore(getPrizeMoney() * 0.05 + 1);
 			}
 			
 			//If the random says it is time for a health pack
@@ -290,17 +292,17 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param maxHealth the new max health
 	 */
 	public void setMaxHealth(float maxHealth) {
-		this.maxHealth = maxHealth;
+		data.put("maxHealth", new JsonPrimitive(maxHealth));
 	}
 
 	@Override
 	public float getMaxHealth() {
-		return maxHealth;
+		return data.get("maxHealth").getAsFloat();
 	}
 
 	@Override
 	public float getHealth() {
-		return health;
+		return data.get("health").getAsFloat();
 	}
 
 	/**
@@ -309,7 +311,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param health the new health
 	 */
 	public void setHealth(float health) {
-		this.health = health;
+		data.put("health", new JsonPrimitive(health));
 	}
 
 	/**
@@ -318,7 +320,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param speed the new speed
 	 */
 	public void setSpeed(float speed) {
-		this.speed = speed;
+		data.put("speed", new JsonPrimitive(speed));
 	}
 
 	/**
@@ -327,7 +329,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @return the speed
 	 */
 	public float getSpeed() {
-		return speed;
+		return data.get("speed").getAsFloat();
 	}
 
 	@Override
@@ -341,7 +343,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param damage the damage
 	 */
 	public void setDamage(float damage) {
-		this.damage = damage;
+		data.put("damage", new JsonPrimitive(damage));
 	}
 
 	/**
@@ -350,7 +352,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	 * @param range the range
 	 */
 	public void setRange(float range) {
-		this.range = range;
+		data.put("range", new JsonPrimitive(range));
 	}
 
 	/**
@@ -370,60 +372,51 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	public void setTexture(String txtr) {
 		zSprite.setSprite(TextureRegistry.getTextureNamesFor(txtr).get(0));
 	}
-
-	@SuppressWarnings("unchecked")
+	
+	public HashMap<String, JsonElement> getData() {
+		return data;
+	}
+	
 	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", entity.getBody().getWorldCenter().x);
-		obj.put("y", entity.getBody().getWorldCenter().y);
-		obj.put("r", entity.getBody().getTransform().getRotation());
-		obj.put("attkCooldown", attackCooldown);
-		obj.put("damage", damage);
-		obj.put("speed", speed);
-		obj.put("range", range);
-		obj.put("maxHealth", maxHealth);
-		obj.put("money", prizeMoney);
-		obj.put("sizeMult", sizeMultiplier);
-		obj.put("txtr", zSprite.getTxtrName());
-		obj.put("m", entity.getMassData().mass);
-		obj.put("f", entity.getFriction());
-		obj.put("health", health);
-
-		return obj;
+	public void read(JsonObject obj) {
+		data = MapUtil.convertToHashMap(obj.entrySet());
 	}
 
 	@Override
-	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float attCool = ((Number) obj.get("attkCooldown")).floatValue();
-		float dmg = ((Number) obj.get("damage")).floatValue();
-		float spd = ((Number) obj.get("speed")).floatValue();
-		float rng = ((Number) obj.get("range")).floatValue();
-		float mH = ((Number) obj.get("maxHealth")).floatValue();
-		double mny = ((Number) obj.get("money")).doubleValue();
-		float szM = ((Number) obj.get("sizeMult")).floatValue();
-		String txtr = (String) obj.get("txtr");
-		float m = ((Number) obj.get("m")).floatValue();
-		float f = ((Number) obj.get("f")).floatValue();
-		float h = ((Number) obj.get("health")).floatValue();
+	public void doPostDeserialize(Game game) {
+		entity = new EntityZombie(data.get("size").getAsFloat());
+		g = game;
+		zSprite = new SpriteDrawingLayer(data.get("txtr").getAsString());
+		entity.setFriction(data.get("friction").getAsFloat());
+		entity.setMass(data.get("mass").getAsFloat());
 
-		ZombieModel model = new ZombieModel(new EntityZombie(0.15f * szM), g, szM);
-		model.attackCooldown = attCool;
-		model.damage = dmg;
-		model.speed = spd;
-		model.range = rng;
-		model.maxHealth = mH;
-		model.prizeMoney = mny;
-		model.health = h;
-		model.setTexture(txtr);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
-		g.addEntityToWorld(model, x, y);
-		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
-		model.getEntity().getBody().getTransform().setRotation(r);
+		game.addEntityToWorld(this, data.get("x").getAsFloat(), data.get("y").getAsFloat());
+		entity.getBody().getTransform().setPosition(new Vector2(data.get("x").getAsFloat(), data.get("y").getAsFloat()));
+		entity.getBody().getTransform().setRotation(data.get("r").getAsFloat());
+		entity.getBody().setLinearVelocity(data.get("vx").getAsFloat(), data.get("vy").getAsFloat());
+
+		data.remove("size");
+		data.remove("friction");
+		data.remove("mass");
+		data.remove("x");
+		data.remove("y");
+		data.remove("r");
+		data.remove("vx");
+		data.remove("vy");
+		data.remove("txtr");
+	}
+	
+	@Override
+	public void write(JsonObject obj) {
+		MapUtil.addMapToJson(obj, data);
+		obj.addProperty("size", entity.getSize());
+		obj.addProperty("friction", entity.getFriction());
+		obj.addProperty("mass", entity.getMassData().mass);
+		obj.addProperty("x", entity.getBody().getWorldCenter().x);
+		obj.addProperty("y", entity.getBody().getWorldCenter().y);
+		obj.addProperty("r", entity.getBody().getTransform().getRotation());
+		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
+		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
+		obj.addProperty("txtr", zSprite.getTxtrName());
 	}
 }

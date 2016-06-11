@@ -1,9 +1,10 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
+import org.amityregion5.ZombieGame.common.buff.Buff;
 
 /**
- * An iterface that defines a basic weapon data
+ * An iterface that defines a basic weapon data.
+ * THIS SHOULD HAVE A CONSTRUCTOR THAT TAKES A JsonObject as a parameter
  * 
  * @author sergeys
  *

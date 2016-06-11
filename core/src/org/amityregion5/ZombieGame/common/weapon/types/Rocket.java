@@ -15,11 +15,9 @@ import org.amityregion5.ZombieGame.common.weapon.WeaponUtils;
 import org.amityregion5.ZombieGame.common.weapon.data.IWeaponDataBase;
 import org.amityregion5.ZombieGame.common.weapon.data.RocketData;
 import org.amityregion5.ZombieGame.common.weapon.data.SoundData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.google.gson.JsonObject;
 
 public class Rocket implements IWeapon {
 
@@ -28,7 +26,7 @@ public class Rocket implements IWeapon {
 	protected String id; //The unique ID
 	protected String pathName;
 	protected List<String>		tags; //The tags owned by this rocket
-	protected Array<RocketData>	data; //The rocket's data
+	protected List<RocketData>	data; //The rocket's data
 
 	@Override
 	public String getName() {
@@ -145,7 +143,7 @@ public class Rocket implements IWeapon {
 
 	@Override
 	public int getNumLevels() {
-		return data.size;
+		return data.size();
 	}
 
 	@Override
@@ -169,28 +167,16 @@ public class Rocket implements IWeapon {
 	}
 
 	@Override
-	public boolean loadWeapon(JSONObject json, String pathName) {
+	public boolean loadWeapon(JsonObject json, String pathName) {
 		//Call Utility Method
 		this.pathName = pathName;
-		return WeaponUtils.loadWeapon(json, getClass(), this::loadWeaponData, (nme, desc, i, tg)->{name = nme; description = desc; id = i; tags = tg;});
+		return WeaponUtils.loadWeapon(json, getClass(), RocketData.class, (nme, desc, i, tg, dt)->{name = nme; description = desc; id = i; tags = tg; data=dt;});
 
 	}
 	
 	@Override
 	public String getPathName() {
 		return pathName;
-	}
-
-	protected boolean loadWeaponData(JSONArray arr) {
-		//Load weapon data
-		data = new Array<RocketData>();
-
-		for (Object obj : arr) {
-			JSONObject o = (JSONObject) obj;
-			RocketData d = new RocketData(o);
-			data.add(d);
-		}
-		return true;
 	}
 
 	@Override

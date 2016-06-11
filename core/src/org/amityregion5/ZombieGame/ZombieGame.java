@@ -42,6 +42,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author sergeys
@@ -69,6 +71,8 @@ public class ZombieGame extends Game {
 	public String					version	= "Error: Version Not Set";	// The game version
 	public String					newestVersion;						// The newest version
 	public ShaderProgram			backgroundShader;					// The grass shader
+	public GsonBuilder				gsonBuilder;
+	public Gson						gson = new Gson();
 	
 	private List<Screen> toDispose = new ArrayList<Screen>(); //A list of screens that need to be disposed
  
@@ -85,6 +89,8 @@ public class ZombieGame extends Game {
 		isCheatModeAllowed = cheatMode; //Set the cheat mode
 		this.isServer = isServer; // Set if it is a server
 		random = new Random(); //Create the random
+		
+		gsonBuilder = new GsonBuilder();
 
 		//Determine the working directory
 		try {
@@ -176,8 +182,7 @@ public class ZombieGame extends Game {
 				//Get settings file
 				settingsFile = Gdx.files.absolute(workingDir + "/ZombieGameData/settings.json");
 				//Create and load the settings
-				settings = new Settings();
-				settings.load();
+				settings = Settings.load();
 			}
 
 			// "Mod" loading list of mods
@@ -271,7 +276,7 @@ public class ZombieGame extends Game {
 				ZombieGame.log("Loading: Loading completed");
 				Gdx.app.postRunnable(() -> setScreenAndDispose(new MainMenu()));
 
-				settings.save();
+				Settings.save(settings);
 			}
 		} , "Main Loading Thread");
 

@@ -2,25 +2,28 @@ package org.amityregion5.ZombieGame.common.game.model.particle;
 
 import org.amityregion5.ZombieGame.client.game.ExplosionParticleDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.helper.VectorFactory;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.annotations.SerializedName;
 
 import box2dLight.Light;
 
 public class ExplosionParticleModel implements IParticle {
-	//private Light	light; //Light
-	private Game	g; //Game
-	private Color	c; //Color
-	//X, Y, x velocity, y velocity, rotation, rotation speed
-	private float	x, y, xVel, yVel, rotation, rotationSpeed;
+	private float x;
+	private float y;
+	@SerializedName(value="xv") private float xVel;
+	@SerializedName(value="yv") private float yVel;
+	@SerializedName(value="r") private float rotation;
+	@SerializedName(value="rv") private float rotationSpeed;
 	private double size = 1.0;
+	private Color	c; //Color
+	
+	private transient Game	g; //Game
 
 	public ExplosionParticleModel() {}
 
@@ -145,44 +148,10 @@ public class ExplosionParticleModel implements IParticle {
 		return y;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("c", c.toString());
-		obj.put("x", x);
-		obj.put("y", y);
-		obj.put("xv", xVel);
-		obj.put("yv", yVel);
-		obj.put("r", rotation);
-		obj.put("rv", rotationSpeed);
-		obj.put("size", size);
-
-		return obj;
-	}
-
-	@Override
-	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		Color c = Color.valueOf((String) obj.get("c"));
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float xV = ((Number) obj.get("xv")).floatValue();
-		float yV = ((Number) obj.get("yv")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float rV = ((Number) obj.get("rv")).floatValue();
-		double size = ((Number) obj.get("size")).doubleValue();
-
-		ExplosionParticleModel model = new ExplosionParticleModel(x, y, c, g, r, rV, xV, yV);
+	public void doPostDeserialize(Game game) {
+		g = game;
 		
-		model.size = size;
-
-		g.addParticleToWorld(model);
-
-		//model.setLight(new PointLight(g.getLighting(), 50, c, 2, x, y));
-		//model.getLight().setXray(true);
-
-		return model;
+		g.addParticleToWorld(this);
 	}
 
 	@Override

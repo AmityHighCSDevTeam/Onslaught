@@ -1,8 +1,16 @@
 package org.amityregion5.ZombieGame.common.weapon.data;
 
+import java.lang.reflect.Type;
+
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.SoundRegistry;
-import org.json.simple.JSONObject;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Data to describe a sound
@@ -11,53 +19,20 @@ import org.json.simple.JSONObject;
  *
  */
 public class SoundData {
-	private String	assetName; //Path to sound file 
+	@SerializedName(value="path") private String	assetName; //Path to sound file 
 	private String trigger; //Trigger that will cause it to play
-	private double	pitch; //Pitch to play at
-	private double	maxVolume; //The maximum volume to play at
+	private double	pitch = 1; //Pitch to play at
+	private double	maxVolume = 1; //The maximum volume to play at
 
-	public static SoundData getSoundData(JSONObject jsonData) {
-		//If both path and string are missing dont make a sound object
-		if (!jsonData.containsKey("path") && !jsonData.containsKey("trigger")) { return null; }
-
-		//Get assetname and trigger from json
-		String assetName = (String) jsonData.get("path");
-		String trigger = (String) jsonData.get("trigger");
-		//Default pitch and volume are 1
-		double pitch = 1;
-		double maxVolume = 1;
-
-		//Set pitch if found
-		if (jsonData.containsKey("pitch")) {
-			pitch = ((Number) jsonData.get("pitch")).doubleValue();
+	public void postRead() {
+		if (!SoundRegistry.tryRegister(assetName)) {
+			//If failed ouput error
+			ZombieGame.error("SoundData: failed to load sound: " + assetName);
 		}
-		//Set max volume if found
-		if (jsonData.containsKey("maxVolume")) {
-			maxVolume = ((Number) jsonData.get("maxVolume")).doubleValue();
-		}
-		//If the sound has not been loaded previously
-		if (SoundRegistry.getSoundsFor(assetName) == null || SoundRegistry.getSoundsFor(null).isEmpty()) {
-			//Load the sound
-			if (!SoundRegistry.tryRegister(assetName)) {
-				//If failed ouput error
-				ZombieGame.error("SoundData: failed to load sound: " + assetName);
-			}
-		}
-
-		//return the object
-		return new SoundData(assetName, trigger, pitch, maxVolume);
 	}
 
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSON() {
-
-		JSONObject obj = new JSONObject();
-		obj.put("path", assetName);
-		obj.put("trigger", trigger);
-		obj.put("pitch", pitch);
-		obj.put("maxVolume", maxVolume);
-
-		return obj;
+	public SoundData(String assetName, double pitch, double maxVolume) {
+		this(assetName, "", pitch, maxVolume);
 	}
 
 	private SoundData(String assetName, String trigger, double pitch, double maxVolume) {
@@ -65,10 +40,6 @@ public class SoundData {
 		this.trigger = trigger;
 		this.pitch = pitch;
 		this.maxVolume = maxVolume;
-	}
-
-	public SoundData(String assetName, double pitch, double maxVolume) {
-		this(assetName, "", pitch, maxVolume);
 	}
 
 	/**
@@ -129,5 +100,21 @@ public class SoundData {
 	 */
 	public void setMaxVolume(double maxVolume) {
 		this.maxVolume = maxVolume;
+	}
+	public static class Deserializor implements JsonDeserializer<SoundData> {
+		@Override
+		public SoundData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			JsonObject o = json.getAsJsonObject();
+			String path = o.get("path").getAsString();
+			String trigger = o.get("trigger").getAsString();
+			double pitch = o.get("pitch").getAsDouble();
+			double max = o.get("maxVolume").getAsDouble();
+			
+			SoundData data = new SoundData(path, trigger, pitch, max);
+			
+			data.postRead();
+			
+			return data;
+		}
 	}
 }

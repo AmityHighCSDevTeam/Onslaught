@@ -1,9 +1,7 @@
 package org.amityregion5.ZombieGame.common.game.model;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Rectangle;
 
@@ -52,20 +50,7 @@ public interface IParticle {
 		return new IDrawingLayer[] {};
 	}
 
-	/**
-	 * Convert to JSON
-	 * @return a JSON representation
-	 */
-	JSONObject convertToJSONObject();
-
-	/**
-	 * Get a particle from JSON
-	 * 
-	 * @param obj the JSON
-	 * @param g the game
-	 * @return the particle
-	 */
-	IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer);
+	void doPostDeserialize(Game game);
 	
 	Rectangle getRect();
 	

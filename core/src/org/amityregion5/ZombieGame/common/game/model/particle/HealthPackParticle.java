@@ -4,20 +4,22 @@ import java.util.Optional;
 
 import org.amityregion5.ZombieGame.client.game.HealthPackDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
 import org.amityregion5.ZombieGame.common.game.model.entity.PlayerModel;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Rectangle;
 
 public class HealthPackParticle implements IParticle {
-	private Game				g; //Game
 	//Time between checks if player is close enough
 	private static final float	timeBetweenChecks	= 0.1f;
 	//X, Y, Size, time until check
-	private float				x, y, size, timeUntilCheck;
+	private float x;
+	private float y;
+	private transient float size;
+	private transient float timeUntilCheck;
+	
+	private transient Game g; //Game
 
 	public HealthPackParticle() {}
 
@@ -82,27 +84,12 @@ public class HealthPackParticle implements IParticle {
 		return size;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", x);
-		obj.put("y", y);
-
-		return obj;
-	}
-
-	@Override
-	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-
-		HealthPackParticle model = new HealthPackParticle(x, y, g);
-
-		g.addParticleToWorld(model);
-
-		return model;
+	public void doPostDeserialize(Game game) {
+		g = game;
+		
+		size = 0.1f;
+		
+		g.addParticleToWorld(this);
 	}
 
 	@Override

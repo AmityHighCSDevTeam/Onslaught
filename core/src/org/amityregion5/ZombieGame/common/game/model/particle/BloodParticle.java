@@ -7,18 +7,18 @@ import java.util.stream.Stream;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
 import org.amityregion5.ZombieGame.common.game.model.IParticle;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.google.gson.annotations.SerializedName;
 
 public class BloodParticle implements IParticle {
-	private Game	g; //Game
 	private float	x, y, size, r; //X position, Y position, Size, and rotation
-	private String	textureName; //Texture name
-	private SpriteDrawingLayer sprite;
+	@SerializedName(value="txtr") private String textureName; //Texture name
+	
+	private transient Game	g; //Game
+	private transient SpriteDrawingLayer sprite;
 
 	public BloodParticle() {}
 
@@ -105,40 +105,20 @@ public class BloodParticle implements IParticle {
 	public float getR() {
 		return r;
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", x);
-		obj.put("y", y);
-		obj.put("r", r);
-		obj.put("txtr", textureName);
-		obj.put("size", size);
-
-		return obj;
-	}
-
-	@Override
-	public IParticle fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue();
-		float y = ((Number) obj.get("y")).floatValue();
-		float r = ((Number) obj.get("r")).floatValue();
-		float s = ((Number) obj.get("size")).floatValue();
-		String txtr = (String) obj.get("txtr");
-
-		BloodParticle model = new BloodParticle(x, y, g);
-
-		model.textureName = txtr;
-		model.r = r;
-		model.size = s;
-
-		g.addParticleToWorld(model);
-
-		return model;
-	}
 	
+	@Override
+	public void doPostDeserialize(Game game) {
+		g = game;
+
+		//Random texture name
+		List<String> textureNames = TextureRegistry.getTextureNamesFor("blood/**");
+		textureName = textureNames.get(g.getRandom().nextInt(textureNames.size()));
+		
+		sprite = new SpriteDrawingLayer(textureName, this::getSize);
+		
+		g.addParticleToWorld(this);
+	}
+
 	@Override
 	public Rectangle getRect() {
 		return new Rectangle(x, y, size, size);

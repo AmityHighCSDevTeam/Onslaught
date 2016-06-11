@@ -2,9 +2,9 @@ package org.amityregion5.ZombieGame.common.game.model;
 
 import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.common.entity.IEntity;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.json.simple.JSONObject;
+
+import com.google.gson.JsonObject;
 
 /**
  * The interface for entities
@@ -68,19 +68,8 @@ public interface IEntityModel<T extends IEntity> {
 	 */
 	boolean isHostile();
 
-	/**
-	 * Convert this entity to a JSON representation
-	 * 
-	 * @return a JSON representation
-	 */
-	JSONObject convertToJSONObject();
+	void read(JsonObject obj);
+	void write(JsonObject obj);
 
-	/**
-	 * Convert a JSON representation back into an entity
-	 * 
-	 * @param obj the JSON object
-	 * @param g the Game object
-	 * @return the entity model
-	 */
-	void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer);
+	void doPostDeserialize(Game game);
 }

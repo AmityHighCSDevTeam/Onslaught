@@ -12,45 +12,48 @@ import org.amityregion5.ZombieGame.client.game.IDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.PlayerExtrasDrawingLayer;
 import org.amityregion5.ZombieGame.client.game.SpriteDrawingLayer;
 import org.amityregion5.ZombieGame.client.screen.InGameScreen;
+import org.amityregion5.ZombieGame.common.buff.Buff;
 import org.amityregion5.ZombieGame.common.entity.EntityPlayer;
-import org.amityregion5.ZombieGame.common.func.Consumer3;
 import org.amityregion5.ZombieGame.common.game.DamageTypes;
 import org.amityregion5.ZombieGame.common.game.Game;
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.game.model.IEntityModel;
 import org.amityregion5.ZombieGame.common.game.model.particle.BloodParticle;
 import org.amityregion5.ZombieGame.common.helper.BodyHelper;
+import org.amityregion5.ZombieGame.common.util.MapUtil;
 import org.amityregion5.ZombieGame.common.weapon.WeaponStack;
-import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
 import org.amityregion5.ZombieGame.common.weapon.types.NullWeapon;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 
 import box2dLight.Light;
 
 
 public class PlayerModel implements IEntityModel<EntityPlayer> {
-	private EntityPlayer				entity; //The entity
-	private double						money				= 1000; //The money
-	private double						screenJitter		= 0; //The screen jitter
-	private Vector2						mousePos; //The mouse position
 	private List<WeaponStack>			weapons; //The weapons
-	private WeaponStack[]				hotbar; //The hotbar
-	private int							currentWeapon		= 0; //The current weapon
-	private InGameScreen				screen; //The screen
-	private Game						g; //The game
-	private Light						light, circleLight; //The lights
-	private SpriteDrawingLayer			sprite; //The sprite
-	private PlayerExtrasDrawingLayer	extras; //The held gun drawing layer
-	private float						health, maxHealth, speed, baseSpeed, baseHealth; //Health and speed
-	private boolean						shootJustPressed	= false; //Was shoot button down last tick
-	private List<SoundPlayingData>		soundsToPlay; //The sounds to play
+	private float						health; //Health and speed
+	private HashMap<String, JsonElement>		data = new HashMap<String, JsonElement>();
 	private Buff						totalBuffs; //The total sum of all buffs on it
-	private List<Buff>					buffs, temporaryBuffs; //The buffs and temporary buffs
-	private double score = 0;
-	private HashMap<String, Object>		extraData = new HashMap<String, Object>();
+	private List<Buff>					buffs; //The buffs and temporary buffs
+	
+	private transient List<Buff> temporaryBuffs;
+	private transient WeaponStack[]				hotbar; //The hotbar
+	private transient EntityPlayer				entity; //The entity
+	private transient float maxHealth, speed;
+	private transient float baseSpeed, baseHealth = 100;
+	private transient double						screenJitter		= 0; //The screen jitter
+	private transient Vector2						mousePos; //The mouse position
+	private transient int							currentWeapon		= 0; //The current weapon
+	private transient InGameScreen				screen; //The screen
+	private transient Game						g; //The game
+	private transient Light						light, circleLight; //The lights
+	private transient SpriteDrawingLayer			sprite; //The sprite
+	private transient PlayerExtrasDrawingLayer	extras; //The held gun drawing layer
+	private transient boolean						shootJustPressed	= false; //Was shoot button down last tick
+	private transient List<SoundPlayingData>		soundsToPlay; //The sounds to play
 
 	public PlayerModel() {}
 
@@ -58,12 +61,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		this.entity = entity; //Set values
 		weapons = new ArrayList<WeaponStack>();
 		this.g = g;
-		money = startMoney;
-		this.screen = screen;
-		baseHealth = 100; //Health = 100
-		health = baseHealth;
+		setMoney(startMoney);
+		setHealth(baseHealth);
 		maxHealth = baseHealth;
+		this.screen = screen;
 		hotbar = new WeaponStack[3]; //Create arrays
+		
+		setScore(0);
 
 		totalBuffs = new Buff();
 		buffs = new ArrayList<Buff>(); //Create arraylists
@@ -189,7 +193,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	 * @return the money
 	 */
 	public double getMoney() {
-		return money;
+		return data.get("money").getAsDouble();
 	}
 
 	/**
@@ -198,7 +202,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	 * @param money the new money
 	 */
 	public void setMoney(double money) {
-		this.money = money;
+		data.put("money", new JsonPrimitive(money));
 	}
 
 	/**
@@ -479,121 +483,81 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	public void setScreen(InGameScreen screen) {
 		this.screen = screen;
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public JSONObject convertToJSONObject() {
-		JSONObject obj = new JSONObject();
-
-		obj.put("x", entity.getBody().getWorldCenter().x);
-		obj.put("y", entity.getBody().getWorldCenter().y);
-		obj.put("r", entity.getBody().getTransform().getRotation());
-		obj.put("money", money);
-		obj.put("screenJitter", screenJitter);
-		obj.put("txtr", sprite.getTxtrName());
-		obj.put("m", entity.getMassData().mass);
-		obj.put("f", entity.getFriction());
-		obj.put("health", health);
-		obj.put("score", score);
-
-		JSONArray weaps = new JSONArray();
-		JSONObject hotba = new JSONObject();
-
-		for (int i = 0; i < weapons.size(); i++) {
-			WeaponStack weap = weapons.get(i);
-
-			JSONObject w = new JSONObject();
-
-			w.put("id", weap.getID());
-			w.put("ammo", weap.getAmmo());
-			w.put("totalAmmo", weap.getTotalAmmo());
-			w.put("cooldown", weap.getPostFire());
-			w.put("level", weap.getLevel());
-
-			weaps.add(w);
-
-			for (int i2 = 0; i2 < hotbar.length; i2++) {
-				if (hotbar[i2] == weap) {
-					hotba.put(i, i2);
-				}
-			}
-		}
-
-		obj.put("weapons", weaps);
-		obj.put("hotbar", hotba);
-
-		JSONArray bufs = new JSONArray();
-
-		for (Buff b : buffs) {
-			bufs.add(b.toJSON());
-		}
-
-		obj.put("buffs", bufs);
-		JSONObject o = new JSONObject();
-		o.putAll(extraData);
-		obj.put("data", o);
-
-		return obj;
+	public void read(JsonObject obj) {
+		data = MapUtil.convertToHashMap(obj.entrySet());
 	}
-
+	
 	@Override
-	public void fromJSON(JSONObject obj, Game g, Consumer3<String, String, Boolean> addErrorConsumer) {
-		float x = ((Number) obj.get("x")).floatValue(); // √
-		float y = ((Number) obj.get("y")).floatValue(); // √
-		float r = ((Number) obj.get("r")).floatValue(); // √
-		double money = ((Number) obj.get("money")).doubleValue(); // √
-		double score = ((Number) obj.get("score")).doubleValue(); // √
-		double screenJitter = ((Number) obj.get("screenJitter")).doubleValue();
-		String txtr = (String) obj.get("txtr"); // √
-		float m = ((Number) obj.get("m")).floatValue(); // √
-		float f = ((Number) obj.get("f")).floatValue(); // √
-		float heal = ((Number) obj.get("health")).floatValue();
-		JSONArray weaps = (JSONArray) obj.get("weapons");
-		JSONArray buffs = (JSONArray) obj.get("buffs");
-		JSONObject hotbar = (JSONObject) obj.get("hotbar");
-
-		PlayerModel model = new PlayerModel(new EntityPlayer(), g, null, money, txtr);
-		model.getEntity().setFriction(f);
-		model.getEntity().setMass(m);
-		model.setScreenVibrate(screenJitter);
-		model.addScore(score);
-		for (Object o : buffs) {
-			model.applyBuff(Buff.getFromJSON((JSONObject) o));
-		}
-		model.setHealth(heal);
-		for (int i = 0; i < weaps.size(); i++) {
-			JSONObject w = (JSONObject) weaps.get(i);
-
-			IWeapon iWea = ZombieGame.instance.weaponRegistry.getWeaponFromID((String) w.get("id"));
-			
-			if (iWea == null) {
-				addErrorConsumer.run("Weapons not found:", (String) w.get("id"), true);
-				continue;
-			}
-
-			WeaponStack weap = new WeaponStack(iWea);
-
-			weap.setAmmo(((Number) w.get("ammo")).intValue());
-			weap.setTotalAmmo(((Number) w.get("totalAmmo")).intValue());
-			weap.setPostFire(((Number) w.get("cooldown")).doubleValue());
-			weap.setLevel(((Number) w.get("level")).intValue());
-
-			model.weapons.add(weap);
-
-			if (hotbar.containsKey(i + "")) {
-				int i2 = ((Number) hotbar.get(i + "")).intValue();
-				model.hotbar[i2] = weap;
+	public void doPostDeserialize(Game game) {
+		entity = new EntityPlayer();
+		weapons = ZombieGame.instance.gson.fromJson(data.get("weapons"), new TypeToken<ArrayList<WeaponStack>>(){}.getType());
+		g = game;
+		maxHealth = baseHealth;
+		totalBuffs = new Buff();
+		List<Buff> tempBuffs = ZombieGame.instance.gson.fromJson(data.get("buffs"), new TypeToken<ArrayList<Buff>>(){}.getType());
+		tempBuffs.forEach((b)->applyBuff(b));
+		
+		setHealth(getMaxHealth() * data.get("healthFraction").getAsFloat());
+		
+		hotbar = new WeaponStack[3]; //Create arrays
+		
+		int[] hotbarIndicies = ZombieGame.instance.gson.fromJson(data.get("hotbarIndicies"), int[].class);
+		for (int i=0;i<hotbar.length; i++) {
+			if (hotbarIndicies[i] != -1) {
+				hotbar[i] = weapons.get(hotbarIndicies[i]);
 			}
 		}
+
+		temporaryBuffs = new ArrayList<Buff>();
+
+		sprite = new SpriteDrawingLayer(data.get("txtr").getAsString());// "*/Players/**.png"
+		extras = new PlayerExtrasDrawingLayer(this);
+
+		soundsToPlay = new ArrayList<SoundPlayingData>();
 		
-		@SuppressWarnings("unchecked")
-		HashMap<String, Object> edata = new HashMap<String, Object>((JSONObject)obj.get("data"));
+		game.addEntityToWorld(this, data.get("x").getAsFloat(), data.get("y").getAsFloat());
+		entity.getBody().getTransform().setPosition(new Vector2(data.get("x").getAsFloat(), data.get("y").getAsFloat()));
+		entity.getBody().getTransform().setRotation(data.get("r").getAsFloat());
+		entity.getBody().setLinearVelocity(data.get("vx").getAsFloat(), data.get("vy").getAsFloat());
 		
-		model.extraData = edata;
+		data.remove("x");
+		data.remove("y");
+		data.remove("r");
+		data.remove("vx");
+		data.remove("vy");
+		data.remove("healthFraction");
+		data.remove("weapons");
+		data.remove("txtr");
+		data.remove("hotbarIndicies");
+		data.remove("buffs");
+	}
+	
+	@Override
+	public void write(JsonObject obj) {
+		MapUtil.addMapToJson(obj, data);
+		obj.addProperty("x", entity.getBody().getWorldCenter().x);
+		obj.addProperty("y", entity.getBody().getWorldCenter().y);
+		obj.addProperty("r", entity.getBody().getTransform().getRotation());
+		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
+		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
+		obj.addProperty("healthFraction", health/maxHealth);
+		obj.add("weapons", ZombieGame.instance.gson.toJsonTree(weapons));
 		
-		g.addEntityToWorld(model, x, y);
-		model.getEntity().getBody().getTransform().setPosition(new Vector2(x, y));
-		model.getEntity().getBody().getTransform().setRotation(r);
+		obj.addProperty("txtr", sprite.getTxtrName());
+		
+		int[] indicies = new int[hotbar.length];
+		for (int i = 0; i<hotbar.length; i++) {
+			if (!(hotbar[i] == null || hotbar[i].getWeapon() instanceof NullWeapon)) {
+				indicies[i] = weapons.indexOf(hotbar[i]);
+			} else {
+				indicies[i] = -1;
+			}
+		}
+		obj.add("hotbarIndicies", ZombieGame.instance.gson.toJsonTree(indicies));
+		
+		obj.add("buffs", ZombieGame.instance.gson.toJsonTree(buffs));
 	}
 
 	/**
@@ -605,18 +569,22 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		return screen;
 	}
 	
+	private void setScore(double score) {
+		data.put("score", new JsonPrimitive(score));
+	}
+	
 	/**
 	 * Increase the score by a specific number
 	 * @param amount
 	 */
 	public void addScore(double amount) {
-		score += amount;
+		setScore(getScore() + amount);
 	}
 	public double getScore() {
-		return score;
+		return data.get("score").getAsDouble();
 	}
 	
-	public HashMap<String, Object> getExtraData() {
-		return extraData;
+	public HashMap<String, JsonElement> getData() {
+		return data;
 	}
 }

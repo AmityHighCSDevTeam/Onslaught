@@ -18,17 +18,18 @@ import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
  */
 public class PluginContainer {
 	//The arraylist of weapons
-	private ArrayList<IWeapon>					weapons			= new ArrayList<IWeapon>();
+	private transient ArrayList<IWeapon>					weapons			= new ArrayList<IWeapon>();
 	//The arraylist of weapon classes
-	private ArrayList<Class<? extends IWeapon>>	weaponClasses	= new ArrayList<Class<? extends IWeapon>>();
+	private transient ArrayList<Class<? extends IWeapon>>	weaponClasses	= new ArrayList<Class<? extends IWeapon>>();
 
 	//The array list of buff applicators
-	private ArrayList<BuffApplicator> buffApplicators = new ArrayList<BuffApplicator>();
+	private transient ArrayList<BuffApplicator> buffApplicators = new ArrayList<BuffApplicator>();
 
 	private String			name; //The name of the plugin
 	private String			desc; //The description of the plugin
-	private String			pluginFolderLoc; //The plugin's folder location
-	private List<IPlugin>	plugins; //All Plugin classes
+	private String			jarLoc; //The jar location
+	private transient String			pluginFolderLoc; //The plugin's folder location
+	private transient List<IPlugin>	plugins; //All Plugin classes
 
 	public PluginContainer() {}
 
@@ -107,5 +108,9 @@ public class PluginContainer {
 
 	public void setPlugins(List<IPlugin> plugins) {
 		this.plugins = plugins;
+	}
+	
+	public String getJarLoc() {
+		return jarLoc;
 	}
 }

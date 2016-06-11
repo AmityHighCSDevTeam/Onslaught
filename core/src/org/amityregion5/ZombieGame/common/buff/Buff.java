@@ -1,8 +1,6 @@
-package org.amityregion5.ZombieGame.common.game.buffs;
+package org.amityregion5.ZombieGame.common.buff;
 
 import java.util.HashMap;
-
-import org.json.simple.JSONObject;
 
 /**
  * A class representing any and all buffs
@@ -18,7 +16,7 @@ import org.json.simple.JSONObject;
  * @author sergeys
  *
  */
-public class Buff {
+public class Buff{
 	private HashMap<String, Double>	multiplicative; //Buffs that add together through multiplication
 	private HashMap<String, Double>	additive; //Buffs that add together through addition
 
@@ -83,54 +81,6 @@ public class Buff {
 	public Buff() {
 		multiplicative = new HashMap<String, Double>();
 		additive = new HashMap<String, Double>();
-	}
-
-	/**
-	 * Get a buff from a JSON representation
-	 * 
-	 * @param json the json
-	 * @return a buff
-	 */
-	public static Buff getFromJSON(JSONObject json) {
-		Buff buff = new Buff();
-
-		if (json.containsKey("add")) {
-			for (Object o : ((JSONObject) json.get("add")).keySet()) {
-				String key = (String) o;
-				Double val = ((Number) ((JSONObject) json.get("add")).get(o)).doubleValue();
-				buff.addAdd(key, val);
-			}
-		}
-		if (json.containsKey("mult")) {
-			for (Object o : ((JSONObject) json.get("mult")).keySet()) {
-				String key = (String) o;
-				Double val = ((Number) ((JSONObject) json.get("mult")).get(o)).doubleValue();
-				buff.addMult(key, val);
-			}
-		}
-
-		return buff;
-	}
-
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSON() {
-		JSONObject jo = new JSONObject();
-
-		JSONObject add = new JSONObject();
-		JSONObject mult = new JSONObject();
-
-		for (String a : additive.keySet()) {
-			add.put(a, additive.get(a));
-		}
-
-		for (String m : multiplicative.keySet()) {
-			add.put(m, multiplicative.get(m));
-		}
-
-		jo.put("add", add);
-		jo.put("mult", mult);
-
-		return jo;
 	}
 
 	/**

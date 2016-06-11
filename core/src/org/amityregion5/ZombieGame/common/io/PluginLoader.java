@@ -9,28 +9,23 @@ import java.util.stream.Collectors;
 import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.asset.TextureRegistry;
 import org.amityregion5.ZombieGame.common.buff.BuffApplicator;
-import org.amityregion5.ZombieGame.common.buff.BuyableBuffContainer;
-import org.amityregion5.ZombieGame.common.game.buffs.Buff;
 import org.amityregion5.ZombieGame.common.plugin.IPlugin;
 import org.amityregion5.ZombieGame.common.plugin.PluginContainer;
 import org.amityregion5.ZombieGame.common.plugin.PluginManager;
 import org.amityregion5.ZombieGame.common.weapon.types.IWeapon;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * A class to load plugins
  * @author sergeys
  */
 public class PluginLoader {
-
-	//The JSONParser
-	private static JSONParser	parser	= new JSONParser();
+	//The json parser
+	private JsonParser parser = new JsonParser();
 	//The plugin manager
 	private PluginManager		manager;
 
@@ -53,27 +48,23 @@ public class PluginLoader {
 				FileHandle meta = p.child("plugin.json");
 				//If it exists
 				if (meta.exists()) {
-					try { 
 						//Create a plugin container
-						PluginContainer plugin = new PluginContainer();
-
-						//Load the plugin metadata
-						JSONObject pluginMeta = (JSONObject) parser.parse(meta.reader());
-						//Get plugin name
-						plugin.setName((String) pluginMeta.get("name"));
-						//Get plugin description
-						plugin.setDesc((String) pluginMeta.get("desc"));
-						//If it has a jar location
-						if (pluginMeta.containsKey("jarLoc")) {
+						PluginContainer plugin = ZombieGame.instance.gson.fromJson(meta.reader(), PluginContainer.class);
+						
+						if (plugin.getJarLoc() != null) {
 							//Get the jar location
-							String s = (String) pluginMeta.get("jarLoc");
+							String s = plugin.getJarLoc();
 							//If the jar exists
 							if (!s.isEmpty() && p.child(s).exists()) {
-								//Load the Jar
-								JarLoader loader = new JarLoader(p.child(s).file());
+								try {
+									//Load the Jar
+									JarLoader loader = new JarLoader(p.child(s).file());
 
-								//Set all of the plugins found and created as the list of plugins in the container
-								plugin.setPlugins(loader.getIPlugins());
+									//Set all of the plugins found and created as the list of plugins in the container
+									plugin.setPlugins(loader.getIPlugins());
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 						
@@ -88,9 +79,6 @@ public class PluginLoader {
 						ZombieGame.log("Plugin Loader: Plugin Found: " + p.name());
 						//Add it to the manager
 						manager.addPlugin(plugin);
-					} catch (IOException | ParseException e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		}
@@ -102,6 +90,8 @@ public class PluginLoader {
 	 *            the list of files that can possibly be plugins
 	 */
 	public void loadPlugins(FileHandle[] plugins) {
+		ZombieGame.instance.gson = ZombieGame.instance.gsonBuilder.create();
+		
 		ZombieGame.log("Plugin Loader: Starting loading process");
 		// Loop through the plugin list
 		for (PluginContainer plugin : manager.getPlugins()) {
@@ -144,12 +134,7 @@ public class PluginLoader {
 					//Load it as a weapon
 					if (handle.extension().equals("json")) {
 						ZombieGame.debug("Plugin Loader: Loading Weapon: " + loc);
-						try {
-							loadWeapon((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
-						} catch (IOException | ParseException e) {
-							ZombieGame.error("Plugin Loader: Failed to load: " + loc);
-							e.printStackTrace();
-						}
+						loadWeapon(handle, plugin, handle.path());
 					}
 					break;
 				case "Buffs":
@@ -157,12 +142,7 @@ public class PluginLoader {
 					//Load it as a buff
 					if (handle.extension().equals("json")) {
 						ZombieGame.debug("Plugin Loader: Loading Buff: " + loc);
-						try {
-							loadBuff((JSONObject) parser.parse(handle.reader()), plugin, handle.path());
-						} catch (IOException | ParseException e) {
-							ZombieGame.error("Plugin Loader: Failed to load: " + loc);
-							e.printStackTrace();
-						}
+						loadBuff(handle, plugin, handle.path());
 					}
 					break;
 				case "Players":
@@ -185,69 +165,18 @@ public class PluginLoader {
 		}
 	}
 
-	private void loadBuff(JSONObject o, PluginContainer plugin, String pathName) {
-		//List of buffs
-		ArrayList<BuyableBuffContainer> buffs = new ArrayList<BuyableBuffContainer>();
-
-		//Get name
-		String name = (String) o.get("name");
-
-		//Get icon path
-		String icon = (String) o.get("icon");
-
-		//Get name
-		String uid = (String) o.get("uid");
-
-		//Get JSON Array
-		JSONArray levelsArr = (JSONArray) o.get("levels");
+	private void loadBuff(FileHandle handle, PluginContainer plugin, String pathName) {
+		BuffApplicator app = ZombieGame.instance.gson.fromJson(handle.reader(), BuffApplicator.class);
 		
-		for (Object levelObj : levelsArr) {
-			JSONObject level = (JSONObject) levelObj;
-			
-			//Get price
-			double price = ((Number) level.get("price")).doubleValue();
-
-			//Get JSON Array
-			JSONArray arr = (JSONArray) level.get("buffs");
-			
-			//Create the buff
-			Buff buff = new Buff();
-			
-			//Loop through array
-			for (Object obj : arr) {
-				JSONObject aO = (JSONObject) obj;
-
-				//Get type of buff data
-				String type = (String) aO.get("type");
-				//Get buff data key
-				String key = (String) aO.get("key");
-				//Get buff data value
-				double value = ((Number) aO.get("val")).doubleValue();
-
-				//If the type is multiplicative
-				if (type.equals("mult")) {
-					//Add it as a muliplicative buff
-					buff.addMult(key, value);
-				} else if (type.equals("add")) {
-					//If it is additive
-					//Add it as an additive buff
-					buff.addAdd(key, value);
-				}
-			}
-			
-			buffs.add(new BuyableBuffContainer(buff, price));
-		}
-
-		//Create the buff applicator
-		BuffApplicator applicator = new BuffApplicator(buffs.toArray(new BuyableBuffContainer[]{}), name, icon, uid);
-
 		//Add it to the plugin
-		plugin.addBuffApplicator(applicator);
+		plugin.addBuffApplicator(app);
 	}
 
-	private void loadWeapon(JSONObject o, PluginContainer plugin, String pathName) {
+	private void loadWeapon(FileHandle handle, PluginContainer plugin, String pathName) {
+		JsonObject o = parser.parse(handle.reader()).getAsJsonObject();
+		
 		//Get the class name of the weapon
-		String className = (String) o.get("className");
+		String className = o.get("className").getAsString();
 		//If it doesn't exist register this as an error
 		if (className == null) {
 			ZombieGame.error("Plugin Loader: Failed to load weapon: " + pathName + " Error: No class name");

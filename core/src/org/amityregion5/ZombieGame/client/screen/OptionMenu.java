@@ -6,6 +6,7 @@ import org.amityregion5.ZombieGame.ZombieGame;
 import org.amityregion5.ZombieGame.client.Client;
 import org.amityregion5.ZombieGame.client.gui.GuiRectangle;
 import org.amityregion5.ZombieGame.client.music.MusicHandler;
+import org.amityregion5.ZombieGame.client.settings.Settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -272,7 +273,7 @@ public class OptionMenu extends GuiScreen {
 				}));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*ZombieGame.getXScalar(), 10*ZombieGame.getXScalar(), getWidth() - 20*ZombieGame.getXScalar(), 50*ZombieGame.getXScalar()),
 				"Back", (r)->{
-					ZombieGame.instance.settings.save();
+					Settings.save(ZombieGame.instance.settings);
 					ZombieGame.instance.setScreenAndDispose(prevScreen);
 				}));
 	}
