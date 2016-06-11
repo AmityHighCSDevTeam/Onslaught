@@ -60,7 +60,7 @@ nb-configuration.xml
 build/
 core/ZombieGameData/log.log
 core/ZombieGameData/settings.json
-core/ZombieGameData/saves
+core/ZombieGameData/saves/
 
 ## OS Specific
 .DS_Store
