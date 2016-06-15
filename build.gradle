@@ -12,7 +12,7 @@ allprojects {
 
     version = "${majorVersion}.${minorVersion}.${buildNumber}"
     ext {
-        appName = 'ZombieGame'
+        appName = 'Onslaught'
         gdxVersion = '1.9.1'
         roboVMVersion = '1.9.0'
         box2DLightsVersion = '1.4'
