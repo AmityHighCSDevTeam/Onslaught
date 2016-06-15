@@ -62,7 +62,7 @@ task incrementBuildNum << {
     File propsFile = new File('gradle.properties') 
     props.load(propsFile.newDataInputStream()) 
     
-    File version = new File('core/ZombieGameData/version.txt')
+    File version = new File('core/OnslaughtData/version.txt')
     version.text = props.getProperty('majorVersion') + '.' + props.getProperty('minorVersion') + '.' + props.getProperty('buildNumber')
     
     Integer nextbuildnum = ( ((props.getProperty('buildNumber')) as BigDecimal) + 1 ) 
