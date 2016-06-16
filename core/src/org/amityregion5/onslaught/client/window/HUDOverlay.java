@@ -178,7 +178,7 @@ public class HUDOverlay implements Screen {
 
 		if (!(player.getCurrentWeapon().getWeapon() instanceof NullWeapon)) {
 			//Draw the gun status
-			screen.getSmallOutlineFont().draw(batch, "Weapon Status: " + player.getCurrentWeapon().getStatus(), screen.getWidth() - 390*Onslaught.getXScalar(), 90*Onslaught.getYScalar());
+			screen.getSmallOutlineFont().draw(batch, "Weapon Status: " + player.getCurrentWeapon().getStatus().getName(), screen.getWidth() - 390*Onslaught.getXScalar(), 90*Onslaught.getYScalar());
 		}
 
 		//Draw the score

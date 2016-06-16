@@ -6,6 +6,7 @@ import java.util.Map;
 import org.amityregion5.onslaught.common.game.Game;
 import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
 import org.amityregion5.onslaught.common.weapon.WeaponStack;
+import org.amityregion5.onslaught.common.weapon.WeaponStatus;
 import org.amityregion5.onslaught.common.weapon.data.IWeaponDataBase;
 import org.json.simple.JSONObject;
 
@@ -53,5 +54,5 @@ public interface IWeapon {
 	 */
 	public void tick(float delta, WeaponStack stack);
 	
-	public String getStatus(WeaponStack stack);
+	public WeaponStatus getStatus(WeaponStack stack);
 }

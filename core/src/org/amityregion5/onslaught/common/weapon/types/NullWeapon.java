@@ -8,6 +8,7 @@ import java.util.Map;
 import org.amityregion5.onslaught.common.game.Game;
 import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
 import org.amityregion5.onslaught.common.weapon.WeaponStack;
+import org.amityregion5.onslaught.common.weapon.WeaponStatus;
 import org.amityregion5.onslaught.common.weapon.data.WeaponData;
 import org.json.simple.JSONObject;
 
@@ -73,8 +74,8 @@ public final class NullWeapon implements IWeapon {
 	}
 
 	@Override
-	public String getStatus(WeaponStack stack) {
-		return "NO WEAPON";
+	public WeaponStatus getStatus(WeaponStack stack) {
+		return WeaponStatus.MISSING;
 	}
 
 	@Override

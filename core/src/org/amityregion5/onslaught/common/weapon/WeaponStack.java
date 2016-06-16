@@ -245,7 +245,7 @@ public class WeaponStack {
 		return weapon.getID();
 	}
 
-	public String getStatus() {
+	public WeaponStatus getStatus() {
 		return weapon.getStatus(this);
 	}
 	

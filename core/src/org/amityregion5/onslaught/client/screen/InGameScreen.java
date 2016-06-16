@@ -27,6 +27,7 @@ import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
 import org.amityregion5.onslaught.common.game.model.entity.ZombieModel;
 import org.amityregion5.onslaught.common.game.model.particle.HealthPackParticle;
 import org.amityregion5.onslaught.common.helper.MathHelper;
+import org.amityregion5.onslaught.common.weapon.WeaponStatus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
@@ -265,6 +266,12 @@ public class InGameScreen extends GuiScreen {
 		batch.setProjectionMatrix(oldBatchMatrix);
 
 		Gdx.gl.glEnable(GL20.GL_BLEND);
+		shape.setProjectionMatrix(camera.combined);
+		shape.begin(ShapeType.Filled);
+		shape.setColor(getStatusColor());
+		shape.circle(Gdx.input.getX(), getHeight() - Gdx.input.getY(), (float)Onslaught.instance.settings.getARadius(), 20);
+		shape.end();
+		shape.setProjectionMatrix(inGameCamera.combined);
 		if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
 			shape.setProjectionMatrix(camera.combined);
 			shape.begin(ShapeType.Filled);
@@ -306,6 +313,27 @@ public class InGameScreen extends GuiScreen {
 				Onslaught.instance.setScreenAndDispose(new ScoreMenu(prevScreen, game.getDifficulty(), player.getScore()));
 			}
 		}
+	}
+
+	private Color getStatusColor() {
+		if (player.getCurrentWeapon().getTotalAmmo() == 0 && player.getCurrentWeapon().getAmmo() == 0) {
+			return new Color(1, 0, 0, (float)Onslaught.instance.settings.getAAlpha());
+		}
+		
+		WeaponStatus stat = player.getCurrentWeapon().getStatus();
+		if (stat == WeaponStatus.FIRE || stat == WeaponStatus.READY) {
+			if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
+				return new Color(1, 1, 0, (float)Onslaught.instance.settings.getAAlpha());
+			}
+		} else {
+			if (player.getCurrentWeapon().getTotalAmmo() == 0 ^ player.getCurrentWeapon().getAmmo() == 0) {
+				return new Color(0, 1, 0, (float)Onslaught.instance.settings.getAAlpha());
+			} else {
+				return new Color(0, 0, 1, (float)Onslaught.instance.settings.getAAlpha());
+			}
+		}
+		
+		return new Color(0, 0, 0, 0);
 	}
 
 	@Override
