@@ -3,6 +3,7 @@ package org.amityregion5.onslaught.client.window;
 import java.text.NumberFormat;
 
 import org.amityregion5.onslaught.Onslaught;
+import org.amityregion5.onslaught.client.Client;
 import org.amityregion5.onslaught.client.asset.TextureRegistry;
 import org.amityregion5.onslaught.client.screen.InGameScreen;
 import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
@@ -82,6 +83,11 @@ public class HUDOverlay implements Screen {
 			shapeRender.setColor(Color.GRAY);
 			shapeRender.rect(startX + eachBoxSize * i*Onslaught.getAScalar(), 0, eachBoxSize*Onslaught.getAScalar(), eachBoxSize*Onslaught.getAScalar());
 			shapeRender.end();
+			
+			if (Client.mouseJustReleased() && Gdx.input.getX() > startX + eachBoxSize * i*Onslaught.getAScalar() && Gdx.input.getX() < startX + eachBoxSize * (i+1) *Onslaught.getAScalar()
+					&& screen.getHeight()-Gdx.input.getY() < eachBoxSize*Onslaught.getAScalar()) {
+				player.setHotbarSlot(i);
+			}
 
 			Gdx.gl.glLineWidth(2);
 

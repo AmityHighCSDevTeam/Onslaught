@@ -132,19 +132,13 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		//Switch hotbar slot
 		{
 			if (Onslaught.instance.settings.getInput("Hotbar_1").isJustDown()) {
-				removeTemporaryWeaponBuff();
-				currentWeapon = 0;
-				addTemporaryWeaponBuff();
+				setHotbarSlot(0);
 			}
 			if (Onslaught.instance.settings.getInput("Hotbar_2").isJustDown()) {
-				removeTemporaryWeaponBuff();
-				currentWeapon = 1;
-				addTemporaryWeaponBuff();
+				setHotbarSlot(1);
 			}
 			if (Onslaught.instance.settings.getInput("Hotbar_3").isJustDown()) {
-				removeTemporaryWeaponBuff();
-				currentWeapon = 2;
-				addTemporaryWeaponBuff();
+				setHotbarSlot(2);
 			}
 		}
 
@@ -161,6 +155,12 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		sprite.getSprite().setOriginCenter();
 		//Decrease screen jitter
 		screenJitter *= 0.9;
+	}
+	
+	public void setHotbarSlot(int i) {
+		removeTemporaryWeaponBuff();
+		currentWeapon = i;
+		addTemporaryWeaponBuff();
 	}
 
 	/**
