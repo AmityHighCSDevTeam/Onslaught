@@ -418,15 +418,19 @@ public class InGameScreen extends GuiScreen {
 		//If close window pressed close a window or open the pause window
 		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
 			if (currentWindow != null) {
-				game.setPaused(false);
 				currentWindow.dispose();
 				currentWindow = null;
 			} else {
 				if (game.isSinglePlayer()) {
-					game.setPaused(true);
 					currentWindow = new PauseWindow(this, player);
 				}
 			}
+		}
+		
+		if (game.isSinglePlayer() && currentWindow != null && Onslaught.instance.settings.isAutoPauseInSP() && currentWindow.pauseIfOpenAsWindow()) {
+			game.setPaused(true);
+		} else {
+			game.setPaused(false);
 		}
 	}
 

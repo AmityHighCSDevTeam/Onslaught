@@ -20,4 +20,11 @@ public interface Screen {
 	 * Called to clean up data when this object is no longer needed
 	 */
 	public void dispose();
+	
+	/** 
+	 * Should the game pause if this screen is open as a window
+	 * 
+	 * @return a boolean value representing the above
+	 */
+	public boolean pauseIfOpenAsWindow();
 }

@@ -141,4 +141,9 @@ public class PauseWindow implements Screen {
 		screen.getGame().setPaused(false);
 		batch.dispose();
 	}
+	
+	@Override
+	public boolean pauseIfOpenAsWindow() {
+		return true;
+	}
 }

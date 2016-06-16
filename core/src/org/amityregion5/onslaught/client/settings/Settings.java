@@ -42,6 +42,8 @@ public class Settings {
 	private double								aAlpha;
 	//Should ammo be automaticcally be bough
 	private boolean								autoBuy;
+	//Should the game automatically pause in single player
+	private boolean								autoPauseInSP;
 
 	public Settings() {
 		//Create hashmap
@@ -52,6 +54,7 @@ public class Settings {
 		aRadius = 50;
 		aAlpha = 0.2;
 		autoBuy = false;
+		autoPauseInSP = true;
 	}
 
 	/**
@@ -400,5 +403,13 @@ public class Settings {
 	
 	public boolean isAutoBuy() {
 		return autoBuy;
+	}
+	
+	public void setAutoPauseInSP(boolean autoPauseInSP) {
+		this.autoPauseInSP = autoPauseInSP;
+	}
+	
+	public boolean isAutoPauseInSP() {
+		return autoPauseInSP;
 	}
 }

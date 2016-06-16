@@ -192,4 +192,9 @@ public class HUDOverlay implements Screen {
 		shapeRender.dispose();
 		batch.dispose();
 	}
+
+	@Override
+	public boolean pauseIfOpenAsWindow() {
+		return false;
+	}
 }

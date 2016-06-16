@@ -264,12 +264,21 @@ public class OptionMenu extends GuiScreen {
 				"Controls", (r)->{
 					Onslaught.instance.setScreen(new ControlsMenu(this));
 				}));
+		
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Automatic Ammo Buying:", (r)->{}, Align.left, false));
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
 				(Onslaught.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"), (r)->{
 					Onslaught.instance.settings.setAutoBuy(!Onslaught.instance.settings.isAutoBuy());
 					r.setText((Onslaught.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"));
 				}));
+		
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Pause when menus open:", (r)->{}, Align.left, false));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
+				(Onslaught.instance.settings.isAutoPauseInSP() ? "Currently Enabled" : "Currently Disabled"), (r)->{
+					Onslaught.instance.settings.setAutoPauseInSP(!Onslaught.instance.settings.isAutoPauseInSP());
+					r.setText((Onslaught.instance.settings.isAutoPauseInSP() ? "Currently Enabled" : "Currently Disabled"));
+				}));
+		
 		addElement(new GuiRectangle(()->new Rectangle2D.Float(10*Onslaught.getXScalar(), 10*Onslaught.getXScalar(), getWidth() - 20*Onslaught.getXScalar(), 50*Onslaught.getXScalar()),
 				"Back", (r)->{
 					Onslaught.instance.settings.save();
