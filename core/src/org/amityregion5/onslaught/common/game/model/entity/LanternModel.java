@@ -33,6 +33,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	private SpriteDrawingLayer	sprite; //The sprite drawing layer
 	private String				creation; //The creation string
 	private float 				life; //The time remaining for this lantern
+	private PlayerModel 		explosionSource;
 
 	public LanternModel() {}
 
@@ -74,7 +75,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 			light.attachToBody(entity.getBody());
 		} else {
 			g.removeEntity(this);
-			g.makeExplosion(entity.getBody().getWorldCenter(), 10d, null);
+			g.makeExplosion(entity.getBody().getWorldCenter(), 10d, explosionSource);
 		}
 	}
 
@@ -93,6 +94,9 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 			g.removeEntity(this);
 		}
 		if (light != null) {
+			if (source instanceof PlayerModel) {
+				explosionSource = (PlayerModel) source;
+			}
 			light.remove(); //Dispose of the light immediately
 			light = null;
 		}
