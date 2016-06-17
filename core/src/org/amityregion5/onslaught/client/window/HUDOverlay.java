@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 
 import org.amityregion5.onslaught.Onslaught;
 import org.amityregion5.onslaught.client.Client;
+import org.amityregion5.onslaught.client.InputAccessor;
 import org.amityregion5.onslaught.client.asset.TextureRegistry;
 import org.amityregion5.onslaught.client.screen.InGameScreen;
 import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
@@ -11,6 +12,7 @@ import org.amityregion5.onslaught.common.weapon.WeaponStack;
 import org.amityregion5.onslaught.common.weapon.types.NullWeapon;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -37,12 +39,32 @@ public class HUDOverlay implements Screen {
 	private Sprite[] sprites;
 	private String[] names;
 	private Vector2 oldSize = new Vector2(0,0);
+	private InputProcessor	processor;
+	private double scrollCounter = 0;
 
 	public HUDOverlay(InGameScreen screen, PlayerModel player) {
 		this.screen = screen; //Set values
 		this.player = player;
 		sprites = new Sprite[player.getHotbar().length];
 		names = new String[player.getHotbar().length];
+
+		//Create an input processor
+		processor = new InputAccessor() {
+			@Override
+			public boolean scrolled(int amount) {
+				//When the scroll wheel is used
+				scrollCounter += amount*Onslaught.instance.settings.getHotbarScrollSensitivity();
+				
+				int amt = (int) scrollCounter;
+				scrollCounter -= amt;
+				player.setHotbarSlot(player.getCurrWeapIndex() + amt);
+
+				return true;
+			}
+		};
+
+		//Add the processor the the multiplexer
+		Client.inputMultiplexer.addProcessor(processor);
 	}
 
 	@Override
@@ -83,7 +105,7 @@ public class HUDOverlay implements Screen {
 			shapeRender.setColor(Color.GRAY);
 			shapeRender.rect(startX + eachBoxSize * i*Onslaught.getAScalar(), 0, eachBoxSize*Onslaught.getAScalar(), eachBoxSize*Onslaught.getAScalar());
 			shapeRender.end();
-			
+
 			if (Client.mouseJustReleased() && Gdx.input.getX() > startX + eachBoxSize * i*Onslaught.getAScalar() && Gdx.input.getX() < startX + eachBoxSize * (i+1) *Onslaught.getAScalar()
 					&& screen.getHeight()-Gdx.input.getY() < eachBoxSize*Onslaught.getAScalar()) {
 				player.setHotbarSlot(i);
@@ -191,6 +213,8 @@ public class HUDOverlay implements Screen {
 		//Dispose things
 		shapeRender.dispose();
 		batch.dispose();
+
+		Client.inputMultiplexer.removeProcessor(processor);
 	}
 
 	@Override

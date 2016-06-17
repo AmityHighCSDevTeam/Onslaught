@@ -248,6 +248,46 @@ public class OptionMenu extends GuiScreen {
 			
 			y -= h + 10*Onslaught.getYScalar();
 		}	x = 10*Onslaught.getXScalar();
+		{
+			Color c = batch.getColor();
+			batch.setColor(1, 1, 1, 1);
+			//Draw volume text
+			glyph.setText(Onslaught.instance.mainFont, "Hotbar Scrolling Sensitivity: " + ((int) (Onslaught.instance.settings.getHotbarScrollSensitivity() * 100)) / 100f,
+					Color.WHITE, w, Align.left, false);
+			Onslaught.instance.mainFont.draw(batch, glyph, x, y + (h + glyph.height) / 2);
+			batch.setColor(c);
+
+			//Displace x position
+			x += xSplit*Onslaught.getXScalar();
+			w = getWidth() - x - 50*Onslaught.getXScalar();
+
+			batch.setColor(1, 1, 1, 1);
+			//Change color if moused over
+			if (mX >= x && mX <= x + w && mY >= y && mY <= y + h) {
+				batch.setColor(new Color(27 / 255f, 168 / 255f, 55 / 255f, 1f));
+			}
+			//Draw the Slider using two buttons because i'm lazy to make a shape renderer
+			batch.draw(buttText, x, y + h / 2 - 1, w, 2);
+			batch.draw(buttText, x + (float) (w * Onslaught.instance.settings.getHotbarScrollSensitivity()/2) - 1, y, 2, h);
+			batch.setColor(c);
+
+			//If the mouse is down set the master volume
+			if (Gdx.input.isTouched()) {
+				if (mY >= y && mY <= y + h) {
+					mX -= x;
+					if (mX > w) {
+						mX = w;
+					} else if (mX < 0) {
+						mX = 0;
+					}
+					double sensitivity = mX / w * 2;
+					mX = Gdx.input.getX();
+					Onslaught.instance.settings.setHotbarScrollSensitivity(sensitivity);
+				}
+			}
+			
+			y -= h + 10*Onslaught.getYScalar();
+		}	x = 10*Onslaught.getXScalar();
 	}
 
 	@Override
@@ -265,15 +305,15 @@ public class OptionMenu extends GuiScreen {
 					Onslaught.instance.setScreen(new ControlsMenu(this));
 				}));
 		
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Automatic Ammo Buying:", (r)->{}, Align.left, false));
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 450*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Automatic Ammo Buying:", (r)->{}, Align.left, false));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
 				(Onslaught.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"), (r)->{
 					Onslaught.instance.settings.setAutoBuy(!Onslaught.instance.settings.isAutoBuy());
 					r.setText((Onslaught.instance.settings.isAutoBuy() ? "Currently Enabled" : "Currently Disabled"));
 				}));
 		
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Pause when menus open:", (r)->{}, Align.left, false));
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 500*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 550*Onslaught.getYScalar(), getWidth()/2 - 20, 50*Onslaught.getYScalar()), "Pause when menus open:", (r)->{}, Align.left, false));
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10, getHeight() - 550*Onslaught.getYScalar(), getWidth() - 20, 50*Onslaught.getYScalar()),
 				(Onslaught.instance.settings.isAutoPauseInSP() ? "Currently Enabled" : "Currently Disabled"), (r)->{
 					Onslaught.instance.settings.setAutoPauseInSP(!Onslaught.instance.settings.isAutoPauseInSP());
 					r.setText((Onslaught.instance.settings.isAutoPauseInSP() ? "Currently Enabled" : "Currently Disabled"));

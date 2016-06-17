@@ -44,6 +44,8 @@ public class Settings {
 	private boolean								autoBuy;
 	//Should the game automatically pause in single player
 	private boolean								autoPauseInSP;
+	//The hotbar scrolling sensitivity
+	private double 								hotbarScrollSensitivity;
 
 	public Settings() {
 		//Create hashmap
@@ -55,6 +57,7 @@ public class Settings {
 		aAlpha = 0.2;
 		autoBuy = false;
 		autoPauseInSP = true;
+		hotbarScrollSensitivity = 0.25;
 	}
 
 	/**
@@ -411,5 +414,13 @@ public class Settings {
 	
 	public boolean isAutoPauseInSP() {
 		return autoPauseInSP;
+	}
+	
+	public double getHotbarScrollSensitivity() {
+		return hotbarScrollSensitivity;
+	}
+	
+	public void setHotbarScrollSensitivity(double hotbarScrollSensitivity) {
+		this.hotbarScrollSensitivity = hotbarScrollSensitivity;
 	}
 }

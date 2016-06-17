@@ -159,7 +159,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	
 	public void setHotbarSlot(int i) {
 		removeTemporaryWeaponBuff();
-		currentWeapon = i;
+		currentWeapon = i%hotbar.length;
+		if (currentWeapon < 0) {
+			currentWeapon += hotbar.length;
+		}
 		addTemporaryWeaponBuff();
 	}
 
