@@ -50,7 +50,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	private float timeUntilIdleCheck = 0;
 
 	public ZombieModel() {}
-	
+
 	public ZombieModel(EntityZombie zom, Game g, float sizeMultiplier) {
 		entity = zom;
 		this.g = g;
@@ -83,7 +83,7 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		}
 		//Decrement time until growl
 		secUntilGrowl -= delta;
-		
+
 		if (g.isAIDisabled()) {
 			ai = AIMode.IDLE;
 		}
@@ -226,27 +226,30 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		//Get the damage that is taken from the source
 		float damageTaken = Math.min(damage, health);
-		
+
 		//If less than zero
 		if (damageTaken < 0) {
 			//Set it to zero
 			damageTaken = 0;
 		}
-		
+
 		//For every 5 units of damage taken
 		//for (int i = 0; i < damageTaken; i += 5) {
-			//Add a splatter of blood
+		//Add a splatter of blood
 		BloodParticle.addBloodToWorld(entity.getBody().getWorldCenter().x - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f,
-							entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f, g);
+				entity.getBody().getWorldCenter().y - entity.getSize() * 1.25f + g.getRandom().nextFloat() * 2 * entity.getSize() * 1.25f, g);
 		//}
-		
+
 		//Decrease health by damage
 		health -= damageTaken;
 		//Set AI to follow the thing that hurt it
 		ai = AIMode.FOLLOWING;
-		//Set the thing that hurt it as the target
-		target = source.getEntity();
-		
+
+		if (source != null) {
+			//Set the thing that hurt it as the target
+			target = source.getEntity();
+		}
+
 		//If this was the killing blow
 		if (health <= 0 && damageTaken > 0) {
 			//If the source is a player
@@ -256,13 +259,13 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 				pModel.setMoney(pModel.getMoney() + prizeMoney);
 				pModel.addScore(prizeMoney * 0.05 + 1);
 			}
-			
+
 			//If the random says it is time for a health pack
 			if (g.getDifficulty().getHealthPackChance() > g.getRandom().nextDouble()) {
 				//Add a health pack
 				g.addParticleToWorld(new HealthPackParticle(entity.getBody().getWorldCenter().x, entity.getBody().getWorldCenter().y, g));
 			}
-			
+
 			//Remove this entity
 			g.removeEntity(this);
 		}
