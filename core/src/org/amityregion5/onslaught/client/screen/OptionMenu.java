@@ -288,6 +288,10 @@ public class OptionMenu extends GuiScreen {
 			
 			y -= h + 10*Onslaught.getYScalar();
 		}	x = 10*Onslaught.getXScalar();
+		
+		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
 	}
 
 	@Override

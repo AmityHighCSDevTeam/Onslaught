@@ -126,6 +126,9 @@ public class CreditsMenu extends GuiScreen {
 			batch.begin();
 		}
 
+		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
 	}
 
 	@Override

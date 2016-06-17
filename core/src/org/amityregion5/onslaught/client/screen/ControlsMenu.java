@@ -32,6 +32,7 @@ public class ControlsMenu extends GuiScreen {
 	private double			scrollPos; //The scroll position
 	private String			selected; //The selected key
 	private InputProcessor	processor; //The input processor
+	private boolean justSet;
 
 	public ControlsMenu(GuiScreen prevScreen) {
 		super(prevScreen);
@@ -43,6 +44,7 @@ public class ControlsMenu extends GuiScreen {
 					//If something is currently selected set its input and deselect it
 					Onslaught.instance.settings.setInput(selected, new InputData(true, keycode));
 					selected = null;
+					justSet = true;
 				}
 				return false;
 			}
@@ -51,6 +53,7 @@ public class ControlsMenu extends GuiScreen {
 				if (selected != null) {
 					//If something is currently selected set its input (will later we deselected)
 					Onslaught.instance.settings.setInput(selected, new InputData(false, button));
+					justSet = true;
 				}
 				return false;
 			}
@@ -77,6 +80,11 @@ public class ControlsMenu extends GuiScreen {
 	@Override
 	protected void drawScreen(float delta) {
 		super.drawScreen(delta);
+		
+		if (selected == null && justSet == false && Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
+		justSet = true;
 
 		batch.end();
 		{
