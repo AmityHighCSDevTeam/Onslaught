@@ -308,6 +308,10 @@ public class Onslaught extends Game {
 		
 		//Render everything else
 		super.render();
+		
+		if (Runtime.getRuntime().freeMemory() < 1000) {
+			error("Memory Running Out: " + Runtime.getRuntime().freeMemory());
+		}
 	}
 
 	@Override
