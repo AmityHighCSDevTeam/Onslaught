@@ -4,7 +4,6 @@ import org.amityregion5.onslaught.common.buff.Buff;
 
 /**
  * An iterface that defines a basic weapon data.
- * THIS SHOULD HAVE A CONSTRUCTOR THAT TAKES A JsonObject as a parameter
  * 
  * @author sergeys
  *

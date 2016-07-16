@@ -149,6 +149,10 @@ public class ContinueMenu extends GuiScreen {
 
 		// Draw name of screen
 		Onslaught.instance.bigFont.draw(batch, "Continue", 10, getHeight() - 45, getWidth() - 20, Align.center, false);
+		
+		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
 	}
 
 	@Override

@@ -168,6 +168,15 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		//Decrease screen jitter
 		screenJitter *= 0.9;
 	}
+	
+	public void setHotbarSlot(int i) {
+		removeTemporaryWeaponBuff();
+		currentWeapon = i%hotbar.length;
+		if (currentWeapon < 0) {
+			currentWeapon += hotbar.length;
+		}
+		addTemporaryWeaponBuff();
+	}
 
 	/**
 	 * Set the mouse position

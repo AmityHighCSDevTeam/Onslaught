@@ -729,4 +729,9 @@ public class ShopWindow implements Screen {
 		batch.dispose();
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
+	
+	@Override
+	public boolean pauseIfOpenAsWindow() {
+		return true;
+	}
 }

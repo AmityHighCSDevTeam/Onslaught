@@ -302,4 +302,9 @@ public class InventoryWindow implements Screen {
 		double height = (screenHeight * screenHeight) / getMaxScrollAmount();
 		return (float) (height > screenHeight ? screenHeight : height);
 	}
+	
+	@Override
+	public boolean pauseIfOpenAsWindow() {
+		return true;
+	}
 }

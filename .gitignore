@@ -58,9 +58,9 @@ nb-configuration.xml
 
 .gradle
 build/
-core/ZombieGameData/log.log
-core/ZombieGameData/settings.json
-core/ZombieGameData/saves/
+core/OnslaughtData/log.log
+core/OnslaughtData/settings.json
+core/OnslaughtData/saves/
 
 ## OS Specific
 .DS_Store

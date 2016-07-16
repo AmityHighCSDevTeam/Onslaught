@@ -68,6 +68,10 @@ public class ScoreMenu extends GuiScreen {
 			Onslaught.instance.mainFont.draw(batch, glyph, x, y + glyph.height / 2);
 			y -= glyph.height + extraH;
 		}
+		
+		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
 	}
 
 	@Override

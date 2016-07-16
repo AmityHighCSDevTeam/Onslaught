@@ -42,12 +42,14 @@ public class MainMenu extends GuiScreen {
 
 	@Override
 	protected void drawScreen(float delta) {
-		super.drawScreen(delta);
-
 		// Draw picture
 		batch.setColor(1, 1, 1, 1);
-
+		
+		batch.enableBlending();
+		
 		batch.draw(titleTexture, camera.viewportWidth/2 - titleWidth/2, camera.viewportHeight - titleHeight - 10, titleWidth, titleHeight);
+
+		super.drawScreen(delta);
 
 		float y = 15;
 		//Draw version
@@ -104,13 +106,8 @@ public class MainMenu extends GuiScreen {
 	public void resize(int width, int height) {
 		// Compute title position
 
-		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
-		titleHeight = Onslaught.getScaledY(titleTexture.getHeight());
-
-		if (titleWidth > getWidth()) {
-			titleWidth = getWidth();
-			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
-		}
+		titleWidth = getWidth();
+		titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
 
 		super.resize(width, height);
 	}
@@ -119,15 +116,10 @@ public class MainMenu extends GuiScreen {
 	public void show() {
 		super.show();
 		// Initialize the title texture
-		titleTexture = new Texture(Gdx.files.internal("images/ZombieGameTitle.png"));
+		titleTexture = new Texture(Gdx.files.internal("images/Title.png"));
 
-		titleWidth = titleHeight/titleTexture.getHeight()*titleTexture.getWidth();
-		titleHeight = Onslaught.getScaledY(titleTexture.getHeight());
-
-		if (titleWidth > getWidth()) {
-			titleWidth = getWidth();
-			titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
-		}
+		titleWidth = getWidth();
+		titleHeight = titleWidth/titleTexture.getWidth()*titleTexture.getHeight();
 
 		MusicHandler.setMusicPlaying(MusicHandler.menuMusic);
 	}
@@ -136,28 +128,28 @@ public class MainMenu extends GuiScreen {
 	protected void setUpScreen() {
 		super.setUpScreen();
 
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight - 10 - Onslaught.getScaledY(10 + 50 + 60 * 0),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight*0.4f - 10 - Onslaught.getScaledY(10 + 50 + 60 * 0),
 				getWidth() - Onslaught.getScaledX(20),Onslaught.getScaledY(50)),
 				"Play Game", (r)->{
 					if (newerVersionMode != 1) {
 						Onslaught.instance.setScreen(new PlayGameMenu(this));
 					}
 				}));
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight - 10 - Onslaught.getScaledY(10 + 50 + 60 * 1),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight*0.4f - 10 - Onslaught.getScaledY(10 + 50 + 60 * 1),
 				getWidth() - Onslaught.getScaledX(20),Onslaught.getScaledY(50)),
 				"Options", (r)->{
 					if (newerVersionMode != 1) {
 						Onslaught.instance.setScreen(new OptionMenu(this));
 					}
 				}));
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight - 10 - Onslaught.getScaledY(10 + 50 + 60 * 2),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight*0.4f - 10 - Onslaught.getScaledY(10 + 50 + 60 * 2),
 				getWidth() - Onslaught.getScaledX(20),Onslaught.getScaledY(50)),
 				"Credits", (r)->{
 					if (newerVersionMode != 1) {
 						Onslaught.instance.setScreen(new CreditsMenu(this));
 					}
 				}));
-		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight - 10 - Onslaught.getScaledY(10 + 50 + 60 * 4),
+		addElement(new GuiRectangle(()->new Rectangle2D.Float(10 * Onslaught.getXScalar(),getHeight() - titleHeight*0.4f - 10 - Onslaught.getScaledY(10 + 50 + 60 * 4),
 				getWidth() - Onslaught.getScaledX(20),Onslaught.getScaledY(50)),
 				"Quit", (r)->{
 					if (newerVersionMode != 1) {

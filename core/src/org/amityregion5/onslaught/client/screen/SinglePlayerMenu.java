@@ -34,6 +34,10 @@ public class SinglePlayerMenu extends GuiScreen {
 
 		// Draw name of screen
 		Onslaught.instance.bigFont.draw(batch, "Single Player", 10, getHeight() - 45*Onslaught.getYScalar(), getWidth() - 20, Align.center, false);
+		
+		if (Onslaught.instance.settings.getInput("Close_Window").isJustDown()) {
+			Onslaught.instance.setScreenAndDispose(prevScreen);
+		}
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -103,7 +104,7 @@ public class Onslaught extends Game {
 		}
 
 		//Log file output stream
-		FileOutputStream fos = new FileOutputStream(workingDir + "/ZombieGameData/log.log");
+		FileOutputStream fos = new FileOutputStream(workingDir + "/OnslaughtData/log.log");
 
 		//These make it so that they print both to the console/ide debug window and to the log file
 		//Output stream
@@ -115,14 +116,14 @@ public class Onslaught extends Game {
 	@Override
 	public void create() {
 		//Read the version File
-		FileHandle versionFile = Gdx.files.absolute(workingDir + "/ZombieGameData/version.txt");
+		FileHandle versionFile = Gdx.files.absolute(workingDir + "/OnslaughtData/version.txt");
 		version = versionFile.readString();
 
 		//Start a thread ot determine the most recent verison that has been uploaded
 		Thread newerVersionThread = new Thread(() -> {
 			try {
 				//Get URL
-				URL url = new URL("https://raw.githubusercontent.com/AmityHighCSDevTeam/ZombieGame/master/core/ZombieGameData/version.txt");
+				URL url = new URL("https://raw.githubusercontent.com/AmityHighCSDevTeam/Onslaught/master/core/OnslaughtData/version.txt");
 				//Scanner for the URL
 				Scanner s = new Scanner(url.openStream());
 
@@ -176,11 +177,11 @@ public class Onslaught extends Game {
 		// Thread for loading the game
 		Thread loadingThread = new Thread(() -> {
 			// The gamedata folder
-			gameData = Gdx.files.absolute(workingDir + "/ZombieGameData/GameData");
+			gameData = Gdx.files.absolute(workingDir + "/OnslaughtData/GameData");
 
 			if (!isServer) {
 				//Get settings file
-				settingsFile = Gdx.files.absolute(workingDir + "/ZombieGameData/settings.json");
+				settingsFile = Gdx.files.absolute(workingDir + "/OnslaughtData/settings.json");
 				//Create and load the settings
 				settings = Settings.load();
 			}
@@ -306,8 +307,16 @@ public class Onslaught extends Game {
 		
 		//Update the was mouse pressed varibale in the client 
 		Client.update();
+		
+		Gdx.gl.glBlendColor(1, 1, 1, 1);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		
 		//Render everything else
 		super.render();
+		
+		if (Runtime.getRuntime().freeMemory() < 1000) {
+			error("Memory Running Out: " + Runtime.getRuntime().freeMemory());
+		}
 	}
 
 	@Override

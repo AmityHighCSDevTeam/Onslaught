@@ -37,7 +37,7 @@
           "maxVolume": 0.05
         },
         {
-          "path": "Core/Audio/pistolShot.wav",
+          "path": "Core/Audio/shotgun.wav",
           "trigger": "fire",
           "pitch": 1,
           "maxVolume": 0.3
@@ -74,7 +74,7 @@
           "maxVolume": 0.05
         },
         {
-          "path": "Core/Audio/pistolShot.wav",
+          "path": "Core/Audio/shotgun.wav",
           "trigger": "fire",
           "pitch": 1,
           "maxVolume": 0.3
@@ -111,7 +111,7 @@
           "maxVolume": 0.05
         },
         {
-          "path": "Core/Audio/pistolShot.wav",
+          "path": "Core/Audio/shotgun.wav",
           "trigger": "fire",
           "pitch": 1,
           "maxVolume": 0.3

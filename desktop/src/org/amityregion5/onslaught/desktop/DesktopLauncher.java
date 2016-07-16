@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.amityregion5.onslaught.Onslaught;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -17,10 +18,11 @@ public class DesktopLauncher {
 		config.height = 900;
 		config.useHDPI = true;
 		config.vSyncEnabled = true;
-		//config.addIcon("images/iconTestBMP.bmp", FileType.Internal);
-		//config.addIcon("images/iconTestBMP1.bmp", FileType.Internal);
-		//config.addIcon("images/iconTest.png", FileType.Internal);
-		//config.addIcon("images/iconTest3.png", FileType.Internal);
+		
+		config.addIcon("icons/Size16.png", FileType.Internal);
+		config.addIcon("icons/Size32.png", FileType.Internal);
+		config.addIcon("icons/Size128.png", FileType.Internal);
+		
 		config.title = "Onslaught";
 		
 		List<String> args = Arrays.asList(arg);

@@ -11,6 +11,7 @@ import org.amityregion5.onslaught.common.game.model.entity.PlayerModel;
 import org.amityregion5.onslaught.common.helper.MathHelper;
 import org.amityregion5.onslaught.common.helper.VectorFactory;
 import org.amityregion5.onslaught.common.weapon.WeaponStack;
+import org.amityregion5.onslaught.common.weapon.WeaponStatus;
 import org.amityregion5.onslaught.common.weapon.WeaponUtils;
 import org.amityregion5.onslaught.common.weapon.data.GrenadeData;
 import org.amityregion5.onslaught.common.weapon.data.IWeaponDataBase;
@@ -170,17 +171,17 @@ public class Grenade implements IWeapon {
 	}
 	
 	@Override
-	public String getStatus(WeaponStack stack) {
+	public WeaponStatus getStatus(WeaponStack stack) {
 		int wTime = stack.getWeaponTime();
 		if (wTime == 1 && stack.getPostFire() > 0) {
-			return "Reloading";
+			return WeaponStatus.RELOAD;
 		} else if (wTime == 2 && stack.getPostFire() > 0) {
-			return "Warming Up";
+			return WeaponStatus.WARMUP;
 		} else if (wTime == 3 && stack.isPreFiring()) {
-			return "Firing";
+			return WeaponStatus.FIRE;
 		} else if (wTime == 4 && stack.getPostFire() > 0) {
-			return "Cooling Down";
+			return WeaponStatus.COOLDOWN;
 		}
-		return "Ready";
+		return WeaponStatus.READY;
 	}
 }

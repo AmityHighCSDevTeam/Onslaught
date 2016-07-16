@@ -175,4 +175,9 @@ public class SaveWindow implements Screen {
 		//Remove input processor
 		Client.inputMultiplexer.removeProcessor(processor);
 	}
+	
+	@Override
+	public boolean pauseIfOpenAsWindow() {
+		return true;
+	}
 }

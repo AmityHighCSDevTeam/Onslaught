@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.amityregion5.onslaught.Onslaught;
 import org.amityregion5.onslaught.common.game.difficulty.Difficulty;
-
-import java.util.Set;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.stream.JsonWriter;
@@ -36,6 +35,10 @@ public class Settings {
 	private double								aAlpha;
 	//Should ammo be automaticcally be bough
 	private boolean								autoBuy;
+	//Should the game automatically pause in single player
+	private boolean								autoPauseInSP;
+	//The hotbar scrolling sensitivity
+	private double 								hotbarScrollSensitivity;
 
 	public Settings() {
 		//Create hashmap
@@ -46,6 +49,8 @@ public class Settings {
 		aRadius = 50;
 		aAlpha = 0.2;
 		autoBuy = false;
+		autoPauseInSP = true;
+		hotbarScrollSensitivity = 0.25;
 	}
 
 	/**
@@ -236,5 +241,20 @@ public class Settings {
 	
 	public boolean isAutoBuy() {
 		return autoBuy;
+	}
+	public void setAutoPauseInSP(boolean autoPauseInSP) {
+		this.autoPauseInSP = autoPauseInSP;
+	}
+	
+	public boolean isAutoPauseInSP() {
+		return autoPauseInSP;
+	}
+	
+	public double getHotbarScrollSensitivity() {
+		return hotbarScrollSensitivity;
+	}
+	
+	public void setHotbarScrollSensitivity(double hotbarScrollSensitivity) {
+		this.hotbarScrollSensitivity = hotbarScrollSensitivity;
 	}
 }

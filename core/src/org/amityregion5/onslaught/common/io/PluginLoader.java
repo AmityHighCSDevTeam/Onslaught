@@ -46,7 +46,7 @@ public class PluginLoader {
 
 				//Get metadata json file
 				FileHandle meta = p.child("plugin.json");
-				//If it exists
+				//If it existså
 				if (meta.exists()) {
 						//Create a plugin container
 						PluginContainer plugin = Onslaught.instance.gson.fromJson(meta.reader(), PluginContainer.class);

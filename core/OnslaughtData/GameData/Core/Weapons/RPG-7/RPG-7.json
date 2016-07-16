@@ -31,7 +31,27 @@
         "mult": {
           "speed": 0.75
         }
-      }
+      },
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/rocketFire.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        },
+        {
+          "path": "Core/Audio/rocketFly.wav",
+          "trigger": "fly",
+          "pitch": 1,
+          "maxVolume": 1
+        }
+      ]
     },
     {
       "price": 10000,
@@ -59,7 +79,27 @@
         "mult": {
           "speed": 0.8
         }
-      }
+      },
+      "sounds": [
+        {
+          "path": "Core/Audio/reload.wav",
+          "trigger": "reload",
+          "pitch": 1,
+          "maxVolume": 0.05
+        },
+        {
+          "path": "Core/Audio/rocketFire.wav",
+          "trigger": "fire",
+          "pitch": 1,
+          "maxVolume": 0.3
+        },
+        {
+          "path": "Core/Audio/rocketFly.wav",
+          "trigger": "fly",
+          "pitch": 1,
+          "maxVolume": 1
+        }
+      ]
     }
   ]
 }
