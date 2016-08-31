@@ -97,7 +97,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 			light.setActive(true); //Update Light
 			light.attachToBody(entity.getBody());
 		} else {
-			g.removeEntity(this);
+			data.put("DEAD", new JsonPrimitive(true));
 			g.makeExplosion(entity.getBody().getWorldCenter(), 10d, null);
 		}
 	}
@@ -114,7 +114,7 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 	@Override
 	public float damage(float damage, IEntityModel<?> source, String damageType) {
 		if (source == this) {
-			g.removeEntity(this);
+			data.put("DEAD", new JsonPrimitive(true));
 		}
 		if (light != null) {
 			light.remove(); //Dispose of the light immediately
@@ -211,5 +211,10 @@ public class LanternModel implements IEntityModel<EntityLantern> {
 		obj.addProperty("r", entity.getBody().getTransform().getRotation());
 		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
 		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
+	}
+
+	@Override
+	public boolean shouldBeDeleted() {
+		return data.containsKey("DEAD");
 	}
 }

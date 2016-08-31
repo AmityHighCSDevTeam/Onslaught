@@ -111,7 +111,7 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 		} else {
 			//If time to explode
 			//Remove the entity
-			g.removeEntity(this);
+			data.put("DEAD", new JsonPrimitive(true));
 			//Make the explosion
 			g.makeExplosion(explosionPos, getStrength(), parent);
 		}
@@ -281,5 +281,10 @@ public class RocketModel implements IEntityModel<EntityRocket> {
 		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
 		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
 		obj.addProperty("txtr", sprite.getTxtrName());
+	}
+
+	@Override
+	public boolean shouldBeDeleted() {
+		return data.containsKey("DEAD");
 	}
 }

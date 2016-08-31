@@ -52,12 +52,12 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle = new TextParticle(0, 1, this, "Use " + moveDirName + " to move."));
 			tutorialPart = 0;
 		} else if (tutorialPart == 0 && getSingleplayerPlayer().getEntity().getBody().getLinearVelocity().len2() > 0.01) {
-			removeParticle(particle);
+			particle.kill();
 			particle = new TextParticle(0, 1, this, "Press " + Onslaught.instance.settings.getInput("Shop_Window").getName() + " to open the store.");
 			addParticleToWorld(particle);
 			tutorialPart = 1;
 		} else if (tutorialPart == 1 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof ShopWindow) {
-			removeParticle(particle);
+			particle.kill();
 
 			getSingleplayerPlayer().setMoney(Onslaught.instance.pluginManager.getActivatedWeapons().parallelStream()
 					.filter((w) -> w.getName().equalsIgnoreCase("M9")).findFirst().get().getWeaponData(0).getPrice());
@@ -67,13 +67,13 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 2;
 		} else if (tutorialPart == 2 && getSingleplayerPlayer().getWeapons().parallelStream().anyMatch((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this, "Press " + Onslaught.instance.settings.getInput("Close_Window").getName() + " to close the window.");
 			addParticleToWorld(particle);
 			tutorialPart = 3;
 		} else if (tutorialPart == 3 && getSingleplayerPlayer().getScreen().getCurrentWindow() == null) {
-			removeParticle(particle);
+			particle.kill();
 
 			WeaponData m9Data = ((WeaponData) Onslaught.instance.pluginManager.getActivatedWeapons().parallelStream()
 					.filter((w) -> w.getName().equalsIgnoreCase("M9")).findFirst().get().getWeaponData(0));
@@ -86,14 +86,14 @@ public class TutorialGame extends Game {
 			tutorialPart = 4;
 		} else if (tutorialPart == 4 && getSingleplayerPlayer().getWeapons().parallelStream().filter((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))
 				.findFirst().get().getTotalAmmo() > 0) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this, "The yellow circle around your mouse\n shows that you are running low on ammo.\nPress " + Onslaught.instance.settings.getInput("Reload").getName() + " to reload.");
 			addParticleToWorld(particle);
 			tutorialPart = 5;
 		} else if (tutorialPart == 5 && getSingleplayerPlayer().getWeapons().parallelStream().filter((w) -> w.getWeapon().getName().equalsIgnoreCase("M9"))
 				.findFirst().get().getAmmo() > 0) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this, "Kill the zombie by pressing " + Onslaught.instance.settings.getInput("Shoot").getName() + " to shoot.");
 			addParticleToWorld(particle);
@@ -116,7 +116,7 @@ public class TutorialGame extends Game {
 
 			tutorialPart = 6;
 		} else if (tutorialPart == 6 && hostiles == 0) {
-			removeParticle(particle);
+			particle.kill();
 			getSingleplayerPlayer().damage(50, null, "The tutorial smites you!");
 			
 			HealthPackParticle hp = new HealthPackParticle(getSingleplayerPlayer().getEntity().getBody().getWorldCenter().x + 2, 
@@ -128,21 +128,21 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 7;
 		} else if (tutorialPart == 7 && getSingleplayerPlayer().getHealth() > 50.1) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this,
 					"Select the second hotbar slot by pressing " + Onslaught.instance.settings.getInput("Hotbar_2").getName() + ".");
 			addParticleToWorld(particle);
 			tutorialPart = 8;
 		} else if (tutorialPart == 8 && getSingleplayerPlayer().getCurrWeapIndex() == 1) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this,
 					"Open your inventory by pressing " + Onslaught.instance.settings.getInput("Inventory_Window").getName() + ".");
 			addParticleToWorld(particle);
 			tutorialPart = 9;
 		} else if (tutorialPart == 9 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof InventoryWindow) {
-			removeParticle(particle);
+			particle.kill();
 
 			getSingleplayerPlayer().getWeapons().add(new WeaponStack(
 					Onslaught.instance.pluginManager.getActivatedWeapons().parallelStream().filter((w) -> w.getName().equals("AK47")).findFirst().get()));
@@ -152,13 +152,13 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 10;
 		} else if (tutorialPart == 10 && getSingleplayerPlayer().getCurrentWeapon().getWeapon().getName().equals("AK47")) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this, "Press " + Onslaught.instance.settings.getInput("Close_Window").getName() + " to close the window.");
 			addParticleToWorld(particle);
 			tutorialPart = 11;
 		} else if (tutorialPart == 11 && getSingleplayerPlayer().getScreen().getCurrentWindow() == null) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this,
 					"Press " + Onslaught.instance.settings.getInput("Toggle_Flashlight").getName() + " to toggle your flashlight.");
@@ -166,7 +166,7 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 12;
 		} else if (tutorialPart == 12 && !getSingleplayerPlayer().getLight().isActive()) {
-			removeParticle(particle);
+			particle.kill();
 
 			lighting.setAmbientLight(new Color(0, 0, 0, 1f));
 
@@ -174,14 +174,14 @@ public class TutorialGame extends Game {
 			addParticleToWorld(particle);
 			tutorialPart = 13;
 		} else if (tutorialPart == 13 && getSingleplayerPlayer().getLight().isActive()) {
-			removeParticle(particle);
+			particle.kill();
 
 			particle = new TextParticle(0, 1, this,
 					"Press " + Onslaught.instance.settings.getInput("Close_Window").getName() + " to open the pause/quit window.");
 			addParticleToWorld(particle);
 			tutorialPart = 14;
 		} else if (tutorialPart == 14 && getSingleplayerPlayer().getScreen().getCurrentWindow() instanceof PauseWindow) {
-			removeParticle(particle);
+			particle.kill();
 
 			yOffset = 0;
 			particle = new TextParticle(0, 0, this, "You have completed the tutorial.");

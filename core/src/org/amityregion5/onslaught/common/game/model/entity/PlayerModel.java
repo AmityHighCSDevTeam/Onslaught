@@ -268,7 +268,7 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 		//If no more health
 		if (health <= 0) {
 			//Kill player
-			g.doPlayerDie(this);
+			g.onPlayerDeath(this);
 		}
 		return damageTaken;
 	}
@@ -595,5 +595,10 @@ public class PlayerModel implements IEntityModel<EntityPlayer> {
 	
 	public HashMap<String, JsonElement> getData() {
 		return data;
+	}
+
+	@Override
+	public boolean shouldBeDeleted() {
+		return !g.getPlayers().contains(this);
 	}
 }

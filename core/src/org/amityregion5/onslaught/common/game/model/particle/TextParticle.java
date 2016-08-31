@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class TextParticle implements IParticle {
 	private transient float	x, y, size; //X, Y, Size
+	private transient boolean dead;
 	private transient String text; //Text
 
 	public TextParticle() {}
@@ -25,6 +26,7 @@ public class TextParticle implements IParticle {
 		this.y = y; //Set variables
 		size = 0.004f;
 		this.text = text;
+		dead = false;
 	}
 
 	@Override
@@ -84,5 +86,14 @@ public class TextParticle implements IParticle {
 
 	@Override
 	public void doPostDeserialize(Game game) {
+	}
+	
+	public void kill() {
+		dead = true;
+	}
+	
+	@Override
+	public boolean shouldBeDeleted() {
+		return dead;
 	}
 }

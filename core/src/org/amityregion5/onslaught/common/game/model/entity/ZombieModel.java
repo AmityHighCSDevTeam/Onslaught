@@ -267,9 +267,6 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 				//Add a health pack
 				g.addParticleToWorld(new HealthPackParticle(entity.getBody().getWorldCenter().x, entity.getBody().getWorldCenter().y, g));
 			}
-
-			//Remove this entity
-			g.removeEntity(this);
 		}
 		return damageTaken;
 	}
@@ -421,5 +418,10 @@ public class ZombieModel implements IEntityModel<EntityZombie> {
 		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
 		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
 		obj.addProperty("txtr", zSprite.getTxtrName());
+	}
+
+	@Override
+	public boolean shouldBeDeleted() {
+		return getHealth() <= 0;
 	}
 }

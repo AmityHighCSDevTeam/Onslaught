@@ -84,11 +84,7 @@ public class ExplosionParticleModel implements IParticle {
 		y += yVel; //Move y
 		
 		size *= 0.9;
-		
-		if (size < 0.05) {
-			g.removeParticle(this);
-		}
-		
+				
 		//DO light stuffs
 		//if (light != null) {
 			//light.dispose();
@@ -171,5 +167,10 @@ public class ExplosionParticleModel implements IParticle {
 	@Override
 	public Rectangle getRect() {
 		return new Rectangle((float)(getX() - (0.15 / Math.sqrt(getSize()))), (float)(getY() - (0.15 / Math.sqrt(getSize()))), (float)(0.15 / Math.sqrt(getSize()) * 2), (float)(0.15 / Math.sqrt(getSize()) * 2));
+	}
+	
+	@Override
+	public boolean shouldBeDeleted() {
+		return size < 0.05;
 	}
 }

@@ -132,7 +132,7 @@ public class Onslaught extends Game {
 					try {
 						Thread.sleep(10000);
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 					s.close();
 				} , "Time Out Thread");
@@ -150,7 +150,7 @@ public class Onslaught extends Game {
 				debug("Found most up to date version to be = " + newestVersion);
 			} catch (IOException e) {
 				error("Failed to measure most up to date version.");
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		} , "Newer Version Thread");
 

@@ -72,4 +72,6 @@ public interface IEntityModel<T extends IEntity> {
 	void write(JsonObject obj);
 
 	void doPostDeserialize(Game game);
+
+	boolean shouldBeDeleted();
 }

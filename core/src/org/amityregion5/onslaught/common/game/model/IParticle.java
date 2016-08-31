@@ -55,4 +55,6 @@ public interface IParticle {
 	Rectangle getRect();
 	
 	float getRotation();
+
+	boolean shouldBeDeleted();
 }

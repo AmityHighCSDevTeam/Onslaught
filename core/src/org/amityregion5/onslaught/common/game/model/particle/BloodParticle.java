@@ -64,9 +64,6 @@ public class BloodParticle implements IParticle {
 		size *= 0.99;
 
 		//If greater than 4 remove this
-		if (size < 0.1) {
-			g.removeParticle(this);
-		}
 	}
 
 	@Override
@@ -127,5 +124,10 @@ public class BloodParticle implements IParticle {
 	@Override
 	public float getRotation() {
 		return r;
+	}
+	
+	@Override
+	public boolean shouldBeDeleted() {
+		return size < 0.1;
 	}
 }

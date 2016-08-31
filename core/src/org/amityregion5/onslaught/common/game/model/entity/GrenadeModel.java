@@ -50,7 +50,7 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 			setTimeUntilExplosion(getTimeUntilExplosion()-timeStep); //Tick down time until explosion
 			explosionPos = entity.getBody().getWorldCenter().cpy();
 		} else {
-			g.removeEntity(this); //Explode
+			data.put("DEAD", new JsonPrimitive(true));
 			g.makeExplosion(explosionPos, getStrength(), parent);
 		}
 		//Move sprite to the right place
@@ -175,5 +175,10 @@ public class GrenadeModel implements IEntityModel<EntityGrenade> {
 		obj.addProperty("r", entity.getBody().getTransform().getRotation());
 		obj.addProperty("vx", entity.getBody().getLinearVelocity().x);
 		obj.addProperty("vy", entity.getBody().getLinearVelocity().y);
+	}
+
+	@Override
+	public boolean shouldBeDeleted() {
+		return data.containsKey("DEAD");
 	}
 }

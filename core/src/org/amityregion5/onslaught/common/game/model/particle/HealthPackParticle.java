@@ -16,6 +16,7 @@ public class HealthPackParticle implements IParticle {
 	//X, Y, Size, time until check
 	private float x;
 	private float y;
+	private boolean dead;
 	private transient float size;
 	private transient float timeUntilCheck;
 	
@@ -57,7 +58,7 @@ public class HealthPackParticle implements IParticle {
 						//Give it health
 						pM.setHealth(Math.min(pM.getMaxHealth() * 0.2f + pM.getHealth(), pM.getMaxHealth()));
 						//Remove particle
-						g.removeParticle(this);
+						dead = true;
 					}
 				});
 			}
@@ -105,5 +106,10 @@ public class HealthPackParticle implements IParticle {
 	@Override
 	public float getRotation() {
 		return 0;
+	}
+	
+	@Override
+	public boolean shouldBeDeleted() {
+		return dead;
 	}
 }

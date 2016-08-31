@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Random;
 
@@ -62,9 +63,9 @@ public class Game implements Disposable {
 	protected GameContactListener			contactListener; // The contact listener
 	protected World							world; //The world
 	protected float							accumulator; //An accumulator used for ticks
-	protected ArrayList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete; //Entities
-	protected ArrayList<IParticle>			particles, particlesToAdd, particlesToDelete; //Particle
-	protected ArrayList<IBullet>			activeBullets; //The current bullets
+	protected LinkedList<IEntityModel<?>>	entities, entitiesToAdd, entitiesToDelete; //Entities
+	protected List<IParticle>			particles, particlesToAdd, particlesToDelete; //Particle
+	protected List<IBullet>			activeBullets; //The current bullets
 	protected ArrayList<PlayerModel>		players; //All the players
 	protected Random						rand; //A random
 	protected RayHandler					lighting; //The lighting
@@ -96,9 +97,9 @@ public class Game implements Disposable {
 		contactListener = new GameContactListener(); //Create contact listener
 
 		world.setContactListener(contactListener); //Set the contact listener
-		entities = new ArrayList<IEntityModel<?>>(); //Create entities array
-		entitiesToAdd = new ArrayList<IEntityModel<?>>();
-		entitiesToDelete = new ArrayList<IEntityModel<?>>();
+		entities = new LinkedList<IEntityModel<?>>(); //Create entities array
+		entitiesToAdd = new LinkedList<IEntityModel<?>>();
+		entitiesToDelete = new LinkedList<IEntityModel<?>>();
 		particles = new ArrayList<IParticle>(); //Create particles array
 		particlesToAdd = new ArrayList<IParticle>();
 		particlesToDelete = new ArrayList<IParticle>();
@@ -137,14 +138,50 @@ public class Game implements Disposable {
 			while (accumulator >= Constants.TIME_STEP) {
 
 				//Tick all entities and particles
-				entities.forEach((e) -> e.tick(Constants.TIME_STEP));
-				particles.forEach((p) -> p.tick(Constants.TIME_STEP));
+				{
+					ListIterator<IEntityModel<?>> iter = entities.listIterator();
+					if (!world.isLocked()) {
+						while(iter.hasNext()) {
+							IEntityModel<?> model = iter.next();
+							model.tick(Constants.TIME_STEP);
+							if (model.shouldBeDeleted()) {
+								world.destroyBody(model.getEntity().getBody());
+								iter.remove();
+								if (model.isHostile()) {
+									hostiles--;
+								}
+								model.dispose();
+							}
+						}
+						entities.addAll(entitiesToAdd);
+						entitiesToAdd.clear();
+					}
+				}
+				{
+					ListIterator<IParticle> iter = particles.listIterator();
+					if (!world.isLocked()) {
+						while(iter.hasNext()) {
+							IParticle part = iter.next();
+							part.tick(Constants.TIME_STEP);
+							if (part.shouldBeDeleted()) {
+								iter.remove();
+								part.dispose();
+							}
+						}
+						particles.addAll(particlesToAdd);
+						particlesToAdd.clear();
+					}
+				}
+
+				//entities.forEach((e) -> e.tick(Constants.TIME_STEP));
+				//particles.forEach((p) -> p.tick(Constants.TIME_STEP));
 
 				//Step the world
 				world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 				//Decrement the accumulator
 				accumulator -= Constants.TIME_STEP;
 
+				/*
 				{ // Deletion of Entities
 					Iterator<IEntityModel<?>> i = entitiesToDelete.iterator();
 					if (!world.isLocked()) {
@@ -190,7 +227,7 @@ public class Game implements Disposable {
 							i.remove();
 						}
 					}
-				}
+				}*/
 				if (!world.isLocked()) { // Given runnables
 					ArrayList<Runnable> runCopy = new ArrayList<Runnable>(runAfterNextTick);
 					runCopy.forEach((r)->{
@@ -371,9 +408,9 @@ public class Game implements Disposable {
 		world.dispose();
 	}
 
-	public ArrayList<IEntityModel<?>> getEntities() {
+	public List<IEntityModel<?>> getEntities() {
 		return entities;
-	}
+	}/*
 
 	public void removeEntity(IEntityModel<?> e) {
 		if (!entitiesToDelete.contains(e)) {
@@ -383,23 +420,23 @@ public class Game implements Disposable {
 
 	public void removeEntity(IEntity entity) {
 		getEntityModelFromEntity(entity).ifPresent((m) -> removeEntity(m));
-	}
+	}*/
 
-	public ArrayList<IParticle> getParticles() {
+	public List<IParticle> getParticles() {
 		return particles;
 	}
 
-	public ArrayList<IParticle> getParticlesToAdd() {
+	public List<IParticle> getParticlesToAdd() {
 		return particlesToAdd;
 	}
-
+	/*
 	public void removeParticle(IParticle p) {
 		if (!particlesToDelete.contains(p)) {
 			particlesToDelete.add(p);
 		}
-	}
+	}*/
 
-	public ArrayList<IBullet> getActiveBullets() {
+	public List<IBullet> getActiveBullets() {
 		return activeBullets;
 	}
 
@@ -528,9 +565,8 @@ public class Game implements Disposable {
 		return players;
 	}
 
-	public void doPlayerDie(PlayerModel playerModel) {
+	public void onPlayerDeath(PlayerModel playerModel) {
 		players.remove(playerModel);
-		removeEntity(playerModel);
 	}
 
 	public boolean isGameRunning() {
